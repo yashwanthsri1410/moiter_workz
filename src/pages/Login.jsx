@@ -4,7 +4,7 @@ import axios from "axios";
 import backgroundImg from "../assets/background.jpeg";
 import logo from "../assets/favicon.png";
 
-const Login = () => {
+const Login = ({ setRole }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -22,17 +22,39 @@ const Login = () => {
         }
       );
 
-      console.log(response)
       const user = response.data;
       console.log("Login successful:", user);
 
       localStorage.setItem("username", user.username);
+      setRole(user.position); // Optional global state
 
       // Navigate based on userType
       if (user.userType === 1) {
         navigate("/Usercreation");
       } else if ([2, 3, 4].includes(user.userType)) {
-        navigate("/dashboard");
+        // Navigate based on position
+        switch (user.position) {
+          case "Manager":
+            navigate("/dashboard/manager");
+            break;
+          case "Senior Employee":
+            navigate("/dashboard/senior");
+            break;
+          case "Junior Employee":
+            navigate("/dashboard/junior");
+            break;
+          case "Finance Manager":
+            navigate("/dashboard/finance-manager");
+            break;
+          case "Budget Analyst":
+            navigate("/dashboard/budget-analyst");
+            break;
+          case "Cost Accountant":
+            navigate("/dashboard/cost-accountant");
+            break;
+          default:
+            navigate("/dashboard");
+        }
       } else {
         alert("Unknown user type.");
       }
@@ -59,7 +81,7 @@ const Login = () => {
       console.error("API test error:", err.response?.data || err.message);
       alert(
         err.response?.data?.message ||
-          "API not reachable. Check if backend is running."
+        "API not reachable. Check if backend is running."
       );
     }
   };
@@ -77,41 +99,7 @@ const Login = () => {
             <img src={logo} alt="Logo" className="w-12 h-12 rounded-full" />
           </div>
           <h2 className="text-2xl font-bold">Log in</h2>
-          {/* <p className="text-sm text-gray-500 mt-1">
-            Don’t have an account?{" "}
-            <span
-              onClick={() => navigate("/signup")}
-              className="text-blue-600 underline cursor-pointer"
-            >
-              Sign up
-            </span>
-          </p> */}
         </div>
-
-        {/* <div className="mt-6 space-y-3">
-          <button className="flex items-center justify-center w-full border border-gray-300 rounded-full py-2 hover:bg-gray-100 transition">
-            <img
-              src="https://img.icons8.com/color/48/facebook-new.png"
-              alt="facebook"
-              className="w-5 h-5 mr-2"
-            />
-            Log in with Facebook
-          </button>
-          <button className="flex items-center justify-center w-full border border-gray-300 rounded-full py-2 hover:bg-gray-100 transition">
-            <img
-              src="https://img.icons8.com/color/48/google-logo.png"
-              alt="google"
-              className="w-5 h-5 mr-2"
-            />
-            Log in with Google
-          </button>
-        </div> */}
-
-        {/* <div className="my-6 flex items-center">
-          <hr className="flex-grow border-gray-300" />
-          <span className="mx-4 text-gray-500 text-sm">OR</span>
-          <hr className="flex-grow border-gray-300" />
-        </div> */}
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
