@@ -8,6 +8,7 @@ import {
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Usercreation from "./pages/Usercreation";
 
 function App() {
   const isAuthenticated = true;
@@ -22,6 +23,7 @@ function App() {
           path="/dashboard"
           element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
         />
+        <Route path="/Usercreation" element={<Usercreation />} />
       </Routes>
     </Router>
   );

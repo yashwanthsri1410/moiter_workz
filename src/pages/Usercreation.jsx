@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import backgroundImg from "../assets/background.jpeg";
@@ -12,7 +12,9 @@ export default function Signup() {
     age: "",
     email: "",
     password: "",
-    usertype: "1",
+    Empid: "",
+    department: "",
+    position: "",
   });
 
   const [emailValid, setEmailValid] = useState(true);
@@ -20,41 +22,44 @@ export default function Signup() {
   const [passwordValid, setPasswordValid] = useState(true);
   const [usernameValid, setUsernameValid] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [apiError, setApiError] = useState(null);
-  const [showModal, setShowModal] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     if (name === "email") {
-      const isGmail = value.endsWith("@gmail.com");
-      setEmailValid(isGmail);
+      setEmailValid(value.endsWith("@gmail.com"));
     }
 
     if (name === "username") {
-      const isAlpha = /^[A-Za-z]+$/.test(value);
-      setUsernameValid(isAlpha || value === "");
+      setUsernameValid(/^[A-Za-z]+$/.test(value) || value === "");
     }
 
     if (name === "password") {
       const strongPasswordRegex =
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/;
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W).{8,}$/;
       setPasswordValid(strongPasswordRegex.test(value));
     }
 
     if (name === "age") {
       if (/^\d*$/.test(value)) {
         const age = parseInt(value, 10);
-        if (!value) {
-          setAgeError("Age is required.");
-        } else if (age < 18 || age > 60) {
+        if (!value) setAgeError("Age is required.");
+        else if (age < 18 || age > 60)
           setAgeError("Enter valid age between 18 - 60");
-        } else {
-          setAgeError("");
-        }
+        else setAgeError("");
         setForm({ ...form, age: value });
+      }
+      return;
+    }
+
+    if (name === "department") {
+      setForm({ ...form, department: value, position: "" });
+      return;
+    }
+
+    if (name === "Empid") {
+      if (/^\d{0,4}$/.test(value)) {
+        setForm({ ...form, Empid: value });
       }
       return;
     }
@@ -79,8 +84,13 @@ export default function Signup() {
 
     if (!passwordValid) {
       alert(
-       "Password must be at least 8 characters with uppercase, lowercase, number, and symbol."
+        "Password must be at least 8 characters with uppercase, lowercase, number, and symbol."
       );
+      return;
+    }
+
+    if (form.Empid.length !== 4) {
+      alert("Employee ID must be exactly 4 digits.");
       return;
     }
 
@@ -91,7 +101,7 @@ export default function Signup() {
 
     try {
       const response = await axios.post(
-        "http://192.168.22.247:5002/User/register",
+        "http://192.168.22.247:5002/User/register-employee",
         form
       );
       if (response.status === 200 || response.status === 201) {
@@ -109,26 +119,6 @@ export default function Signup() {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          "http://192.168.22.247:5002/User/usertypes"
-        );
-        if (!response.ok)
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        const jsonData = await response.json();
-        setUsers(jsonData);
-      } catch (err) {
-        setApiError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-start bg-cover bg-center relative p-6"
@@ -139,7 +129,9 @@ export default function Signup() {
         <div className="flex items-start justify-center p-4 z-[99] rounded-full">
           <img src={logo} alt="Logo" className="w-12 h-12 rounded-full" />
         </div>
-        <h2 className="text-2xl font-semibold text-center mb-2">Sign up</h2>
+        <h2 className="text-2xl font-semibold text-center mb-2">
+          User creation
+        </h2>
         <p className="text-sm text-center text-gray-500 mb-4">
           Already have an account?{" "}
           <span
@@ -149,7 +141,6 @@ export default function Signup() {
             Log in
           </span>
         </p>
-        
 
         <form onSubmit={handleSubmit} className="space-y-3">
           <input
@@ -229,17 +220,97 @@ export default function Signup() {
             </p>
           )}
 
-          <select
-            name="usertype"
+          <input
+            type="text"
+            name="Empid"
+            placeholder="Employee ID (4-digit number)"
+            maxLength="4"
+            value={form.Empid}
             onChange={handleChange}
-            value={form.usertype}
+            className="w-full px-4 py-2 border rounded-md border-gray-300"
+            required
+          />
+
+          <select
+            name="department"
+            value={form.department}
+            onChange={handleChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-md"
+            required
           >
-            <option value="1">Admin</option>
-            <option value="2">User</option>
-            <option value="3">Editor</option>
-            <option value="4">Viewer</option>
+            <option value="">Select Department</option>
+            <option value="IT department">IT department</option>
+            <option value="HR">HR</option>
+            <option value="Finance">Finance</option>
+            <option value="developer">developer</option>
+            <option value="Testing">Testing</option>
           </select>
+
+          <select
+            name="position"
+            value={form.position}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md"
+            required
+          >
+            <option value="">Select Position</option>
+            {form.department === "Finance" ? (
+              <>
+                <option value="Finance Manager">Finance Manager</option>
+                <option value="Budget Analyst">Budget Analyst</option>
+                <option value="Cost Accountant">Cost Accountant</option>
+              </>
+            ) : form.department ? (
+              <>
+                <option value="Manager">Manager</option>
+                <option value="Senior Employee">Senior Employee</option>
+                <option value="Junior Employee">Junior Employee</option>
+              </>
+            ) : null}
+          </select>
+
+          {form.position && (
+            <div className="bg-gray-100 border border-gray-300 rounded-md p-3 mb-3">
+              <h4 className="font-semibold mb-1">Accessible Pages:</h4>
+              <ul className="list-disc list-inside text-sm text-gray-700">
+                {form.position === "Manager" && (
+                  <>
+                    <li>Dashboard Page</li>
+                    <li>Profile Page</li>
+                    <li>Product Page</li>
+                  </>
+                )}
+                {form.position === "Senior Employee" && (
+                  <>
+                    <li>Dashboard Page</li>
+                    <li>Product Page</li>
+                  </>
+                )}
+                {form.position === "Junior Employee" && (
+                  <li>Dashboard Page</li>
+                )}
+                {form.department === "Finance" &&
+                  form.position === "Finance Manager" && (
+                    <>
+                      <li>Dashboard Page</li>
+                      <li>Profile Page</li>
+                      <li>Product Page</li>
+                    </>
+                  )}
+                {form.department === "Finance" &&
+                  form.position === "Budget Analyst" && (
+                    <>
+                      <li>Dashboard Page</li>
+                      <li>Product Page</li>
+                    </>
+                  )}
+                {form.department === "Finance" &&
+                  form.position === "Cost Accountant" && (
+                    <li>Dashboard Page</li>
+                  )}
+              </ul>
+            </div>
+          )}
 
           <button
             type="submit"
@@ -248,60 +319,7 @@ export default function Signup() {
             Sign Up
           </button>
         </form>
-
-        <button
-          onClick={() => setShowModal(true)}
-          className="mt-4 w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition"
-        >
-          Show Registered Users
-        </button>
       </div>
-
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-3xl p-6 relative max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={() => setShowModal(false)}
-              className="absolute top-2 right-2 text-gray-500 hover:text-black text-lg"
-            >
-              ✖
-            </button>
-            <h3 className="text-xl font-semibold mb-4 text-center">
-              Registered Users
-            </h3>
-            {loading ? (
-              <p className="text-center">Loading...</p>
-            ) : apiError ? (
-              <p className="text-center text-red-600">Error: {apiError}</p>
-            ) : users.length === 0 ? (
-              <p className="text-center">No users found.</p>
-            ) : (
-              <div className="overflow-y-auto max-h-[60vh]">
-                <table className="min-w-full text-sm text-left border">
-                  <thead className="bg-gray-200 text-gray-700 sticky top-0">
-                    <tr>
-                      <th className="py-2 px-4 border">Name</th>
-                      <th className="py-2 px-4 border">Age</th>
-                      <th className="py-2 px-4 border">User Type</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {users.map((user, idx) => (
-                      <tr key={idx} className="border-b">
-                        <td className="py-2 px-4 border">{user.username}</td>
-                        <td className="py-2 px-4 border">{user.age}</td>
-                        <td className="py-2 px-4 border">
-                          {user.userTypeName}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
