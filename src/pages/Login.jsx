@@ -26,13 +26,13 @@ const Login = ({ setRole }) => {
       console.log("Login successful:", user);
 
       localStorage.setItem("username", user.username);
-      setRole(user.position); // Optional global state
+      setRole(user.position || ""); // Optional: track position
 
       // Navigate based on userType
       if (user.userType === 1) {
         navigate("/Usercreation");
       } else if ([2, 3, 4].includes(user.userType)) {
-        // Navigate based on position
+        // Navigate based on position if present
         switch (user.position) {
           case "Manager":
             navigate("/dashboard/manager");
@@ -53,6 +53,7 @@ const Login = ({ setRole }) => {
             navigate("/dashboard/cost-accountant");
             break;
           default:
+            // Fallback for unknown or missing position
             navigate("/dashboard");
         }
       } else {
@@ -81,7 +82,7 @@ const Login = ({ setRole }) => {
       console.error("API test error:", err.response?.data || err.message);
       alert(
         err.response?.data?.message ||
-        "API not reachable. Check if backend is running."
+          "API not reachable. Check if backend is running."
       );
     }
   };
