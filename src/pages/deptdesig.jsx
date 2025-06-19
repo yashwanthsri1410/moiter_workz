@@ -7,17 +7,38 @@ export default function Signup() {
   const [designation, setDesignation] = useState("");
   const [departments, setDepartments] = useState([]);
 
+  const baseUrl = "http://192.168.22.247/api/Department";
+
   useEffect(() => {
     fetchDepartments();
   }, []);
 
   const fetchDepartments = async () => {
     try {
-      const res = await axios.get("http://192.168.22.247:5002/api/department/departments");
-      setDepartments(res.data);
+      const res = await axios.get(`${baseUrl}/departments`);
+      const groupedData = groupByDepartment(res.data);
+      setDepartments(groupedData);
     } catch (err) {
       console.error("Error fetching departments:", err);
     }
+  };
+
+  const groupByDepartment = (data) => {
+    const grouped = {};
+    data.forEach((item) => {
+      if (!grouped[item.deptName]) {
+        grouped[item.deptName] = {
+          deptId: item.deptId,
+          deptName: item.deptName,
+          designations: [],
+        };
+      }
+      grouped[item.deptName].designations.push({
+        designationId: item.designationId,
+        designationName: item.designationName,
+      });
+    });
+    return Object.values(grouped);
   };
 
   const handleSubmit = async (e) => {
@@ -28,9 +49,9 @@ export default function Signup() {
     }
 
     try {
-      await axios.post("http://192.168.22.247:5002/api/department/create", {
-        department,
-        designation,
+      await axios.post(`${baseUrl}/create`, {
+        deptName: department,
+        designationName: designation,
       });
       alert("Department and Designation created successfully!");
       setDepartment("");
@@ -38,13 +59,13 @@ export default function Signup() {
       fetchDepartments();
     } catch (err) {
       console.error("Submission failed:", err);
-      alert("Failed to create.");
+      alert("Failed to create department/designation.");
     }
   };
 
   const handleDeleteDepartment = async (deptName) => {
     try {
-      await axios.delete(`http://192.168.22.247:5002/api/department/department/${deptName}`);
+      await axios.delete(`${baseUrl}/department/${deptName}`);
       alert("Department deleted.");
       fetchDepartments();
     } catch (err) {
@@ -52,13 +73,39 @@ export default function Signup() {
     }
   };
 
-  const handleDeleteDesignation = async (designationName) => {
+  const handleDeleteDesignation = async (designationName, deptName) => {
     try {
-      await axios.delete(`http://192.168.22.247:5002/api/department/designation/${designationName}`);
-      alert("Designation deleted.");
+      const dept = departments.find((d) => d.deptName === deptName);
+
+      if (!dept) return;
+
+      if (dept.designations.length === 1) {
+        await axios.delete(`${baseUrl}/department/${deptName}`);
+        alert("Only designation deleted, so department also removed.");
+      } else {
+        await axios.delete(`${baseUrl}/designation/${designationName}`);
+        alert("Designation deleted.");
+      }
+
       fetchDepartments();
     } catch (err) {
       console.error("Error deleting designation:", err);
+    }
+  };
+
+  const checkApiStatus = async () => {
+    try {
+      const res = await axios.get(`${baseUrl}/create`, {
+        timeout: 5000,
+      });
+      if (res.status === 200) {
+        alert("✅ API is running successfully!");
+      } else {
+        alert("⚠️ API responded with status: " + res.status);
+      }
+    } catch (error) {
+      console.error("API check failed:", error.message);
+      alert("❌ API is not reachable.");
     }
   };
 
@@ -73,13 +120,17 @@ export default function Signup() {
           Add Department & Designation
         </h2>
 
-        {/* Combined Form */}
-        <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-4 mb-6">
+        {/* Form */}
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col md:flex-row gap-4 mb-4"
+        >
           <input
             type="text"
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
             placeholder="Enter department"
+            maxLength={25}
             className="flex-1 px-4 py-2 border border-gray-300 rounded-md"
           />
           <input
@@ -87,6 +138,7 @@ export default function Signup() {
             value={designation}
             onChange={(e) => setDesignation(e.target.value)}
             placeholder="Enter designation"
+            maxLength={25}
             className="flex-1 px-4 py-2 border border-gray-300 rounded-md"
           />
           <button
@@ -97,24 +149,43 @@ export default function Signup() {
           </button>
         </form>
 
-        {/* Department List with Delete Buttons */}
+        {/* Check API Status */}
+        {/* <button
+          type="button"
+          onClick={checkApiStatus}
+          className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition mb-6"
+        >
+          Check API Status
+        </button> */}
+
+        {/* Department List */}
         <div>
           <h3 className="text-lg font-semibold mb-2">Departments</h3>
           {departments.length > 0 ? (
-            <ul className="space-y-2">
-              {departments.map((dept, index) => (
-                <li key={index} className="bg-gray-100 p-4 rounded-md">
-                  <p className="font-semibold">Department: {dept.department}</p>
+            <ul className="space-y-4">
+              {departments.map((dept) => (
+                <li
+                  key={dept.deptId}
+                  className="bg-gray-100 p-4 rounded-md shadow-sm"
+                >
+                  <p className="font-semibold text-blue-800">
+                    Department: {dept.deptName}
+                  </p>
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {dept.designations?.map((des, idx) => (
+                    {dept.designations?.map((des) => (
                       <div
-                        key={idx}
-                        className="flex items-center justify-between bg-white border px-3 py-1 rounded-md"
+                        key={des.designationId}
+                        className="flex items-center justify-between bg-white border px-3 py-1 rounded-md shadow-sm"
                       >
-                        <span>{des}</span>
+                        <span>{des.designationName}</span>
                         <button
                           className="ml-2 text-red-600 text-sm hover:underline"
-                          onClick={() => handleDeleteDesignation(des)}
+                          onClick={() =>
+                            handleDeleteDesignation(
+                              des.designationName,
+                              dept.deptName
+                            )
+                          }
                         >
                           Delete
                         </button>
@@ -122,8 +193,8 @@ export default function Signup() {
                     ))}
                   </div>
                   <button
-                    onClick={() => handleDeleteDepartment(dept.department)}
-                    className="mt-2 text-sm text-red-600 hover:underline"
+                    onClick={() => handleDeleteDepartment(dept.deptName)}
+                    className="mt-3 text-sm text-red-600 hover:underline"
                   >
                     Delete Department
                   </button>

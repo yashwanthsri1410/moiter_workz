@@ -8,13 +8,11 @@ export default function Signup() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    username: "",
+    name: "",
     age: "",
     email: "",
     password: "",
-    Empid: "",
-    department: "",
-    position: "",
+    usertype: "",
   });
 
   const [emailValid, setEmailValid] = useState(true);
@@ -30,8 +28,8 @@ export default function Signup() {
       setEmailValid(value.endsWith("@gmail.com"));
     }
 
-    if (name === "username") {
-      setUsernameValid(/^[A-Za-z]+$/.test(value) || value === "");
+    if (name === "name") {
+      setUsernameValid(/^[A-Za-z\s]*$/.test(value) || value === "");
     }
 
     if (name === "password") {
@@ -52,25 +50,18 @@ export default function Signup() {
       return;
     }
 
-    if (name === "department") {
-      setForm({ ...form, department: value, position: "" });
-      return;
-    }
-
-    if (name === "Empid") {
-      if (/^\d{0,4}$/.test(value)) {
-        setForm({ ...form, Empid: value });
-      }
-      return;
-    }
-
     setForm({ ...form, [name]: value });
+  };
+
+  const userTypeMap = {
+    "Super User": 1,
+    Maker: 2,
+    Checker: 3,
+    User: 4,
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const age = parseInt(form.age, 10);
 
     if (!emailValid) {
       alert("Email must end with '@gmail.com'.");
@@ -78,7 +69,7 @@ export default function Signup() {
     }
 
     if (!usernameValid) {
-      alert("Username should contain only alphabets.");
+      alert("Name should contain only alphabets.");
       return;
     }
 
@@ -89,20 +80,28 @@ export default function Signup() {
       return;
     }
 
-    if (form.Empid.length !== 4) {
-      alert("Employee ID must be exactly 4 digits.");
-      return;
-    }
-
     if (ageError) {
       alert("Please correct the age field.");
       return;
     }
 
+    if (!form.usertype) {
+      alert("Please select a user type.");
+      return;
+    }
+
+    const payload = {
+      name: form.name.trim(),
+      age: parseInt(form.age, 10),
+      email: form.email.trim(),
+      password: form.password,
+      usertype: userTypeMap[form.usertype],
+    };
+
     try {
       const response = await axios.post(
-        "http://192.168.22.247:5002/User/register-employee",
-        form
+        "http://192.168.22.247/api/Department/create-super-user",
+        payload
       );
       if (response.status === 200 || response.status === 201) {
         alert("User registered!");
@@ -111,14 +110,18 @@ export default function Signup() {
         alert("Registration failed. Please try again.");
       }
     } catch (error) {
-      if (error.response?.data?.message) {
-        alert(`Registration failed: ${error.response.data.message}`);
-      } else {
-        alert("Registration failed: Something went wrong.");
-      }
+      alert(
+        error.response?.data?.message
+          ? `Registration failed: ${error.response.data.message}`
+          : "Registration failed: Something went wrong."
+      );
     }
   };
 
+
+
+
+  
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-start bg-cover bg-center relative p-6"
@@ -145,10 +148,10 @@ export default function Signup() {
         <form onSubmit={handleSubmit} className="space-y-3">
           <input
             type="text"
-            name="username"
-            placeholder="Username"
+            name="name"
+            placeholder="Name"
             maxLength="15"
-            value={form.username}
+            value={form.name}
             onChange={handleChange}
             className={`w-full px-4 py-2 border rounded-md ${
               usernameValid ? "border-gray-300" : "border-red-500"
@@ -157,7 +160,7 @@ export default function Signup() {
           />
           {!usernameValid && (
             <p className="text-sm text-red-600 mt-1">
-              Username should contain only alphabets.
+              Name should contain only alphabets.
             </p>
           )}
 
@@ -220,97 +223,19 @@ export default function Signup() {
             </p>
           )}
 
-          <input
-            type="text"
-            name="Empid"
-            placeholder="Employee ID (4-digit number)"
-            maxLength="4"
-            value={form.Empid}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-md border-gray-300"
-            required
-          />
-
           <select
-            name="department"
-            value={form.department}
+            name="usertype"
+            value={form.usertype}
             onChange={handleChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-md"
             required
           >
-            <option value="">Select Department</option>
-            <option value="IT department">IT department</option>
-            <option value="HR">HR</option>
-            <option value="Finance">Finance</option>
-            <option value="developer">developer</option>
-            <option value="Testing">Testing</option>
+            <option value="">Select User Type</option>
+            <option value="Super User">Super User</option>
+            <option value="Maker">Maker</option>
+            <option value="Checker">Checker</option>
+            <option value="User">User</option>
           </select>
-
-          <select
-            name="position"
-            value={form.position}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md"
-            required
-          >
-            <option value="">Select Position</option>
-            {form.department === "Finance" ? (
-              <>
-                <option value="Finance Manager">Finance Manager</option>
-                <option value="Budget Analyst">Budget Analyst</option>
-                <option value="Cost Accountant">Cost Accountant</option>
-              </>
-            ) : form.department ? (
-              <>
-                <option value="Manager">Manager</option>
-                <option value="Senior Employee">Senior Employee</option>
-                <option value="Junior Employee">Junior Employee</option>
-              </>
-            ) : null}
-          </select>
-
-          {form.position && (
-            <div className="bg-gray-100 border border-gray-300 rounded-md p-3 mb-3">
-              <h4 className="font-semibold mb-1">Accessible Pages:</h4>
-              <ul className="list-disc list-inside text-sm text-gray-700">
-                {form.position === "Manager" && (
-                  <>
-                    <li>Dashboard Page</li>
-                    <li>Profile Page</li>
-                    <li>Product Page</li>
-                  </>
-                )}
-                {form.position === "Senior Employee" && (
-                  <>
-                    <li>Dashboard Page</li>
-                    <li>Product Page</li>
-                  </>
-                )}
-                {form.position === "Junior Employee" && (
-                  <li>Dashboard Page</li>
-                )}
-                {form.department === "Finance" &&
-                  form.position === "Finance Manager" && (
-                    <>
-                      <li>Dashboard Page</li>
-                      <li>Profile Page</li>
-                      <li>Product Page</li>
-                    </>
-                  )}
-                {form.department === "Finance" &&
-                  form.position === "Budget Analyst" && (
-                    <>
-                      <li>Dashboard Page</li>
-                      <li>Product Page</li>
-                    </>
-                  )}
-                {form.department === "Finance" &&
-                  form.position === "Cost Accountant" && (
-                    <li>Dashboard Page</li>
-                  )}
-              </ul>
-            </div>
-          )}
 
           <button
             type="submit"

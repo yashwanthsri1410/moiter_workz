@@ -15,47 +15,24 @@ const Login = ({ setRole }) => {
 
     try {
       const response = await axios.post(
-        "http://192.168.22.247:5002/User/login",
-        { username, password },
+        "http://192.168.22.247/api/Department/super-user-login",
+        {
+          name: username.trim(),
+          password: password.trim(),
+        },
         {
           headers: { "Content-Type": "application/json" },
         }
       );
 
-      const user = response.data;
-      console.log("Login successful:", user);
-
-      localStorage.setItem("username", user.username);
-      setRole(user.position || ""); // Optional: track position
-
-      // Navigate based on userType
+      const user = response.data.user;
+      localStorage.setItem("username", user.name);
+      setRole(user.userType);
+      console.log(response)
       if (user.userType === 1) {
-        navigate("/Usercreation");
+        navigate("/Employee-Registration");
       } else if ([2, 3, 4].includes(user.userType)) {
-        // Navigate based on position if present
-        switch (user.position) {
-          case "Manager":
-            navigate("/dashboard/manager");
-            break;
-          case "Senior Employee":
-            navigate("/dashboard/senior");
-            break;
-          case "Junior Employee":
-            navigate("/dashboard/junior");
-            break;
-          case "Finance Manager":
-            navigate("/dashboard/finance-manager");
-            break;
-          case "Budget Analyst":
-            navigate("/dashboard/budget-analyst");
-            break;
-          case "Cost Accountant":
-            navigate("/dashboard/cost-accountant");
-            break;
-          default:
-            // Fallback for unknown or missing position
-            navigate("/dashboard");
-        }
+        navigate("/Dashboard");
       } else {
         alert("Unknown user type.");
       }
@@ -66,23 +43,37 @@ const Login = ({ setRole }) => {
   };
 
   const handleApiTest = async () => {
+    const testUsername = "admin";
+    const testPassword = "admin123";
+
     try {
-      const res = await axios.post(
-        "http://192.168.22.247:5002/User/login",
+      const response = await axios.post(
+        "http://192.168.22.247/api/Department/super-user-login",
         {
-          username: "testuser",
-          password: "test123",
+          name: testUsername.trim(),
+          password: testPassword.trim(),
         },
         {
           headers: { "Content-Type": "application/json" },
         }
       );
-      alert("API is working! Response: " + JSON.stringify(res.data));
+
+      const user = response.data.user;
+      localStorage.setItem("username", user.name);
+      setRole(user.userType);
+
+      if (user.userType === 1) {
+        navigate("/Employee-Registration");
+      } else if ([2, 3, 4].includes(user.userType)) {
+        navigate("/Dashboard");
+      } else {
+        alert("Unknown user type.");
+      }
     } catch (err) {
       console.error("API test error:", err.response?.data || err.message);
       alert(
         err.response?.data?.message ||
-          "API not reachable. Check if backend is running."
+        "API not reachable. Check if backend is running."
       );
     }
   };
@@ -151,9 +142,9 @@ const Login = ({ setRole }) => {
         <button
           type="button"
           onClick={handleApiTest}
-          className="w-full bg-green-500 text-white px-4 py-2 mt-4 rounded-md hover:bg-green-600"
+          className="w-full bg-blue-500 text-white px-4 py-2 mt-4 rounded-md hover:bg-blue-600"
         >
-          Test API
+          Test Login as Super User
         </button>
       </div>
     </div>

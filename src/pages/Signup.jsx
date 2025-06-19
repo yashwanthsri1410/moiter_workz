@@ -91,7 +91,7 @@ export default function Signup() {
 
     try {
       const response = await axios.post(
-        "http://192.168.22.247:5002/User/register",
+        "http://192.168.22.247/User/register",
         form
       );
       if (response.status === 200 || response.status === 201) {
@@ -113,7 +113,7 @@ export default function Signup() {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "http://192.168.22.247:5002/User/usertypes"
+          "http://192.168.22.247/User/usertypes"
         );
         if (!response.ok)
           throw new Error(`HTTP error! Status: ${response.status}`);
