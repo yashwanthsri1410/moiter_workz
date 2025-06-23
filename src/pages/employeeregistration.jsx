@@ -34,19 +34,20 @@ const UserRegistration = () => {
       .get("http://192.168.22.247/api/Department/get-all-details")
       .then((res) => {
         const data = res.data;
-        setStatusOptions(data.statusDetails || []);
-        setModuleOptions(data.moduleDetails || []);
-        setDesignationOptions(data.departmentDesignations || []);
+        setStatusOptions(data.data.statusDetails || []);
+        setModuleOptions(data.data.moduleDetails || []);
+        setDesignationOptions(data.data.departmentDesignations || []);
 
         // Extract unique departments from departmentDesignations
         const uniqueDepts = [
           ...new Map(
-            (data.departmentDesignations || []).map((item) => [
+            (data.data.departmentDesignations || []).map((item) => [
               item.deptId,
               { deptId: item.deptId, deptName: item.deptName },
             ])
           ).values(),
         ];
+        // console.log(uniqueDepts, data?.data)
         setDepartmentOptions(uniqueDepts);
       })
       .catch(() => setApiError(true));
@@ -80,7 +81,6 @@ const UserRegistration = () => {
     e.preventDefault();
     if (
       emailError ||
-      // passwordStrength !== "Strong password" ||
       password !== confirmPassword ||
       nameError ||
       empIdError
@@ -93,9 +93,9 @@ const UserRegistration = () => {
       empId: "emp" + empId,
       deptId: parseInt(departmentId),
       designationId: parseInt(designationId),
-      name,
-      email,
-      password,
+      name: name,
+      email: email,
+      password: password,
       statusId: parseInt(statusId),
       moduleAccessId: parseInt(moduleId),
       createdBy: "sathish",
@@ -103,11 +103,53 @@ const UserRegistration = () => {
     };
 
     try {
-      console.log(payload);
-      await axios.post("http://192.168.22.247/api/Department/userCreate", payload);
+      const response = await axios.post(
+        "http://192.168.22.247/api/Department/userCreate",
+        payload
+      );
+      const getClientIp = async () => {
+        try {
+          const res = await axios.get("https://api.ipify.org?format=json");
+          return res.data.ip;
+        } catch (error) {
+          console.error("Failed to get IP address:", error);
+          return "";
+        }
+      };
+      const clientIp = await getClientIp();
+      await axios.post("http://192.168.22.247/api/Department/log", {
+        EntityName: "User",
+        EntityId: response.data?.userId || "", // adjust based on actual response
+        Action: "insert",
+        ChangedBy: email,
+        ChangedOn: new Date().toISOString(),
+        OldValues: "",
+        NewValues: JSON.stringify(payload),
+        ChangedColumns: Object.keys(payload).join(","),
+        SourceIP: clientIp,
+      });
+
       alert("User registered successfully!");
     } catch (err) {
       console.error(err);
+
+      // Optional: log failure in audit trail
+      try {
+        await axios.post("http://192.168.22.247/api/Department/log", {
+          EntityName: "User",
+          EntityId: "",
+          Action: "Create-Failed",
+          ChangedBy: email,
+          ChangedOn: new Date().toISOString(),
+          OldValues: "",
+          NewValues: JSON.stringify(payload),
+          ChangedColumns: Object.keys(payload).join(","),
+          SourceIP: "",
+        });
+      } catch {
+        // ignore logging errors
+      }
+
       alert("Failed to register.");
     }
   };
@@ -117,7 +159,6 @@ const UserRegistration = () => {
     (des) => des.deptId === parseInt(departmentId)
   );
 
-  // Filter modules based on selected designation and remove duplicates by moduleDescription
   const filteredModules = useMemo(() => {
     if (!designationId) return [];
     const filtered = moduleOptions.filter(
@@ -153,6 +194,7 @@ const UserRegistration = () => {
       setPasswordStrengthLevel("");
     }
   };
+
   return (
     <div
       className="min-h-screen bg-cover bg-center flex items-center justify-center relative"
@@ -249,15 +291,13 @@ const UserRegistration = () => {
                 {passwordStrengthLevel && `Password Strength: ${passwordStrengthLevel}`}
               </p>
               <p
-                className={`text-sm   ${passwordStrength === "Strong password" ? "text-green-600" : "text-red-600"
+                className={`text-sm ${passwordStrength === "Strong password" ? "text-green-600" : "text-red-600"
                   }`}
               >
                 {passwordStrength}
               </p>
             </div>
-
           )}
-
 
           <input
             type="password"
@@ -287,7 +327,7 @@ const UserRegistration = () => {
             className="w-full px-4 py-2 border rounded-md"
             required
           >
-            <option value="">-- Select Department --</option>
+            <option value="">Select Department</option>
             {departmentOptions.map((dept) => (
               <option key={dept.deptId} value={dept.deptId}>
                 {dept.deptName}
@@ -295,7 +335,7 @@ const UserRegistration = () => {
             ))}
           </select>
 
-          {/* Designation filtered by Department */}
+          {/* Designation */}
           <select
             value={designationId}
             onChange={(e) => {
@@ -306,23 +346,15 @@ const UserRegistration = () => {
             required
             disabled={!departmentId}
           >
-            <option value="">-- Select Designation --</option>
+            <option value="">Select Designation</option>
             {filteredDesignations.map((des) => (
               <option key={des.designationId} value={des.designationId}>
                 {des.designationName}
               </option>
             ))}
           </select>
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={() => navigate("/deptdesig")}
-              className="mt-1 text-sm text-blue-600 hover:underline"
-            >
-              + Create Department/Designation
-            </button>
-          </div>
-          {/* Modules filtered by Designation without duplicates */}
+
+          {/* Module */}
           <select
             value={moduleId}
             onChange={(e) => setModuleId(e.target.value)}
@@ -330,22 +362,14 @@ const UserRegistration = () => {
             required
             disabled={!designationId}
           >
-            <option value="">-- Select Module --</option>
+            <option value="">Select Module</option>
             {filteredModules.map((mod) => (
               <option key={mod.moduleId} value={mod.moduleId}>
-                {mod.moduleDescription} ({mod.screenDesc})
+                {mod.moduleDescription}
               </option>
             ))}
           </select>
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={() => navigate("/Modulescreen")}
-              className="mt-1 text-sm text-blue-600 hover:underline"
-            >
-              + Create Module
-            </button>
-          </div>
+
           {/* Status */}
           <select
             value={statusId}
@@ -353,23 +377,41 @@ const UserRegistration = () => {
             className="w-full px-4 py-2 border rounded-md"
             required
           >
-            <option value="">-- Select Status --</option>
-            {statusOptions.map((s) => (
-              <option key={s.statusId} value={s.statusId}>
-                {s.statusDescription}
+            <option value="">Select Status</option>
+            {statusOptions.map((status) => (
+              <option key={status.statusId} value={status.statusId}>
+                {status.statusDescription}
               </option>
             ))}
           </select>
 
-          {apiError && <p className="text-red-600 text-sm">Failed to load dropdown data.</p>}
-
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+            disabled={
+              emailError ||
+              passwordMatchError ||
+              nameError ||
+              empIdError ||
+              !empId ||
+              !name ||
+              !email ||
+              !password ||
+              !confirmPassword ||
+              !moduleId ||
+              !designationId ||
+              !departmentId ||
+              !statusId
+            }
+            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors disabled:bg-gray-400"
           >
             Register
           </button>
         </form>
+        {apiError && (
+          <p className="text-red-600 text-center mt-2">
+            Error loading data from server. Please try again later.
+          </p>
+        )}
       </div>
     </div>
   );

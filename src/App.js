@@ -13,16 +13,15 @@ import Modulescreen from "./pages/module&screen";
 import EmployeeRegistration from "./pages/employeeregistration";
 import Dashboard from "./pages/MainDashboard";
 import Employeelogin from "./pages/employeelogin";
-import SendRequestInfo from "../src/components/SendRequestInfo"
+import SendRequestInfo from "../src/components/SendRequestInfo";
+import usePageAudit from './usePageAudit';
 
-
-function App() {
-  const [role, setRole] = useState("");
-  const isAuthenticated = !!role;
+function AppRoutes({ setRole }) {
+  usePageAudit(); // ✅ Moved here: Inside Router
 
   return (
-    <Router>
-      <SendRequestInfo/>
+    <>
+      <SendRequestInfo />
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/signup" element={<Signup />} />
@@ -34,6 +33,17 @@ function App() {
         <Route path="/Dashboard" element={<Dashboard />} />
         <Route path="/Employee-Login" element={<Employeelogin />} />
       </Routes>
+    </>
+  );
+}
+
+function App() {
+  const [role, setRole] = useState("");
+  const isAuthenticated = !!role;
+
+  return (
+    <Router>
+      <AppRoutes setRole={setRole} />
     </Router>
   );
 }

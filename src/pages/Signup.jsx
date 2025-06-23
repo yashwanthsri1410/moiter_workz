@@ -62,59 +62,154 @@ export default function Signup() {
     setForm({ ...form, [name]: value });
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   const age = parseInt(form.age, 10);
+
+  //   if (!emailValid) {
+  //     alert("Email must end with '@gmail.com'.");
+  //     return;
+  //   }
+
+  //   if (!usernameValid) {
+  //     alert("Username should contain only alphabets.");
+  //     return;
+  //   }
+
+  //   if (!passwordValid) {
+  //     alert(
+  //       "Password must be at least 8 characters with uppercase, lowercase, number, and symbol."
+  //     );
+  //     return;
+  //   }
+
+  //   if (ageError) {
+  //     alert("Please correct the age field.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await axios.post(
+  //       "http://192.168.22.247/User/register",
+  //       form
+  //     );
+
+  //     if (response.status === 200 || response.status === 201) {
+  //       // Send audit trail log after successful registration
+  //       try {
+  //         await axios.post("http://192.168.22.247/api/Department/log", {
+  //           userId: form.username,
+  //           action: "User Registered",
+  //           timestamp: new Date().toISOString(),
+  //           details: `User ${form.username} registered with email ${form.email}`,
+  //         });
+  //         console.log("Audit log sent successfully");
+  //       } catch (logError) {
+  //         console.error("Failed to send audit log", logError);
+  //       }
+
+  //       alert("User registered!");
+  //       navigate("/login");
+  //     } else {
+  //       alert("Registration failed. Please try again.");
+  //     }
+  //   } catch (error) {
+  //     if (error.response?.data?.message) {
+  //       alert(`Registration failed: ${error.response.data.message}`);
+  //     } else {
+  //       alert("Registration failed: Something went wrong.");
+  //     }
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const age = parseInt(form.age, 10);
+  if (!emailValid) {
+    alert("Email must end with '@gmail.com'.");
+    return;
+  }
 
-    if (!emailValid) {
-      alert("Email must end with '@gmail.com'.");
-      return;
-    }
+  if (!usernameValid) {
+    alert("Name should contain only alphabets.");
+    return;
+  }
 
-    if (!usernameValid) {
-      alert("Username should contain only alphabets.");
-      return;
-    }
+  if (!passwordValid) {
+    alert(
+      "Password must be at least 8 characters with uppercase, lowercase, number, and symbol."
+    );
+    return;
+  }
 
-    if (!passwordValid) {
-      alert(
-       "Password must be at least 8 characters with uppercase, lowercase, number, and symbol."
-      );
-      return;
-    }
+  if (ageError) {
+    alert("Please correct the age field.");
+    return;
+  }
 
-    if (ageError) {
-      alert("Please correct the age field.");
-      return;
-    }
+  if (!form.usertype) {
+    alert("Please select a user type.");
+    return;
+  }
 
-    try {
-      const response = await axios.post(
-        "http://192.168.22.247/User/register",
-        form
-      );
-      if (response.status === 200 || response.status === 201) {
-        alert("User registered!");
-        navigate("/login");
-      } else {
-        alert("Registration failed. Please try again.");
-      }
-    } catch (error) {
-      if (error.response?.data?.message) {
-        alert(`Registration failed: ${error.response.data.message}`);
-      } else {
-        alert("Registration failed: Something went wrong.");
-      }
-    }
+  const payload = {
+    name: form.name.trim(),
+    age: parseInt(form.age, 10),
+    email: form.email.trim(),
+    password: form.password,
+    usertype: userTypeMap[form.usertype],
   };
+
+  try {
+    const response = await axios.post(
+      "http://192.168.22.247/api/Department/create-super-user",
+      payload
+    );
+
+    // Log request payload and response status to logging API
+    await axios.post("http://192.168.22.247/api/Department/log", {
+      EntityName: "User",
+      EntityId: response.data?.userId || "", // Adjust based on your API response
+      Action: "Create",
+      ChangedBy: form.email.trim(),
+      ChangedOn: new Date().toISOString(),
+      OldValues: "",
+      NewValues: JSON.stringify(payload),
+      ChangedColumns: Object.keys(payload).join(","),
+      SourceIP: "", // Optional - if available, send it here
+    });
+
+    if (response.status === 200 || response.status === 201) {
+      alert("User registered!");
+      navigate("/login");
+    } else {
+      alert("Registration failed. Please try again.");
+    }
+  } catch (error) {
+    // Log error info as well
+    await axios.post("http://192.168.22.247/api/Department/log", {
+      action: "User Signup",
+      requestData: payload,
+      errorMessage: error.response?.data?.message || error.message,
+      timestamp: new Date().toISOString(),
+    }).catch(() => {
+      // ignore logging errors
+    });
+
+    alert(
+      error.response?.data?.message
+        ? `Registration failed: ${error.response.data.message}`
+        : "Registration failed: Something went wrong."
+    );
+  }
+};
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "http://192.168.22.247/User/usertypes"
-        );
+        const response = await fetch("http://192.168.22.247/User/usertypes");
         if (!response.ok)
           throw new Error(`HTTP error! Status: ${response.status}`);
         const jsonData = await response.json();
@@ -149,7 +244,6 @@ export default function Signup() {
             Log in
           </span>
         </p>
-        
 
         <form onSubmit={handleSubmit} className="space-y-3">
           <input
@@ -290,9 +384,7 @@ export default function Signup() {
                       <tr key={idx} className="border-b">
                         <td className="py-2 px-4 border">{user.username}</td>
                         <td className="py-2 px-4 border">{user.age}</td>
-                        <td className="py-2 px-4 border">
-                          {user.userTypeName}
-                        </td>
+                        <td className="py-2 px-4 border">{user.userTypeName}</td>
                       </tr>
                     ))}
                   </tbody>
