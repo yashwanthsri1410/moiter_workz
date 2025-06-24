@@ -1,0 +1,38 @@
+# Build Folders
+bin/
+obj/
+
+# Visual Studio Working Directory
+.vs/
+
+# User-specific Files
+*.user
+*.suo
+
+# ASP.NET Scaffolding & Logs
+App_Data/
+*.log
+
+# NuGet Packages
+*.nupkg
+packages/
+
+# Publish Output (optional)
+publish/
+
+# Test Results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Backup Files
+*.bak
+*.orig
+
+# OS Files
+Thumbs.db
+ehthumbs.db
+desktop.ini
+.DS_Store
+node_modules
