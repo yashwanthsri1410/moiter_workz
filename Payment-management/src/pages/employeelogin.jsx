@@ -4,11 +4,51 @@ import axios from "axios";
 import backgroundImg from "../assets/background.jpeg";
 import logo from "../assets/favicon.png";
 
-const Employeelogin = () => {
+const Employeelogin = ({ setRole }) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
+
+    const logAuditTrail = async (user, ip = null) => {
+        const getClientIp = async () => {
+            try {
+                const res = await axios.get("https://api.ipify.org?format=json");
+                return res.data.ip;
+            } catch (error) {
+                console.error("Failed to get IP address:", error);
+                return "";
+            }
+        };
+        const clientIp = await getClientIp();
+        const auditPayload = {
+            actorId: user.id,
+            actorType: "EMPLOYEE",
+            actorRole: user.role || "Employee",
+            action: "LOGIN",
+            entityType: "USER",
+            entityId: user.id,
+            prevState: null,
+            newState: { status: "LoggedIn" },
+            actionResult: "SUCCESS",
+            ipAddress: clientIp,
+            userAgent: navigator.userAgent,
+            channel: "WEB",
+            metadata: JSON.stringify({
+                loginTime: new Date().toISOString(),
+                page: window.location.pathname,
+            }),
+        };
+        console.log(ip)
+        try {
+            await axios.post("http://192.168.22.247/api/Audit/log-audit", auditPayload, {
+                headers: { "Content-Type": "application/json" },
+            });
+            console.log("Audit trail logged");
+        } catch (error) {
+            console.error("Audit log failed:", error.response?.data || error.message);
+        }
+    };
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -28,7 +68,10 @@ const Employeelogin = () => {
             const user = response.data.user;
             localStorage.setItem("username", user.name);
             setRole(user.userType);
-            console.log(response)
+
+            // ✅ Audit Logging
+            await logAuditTrail(user);
+
             if (user.userType === 1) {
                 navigate("/Employee-Registration");
             } else if ([2, 3, 4].includes(user.userType)) {
@@ -61,6 +104,9 @@ const Employeelogin = () => {
             const user = response.data.user;
             localStorage.setItem("username", user.name);
             setRole(user.userType);
+
+            // ✅ Audit Logging
+            await logAuditTrail(user);
 
             if (user.userType === 1) {
                 navigate("/Employee-Registration");

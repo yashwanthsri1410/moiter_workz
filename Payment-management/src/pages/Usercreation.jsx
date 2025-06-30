@@ -100,11 +100,43 @@ export default function Signup() {
 
     try {
       const response = await axios.post(
-        "http://192.168.22.247/api/Department/create-super-user",
+        "http://192.168.22.247/app1/api/Department/create-super-user",
         payload
       );
+
       if (response.status === 200 || response.status === 201) {
         alert("User registered!");
+
+        // 📘 Audit Trail API call
+        await axios.post("http://192.168.22.247/app2/api/Audit/log-audit", {
+          actorId: "111", // Replace with actual ID if available
+          actorType: "User",
+          actorRole: form.usertype,
+          action: "User Registration",
+          entityType: "User",
+          entityId: null,
+          prevState: null,
+          newState: {
+            name: form.name.trim(),
+            age: parseInt(form.age, 10),
+            email: form.email.trim(),
+            usertype: form.usertype,
+          },
+          actionResult: "SUCCESS",
+          ipAddress: "127.0.0.1", // Ideally fetch from backend
+          userAgent: window.navigator.userAgent,
+          channel: "WEB",
+          metadata: {
+            created_by: null,
+            created_date: new Date().toISOString(),
+            modified_by: null,
+            modified_date: null,
+            header: {
+              info: "User created via registration form",
+            },
+          },
+        });
+
         navigate("/login");
       } else {
         alert("Registration failed. Please try again.");
@@ -118,10 +150,6 @@ export default function Signup() {
     }
   };
 
-
-
-
-  
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-start bg-cover bg-center relative p-6"

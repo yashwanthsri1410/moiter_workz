@@ -31,14 +31,12 @@ const UserRegistration = () => {
 
   useEffect(() => {
     axios
-      .get("http://192.168.22.247/api/Department/get-all-details")
+      .get("http://192.168.22.247/app1/api/Department/get-all-details")
       .then((res) => {
         const data = res.data;
         setStatusOptions(data.data.statusDetails || []);
         setModuleOptions(data.data.moduleDetails || []);
         setDesignationOptions(data.data.departmentDesignations || []);
-
-        // Extract unique departments from departmentDesignations
         const uniqueDepts = [
           ...new Map(
             (data.data.departmentDesignations || []).map((item) => [
@@ -47,13 +45,11 @@ const UserRegistration = () => {
             ])
           ).values(),
         ];
-        // console.log(uniqueDepts, data?.data)
         setDepartmentOptions(uniqueDepts);
       })
       .catch(() => setApiError(true));
   }, []);
 
-  // Validation functions
   const validateEmail = (val) => {
     const regex = /^[\w-.]+@gmail\.com$/;
     setEmailError(regex.test(val) ? "" : "Email must be a valid Gmail address.");
@@ -76,14 +72,26 @@ const UserRegistration = () => {
     setEmpIdError(/^\d+$/.test(val) ? "" : "Employee ID must be an integer.");
   };
 
-  // Handle form submit
+  const getClientIp = async () => {
+    try {
+      const res = await axios.get("https://api.ipify.org?format=json");
+      return res.data.ip;
+    } catch {
+      return "";
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (
       emailError ||
       password !== confirmPassword ||
       nameError ||
-      empIdError
+      empIdError ||
+      !departmentId ||
+      !designationId ||
+      !moduleId ||
+      !statusId
     ) {
       alert("Please fix the validation errors.");
       return;
@@ -97,29 +105,24 @@ const UserRegistration = () => {
       email: email,
       password: password,
       statusId: parseInt(statusId),
-      moduleAccessId: parseInt(moduleId),
+      moduleAccessId: parseInt("13"),
       createdBy: "sathish",
-      userType: parseInt(moduleId),
+      userType: parseInt("1"),
     };
+
+    console.log("Submitting payload:", payload);
+
+    const clientIp = await getClientIp();
 
     try {
       const response = await axios.post(
-        "http://192.168.22.247/api/Department/userCreate",
+        "http://192.168.22.247/app1/api/Department/userCreate",
         payload
       );
-      const getClientIp = async () => {
-        try {
-          const res = await axios.get("https://api.ipify.org?format=json");
-          return res.data.ip;
-        } catch (error) {
-          console.error("Failed to get IP address:", error);
-          return "";
-        }
-      };
-      const clientIp = await getClientIp();
-      await axios.post("http://192.168.22.247/api/Department/log", {
+
+      await axios.post("http://192.168.22.247/app2/api/Audit/log-audit", {
         EntityName: "User",
-        EntityId: response.data?.userId || "", // adjust based on actual response
+        EntityId: response.data?.userId || "",
         Action: "insert",
         ChangedBy: email,
         ChangedOn: new Date().toISOString(),
@@ -131,11 +134,10 @@ const UserRegistration = () => {
 
       alert("User registered successfully!");
     } catch (err) {
-      console.error(err);
+      console.error("Registration failed:", err);
 
-      // Optional: log failure in audit trail
       try {
-        await axios.post("http://192.168.22.247/api/Department/log", {
+        await axios.post("http://192.168.22.247/app2/api/Audit/log-audit", {
           EntityName: "User",
           EntityId: "",
           Action: "Create-Failed",
@@ -144,17 +146,14 @@ const UserRegistration = () => {
           OldValues: "",
           NewValues: JSON.stringify(payload),
           ChangedColumns: Object.keys(payload).join(","),
-          SourceIP: "",
+          SourceIP: clientIp,
         });
-      } catch {
-        // ignore logging errors
-      }
+      } catch {}
 
-      alert("Failed to register.");
+      alert("Failed to register. Please check the form or contact admin.");
     }
   };
 
-  // Filter designations based on selected department
   const filteredDesignations = designationOptions.filter(
     (des) => des.deptId === parseInt(departmentId)
   );
@@ -165,7 +164,6 @@ const UserRegistration = () => {
       (mod) => mod.designationId === parseInt(designationId)
     );
 
-    // Remove duplicates by moduleDescription
     const uniqueModulesMap = new Map();
     filtered.forEach((mod) => {
       if (!uniqueModulesMap.has(mod.moduleDescription)) {
@@ -280,20 +278,15 @@ const UserRegistration = () => {
                     }`}
                 ></div>
               </div>
-              <p
-                className={`text-sm mt-1 ${passwordStrengthLevel === "Weak"
-                  ? "text-red-600"
-                  : passwordStrengthLevel === "Moderate"
-                    ? "text-yellow-600"
-                    : "text-green-600"
-                  }`}
-              >
+              <p className={`text-sm mt-1 ${passwordStrengthLevel === "Weak"
+                ? "text-red-600"
+                : passwordStrengthLevel === "Moderate"
+                  ? "text-yellow-600"
+                  : "text-green-600"
+                }`}>
                 {passwordStrengthLevel && `Password Strength: ${passwordStrengthLevel}`}
               </p>
-              <p
-                className={`text-sm ${passwordStrength === "Strong password" ? "text-green-600" : "text-red-600"
-                  }`}
-              >
+              <p className={`text-sm ${passwordStrength ? "text-red-600" : ""}`}>
                 {passwordStrength}
               </p>
             </div>
@@ -304,7 +297,6 @@ const UserRegistration = () => {
             value={confirmPassword}
             onChange={(e) => {
               setConfirmPassword(e.target.value);
-
               setPasswordMatchError(
                 password !== e.target.value ? "Passwords do not match." : ""
               );
@@ -316,7 +308,6 @@ const UserRegistration = () => {
           />
           {passwordMatchError && <p className="text-red-600 text-sm">{passwordMatchError}</p>}
 
-          {/* Department */}
           <select
             value={departmentId}
             onChange={(e) => {
@@ -335,7 +326,6 @@ const UserRegistration = () => {
             ))}
           </select>
 
-          {/* Designation */}
           <select
             value={designationId}
             onChange={(e) => {
@@ -354,7 +344,6 @@ const UserRegistration = () => {
             ))}
           </select>
 
-          {/* Module */}
           <select
             value={moduleId}
             onChange={(e) => setModuleId(e.target.value)}
@@ -370,7 +359,6 @@ const UserRegistration = () => {
             ))}
           </select>
 
-          {/* Status */}
           <select
             value={statusId}
             onChange={(e) => setStatusId(e.target.value)}
@@ -407,9 +395,10 @@ const UserRegistration = () => {
             Register
           </button>
         </form>
+
         {apiError && (
           <p className="text-red-600 text-center mt-2">
-            Error loading data from server. Please try again later.
+            Error loading dropdown data. Please try again later.
           </p>
         )}
       </div>

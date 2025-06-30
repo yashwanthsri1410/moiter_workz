@@ -14,10 +14,9 @@ import EmployeeRegistration from "./pages/employeeregistration";
 import Dashboard from "./pages/MainDashboard";
 import Employeelogin from "./pages/employeelogin";
 import SendRequestInfo from "../src/components/SendRequestInfo";
-import usePageAudit from './usePageAudit';
+import CustomerKYCForm from "./pages/CustomerKYCForm";
 
 function AppRoutes({ setRole }) {
-  usePageAudit(); // ✅ Moved here: Inside Router
 
   return (
     <>
@@ -32,6 +31,7 @@ function AppRoutes({ setRole }) {
         <Route path="/Employee-Registration" element={<EmployeeRegistration />} />
         <Route path="/Dashboard" element={<Dashboard />} />
         <Route path="/Employee-Login" element={<Employeelogin />} />
+        <Route path="/customer-On-boarding"element={<CustomerKYCForm/>}/>
       </Routes>
     </>
   );

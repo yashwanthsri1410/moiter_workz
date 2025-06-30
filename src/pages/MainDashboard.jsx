@@ -2,13 +2,10 @@ import React from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import backgroundImg from "../assets/background.jpeg";
-import AuditButton from '../components/AuditButton';
 
 export default function Dashboard() {
   const username = localStorage.getItem("username") || "Guest";
-  const handleDelete = () => {
-    console.log('Deleted!');
-  };
+
   return (
     <div
       className="flex flex-col min-h-screen bg-cover bg-center relative"
@@ -25,10 +22,6 @@ export default function Dashboard() {
             Welcome,{" "}
             <span className="font-semibold text-yellow-300">{username}</span>
           </p>
-
-          {/* <AuditButton actionName="delete_button_clicked" onClick={handleDelete}>
-            Delete
-          </AuditButton> */}
         </main>
         <Footer />
       </div>

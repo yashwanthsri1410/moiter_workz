@@ -2,7 +2,6 @@ import React from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import backgroundImg from "../assets/background.jpeg";
-import AuditButton from '../components/AuditButton';
 
 export default function Dashboard() {
   const username = localStorage.getItem("username") || "Guest";

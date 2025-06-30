@@ -13,12 +13,9 @@ import Modulescreen from "./pages/module&screen";
 import EmployeeRegistration from "./pages/employeeregistration";
 import Dashboard from "./pages/MainDashboard";
 import Employeelogin from "./pages/employeelogin";
-import SendRequestInfo from "../src/components/SendRequestInfo";
-import usePageAudit from './usePageAudit';
+import SendRequestInfo from "./components/SendRequestInfo";
 
 function AppRoutes({ setRole }) {
-  usePageAudit(); // ✅ Moved here: Inside Router
-
   return (
     <>
       <SendRequestInfo />
@@ -39,8 +36,6 @@ function AppRoutes({ setRole }) {
 
 function App() {
   const [role, setRole] = useState("");
-  const isAuthenticated = !!role;
-
   return (
     <Router>
       <AppRoutes setRole={setRole} />
