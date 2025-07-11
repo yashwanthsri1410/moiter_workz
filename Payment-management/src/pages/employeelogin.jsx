@@ -3,62 +3,66 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import backgroundImg from "../assets/background.jpeg";
 import logo from "../assets/favicon.png";
+import usePublicIp from "../hooks/usePublicIp";
 
 const Employeelogin = ({ setRole }) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [headersError, setheadersError] = useState("");
     const navigate = useNavigate();
+    const ip = usePublicIp();
 
-    const logAuditTrail = async (user, ip = null) => {
-        const getClientIp = async () => {
-            try {
-                const res = await axios.get("https://api.ipify.org?format=json");
-                return res.data.ip;
-            } catch (error) {
-                console.error("Failed to get IP address:", error);
-                return "";
+    const getMetadata = async () => {
+        const timestamp = new Date().toISOString();
+        const dummyId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
+
+        return {
+            ipAddress: ip,
+            userAgent: navigator.userAgent,
+            headers: headersError ? headersError : JSON.stringify({ "content-type": "application/json" }),
+            headers: JSON.stringify({
+                Accept: "application/json",
+                ContentType: "application/json",
+            }),
+            channel: "WEB",
+            auditMetadata: {
+                createdBy: dummyId,
+                createdDate: timestamp,
+                modifiedBy: dummyId,
+                modifiedDate: timestamp,
+                header: {
+                    additionalProp1: {
+                        options: { propertyNameCaseInsensitive: true },
+                        parent: "string",
+                        root: "string",
+                    },
+                    additionalProp2: {
+                        options: { propertyNameCaseInsensitive: true },
+                        parent: "string",
+                        root: "string",
+                    },
+                    additionalProp3: {
+                        options: { propertyNameCaseInsensitive: true },
+                        parent: "string",
+                        root: "string",
+                    }
+                }
             }
         };
-        const clientIp = await getClientIp();
-        const auditPayload = {
-            actorId: user.id,
-            actorType: "EMPLOYEE",
-            actorRole: user.role || "Employee",
-            action: "LOGIN",
-            entityType: "USER",
-            entityId: user.id,
-            prevState: null,
-            newState: { status: "LoggedIn" },
-            actionResult: "SUCCESS",
-            ipAddress: clientIp,
-            userAgent: navigator.userAgent,
-            channel: "WEB",
-            metadata: JSON.stringify({
-                loginTime: new Date().toISOString(),
-                page: window.location.pathname,
-            }),
-        };
-        console.log(ip)
-        try {
-            await axios.post("http://192.168.22.247/api/Audit/log-audit", auditPayload, {
-                headers: { "Content-Type": "application/json" },
-            });
-            console.log("Audit trail logged");
-        } catch (error) {
-            console.error("Audit log failed:", error.response?.data || error.message);
-        }
     };
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        const metadata = await getMetadata();
 
         try {
             const response = await axios.post(
-                "http://192.168.22.247/api/Department/Employeelogin",
+                "http://192.168.22.247/us/api/Department/super-user-login",
                 {
-                    name: username.trim(),
-                    password: password.trim(),
+                    name: username,
+                    password: password,
+                    metadata: metadata
                 },
                 {
                     headers: { "Content-Type": "application/json" },
@@ -67,60 +71,21 @@ const Employeelogin = ({ setRole }) => {
 
             const user = response.data.user;
             localStorage.setItem("username", user.name);
-            setRole(user.userType);
-
-            // ✅ Audit Logging
-            await logAuditTrail(user);
-
+            // setRole(user.userType);
+            // console.log("?????????",user) 
             if (user.userType === 1) {
+                navigate("/Usercreation");
+            } else if (user.userType === 2) {
                 navigate("/Employee-Registration");
-            } else if ([2, 3, 4].includes(user.userType)) {
-                navigate("/Dashboard");
+            } else if (user.userType === 3) {
+                navigate("/checkers-approval");
             } else {
                 alert("Unknown user type.");
             }
         } catch (error) {
             console.error("Login error:", error.response?.data || error.message);
+            setheadersError(" KYC Submission failed");
             alert(error.response?.data?.message || "Invalid username or password.");
-        }
-    };
-
-    const handleApiTest = async () => {
-        const testUsername = "admin";
-        const testPassword = "admin123";
-
-        try {
-            const response = await axios.post(
-                "http://192.168.22.247/api/Department/Employeelogin",
-                {
-                    name: testUsername.trim(),
-                    password: testPassword.trim(),
-                },
-                {
-                    headers: { "Content-Type": "application/json" },
-                }
-            );
-
-            const user = response.data.user;
-            localStorage.setItem("username", user.name);
-            setRole(user.userType);
-
-            // ✅ Audit Logging
-            await logAuditTrail(user);
-
-            if (user.userType === 1) {
-                navigate("/Employee-Registration");
-            } else if ([2, 3, 4].includes(user.userType)) {
-                navigate("/Dashboard");
-            } else {
-                alert("Unknown user type.");
-            }
-        } catch (err) {
-            console.error("API test error:", err.response?.data || err.message);
-            alert(
-                err.response?.data?.message ||
-                "API not reachable. Check if backend is running."
-            );
         }
     };
 
@@ -184,14 +149,6 @@ const Employeelogin = ({ setRole }) => {
                         Log in
                     </button>
                 </form>
-
-                <button
-                    type="button"
-                    onClick={handleApiTest}
-                    className="w-full bg-blue-500 text-white px-4 py-2 mt-4 rounded-md hover:bg-blue-600"
-                >
-                    Test Login as Super User
-                </button>
             </div>
         </div>
     );

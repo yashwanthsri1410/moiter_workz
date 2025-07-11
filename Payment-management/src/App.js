@@ -15,14 +15,16 @@ import Dashboard from "./pages/MainDashboard";
 import Employeelogin from "./pages/employeelogin";
 import SendRequestInfo from "../src/components/SendRequestInfo";
 import CustomerKYCForm from "./pages/CustomerKYCForm";
+import Makerscreation from "./pages/makerscreation";
+import Checkersapproval from "./pages/checkersapproval";
 
 function AppRoutes({ setRole }) {
 
   return (
     <>
-      <SendRequestInfo />
+      {/* <SendRequestInfo /> */}
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/" element={<Navigate to="/Employee-Login" />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login setRole={setRole} />} />
         <Route path="/Usercreation" element={<Usercreation />} />
@@ -31,7 +33,9 @@ function AppRoutes({ setRole }) {
         <Route path="/Employee-Registration" element={<EmployeeRegistration />} />
         <Route path="/Dashboard" element={<Dashboard />} />
         <Route path="/Employee-Login" element={<Employeelogin />} />
-        <Route path="/customer-On-boarding"element={<CustomerKYCForm/>}/>
+        <Route path="/Makers-creation" element={<Makerscreation />} />
+        <Route path="/checkers-approval" element={<Checkersapproval />} />
+        <Route path="/customer-On-boarding" element={<CustomerKYCForm />} />
       </Routes>
     </>
   );

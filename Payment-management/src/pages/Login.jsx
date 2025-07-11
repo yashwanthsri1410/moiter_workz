@@ -15,7 +15,7 @@ const Login = ({ setRole }) => {
 
     try {
       const response = await axios.post(
-        "http://192.168.22.247/api/Department/super-user-login",
+        "http://192.168.22.247/us/api/Department/super-user-login",
         {
           name: username.trim(),
           password: password.trim(),
@@ -48,7 +48,7 @@ const Login = ({ setRole }) => {
 
     try {
       const response = await axios.post(
-        "http://192.168.22.247/api/Department/super-user-login",
+        "http://192.168.22.247/us/api/Department/super-user-login",
         {
           name: testUsername.trim(),
           password: testPassword.trim(),

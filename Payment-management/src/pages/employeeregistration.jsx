@@ -1,327 +1,234 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import backgroundImg from "../assets/background.jpeg";
 import logo from "../assets/favicon.png";
-import { useNavigate } from "react-router-dom";
+import usePublicIp from "../hooks/usePublicIp";
 
-const UserRegistration = () => {
-  const navigate = useNavigate();
+const EmployeeCreateForm = () => {
   const [empId, setEmpId] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [moduleId, setModuleId] = useState("");
+  const [statusId, setStatusId] = useState(1);
+  const [userType, setUserType] = useState(2);
+  const [createdBy, setCreatedBy] = useState("admin");
+  const [roleDescription, setRoleDescription] = useState("");
+  const [accessList, setAccessList] = useState([]);
+  const [deptId, setDeptId] = useState("");
   const [designationId, setDesignationId] = useState("");
-  const [departmentId, setDepartmentId] = useState("");
-  const [statusId, setStatusId] = useState("");
-
-  const [statusOptions, setStatusOptions] = useState([]);
-  const [moduleOptions, setModuleOptions] = useState([]);
-  const [designationOptions, setDesignationOptions] = useState([]);
-  const [departmentOptions, setDepartmentOptions] = useState([]);
-  const [passwordStrengthLevel, setPasswordStrengthLevel] = useState("");
+  const [roleAccessId, setRoleAccessId] = useState("");
 
   const [emailError, setEmailError] = useState("");
-  const [passwordStrength, setPasswordStrength] = useState("");
-  const [passwordMatchError, setPasswordMatchError] = useState("");
   const [nameError, setNameError] = useState("");
   const [empIdError, setEmpIdError] = useState("");
-  const [apiError, setApiError] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+
+  const ip = usePublicIp();
+  const userAgent = navigator.userAgent;
 
   useEffect(() => {
     axios
-      .get("http://192.168.22.247/app1/api/Department/get-all-details")
-      .then((res) => {
-        const data = res.data;
-        setStatusOptions(data.data.statusDetails || []);
-        setModuleOptions(data.data.moduleDetails || []);
-        setDesignationOptions(data.data.departmentDesignations || []);
-        const uniqueDepts = [
-          ...new Map(
-            (data.data.departmentDesignations || []).map((item) => [
-              item.deptId,
-              { deptId: item.deptId, deptName: item.deptName },
-            ])
-          ).values(),
-        ];
-        setDepartmentOptions(uniqueDepts);
-      })
-      .catch(() => setApiError(true));
+      .get("http://192.168.22.247/us/api/Department/getApprove")
+      .then((res) => setAccessList(res.data))
+      .catch((err) => console.error("Error fetching role access data:", err));
   }, []);
 
-  const validateEmail = (val) => {
-    const regex = /^[\w-.]+@gmail\.com$/;
-    setEmailError(regex.test(val) ? "" : "Email must be a valid Gmail address.");
-  };
+  const validate = () => {
+    let valid = true;
+    setEmailError("");
+    setNameError("");
+    setEmpIdError("");
+    setPasswordError("");
 
-  const validatePassword = (val) => {
-    const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-    setPasswordStrength(
-      strongRegex.test(val)
-        ? ""
-        : " (Password must be 8+ chars with uppercase, lowercase, number & symbol.)"
-    );
-  };
-
-  const validateName = (val) => {
-    setNameError(/^[A-Za-z\s]*$/.test(val) ? "" : "Name should contain only letters.");
-  };
-
-  const validateEmpId = (val) => {
-    setEmpIdError(/^\d+$/.test(val) ? "" : "Employee ID must be an integer.");
-  };
-
-  const getClientIp = async () => {
-    try {
-      const res = await axios.get("https://api.ipify.org?format=json");
-      return res.data.ip;
-    } catch {
-      return "";
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setEmailError("Email must contain '@' and end with '.com'");
+      valid = false;
     }
+
+    if (name.length > 25) {
+      setNameError("Name must be within 25 characters");
+      valid = false;
+    }
+
+    if (!/^[0-9]+$/.test(empId)) {
+      setEmpIdError("Employee ID must be an integer");
+      valid = false;
+    }
+
+    const passwordRules = [
+      { regex: /[A-Z]/, msg: "Include at least one UPPERCASE letter" },
+      { regex: /[a-z]/, msg: "Include at least one lowercase letter" },
+      { regex: /[0-9]/, msg: "Include at least one number" },
+      { regex: /[^A-Za-z0-9]/, msg: "Include at least one special character" },
+    ];
+
+    const errors = passwordRules
+      .filter((rule) => !rule.regex.test(password))
+      .map((rule) => rule.msg);
+
+    if (errors.length) {
+      setPasswordError(errors.join(", "));
+      valid = false;
+    }
+
+    return valid;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (
-      emailError ||
-      password !== confirmPassword ||
-      nameError ||
-      empIdError ||
-      !departmentId ||
-      !designationId ||
-      !moduleId ||
-      !statusId
-    ) {
-      alert("Please fix the validation errors.");
-      return;
-    }
+    if (!validate()) return;
+
+    const timestamp = new Date().toISOString();
+    const auditUserId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
 
     const payload = {
-      empId: "emp" + empId,
-      deptId: parseInt(departmentId),
+      empId,
+      deptId: parseInt(deptId),
       designationId: parseInt(designationId),
-      name: name,
-      email: email,
-      password: password,
+      name,
+      email,
+      password,
       statusId: parseInt(statusId),
-      moduleAccessId: parseInt("13"),
-      createdBy: "sathish",
-      userType: parseInt("1"),
+      roleAccessId: parseInt(roleAccessId),
+      roleDescription,
+      createdBy,
+      userType: parseInt(userType),
+      metadata: {
+        ipAddress: ip || "0.0.0.0",
+        userAgent: userAgent,
+        headers: "custom-header",
+        channel: "web",
+        auditMetadata: {
+          createdBy: auditUserId,
+          createdDate: timestamp,
+          modifiedBy: auditUserId,
+          modifiedDate: timestamp,
+          header: {
+            additionalProp1: {
+              options: { propertyNameCaseInsensitive: true },
+              parent: "user",
+              root: "root1",
+            },
+            additionalProp2: {
+              options: { propertyNameCaseInsensitive: true },
+              parent: "user",
+              root: "root2",
+            },
+            additionalProp3: {
+              options: { propertyNameCaseInsensitive: true },
+              parent: "user",
+              root: "root3",
+            },
+          },
+        },
+      },
     };
-
-    console.log("Submitting payload:", payload);
-
-    const clientIp = await getClientIp();
-
+    // console.log(payload)
     try {
-      const response = await axios.post(
-        "http://192.168.22.247/app1/api/Department/userCreate",
+      const res = await axios.post(
+        "http://192.168.22.247/us/api/Department/makerEmployeeCreate",
         payload
       );
-
-      await axios.post("http://192.168.22.247/app2/api/Audit/log-audit", {
-        EntityName: "User",
-        EntityId: response.data?.userId || "",
-        Action: "insert",
-        ChangedBy: email,
-        ChangedOn: new Date().toISOString(),
-        OldValues: "",
-        NewValues: JSON.stringify(payload),
-        ChangedColumns: Object.keys(payload).join(","),
-        SourceIP: clientIp,
-      });
-
-      alert("User registered successfully!");
+      alert("✅ Maker user created successfully");
     } catch (err) {
-      console.error("Registration failed:", err);
-
-      try {
-        await axios.post("http://192.168.22.247/app2/api/Audit/log-audit", {
-          EntityName: "User",
-          EntityId: "",
-          Action: "Create-Failed",
-          ChangedBy: email,
-          ChangedOn: new Date().toISOString(),
-          OldValues: "",
-          NewValues: JSON.stringify(payload),
-          ChangedColumns: Object.keys(payload).join(","),
-          SourceIP: clientIp,
-        });
-      } catch {}
-
-      alert("Failed to register. Please check the form or contact admin.");
+      console.error("❌ Error submitting form:", err);
+      alert("❌ Failed to create maker user. Check console for details.");
     }
   };
 
-  const filteredDesignations = designationOptions.filter(
-    (des) => des.deptId === parseInt(departmentId)
+  const uniqueDepartments = Array.from(
+    new Map(accessList.map((item) => [item.deptId, item])).values()
   );
 
-  const filteredModules = useMemo(() => {
-    if (!designationId) return [];
-    const filtered = moduleOptions.filter(
-      (mod) => mod.designationId === parseInt(designationId)
-    );
+  const uniqueDesignations = Array.from(
+    new Map(
+      accessList
+        .filter((item) => item.deptId == deptId)
+        .map((item) => [item.designationId, item])
+    ).values()
+  );
 
-    const uniqueModulesMap = new Map();
-    filtered.forEach((mod) => {
-      if (!uniqueModulesMap.has(mod.moduleDescription)) {
-        uniqueModulesMap.set(mod.moduleDescription, mod);
-      }
-    });
-
-    return Array.from(uniqueModulesMap.values());
-  }, [designationId, moduleOptions]);
-
-  const evaluatePasswordStrength = (val) => {
-    let strength = 0;
-    if (val.length >= 8) strength++;
-    if (/[A-Z]/.test(val)) strength++;
-    if (/[a-z]/.test(val)) strength++;
-    if (/\d/.test(val)) strength++;
-    if (/[\W_]/.test(val)) strength++;
-
-    if (strength <= 2) {
-      setPasswordStrengthLevel("Weak");
-    } else if (strength === 3 || strength === 4) {
-      setPasswordStrengthLevel("Moderate");
-    } else if (strength === 5) {
-      setPasswordStrengthLevel("Strong");
-    } else {
-      setPasswordStrengthLevel("");
-    }
-  };
-
+  const uniqueRoleScreens = Array.from(
+    new Map(
+      accessList
+        .filter((item) => item.designationId == designationId)
+        .map((item) => [item.roleAccessId, item])
+    ).values()
+  );
+  const uniqueRoles = Array.from(
+    new Map(
+      accessList
+        .filter((item) => item.designationId == designationId)
+        .map((item) => [item.roleDescription, item])
+    ).values()
+  );
   return (
     <div
-      className="min-h-screen bg-cover bg-center flex items-center justify-center relative"
+      className="min-h-screen flex flex-col items-center justify-start bg-cover bg-center relative p-6"
       style={{ backgroundImage: `url(${backgroundImg})` }}
     >
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
-      <div className="relative z-10 w-full max-w-xl bg-white rounded-2xl p-8 shadow-lg space-y-6">
-        <div className="text-center">
-          <img src={logo} alt="Logo" className="w-12 h-12 mx-auto mb-2" />
-          <h2 className="text-2xl font-bold">User Registration</h2>
-        </div>
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-0" />
+      <div className="relative z-10 w-full max-w-xl bg-white rounded-2xl shadow-lg p-8">
+        <img src={logo} alt="Logo" className="w-20 h-20 mx-auto mb-6" />
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
-            value={empId}
-            onChange={(e) => {
-              setEmpId(e.target.value);
-              validateEmpId(e.target.value);
-            }}
-            maxLength={25}
             placeholder="Employee ID"
-            className="w-full px-4 py-2 border rounded-md"
+            value={empId}
+            onChange={(e) => setEmpId(e.target.value)}
+            className="w-full border rounded px-4 py-2"
             required
           />
-          {empIdError && <p className="text-red-600 text-sm">{empIdError}</p>}
+          {empIdError && <p className="text-red-500 text-sm">{empIdError}</p>}
 
           <input
             type="text"
-            value={name}
-            onChange={(e) => {
-              setName(e.target.value);
-              validateName(e.target.value);
-            }}
-            maxLength={25}
             placeholder="Name"
-            className="w-full px-4 py-2 border rounded-md"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full border rounded px-4 py-2"
             required
           />
-          {nameError && <p className="text-red-600 text-sm">{nameError}</p>}
+          {nameError && <p className="text-red-500 text-sm">{nameError}</p>}
 
           <input
             type="email"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              validateEmail(e.target.value);
-            }}
-            maxLength={25}
             placeholder="Email"
-            className="w-full px-4 py-2 border rounded-md"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full border rounded px-4 py-2"
             required
           />
-          {emailError && <p className="text-red-600 text-sm">{emailError}</p>}
+          {emailError && <p className="text-red-500 text-sm">{emailError}</p>}
 
           <input
             type="password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              validatePassword(e.target.value);
-              evaluatePasswordStrength(e.target.value);
-              setPasswordMatchError(
-                e.target.value !== confirmPassword ? "Passwords do not match." : ""
-              );
-            }}
-            maxLength={25}
             placeholder="Password"
-            className="w-full px-4 py-2 border rounded-md"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full border rounded px-4 py-2"
             required
           />
-          {password && (
-            <div className="mt-1">
-              <div className="h-2 w-full bg-gray-300 rounded">
-                <div
-                  className={`h-2 rounded transition-all duration-300 ${passwordStrengthLevel === "Weak"
-                    ? "w-1/3 bg-red-500"
-                    : passwordStrengthLevel === "Moderate"
-                      ? "w-2/3 bg-yellow-500"
-                      : passwordStrengthLevel === "Strong"
-                        ? "w-full bg-green-500"
-                        : ""
-                    }`}
-                ></div>
-              </div>
-              <p className={`text-sm mt-1 ${passwordStrengthLevel === "Weak"
-                ? "text-red-600"
-                : passwordStrengthLevel === "Moderate"
-                  ? "text-yellow-600"
-                  : "text-green-600"
-                }`}>
-                {passwordStrengthLevel && `Password Strength: ${passwordStrengthLevel}`}
-              </p>
-              <p className={`text-sm ${passwordStrength ? "text-red-600" : ""}`}>
-                {passwordStrength}
-              </p>
-            </div>
+          {passwordError && (
+            <p className="text-red-500 text-sm">{passwordError}</p>
           )}
 
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => {
-              setConfirmPassword(e.target.value);
-              setPasswordMatchError(
-                password !== e.target.value ? "Passwords do not match." : ""
-              );
-            }}
-            maxLength={25}
-            placeholder="Confirm Password"
-            className="w-full px-4 py-2 border rounded-md"
-            required
-          />
-          {passwordMatchError && <p className="text-red-600 text-sm">{passwordMatchError}</p>}
-
           <select
-            value={departmentId}
+            value={deptId}
             onChange={(e) => {
-              setDepartmentId(e.target.value);
+              setDeptId(e.target.value);
               setDesignationId("");
-              setModuleId("");
+              setRoleAccessId("");
             }}
-            className="w-full px-4 py-2 border rounded-md"
+            className="w-full border rounded px-4 py-2"
             required
           >
             <option value="">Select Department</option>
-            {departmentOptions.map((dept) => (
-              <option key={dept.deptId} value={dept.deptId}>
-                {dept.deptName}
+            {uniqueDepartments.map((item) => (
+              <option key={item.deptId} value={item.deptId}>
+                {item.deptName}
               </option>
             ))}
           </select>
@@ -330,80 +237,55 @@ const UserRegistration = () => {
             value={designationId}
             onChange={(e) => {
               setDesignationId(e.target.value);
-              setModuleId("");
+              setRoleAccessId("");
             }}
-            className="w-full px-4 py-2 border rounded-md"
+            className="w-full border rounded px-4 py-2"
             required
-            disabled={!departmentId}
           >
             <option value="">Select Designation</option>
-            {filteredDesignations.map((des) => (
-              <option key={des.designationId} value={des.designationId}>
-                {des.designationName}
+            {uniqueDesignations.map((item) => (
+              <option key={item.designationId} value={item.designationId}>
+                {item.designationDesc}
               </option>
             ))}
           </select>
-
           <select
-            value={moduleId}
-            onChange={(e) => setModuleId(e.target.value)}
-            className="w-full px-4 py-2 border rounded-md"
+            value={roleDescription}
+            onChange={(e) => setRoleDescription(e.target.value)}
+            className="w-full border rounded px-4 py-2"
             required
-            disabled={!designationId}
           >
-            <option value="">Select Module</option>
-            {filteredModules.map((mod) => (
-              <option key={mod.moduleId} value={mod.moduleId}>
-                {mod.moduleDescription}
+            <option value="">Select Role</option>
+            {uniqueRoles.map((item) => (
+              <option key={item.roleDescription} value={item.roleDescription}>
+                {item.roleDescription}
               </option>
             ))}
           </select>
-
           <select
-            value={statusId}
-            onChange={(e) => setStatusId(e.target.value)}
-            className="w-full px-4 py-2 border rounded-md"
+            value={roleAccessId}
+            onChange={(e) => setRoleAccessId(e.target.value)}
+            className="w-full border rounded px-4 py-2"
             required
           >
-            <option value="">Select Status</option>
-            {statusOptions.map((status) => (
-              <option key={status.statusId} value={status.statusId}>
-                {status.statusDescription}
+            <option value="">Select Screen</option>
+            {uniqueRoleScreens.map((item) => (
+              <option key={item.roleAccessId} value={item.roleAccessId}>
+                {item.screenDesc} ({item.roleDescription})
               </option>
             ))}
           </select>
 
           <button
             type="submit"
-            disabled={
-              emailError ||
-              passwordMatchError ||
-              nameError ||
-              empIdError ||
-              !empId ||
-              !name ||
-              !email ||
-              !password ||
-              !confirmPassword ||
-              !moduleId ||
-              !designationId ||
-              !departmentId ||
-              !statusId
-            }
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
           >
-            Register
+            Create Maker User
           </button>
         </form>
-
-        {apiError && (
-          <p className="text-red-600 text-center mt-2">
-            Error loading dropdown data. Please try again later.
-          </p>
-        )}
       </div>
     </div>
   );
 };
 
-export default UserRegistration;
+export default EmployeeCreateForm;
