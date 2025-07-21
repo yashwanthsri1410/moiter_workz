@@ -2,9 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import backgroundImg from "../assets/background.jpeg";
 import logo from "../assets/favicon.png";
-import { v4 as uuidv4 } from "uuid"; // for generated UUIDs
+import { v4 as uuidv4 } from "uuid";
+import usePublicIp from "../hooks/usePublicIp";
 
 const Makerscreation = () => {
+    const username = localStorage.getItem("username");
+  const ip = usePublicIp();
   const [formData, setFormData] = useState({
     deptName: "",
     designationName: "",
@@ -13,14 +16,14 @@ const Makerscreation = () => {
   });
 
   const [metadata, setMetadata] = useState({
-    ipAddress: "",
+    ipAddress: ip,
     userAgent: navigator.userAgent,
     headers: "Content-Type: application/json", // example static header
     channel: "WEB",
     auditMetadata: {
-      createdBy: uuidv4(),
+       createdBy: username,
       createdDate: new Date().toISOString(),
-      modifiedBy: uuidv4(),
+     modifiedBy: username,
       modifiedDate: new Date().toISOString(),
       header: {
         additionalProp1: {
@@ -42,22 +45,6 @@ const Makerscreation = () => {
     },
   });
 
-  // 🔍 Fetch IP Address
-  useEffect(() => {
-    const fetchIP = async () => {
-      try {
-        const res = await axios.get("https://api.ipify.org?format=json");
-        setMetadata((prev) => ({
-          ...prev,
-          ipAddress: res.data.ip,
-        }));
-      } catch (error) {
-        console.error("Failed to fetch IP address:", error);
-      }
-    };
-
-    fetchIP();
-  }, []);
 
   const handleChange = (e) => {
     setFormData((prev) => ({

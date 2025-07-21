@@ -1,290 +1,136 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import backgroundImg from "../assets/background.jpeg";
-import logo from "../assets/favicon.png";
-import usePublicIp from "../hooks/usePublicIp";
+import Headers from "../components/Header";
+import banner from "../assets/banner.png";
+import {
+  ArrowDown,
+  Mail,
+  MapPin,
+  HelpCircle,
+  Users,
+  UserPlus,
+} from "lucide-react";
 
+import { useNavigate } from "react-router-dom";
 const EmployeeCreateForm = () => {
-  const [empId, setEmpId] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [statusId, setStatusId] = useState(1);
-  const [userType, setUserType] = useState(2);
-  const [createdBy, setCreatedBy] = useState("admin");
-  const [roleDescription, setRoleDescription] = useState("");
-  const [accessList, setAccessList] = useState([]);
-  const [deptId, setDeptId] = useState("");
-  const [designationId, setDesignationId] = useState("");
-  const [roleAccessId, setRoleAccessId] = useState("");
-
-  const [emailError, setEmailError] = useState("");
-  const [nameError, setNameError] = useState("");
-  const [empIdError, setEmpIdError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-
-  const ip = usePublicIp();
-  const userAgent = navigator.userAgent;
-
-  useEffect(() => {
-    axios
-      .get("http://192.168.22.247/us/api/Department/getApprove")
-      .then((res) => setAccessList(res.data))
-      .catch((err) => console.error("Error fetching role access data:", err));
-  }, []);
-
-  const validate = () => {
-    let valid = true;
-    setEmailError("");
-    setNameError("");
-    setEmpIdError("");
-    setPasswordError("");
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setEmailError("Email must contain '@' and end with '.com'");
-      valid = false;
-    }
-
-    if (name.length > 25) {
-      setNameError("Name must be within 25 characters");
-      valid = false;
-    }
-
-    if (!/^[0-9]+$/.test(empId)) {
-      setEmpIdError("Employee ID must be an integer");
-      valid = false;
-    }
-
-    const passwordRules = [
-      { regex: /[A-Z]/, msg: "Include at least one UPPERCASE letter" },
-      { regex: /[a-z]/, msg: "Include at least one lowercase letter" },
-      { regex: /[0-9]/, msg: "Include at least one number" },
-      { regex: /[^A-Za-z0-9]/, msg: "Include at least one special character" },
-    ];
-
-    const errors = passwordRules
-      .filter((rule) => !rule.regex.test(password))
-      .map((rule) => rule.msg);
-
-    if (errors.length) {
-      setPasswordError(errors.join(", "));
-      valid = false;
-    }
-
-    return valid;
+  
+   const navigate = useNavigate();
+  const username = localStorage.getItem("username");
+const scrollToFooter = () => {
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: "smooth"
+    });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validate()) return;
-
-    const timestamp = new Date().toISOString();
-    const auditUserId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
-
-    const payload = {
-      empId,
-      deptId: parseInt(deptId),
-      designationId: parseInt(designationId),
-      name,
-      email,
-      password,
-      statusId: parseInt(statusId),
-      roleAccessId: parseInt(roleAccessId),
-      roleDescription,
-      createdBy,
-      userType: parseInt(userType),
-      metadata: {
-        ipAddress: ip || "0.0.0.0",
-        userAgent: userAgent,
-        headers: "custom-header",
-        channel: "web",
-        auditMetadata: {
-          createdBy: auditUserId,
-          createdDate: timestamp,
-          modifiedBy: auditUserId,
-          modifiedDate: timestamp,
-          header: {
-            additionalProp1: {
-              options: { propertyNameCaseInsensitive: true },
-              parent: "user",
-              root: "root1",
-            },
-            additionalProp2: {
-              options: { propertyNameCaseInsensitive: true },
-              parent: "user",
-              root: "root2",
-            },
-            additionalProp3: {
-              options: { propertyNameCaseInsensitive: true },
-              parent: "user",
-              root: "root3",
-            },
-          },
-        },
-      },
-    };
-    // console.log(payload)
-    try {
-      const res = await axios.post(
-        "http://192.168.22.247/us/api/Department/makerEmployeeCreate",
-        payload
-      );
-      alert("✅ Maker user created successfully");
-    } catch (err) {
-      console.error("❌ Error submitting form:", err);
-      alert("❌ Failed to create maker user. Check console for details.");
-    }
-  };
-
-  const uniqueDepartments = Array.from(
-    new Map(accessList.map((item) => [item.deptId, item])).values()
-  );
-
-  const uniqueDesignations = Array.from(
-    new Map(
-      accessList
-        .filter((item) => item.deptId == deptId)
-        .map((item) => [item.designationId, item])
-    ).values()
-  );
-
-  const uniqueRoleScreens = Array.from(
-    new Map(
-      accessList
-        .filter((item) => item.designationId == designationId)
-        .map((item) => [item.roleAccessId, item])
-    ).values()
-  );
-  const uniqueRoles = Array.from(
-    new Map(
-      accessList
-        .filter((item) => item.designationId == designationId)
-        .map((item) => [item.roleDescription, item])
-    ).values()
-  );
   return (
-    <div
-      className="min-h-screen flex flex-col items-center justify-start bg-cover bg-center relative p-6"
-      style={{ backgroundImage: `url(${backgroundImg})` }}
-    >
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm z-0" />
-      <div className="relative z-10 w-full max-w-xl bg-white rounded-2xl shadow-lg p-8">
-        <img src={logo} alt="Logo" className="w-20 h-20 mx-auto mb-6" />
+    <>
+      <Headers />
+      <div className="flex min-h-screen bg-[#081028] text-white">
+        {/* Sidebar */}
+        <aside className="w-64 bg-[#0A1330] border-r border-[#1a233a] p-4 flex flex-col justify-between">
+          <div>
+            <nav className="space-y-2 text-sm">
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            placeholder="Employee ID"
-            value={empId}
-            onChange={(e) => setEmpId(e.target.value)}
-            className="w-full border rounded px-4 py-2"
-            required
-          />
-          {empIdError && <p className="text-red-500 text-sm">{empIdError}</p>}
+                <>
+                  <div className="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-[#151f42] cursor-pointer" onClick={() => navigate("/Employee-creation")}>
+                    <UserPlus className="w-4 h-4 text-gray-400" />
+                    <span>Employee creation</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-2 py-2 rounded-md hover:bg-[#151f42] cursor-pointer" onClick={() => navigate("/customer-On-boarding")}>
+                    <Users className="w-4 h-4 text-gray-400" />
+                    <span>Customer on boarding</span>
+                  </div>
+                </>
+            </nav>
+          </div>
 
-          <input
-            type="text"
-            placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full border rounded px-4 py-2"
-            required
-          />
-          {nameError && <p className="text-red-500 text-sm">{nameError}</p>}
+        </aside>
 
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full border rounded px-4 py-2"
-            required
-          />
-          {emailError && <p className="text-red-500 text-sm">{emailError}</p>}
-
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full border rounded px-4 py-2"
-            required
-          />
-          {passwordError && (
-            <p className="text-red-500 text-sm">{passwordError}</p>
-          )}
-
-          <select
-            value={deptId}
-            onChange={(e) => {
-              setDeptId(e.target.value);
-              setDesignationId("");
-              setRoleAccessId("");
-            }}
-            className="w-full border rounded px-4 py-2"
-            required
-          >
-            <option value="">Select Department</option>
-            {uniqueDepartments.map((item) => (
-              <option key={item.deptId} value={item.deptId}>
-                {item.deptName}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={designationId}
-            onChange={(e) => {
-              setDesignationId(e.target.value);
-              setRoleAccessId("");
-            }}
-            className="w-full border rounded px-4 py-2"
-            required
-          >
-            <option value="">Select Designation</option>
-            {uniqueDesignations.map((item) => (
-              <option key={item.designationId} value={item.designationId}>
-                {item.designationDesc}
-              </option>
-            ))}
-          </select>
-          <select
-            value={roleDescription}
-            onChange={(e) => setRoleDescription(e.target.value)}
-            className="w-full border rounded px-4 py-2"
-            required
-          >
-            <option value="">Select Role</option>
-            {uniqueRoles.map((item) => (
-              <option key={item.roleDescription} value={item.roleDescription}>
-                {item.roleDescription}
-              </option>
-            ))}
-          </select>
-          <select
-            value={roleAccessId}
-            onChange={(e) => setRoleAccessId(e.target.value)}
-            className="w-full border rounded px-4 py-2"
-            required
-          >
-            <option value="">Select Screen</option>
-            {uniqueRoleScreens.map((item) => (
-              <option key={item.roleAccessId} value={item.roleAccessId}>
-                {item.screenDesc} ({item.roleDescription})
-              </option>
-            ))}
-          </select>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-          >
-            Create Maker User
-          </button>
-        </form>
+        {/* Main content */}
+         {/* Main content */}
+        <main className="flex-1 p-6">
+          <h1 className="text-2xl font-semibold mb-4">
+            Welcome, <span className="text-yellow-300">{username}</span>
+          </h1>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            {/* Text content */}
+            <div className="space-y-6">
+              <h2 className="text-4xl font-bold">
+                Seamless Payments, <span className="text-yellow-300">Start to Finish.</span>
+              </h2>
+              <h3 className="text-3xl font-semibold">
+                Powering the Future of Payments
+              </h3>
+              <p className="text-gray-300 text-lg">
+                Delivering secure, scalable, reliable solutions for every step of your organization's payment journey. From issuing and acquiring cards for many nation building, mission critical and innovative use cases and a whole new acquiring platform with UPI acceptance, our solutions enable organizations to offer seamless, modern payment experiences to their employees, customers and other stakeholders.
+              </p>
+            </div>
+            
+            {/* Banner image */}
+            <div className="flex justify-center lg:justify-end">
+              <img 
+                src={banner} 
+                alt="Payment solutions" 
+                className="max-w-full h-auto rounded-lg shadow-xl"
+              />
+            </div>
+          </div>
+        </main>
+        
+        {/* Floating scroll to footer button */}
+        <button
+          onClick={scrollToFooter}
+          className="fixed bottom-6 right-6 bg-[#151f42] p-3 rounded-full shadow-lg hover:bg-[#1e2a5a] transition-colors"
+          aria-label="Scroll to footer"
+        >
+          <ArrowDown className="w-6 h-6 text-white" />
+        </button>
       </div>
-    </div>
+      
+      {/* Footer */}
+      <footer className="bg-[#0A1330] text-white border-t border-[#1a233a]">
+        <div className="container mx-auto px-6 py-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            {/* Contact Info - Horizontal Layout */}
+            <div className="flex flex-col md:flex-row gap-8 w-full md:w-auto">
+              {/* Help & Support */}
+              <div className="flex items-center gap-3">
+                <HelpCircle className="w-5 h-5 text-gray-400" />
+                <div>
+                  <h4 className="font-medium">Help & Support</h4>
+                  <p className="text-gray-400 text-sm">Available 24/7</p>
+                </div>
+              </div>
+              
+              {/* Email */}
+              <div className="flex items-center gap-3">
+                <Mail className="w-5 h-5 text-gray-400" />
+                <div>
+                  <h4 className="font-medium">Email</h4>
+                  <a href="mailto:sales@moiterworkz.com" className="text-gray-400 hover:text-white transition-colors text-sm">
+                    sales@moiterworkz.com
+                  </a>
+                </div>
+              </div>
+              
+              {/* Address */}
+              <div className="flex items-center gap-3">
+                <MapPin className="w-5 h-5 text-gray-400" />
+                <div>
+                  <h4 className="font-medium">Address</h4>
+                  <p className="text-gray-400 text-sm">Guindy, Chennai, Tamil Nadu</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Copyright - moves to right on desktop */}
+            <div className="text-gray-400 text-sm md:text-base">
+              <p>© {new Date().getFullYear()} Moiterworkz. All rights reserved.</p>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </>
   );
 };
 

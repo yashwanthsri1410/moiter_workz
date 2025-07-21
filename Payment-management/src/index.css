@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.react-select__control {
+  background-color: #1b1b3b;
+  border-color: #333;
+  color: white;
+}
+.react-select__menu {
+  background-color: #1b1b3b;
+  color: white;
+}
+.react-select__single-value {
+  color: white;
+}
+.react-select__option--is-focused {
+  background-color: #333;
+}

@@ -57,9 +57,9 @@ const RoleSetup = () => {
         headers: "custom-header",
         channel: "web",
         auditMetadata: {
-          createdBy: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+           createdBy: username,
           createdDate: new Date().toISOString(),
-          modifiedBy: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+         modifiedBy: username,
           modifiedDate: new Date().toISOString(),
           header: {
             additionalProp1: {

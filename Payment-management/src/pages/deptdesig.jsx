@@ -68,7 +68,7 @@ export default function Signup() {
         ipAddress: ip,
         userAgent: navigator.userAgent,
         //  headers: headersError ?  headersError : JSON.stringify({ "content-type": "application/json" }),
-        // headers: "N/A",
+        headers: "N/A",
         channel: "web",
         auditMetadata: {
           createdBy: auditUserId,

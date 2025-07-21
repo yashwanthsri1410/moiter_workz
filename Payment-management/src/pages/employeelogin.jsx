@@ -9,27 +9,23 @@ const Employeelogin = ({ setRole }) => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [headersError, setheadersError] = useState("");
+    const [headersError, setheadersError] = useState("Login error");
+    // console.log("???????????",headersError)
+    const user_name = localStorage.getItem("username");
     const navigate = useNavigate();
     const ip = usePublicIp();
-
-    const getMetadata = async () => {
+    const getMetadata = () => {
         const timestamp = new Date().toISOString();
-        const dummyId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
 
         return {
-            ipAddress: ip,
+            ipAddress: ip || "127.0.0.1",
             userAgent: navigator.userAgent,
             headers: headersError ? headersError : JSON.stringify({ "content-type": "application/json" }),
-            headers: JSON.stringify({
-                Accept: "application/json",
-                ContentType: "application/json",
-            }),
             channel: "WEB",
             auditMetadata: {
-                createdBy: dummyId,
+                createdBy: username,
                 createdDate: timestamp,
-                modifiedBy: dummyId,
+                modifiedBy: username,
                 modifiedDate: timestamp,
                 header: {
                     additionalProp1: {
@@ -54,103 +50,113 @@ const Employeelogin = ({ setRole }) => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        const metadata = await getMetadata();
-
+        const metadata = getMetadata();
         try {
             const response = await axios.post(
-                "http://192.168.22.247/us/api/Department/super-user-login",
+                "http://192.168.22.247:5229/ums/api/UserManagement/user_login",
                 {
-                    name: username,
-                    password: password,
-                    metadata: metadata
+                    username,
+                    password,
+                    metadata
                 },
                 {
                     headers: { "Content-Type": "application/json" },
                 }
             );
 
-            const user = response.data.user;
+            const user = response.data.message;
+            if (!user) {
+                alert("Login failed. User not found.");
+                return;
+            }
+
             localStorage.setItem("username", user.name);
-            // setRole(user.userType);
-            // console.log("?????????",user) 
-            if (user.userType === 1) {
-                navigate("/Usercreation");
-            } else if (user.userType === 2) {
-                navigate("/Employee-Registration");
-            } else if (user.userType === 3) {
-                navigate("/checkers-approval");
-            } else {
-                alert("Unknown user type.");
+            localStorage.setItem("userType", user.userType);
+
+            switch (user.userType) {
+                case 1:
+                    navigate("/Dashboard");
+                    break;
+                case 4:
+                    navigate("/Employee-Registration");
+                    break;
+                case 3:
+                    navigate("/checkers-approval");
+                    break;
+                default:
+                    alert("/Makers-creation");
+                    break;
             }
         } catch (error) {
             console.error("Login error:", error.response?.data || error.message);
-            setheadersError(" KYC Submission failed");
+            setheadersError("Login error" + error.response?.data || error.message);
             alert(error.response?.data?.message || "Invalid username or password.");
         }
     };
 
     return (
-        <div
-            className="min-h-screen bg-cover bg-center flex items-center justify-center relative"
-            style={{ backgroundImage: `url(${backgroundImg})` }}
+       <div className="min-h-screen bg-[#0d0f24] flex items-center justify-center px-4">
+  <div className="w-full max-w-md bg-[#0f122d] rounded-xl shadow-lg p-8 text-white relative">
+    
+    {/* Centered Logo */}
+    <div className="flex justify-center mb-4">
+      <img src={logo} alt="Logo" className="w-10 h-10" />
+    </div>
+
+    {/* Centered Login Form */}
+    <div className="text-center mt-2 mb-4">
+      <h2 className="text-2xl font-bold mb-2">LogIn</h2>
+    </div>
+
+    {/* Login Form */}
+    <form onSubmit={handleLogin} className="space-y-4">
+      <div>
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Your username"
+          className="w-full px-4 py-2 rounded-md bg-[#1a1d3b] border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          required
+        />
+      </div>
+
+      <div className="relative">
+        <input
+          type={showPassword ? "text" : "password"}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Your Password"
+          className="w-full px-4 py-2 rounded-md bg-[#1a1d3b] border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
+          required
+        />
+        <span
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-3 top-2.5 text-sm text-gray-400 cursor-pointer"
         >
-            <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+          {showPassword ? "Hide" : "Show"}
+        </span>
+      </div>
 
-            <div className="relative z-10 w-full max-w-md bg-white rounded-2xl p-8 shadow-lg">
-                <div className="text-center">
-                    <div className="inset-0 flex items-start justify-center p-4 z-[99] rounded-full">
-                        <img src={logo} alt="Logo" className="w-12 h-12 rounded-full" />
-                    </div>
-                    <h2 className="text-2xl font-bold">Employee Log in</h2>
-                </div>
+      <div className="flex justify-between items-center text-sm text-gray-400">
+        <label className="flex items-center">
+          <input type="checkbox" className="mr-2 accent-purple-500" />
+          Remember me
+        </label>
+        {/* <a href="#" className="hover:text-purple-500">Forgot password?</a> */}
+      </div>
 
-                <form onSubmit={handleLogin} className="space-y-4">
-                    <div>
-                        <label className="text-bold text-gray-800">Your Username</label>
-                        <input
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Enter your Username"
-                            className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="text-bold text-gray-800">Your Password</label>
-                        <div className="relative">
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="Enter your password"
-                                className="mt-1 w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
-                            />
-                            <span
-                                className="absolute inset-y-0 right-3 flex items-center text-sm text-gray-500 cursor-pointer"
-                                onClick={() => setShowPassword(!showPassword)}
-                            >
-                                {showPassword ? "Hide" : "Show"}
-                            </span>
-                        </div>
-                    </div>
+      <button
+        type="submit"
+        className="w-full py-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 font-semibold text-white shadow-md hover:opacity-90"
+      >
+        Submit
+      </button>
+    </form>
 
-                    <div className="text-right">
-                        <a href="#" className="text-sm text-gray-600 underline">
-                            Forgot your password
-                        </a>
-                    </div>
+  </div>
+</div>
 
-                    <button
-                        type="submit"
-                        className="w-full bg-gray-300 text-gray-700 py-2 px-4 rounded-full cursor-pointer hover:bg-gray-400"
-                    >
-                        Log in
-                    </button>
-                </form>
-            </div>
-        </div>
     );
 };
 
