@@ -84,7 +84,7 @@ export default function ProductManagement() {
         };
 
         try {
-            axios.post("http://192.168.22.247:5229/ums/api/UserManagement/createProduct", payload, {
+            axios.post("http://192.168.22.247:5252/createProduct", payload, {
                 withCredentials: true
             });
             alert("Product created successfully!");
@@ -133,7 +133,8 @@ export default function ProductManagement() {
         };
 
         try {
-            await axios.put("http://192.168.22.247/ums/api/UserManagement/updateProductById", payload);
+            await axios.put("http://192.168.22.247:5252/updateProductById", payload);
+            console.log("????????",payload         )
             alert("Product updated successfully.");
             setEditingProductId(null);
             setForm({ productName: "", productType: "Fleet Card", description: "", isActive: true });
@@ -153,42 +154,46 @@ export default function ProductManagement() {
             <div className="max-w-6xl mx-auto bg-[#0a132f] p-6 rounded-xl shadow-lg">
                 <h2 className="text-xl font-semibold mb-4">Product Management</h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <input
-                        name="productName"
-                        value={form.productName}
-                        onChange={handleChange}
-                        placeholder="Product Name"
-                        className="px-4 py-2 rounded-md bg-[#131c3a] border border-gray-600"
-                    />
-                    <select
-                        name="productType"
-                        value={form.productType}
-                        onChange={handleChange}
-                        className="px-4 py-2 rounded-md bg-[#131c3a] border border-gray-600"
-                    >
-                        <option value="Fleet Card">Fleet Card</option>
-                        <option value="Gift Card">Gift Card</option>
-                        <option value="Meal Card">Meal Card</option>
-                        <option value="Travel Card">Travel Card</option>
-                    </select>
-                    <input
-                        name="description"
-                        value={form.description}
-                        onChange={handleChange}
-                        placeholder="Description"
-                        className="px-4 py-2 rounded-md bg-[#131c3a] border border-gray-600"
-                    />
-                    <label className="flex items-center gap-2 text-sm">
-                        <input
-                            type="checkbox"
-                            name="isActive"
-                            checked={form.isActive}
-                            onChange={handleChange}
-                        />
-                        Active
-                    </label>
-                </div>
+                <div className="grid grid-cols-1 gap-4 mb-4">
+  <input
+    name="productName"
+    value={form.productName}
+    onChange={handleChange}
+    placeholder="Product Name"
+    className="px-4 py-2 rounded-md bg-[#131c3a] border border-gray-600"
+  />
+  
+  <select
+    name="productType"
+    value={form.productType}
+    onChange={handleChange}
+    className="px-4 py-2 rounded-md bg-[#131c3a] border border-gray-600"
+  >
+    <option value="Fleet Card">Fleet Card</option>
+    <option value="Gift Card">Gift Card</option>
+    <option value="Meal Card">Meal Card</option>
+    <option value="Travel Card">Travel Card</option>
+  </select>
+  
+  <input
+    name="description"
+    value={form.description}
+    onChange={handleChange}
+    placeholder="Description"
+    className="px-4 py-2 rounded-md bg-[#131c3a] border border-gray-600"
+  />
+  
+  <label className="flex items-center gap-2 text-sm">
+    <input
+      type="checkbox"
+      name="isActive"
+      checked={form.isActive}
+      onChange={handleChange}
+    />
+    Active
+  </label>
+</div>
+
 
                 <button
                     onClick={editingProductId ? () => handleUpdate(editingProductId) : handleSubmit}

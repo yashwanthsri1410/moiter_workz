@@ -2,31 +2,36 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import backgroundImg from "../assets/background.jpeg";
 import logo from "../assets/favicon.png";
+import usePublicIp from "../hooks/usePublicIp";
 
-const Modulescreen = () => {
-  const [moduleDesc, setModuleDesc] = useState("");
+const RoleSetup = () => {
+  const [roleDescription, setRoleDescription] = useState("");
   const [screenDesc, setScreenDesc] = useState("");
   const [deptData, setDeptData] = useState([]);
   const [selectedDept, setSelectedDept] = useState("");
   const [selectedDesignationId, setSelectedDesignationId] = useState("");
 
-  // Fetch department/designation data
+  const ip = usePublicIp();
   useEffect(() => {
-    axios
-      .get("http://192.168.22.247/api/Department/departments")
-      .then((res) => setDeptData(res.data))
-      .catch((err) => {
-        console.error("Failed to fetch departments:", err);
-        alert("Failed to load department data.");
-      });
-  }, []);
+  axios
+    .get("http://192.168.22.247:7227/api/CombinedDetails/departments")
+    .then((res) => {
+      // console.log("Fetched data:", res.data); // ✅ confirm it's coming
+      setDeptData(res.data);
+    })
+    .catch((err) => {
+      console.error("Fetch error:", err);
+      alert("Failed to load department/designation data.");
+    });
+}, []);
 
-  // Extract unique departments for dropdown
+
+  // Extract unique departments
   const uniqueDepartments = [
     ...new Map(deptData.map((item) => [item.deptId, item])).values(),
   ];
 
-  // Filter designations based on selected department
+  // Get designations filtered by selected department
   const filteredDesignations = deptData.filter(
     (item) => item.deptId.toString() === selectedDept
   );
@@ -34,56 +39,81 @@ const Modulescreen = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!moduleDesc || !screenDesc || !selectedDesignationId) {
+    if (!roleDescription || !screenDesc || !selectedDesignationId) {
       alert("Please fill all the fields.");
       return;
     }
 
     const payload = {
-      moduleDescription: moduleDesc,
-      screenDesc: screenDesc,
+      roleId: 0,
+      roleDescription,
+      screenId: 0,
+      screenDesc,
+      roleAccess: 0,
       designationId: parseInt(selectedDesignationId),
+      metadata: {
+             ipAddress: ip || "UNKNOWN",
+        userAgent: navigator.userAgent,
+        headers: "custom-header",
+        channel: "web",
+        auditMetadata: {
+           createdBy: username,
+          createdDate: new Date().toISOString(),
+         modifiedBy: username,
+          modifiedDate: new Date().toISOString(),
+          header: {
+            additionalProp1: {
+              options: { propertyNameCaseInsensitive: true },
+              parent: "parent1",
+              root: "root1",
+            },
+          },
+        },
+      },
     };
-// console.log(payload)
+
     try {
       await axios.post(
-        "http://192.168.22.247/api/Department/Module", // ✅ Replace with actual API
+        "http://192.168.22.247/us/api/Department/Role",
         payload,
         {
           headers: { "Content-Type": "application/json" },
         }
       );
-      alert("Data submitted successfully!");
+      alert("Role submitted successfully!");
     } catch (error) {
-      console.error("Error submitting data:", error);
-      alert("Failed to submit data.");
+      console.error("Submission failed:", error);
+      alert(
+        "Submission failed: " +
+          (error?.response?.data?.message || "Unknown error")
+      );
     }
   };
+
   return (
     <div
       className="min-h-screen bg-cover bg-center flex items-center justify-center relative"
       style={{ backgroundImage: `url(${backgroundImg})` }}
     >
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
-
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
       <div className="relative z-10 w-full max-w-xl bg-white rounded-2xl p-8 shadow-lg space-y-6">
         <div className="text-center">
           <img src={logo} alt="Logo" className="w-12 h-12 mx-auto mb-2" />
-          <h2 className="text-2xl font-bold">Module Setup</h2>
+          <h2 className="text-2xl font-bold">Role Setup</h2>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-gray-700 font-semibold">
-              Module Description
+              Role Description
             </label>
             <input
               type="text"
-              value={moduleDesc}
-              onChange={(e) => setModuleDesc(e.target.value)}
+              value={roleDescription}
+              onChange={(e) => setRoleDescription(e.target.value)}
               className="w-full mt-1 px-4 py-2 border rounded-md"
-              placeholder="Enter module description"
-              maxLength={25}
+              placeholder="Enter role description"
+              maxLength={50}
               required
             />
           </div>
@@ -98,7 +128,7 @@ const Modulescreen = () => {
               onChange={(e) => setScreenDesc(e.target.value)}
               className="w-full mt-1 px-4 py-2 border rounded-md"
               placeholder="Enter screen description"
-              maxLength={25}
+              maxLength={50}
               required
             />
           </div>
@@ -112,14 +142,14 @@ const Modulescreen = () => {
               value={selectedDept}
               onChange={(e) => {
                 setSelectedDept(e.target.value);
-                setSelectedDesignationId(""); // reset designation
+                setSelectedDesignationId("");
               }}
               required
             >
               <option value="">-- Select Department --</option>
               {uniqueDepartments.map((dept) => (
                 <option key={dept.deptId} value={dept.deptId}>
-                  {dept.deptName}
+                  {dept.deptName || `Dept #${dept.deptId}`}
                 </option>
               ))}
             </select>
@@ -139,7 +169,7 @@ const Modulescreen = () => {
                 <option value="">-- Select Designation --</option>
                 {filteredDesignations.map((des) => (
                   <option key={des.designationId} value={des.designationId}>
-                    {des.designationName} (ID: {des.designationId})
+                    {des.designationName || `Designation #${des.designationId}`}
                   </option>
                 ))}
               </select>
@@ -150,7 +180,7 @@ const Modulescreen = () => {
             type="submit"
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
           >
-            Submit
+            Submit Role
           </button>
         </form>
       </div>
@@ -158,4 +188,4 @@ const Modulescreen = () => {
   );
 };
 
-export default Modulescreen;
+export default RoleSetup;

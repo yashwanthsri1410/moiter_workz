@@ -5,7 +5,7 @@ const SendRequestInfo = () => {
   useEffect(() => {
     const fetchClientInfo = async () => {
       try {
-        const response = await axios.get("http://192.168.22.247/api/Department/app1/get-request-info", {
+        const response = await axios.get("http://192.168.22.247/app1/api/Department/get-request-info", {
           headers: {
             "X-Custom-Header": "ClientInitCall", // optional custom header
           },

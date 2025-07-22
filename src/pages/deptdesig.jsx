@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import backgroundImg from "../assets/background.jpeg";
+import usePublicIp from "../hooks/usePublicIp";
 
 export default function Signup() {
   const [department, setDepartment] = useState("");
   const [designation, setDesignation] = useState("");
   const [departments, setDepartments] = useState([]);
 
-  const baseUrl = "http://192.168.22.247/api/Department";
+  const ip = usePublicIp();
+  const baseUrl = "http://192.168.22.247:7227/api/CombinedDetails";
 
   useEffect(() => {
     fetchDepartments();
@@ -16,8 +18,10 @@ export default function Signup() {
   const fetchDepartments = async () => {
     try {
       const res = await axios.get(`${baseUrl}/departments`);
-      const groupedData = groupByDepartment(res.data);
-      setDepartments(groupedData);
+      const grouped = groupByDepartment(res.data);
+      
+      // console.log("?????",res)
+      setDepartments(grouped);
     } catch (err) {
       console.error("Error fetching departments:", err);
     }
@@ -26,33 +30,74 @@ export default function Signup() {
   const groupByDepartment = (data) => {
     const grouped = {};
     data.forEach((item) => {
-      if (!grouped[item.deptName]) {
-        grouped[item.deptName] = {
+      if (!item.deptName?.trim()) return; // Skip empty dept
+      if (!grouped[item.deptId]) {
+        grouped[item.deptId] = {
           deptId: item.deptId,
           deptName: item.deptName,
           designations: [],
         };
       }
-      grouped[item.deptName].designations.push({
-        designationId: item.designationId,
-        designationName: item.designationName,
-      });
+      if (item.designationName?.trim()) {
+        grouped[item.deptId].designations.push({
+          designationId: item.designationId,
+          designationName: item.designationName,
+        });
+      }
     });
     return Object.values(grouped);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!department.trim() || !designation.trim()) {
       alert("Please enter both department and designation.");
       return;
     }
 
+    const currentDate = new Date().toISOString();
+    const auditUserId = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
+
+    const payload = {
+      deptId: 0,
+      deptName: department,
+      designationId: 0,
+      designationName: designation,
+      metadata: {
+        ipAddress: ip,
+        userAgent: navigator.userAgent,
+        //  headers: headersError ?  headersError : JSON.stringify({ "content-type": "application/json" }),
+        headers: "N/A",
+        channel: "web",
+        auditMetadata: {
+          createdBy: auditUserId,
+          createdDate: currentDate,
+          modifiedBy: auditUserId,
+          modifiedDate: currentDate,
+          header: {
+            additionalProp1: {
+              options: { propertyNameCaseInsensitive: true },
+              parent: "web",
+              root: "web",
+            },
+            additionalProp2: {
+              options: { propertyNameCaseInsensitive: true },
+              parent: "web",
+              root: "web",
+            },
+            additionalProp3: {
+              options: { propertyNameCaseInsensitive: true },
+              parent: "web",
+              root: "web",
+            },
+          },
+        },
+      },
+    };
+
     try {
-      await axios.post(`${baseUrl}/create`, {
-        deptName: department,
-        designationName: designation,
-      });
+      await axios.post(`http://192.168.22.247/us/api/Department/create`, payload);
       alert("Department and Designation created successfully!");
       setDepartment("");
       setDesignation("");
@@ -65,7 +110,7 @@ export default function Signup() {
 
   const handleDeleteDepartment = async (deptName) => {
     try {
-      await axios.delete(`${baseUrl}/department/${deptName}`);
+      await axios.delete(`http://192.168.22.247/us/api/Department/department/${deptName}`);
       alert("Department deleted.");
       fetchDepartments();
     } catch (err) {
@@ -76,36 +121,19 @@ export default function Signup() {
   const handleDeleteDesignation = async (designationName, deptName) => {
     try {
       const dept = departments.find((d) => d.deptName === deptName);
-
       if (!dept) return;
 
       if (dept.designations.length === 1) {
-        await axios.delete(`${baseUrl}/department/${deptName}`);
+        await axios.delete(`http://192.168.22.247/us/api/Department/department/${deptName}`);
         alert("Only designation deleted, so department also removed.");
       } else {
-        await axios.delete(`${baseUrl}/designation/${designationName}`);
+        await axios.delete(`http://192.168.22.247/us/api/Department/designation/${designationName}`);
         alert("Designation deleted.");
       }
 
       fetchDepartments();
     } catch (err) {
       console.error("Error deleting designation:", err);
-    }
-  };
-
-  const checkApiStatus = async () => {
-    try {
-      const res = await axios.get(`${baseUrl}/create`, {
-        timeout: 5000,
-      });
-      if (res.status === 200) {
-        alert("✅ API is running successfully!");
-      } else {
-        alert("⚠️ API responded with status: " + res.status);
-      }
-    } catch (error) {
-      console.error("API check failed:", error.message);
-      alert("❌ API is not reachable.");
     }
   };
 
@@ -120,7 +148,6 @@ export default function Signup() {
           Add Department & Designation
         </h2>
 
-        {/* Form */}
         <form
           onSubmit={handleSubmit}
           className="flex flex-col md:flex-row gap-4 mb-4"
@@ -149,16 +176,6 @@ export default function Signup() {
           </button>
         </form>
 
-        {/* Check API Status */}
-        {/* <button
-          type="button"
-          onClick={checkApiStatus}
-          className="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition mb-6"
-        >
-          Check API Status
-        </button> */}
-
-        {/* Department List */}
         <div>
           <h3 className="text-lg font-semibold mb-2">Departments</h3>
           {departments.length > 0 ? (
