@@ -4,6 +4,5 @@
   "functions": {},
   "rewrites": [],
   "env": {},
-  "installCommand": "npm install",
-  "nodeVersion": "18.x"
+  "installCommand": "npm install"
 }
