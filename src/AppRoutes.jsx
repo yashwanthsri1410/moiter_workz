@@ -3,26 +3,27 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import Signup from "./pages/Signup";
 import Usercreation from "./pages/Usercreation";
-import Deptdesig from "./pages/deptdesig";
-import Modulescreen from "./pages/module&screen";
-import EmployeeRegistration from "./pages/employeeregistration";
 import Dashboard from "./pages/MainDashboard";
 import Employeelogin from "./pages/employeelogin";
-import SendRequestInfo from "./components/SendRequestInfo";
 import CustomerKYCForm from "./pages/CustomerKYCForm";
 import Makerscreation from "./pages/makerscreation";
-import Checkersapproval from "./pages/checkersapproval";
-import DepartmentCreation from "./pages/departmentCreation";
-import DesignationtCreation from "./pages/designationCreation";
-import ModuleCreation from "./pages/ModuleCreation";
 import ScreenCreation from "./pages/screenCreation";
 import Profile from "./pages/profile";
-import ProtectedRoute from "./auth/ProtectedRoute"; // ⬅️ new
+import ProtectedRoute from "./auth/ProtectedRoute";
 import EmployeeApproval from "./pages/employeeapproval";
 import CustomerApproval from "./pages/customerapproval";
 import Rolecreationfrom from "./pages/rolecreation"
 import EmployeeCreationForm from "./pages/employeecreation";
 import Productcreation from "./pages/productcreation";
+import Productconfiguration from "./pages/productConfiguration";
+import ProductconfigurationUpdation from "./pages/productConfigurationUpdate"
+import DistributionPartnerCreate from "./pages/DistributionPartnerCreate";
+import Infarmonitor from "./pages/inframonitor";
+import ProductcreationApproval from "./pages/productcreationapproval"
+import MakersDashboard from "./pages/makersDashboard";
+import PartnersApproval from "./pages/partnersapproval";
+import SuperuserDashboard from "./pages/superuserDashboard";
+import CheckersDashboardLayout from "./pages/checkersdashboard";
 
 function AppRoutes({ setRole }) {
   return (
@@ -41,30 +42,29 @@ function AppRoutes({ setRole }) {
         }
       />
       <Route
-        path="/Employee-Registration"
+        path="/Makers-dashboard"
         element={
           <ProtectedRoute allowedRoles={[4]}>
-            <EmployeeRegistration />
+            <MakersDashboard />
           </ProtectedRoute>
         }
       />
-       <Route
+      <Route
         path="/Employee-creation"
         element={
-          <ProtectedRoute allowedRoles={[1,4]}>
+          <ProtectedRoute allowedRoles={[1, 4]}>
             <EmployeeCreationForm />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/checkers-approval"
+        path="/productcreation-approval"
         element={
           <ProtectedRoute allowedRoles={[3]}>
-            <Checkersapproval />
+            <ProductcreationApproval />
           </ProtectedRoute>
         }
       />
-
       <Route
         path="/Employee-Approval"
         element={
@@ -73,12 +73,28 @@ function AppRoutes({ setRole }) {
           </ProtectedRoute>
         }
       />
-
        <Route
+        path="/Checkers-dashboard"
+        element={
+          <ProtectedRoute allowedRoles={[3]}>
+            <CheckersDashboardLayout />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
         path="/Customer-Approval"
         element={
           <ProtectedRoute allowedRoles={[3]}>
             <CustomerApproval />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/Partners-approval"
+        element={
+          <ProtectedRoute allowedRoles={[3]}>
+            <PartnersApproval />
           </ProtectedRoute>
         }
       />
@@ -92,7 +108,15 @@ function AppRoutes({ setRole }) {
           </ProtectedRoute>
         }
       />
-       <Route
+      <Route
+        path="/Infarmonitor"
+        element={
+          <ProtectedRoute allowedRoles={[1]}>
+            <Infarmonitor />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/Role-creation"
         element={
           <ProtectedRoute allowedRoles={[1]}>
@@ -101,26 +125,59 @@ function AppRoutes({ setRole }) {
         }
       />
       <Route
-        path="/deptdesig"
+        path="/Product-creation"
         element={
-          <ProtectedRoute allowedRoles={[1]}>
-            <Deptdesig />
+          <ProtectedRoute allowedRoles={[4]}>
+            <Productcreation />
           </ProtectedRoute>
         }
       />
       <Route
-        path="/Modulescreen"
+        path="/distributionPartner-creation"
         element={
-          <ProtectedRoute allowedRoles={[1]}>
-            <Modulescreen />
+          <ProtectedRoute allowedRoles={[4]}>
+            <DistributionPartnerCreate />
           </ProtectedRoute>
         }
       />
-       <Route
+      <Route
         path="/Product-creation"
         element={
-          <ProtectedRoute allowedRoles={[1]}>
+          <ProtectedRoute allowedRoles={[4]}>
             <Productcreation />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/Product-configuration"
+        element={
+          <ProtectedRoute allowedRoles={[1]}>
+            <Productconfiguration />
+          </ProtectedRoute>
+        }
+      />
+
+       <Route
+        path="/Superuser-workplace"
+        element={
+          <ProtectedRoute allowedRoles={[1]}>
+            <SuperuserDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/Product-configuration-updation"
+        element={
+          <ProtectedRoute allowedRoles={[1]}>
+            <ProductconfigurationUpdation />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/Distribution-Partner"
+        element={
+          <ProtectedRoute allowedRoles={[4]}>
+            <DistributionPartnerCreate />
           </ProtectedRoute>
         }
       />
@@ -137,30 +194,6 @@ function AppRoutes({ setRole }) {
         element={
           <ProtectedRoute allowedRoles={[1]}>
             <Makerscreation />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/Department-Creation"
-        element={
-          <ProtectedRoute allowedRoles={[1]}>
-            <DepartmentCreation />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/Designation-Creation"
-        element={
-          <ProtectedRoute allowedRoles={[1]}>
-            <DesignationtCreation />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/Module-Creation"
-        element={
-          <ProtectedRoute allowedRoles={[1]}>
-            <ModuleCreation />
           </ProtectedRoute>
         }
       />

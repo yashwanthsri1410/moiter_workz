@@ -13,7 +13,7 @@ const EmployeeCreationForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [statusId] = useState(1);
-  const [userType] = useState(2);
+  const [userType, setusertype] = useState();
   const [createdBy] = useState("admin");
   const [deptId, setDeptId] = useState("");
   const [designationId, setDesignationId] = useState("");
@@ -75,7 +75,7 @@ const EmployeeCreationForm = () => {
       statusId,
       roleAccessId: parseInt(roleAccessId),
       createdBy,
-      userType,
+      userType: parseInt(userType),
       metadata: {
         ipAddress: ip || "0.0.0.0",
         userAgent,
@@ -106,7 +106,6 @@ const EmployeeCreationForm = () => {
         },
       },
     };
-
     try {
       await axios.post(
         "http://192.168.22.247:5229/ums/api/UserManagement/createEmployee",
@@ -192,101 +191,124 @@ const EmployeeCreationForm = () => {
 
   return (
     <>
-      <div className="min-h-screen flex items-center justify-center bg-[#0d0d28] p-6">
-        <div className="w-full max-w-md bg-[#11112b] rounded-xl shadow-lg p-8">
+      <div className="page-container">
+        <div className="login-container">
+          {/* Glow Corners */}
+          {["top-0 left-0", "top-0 right-0", "bottom-0 left-0", "bottom-0 right-0"].map((pos, i) => {
+            const isRight = pos.includes("right-0");
+            return (
+              <div
+                key={i}
+                className={`glow-corner ${pos} ${isRight ? "glow-corner-right" : "glow-corner-left"}`}
+              />
+            );
+          })}
+
           <img src={logo} alt="Logo" className="w-14 h-14 mx-auto mb-6" />
-          <h2 className="text-white text-center font-semibold text-xl mb-6">LogIn</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="text"
-              placeholder="Employee ID"
-              value={empId}
-              onChange={e => setEmpId(e.target.value)}
-              className="w-full bg-[#1b1b3b] border border-[#333] text-white rounded-md px-4 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
-            {errors.empId && <p className="text-red-500 text-sm">{errors.empId}</p>}
+          <h2 className="form-heading">Employee Creation</h2>
+          <form onSubmit={handleSubmit} className="max-w-md mx-auto bg-[#0c0f11] p-6 rounded-xl shadow-lg border border-gray-800 space-y-5">
+            {/* Heading */}
+            <div className="text-center">
+              <h2 className="text-teal-400 text-xl font-semibold">User Creation</h2>
+              <p className="text-gray-400 text-sm">Add new team member with role-based access</p>
+            </div>
 
-            <input
-              type="text"
-              placeholder="Name"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              className="w-full bg-[#1b1b3b] border border-[#333] text-white rounded-md px-4 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
-            {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+            {/* Full Name */}
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Full Name *</label>
+              <input
+                type="text"
+                placeholder="Enter user's full name"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                className="w-full bg-[#10141a] text-white px-3 py-2 rounded-md border border-teal-900 focus:outline-none focus:border-teal-500"
+              />
+              {errors.name && <p className="text-red-400 text-xs mt-1">{errors.name}</p>}
+            </div>
 
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              className="w-full bg-[#1b1b3b] border border-[#333] text-white rounded-md px-4 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+            {/* Email */}
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Email Address *</label>
+              <input
+                type="email"
+                placeholder="Enter user's email address"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                className="w-full bg-[#10141a] text-white px-3 py-2 rounded-md border border-teal-900 focus:outline-none focus:border-teal-500"
+              />
+              <p className="text-gray-500 text-xs">Password will be sent to this email</p>
+              {errors.email && <p className="text-red-400 text-xs mt-1">{errors.email}</p>}
+            </div>
 
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              className="w-full bg-[#1b1b3b] border border-[#333] text-white rounded-md px-4 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
-            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
-
-            <select
-              value={deptId}
-              onChange={e => { setDeptId(e.target.value); setDesignationId(""); }}
-              className="w-full bg-[#1b1b3b] border border-[#333] text-white rounded-md px-4 py-2 focus:outline-none"
-            >
-              <option value="">Select Department</option>
-              {uniqueDepts.map(d => (
-                <option key={d.deptId} value={d.deptId}>{d.deptName}</option>
-              ))}
-            </select>
-
-            <select
-              value={designationId}
-              onChange={e => setDesignationId(e.target.value)}
-              className="w-full bg-[#1b1b3b] border border-[#333] text-white rounded-md px-4 py-2 focus:outline-none"
-              disabled={!deptId}
-            >
-              <option value="">Select Designation</option>
-              {uniqueDesigns.map(d => (
-                <option key={d.designationId} value={d.designationId}>{d.designationDesc}</option>
-              ))}
-            </select>
-            <Select
-              styles={customStyles}
-              options={uniqueRoles}
-              onChange={handleRoleChange}
-              placeholder="Select Role Description"
-              className="w-full"
-              isClearable
-            />
-
-            {Object.keys(selectedRoleScreens).length > 0 && (
-              <div className="bg-[#1b1b3b] text-white border border-[#333] rounded-md p-4">
-                <h4 className="font-semibold mb-2 text-white">Accessible Modules & Screens:</h4>
-                {Object.entries(selectedRoleScreens).map(([module, screens], idx) => (
-                  <div key={idx} className="mb-2">
-                    <h5 className="text-purple-400 font-bold">{module}</h5>
-                    <ul className="list-disc list-inside text-sm">
-                      {screens.map((screen, i) => (
-                        <li key={i}>{screen}</li>
-                      ))}
-                    </ul>
-                  </div>
+            {/* Department */}
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Department *</label>
+              <select
+                value={deptId}
+                onChange={e => { setDeptId(e.target.value); setDesignationId(""); }}
+                className="w-full bg-[#10141a] text-white px-3 py-2 rounded-md border border-teal-900 focus:outline-none focus:border-teal-500"
+              >
+                <option value="">Select department</option>
+                {uniqueDepts.map(d => (
+                  <option key={d.deptId} value={d.deptId}>{d.deptName}</option>
                 ))}
-              </div>
-            )}
+              </select>
+            </div>
 
+            {/* Designation */}
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Designation *</label>
+              <select
+                value={designationId}
+                onChange={e => setDesignationId(e.target.value)}
+                className="w-full bg-[#10141a] text-white px-3 py-2 rounded-md border border-teal-900 focus:outline-none focus:border-teal-500"
+                disabled={!deptId}
+              >
+                <option value="">Select designation</option>
+                {uniqueDesigns.map(d => (
+                  <option key={d.designationId} value={d.designationId}>{d.designationDesc}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Role */}
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Role *</label>
+              <Select
+                className="react-select-container"
+                classNamePrefix="react-select"
+                styles={customStyles}
+                options={uniqueRoles}
+                onChange={handleRoleChange}
+                placeholder="Select role"
+                isClearable
+              />
+            </div>
+
+            {/* User Type */}
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">User Type *</label>
+              <select
+                onChange={e => { setusertype(e.target.value) }}
+                className="w-full bg-[#10141a] text-white px-3 py-2 rounded-md border border-teal-900 focus:outline-none focus:border-teal-500"
+              >
+                <option value="">Select user type</option>
+                <option value="1">Super User</option>
+                <option value="4">Maker</option>
+                <option value="3">Checker</option>
+                <option value="5">Infra manager</option>
+              </select>
+            </div>
+
+            {/* Submit button */}
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-2 rounded-md hover:opacity-90 transition"
+              className="w-full bg-teal-600 hover:bg-teal-500 text-white py-2 rounded-md shadow-[0_0_10px_rgba(0,255,200,0.6)] hover:shadow-[0_0_20px_rgba(0,255,200,0.9)] transition"
             >
-              Submit
+              + Create User
             </button>
           </form>
+
         </div>
       </div>
 

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import usePublicIp from "../hooks/usePublicIp";
-import { Pencil, Search, Plus, Users } from "lucide-react";
+import { Pencil, Search, Plus, Users, UserCog, ArrowLeft } from "lucide-react";
 
-const RoleAccessForm = () => {
+const RoleAccessForm = ({ onBack }) => {
   const [modulesData, setModulesData] = useState([]);
   const [selectedModules, setSelectedModules] = useState([]);
   const [screensPerModule, setScreensPerModule] = useState({});
@@ -169,40 +169,52 @@ const RoleAccessForm = () => {
   return (
     <div className="p-6 space-y-6 min-h-screen text-white">
       {/* Header */}
-      <div className="flex items-center justify-between w-full p-4 rounded-xl">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl border border-[#00f5a0]/30 shadow-[0_0_12px_#00f5a022]">
-            <Users className="text-[#00f5a0] w-5 h-5" />
+      <div className="form-header">
+        <div className="back-title">
+          <div className="header-left">
+            <div className="flex items-center gap-[10px]">
+              <button className="header-icon-btn" onClick={onBack}>
+                <ArrowLeft className="text-[#00d4aa] w-4 h-4" />
+              </button>
+
+              <div className="header-icon-box">
+                <Users className="text-[#00d4aa] w-4 h-4" />
+              </div>
+            </div>
+            <div>
+              <h1 className="header-title">Role Access Management</h1>
+              <p className="header-subtext">Assign modules and screens to roles</p>
+            </div>
+
           </div>
-          <div>
-            <h1 className="text-[#00f5a0] font-semibold text-lg">
-              Role Access Management
-            </h1>
-            <p className="text-gray-400 text-sm">
-              Assign modules and screens to roles
-            </p>
+
+          <div className="flex items-center gap-4">
+
+
+            {/* Active count */}
+            <button className="btn-count">
+              <span className="w-2 h-2 rounded-full bg-[#04CF6A]  plus"></span>
+              {roleDescriptions.length} Active roles
+            </button>
+
+
           </div>
         </div>
-
-        <div className="flex items-center gap-4">
+        <div className="search-toggle">
           {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-3 text-gray-400 w-4 h-4" />
+          <div className="search-box">
+            <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search roles..."
-              className="h-10 w-64 bg-[#0f1114] pl-10 pr-3 text-sm text-gray-200 rounded-xl border border-[#00f5a0]/25 focus:border-[#00f5a0]/70 focus:outline-none transition-all shadow-[0_0_12px_#00f5a022]"
+              className="search-input"
             />
           </div>
-
           {/* Toggle form */}
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="px-4 py-2 rounded-xl bg-[#0f1114] border border-[#00f5a0]/30 text-[#00f5a0] text-sm flex items-center gap-2 hover:border-[#00f5a0]/70 transition-all shadow-[0_0_12px_#00f5a022]"
-          >
-            <Plus className="w-4 h-4" />
+          <button onClick={() => setShowForm(!showForm)} className="btn-toggle">
+            <Plus className="w-3 h-3" />
             {showForm ? "Close Form" : "Add Role"}
           </button>
         </div>
@@ -210,33 +222,24 @@ const RoleAccessForm = () => {
 
       {/* Create Form */}
       {showForm && (
-        <form
-          onSubmit={handleSubmit}
-          className="p-6 rounded-xl border border-[#00f5a0]/20 shadow-[0_0_18px_#00f5a022] bg-[#0f1114] space-y-4"
-        >
-          <h2 className="text-[#00f5a0] font-semibold text-lg">
-            Create New Role
-          </h2>
+        <form onSubmit={handleSubmit} className="department-form">
+          <h2 className="form-title">Create New Role</h2>
 
           <div>
-            <label className="block text-sm text-gray-300 mb-2">
-              Role Description
-            </label>
+            <label className="form-label">Role Description</label>
             <input
               type="text"
               value={roleDescription}
               onChange={(e) => setRoleDescription(e.target.value)}
               placeholder="Enter role description..."
-              className="w-full h-10 bg-[#111827] border border-[#00f5a0]/25 text-gray-200 rounded-md px-3 focus:border-[#00f5a0]/70 focus:outline-none shadow-[0_0_10px_#00f5a022]"
+              className="form-input"
               required
             />
           </div>
 
           {/* Modules */}
-          <div>
-            <label className="block text-sm text-gray-300 mb-2">
-              Select Modules
-            </label>
+          <div className="mt-[15px]">
+            <label className="form-label">Select Modules</label>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {uniqueModules.map((module) => (
                 <label
@@ -247,7 +250,7 @@ const RoleAccessForm = () => {
                     type="checkbox"
                     checked={selectedModules.includes(module)}
                     onChange={() => handleModuleCheckboxChange(module)}
-                    className="accent-[#00f5a0]"
+                    className="accent-[#00d4aa]"
                   />
                   {module}
                 </label>
@@ -258,9 +261,7 @@ const RoleAccessForm = () => {
           {/* Screens */}
           {selectedModules.map((module) => (
             <div key={module}>
-              <label className="block text-sm text-gray-300 mb-2">
-                Screens for {module}
-              </label>
+              <label className="form-label">Screens for {module}</label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {(screensPerModule[module] || []).map((screen) => (
                   <label
@@ -269,9 +270,11 @@ const RoleAccessForm = () => {
                   >
                     <input
                       type="checkbox"
-                      checked={selectedScreensPerModule[module]?.includes(screen) || false}
+                      checked={
+                        selectedScreensPerModule[module]?.includes(screen) || false
+                      }
                       onChange={() => handleScreenCheckboxChange(module, screen)}
-                      className="accent-[#00f5a0]"
+                      className="accent-[#00d4aa]"
                     />
                     {screen}
                   </label>
@@ -288,10 +291,7 @@ const RoleAccessForm = () => {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              className="px-4 py-2 rounded-lg bg-[#0f1114] border border-[#00f5a0]/40 text-[#00f5a0] text-sm hover:border-[#00f5a0]/70 shadow-[0_0_12px_#00f5a022]"
-            >
+            <button type="submit" className="btn-toggle">
               Create Role
             </button>
           </div>
@@ -309,12 +309,12 @@ const RoleAccessForm = () => {
           </span>
         </div>
 
-        <div className="overflow-hidden rounded-lg border border-gray-800">
+        <div className="table-wrapper">
           <table className="w-full text-left">
-            <thead className="bg-[#101316] text-teal-400 text-sm">
+            <thead className="table-head">
               <tr>
-                <th className="px-4 py-3">Role Description</th>
-                <th className="px-4 py-3">Actions</th>
+                <th className="table-cell">Role Description</th>
+                <th className="table-cell-icon color-[#00d4aa] flex gap-4">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800 text-sm">
@@ -326,25 +326,22 @@ const RoleAccessForm = () => {
                       .includes(searchTerm.toLowerCase())
                   )
                   .map((role) => (
-                    <tr
-                      key={role.roleAccessId}
-                      className="hover:bg-[#161A1D] transition-colors"
-                    >
-                      <td className="px-4 py-3 text-gray-200">
+                    <tr key={role.roleAccessId} className="table-row">
+                      <td className="table-cell-name">
                         {editRole?.roleAccessId === role.roleAccessId ? (
                           <input
                             type="text"
                             value={editedRoleName}
                             onChange={(e) => setEditedRoleName(e.target.value)}
-                            className="bg-[#111827] border border-[#00f5a0]/30 rounded px-2 py-1 text-sm text-gray-200 focus:border-[#00f5a0]/70 focus:outline-none"
+                            className="form-input"
                           />
                         ) : (
-                          role.roleDescription
+                          <div className="flex items-center gap-1 "> <UserCog className="w-4 h-4 text-teal-400 " />{role.roleDescription}</div>
                         )}
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="table-cell-icon flex gap-4">
                         {editRole?.roleAccessId === role.roleAccessId ? (
-                          <div className="flex gap-4">
+                          <>
                             <button
                               onClick={handleUpdateRole}
                               className="text-teal-400 hover:underline"
@@ -357,7 +354,7 @@ const RoleAccessForm = () => {
                             >
                               Cancel
                             </button>
-                          </div>
+                          </>
                         ) : (
                           <button
                             onClick={() => {
@@ -374,10 +371,7 @@ const RoleAccessForm = () => {
                   ))
               ) : (
                 <tr>
-                  <td
-                    colSpan={2}
-                    className="px-4 py-6 text-center text-gray-400"
-                  >
+                  <td colSpan={2} className="table-cell table-cell-muted text-center">
                     No roles found.
                   </td>
                 </tr>
@@ -387,6 +381,7 @@ const RoleAccessForm = () => {
         </div>
       </div>
     </div>
+
   );
 };
 

@@ -164,7 +164,6 @@ const CustomerKYCForm = () => {
     }
   };
   const inputStyle = "w-full bg-[#1b1b3b] text-white border border-[#444] rounded px-4 py-2 placeholder-gray-400 focus:outline-none focus:border-purple-500";
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0d0d28] p-6">
       <div className="w-full max-w-4xl bg-[#11112b] rounded-xl shadow-lg p-8">

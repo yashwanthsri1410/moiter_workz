@@ -1,163 +1,252 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import backgroundImg from "../assets/background.jpeg";
-import logo from "../assets/favicon.png";
 import usePublicIp from "../hooks/usePublicIp";
+import {
+  Eye,
+  EyeOff,
+  Lock,
+  User,
+  AlertTriangle,
+  ArrowRight,
+  Shield,
+  Fingerprint,
+} from "lucide-react";
+import logo from "../assets/logo.png";
+import "../styles/styles.css"
 
-const Employeelogin = ({ setRole }) => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [showPassword, setShowPassword] = useState(false);
-    const [headersError, setheadersError] = useState("Login error");
-    // console.log("???????????",headersError)
-    const user_name = localStorage.getItem("username");
-    const navigate = useNavigate();
-    const ip = usePublicIp();
-    const getMetadata = () => {
-        const timestamp = new Date().toISOString();
+const Employeelogin = () => {
+  const [formData, setFormData] = useState({ username: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [particles, setParticles] = useState([]);
 
-        return {
-            ipAddress: ip || "127.0.0.1",
-            userAgent: navigator.userAgent,
-            headers: headersError ? headersError : JSON.stringify({ "content-type": "application/json" }),
-            channel: "WEB",
-            auditMetadata: {
-                createdBy: username,
-                createdDate: timestamp,
-                modifiedBy: username,
-                modifiedDate: timestamp,
-                header: {
-                    additionalProp1: {
-                        options: { propertyNameCaseInsensitive: true },
-                        parent: "string",
-                        root: "string",
-                    },
-                    additionalProp2: {
-                        options: { propertyNameCaseInsensitive: true },
-                        parent: "string",
-                        root: "string",
-                    },
-                    additionalProp3: {
-                        options: { propertyNameCaseInsensitive: true },
-                        parent: "string",
-                        root: "string",
-                    }
-                }
-            }
-        };
+  const navigate = useNavigate();
+  const ip = usePublicIp();
+
+  // Floating particles
+  useEffect(() => {
+    const newParticles = [];
+    for (let i = 0; i < 23; i++) {
+      newParticles.push({
+        id: i,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        size: Math.random() * 2 + 1,
+        opacity: Math.random() * 0.3 + 0.1,
+        speed: Math.random() * 0.5 + 0.2,
+        direction: Math.random() * Math.PI * 2,
+      });
+    }
+    setParticles(newParticles);
+
+    const interval = setInterval(() => {
+      setParticles((prev) =>
+        prev.map((p) => ({
+          ...p,
+          x: (p.x + Math.cos(p.direction) * p.speed) % 100,
+          y: (p.y + Math.sin(p.direction) * p.speed) % 100,
+          direction: p.direction + (Math.random() - 0.5) * 0.1,
+        }))
+      );
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
+
+  const getMetadata = () => {
+    const timestamp = new Date().toISOString();
+    return {
+      ipAddress: ip || "127.0.0.1",
+      userAgent: navigator.userAgent,
+      headers: JSON.stringify({ "content-type": "application/json" }),
+      channel: "WEB",
+      auditMetadata: {
+        createdBy: formData.username,
+        createdDate: timestamp,
+        modifiedBy: formData.username,
+        modifiedDate: timestamp,
+      },
     };
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        const metadata = getMetadata();
-        try {
-            const response = await axios.post(
-                "http://192.168.22.247:5229/ums/api/UserManagement/user_login",
-                {
-                    username,
-                    password,
-                    metadata
-                },
-                {
-                    headers: { "Content-Type": "application/json" },
+    if (!formData.username || !formData.password) {
+      setError("Please enter both username and password");
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://192.168.22.247:5229/ums/api/UserManagement/user_login",
+        {
+          username: formData.username,
+          password: formData.password,
+          metadata: getMetadata(),
+        },
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      const user = response.data.message;
+      if (!user) {
+        setError("Login failed. User not found.");
+        setIsLoading(false);
+        return;
+      }
+      localStorage.setItem("username", user.username);
+      localStorage.setItem("userType", user.userType);
+
+      switch (user.userType) {
+        case 1:
+          navigate("/superuser-workplace");
+          break;
+        case 4:
+          navigate("/Makers-dashboard");
+          break;
+        case 3:
+          navigate("/Checkers-dashboard");
+          break;
+        default:
+          navigate("/Makers-creation");
+          break;
+      }
+    } catch (err) {
+      console.error("Login error:", err.response?.data || err.message);
+      setError(err.response?.data?.message || "Invalid username or password.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (error) setError("");
+  };
+  return (
+    <div className="login-page">
+      {/* Particles */}
+      <div className="particles">
+        {particles.map((p) => (
+          <div
+            key={p.id}
+            className="particle"
+            style={{
+              left: `${p.x}%`,
+              top: `${p.y}%`,
+              width: `${p.size * 1}px`,
+              height: `${p.size * 1}px`,
+              borderRadius: "50%",
+              backgroundColor: "#10B981",
+              opacity: p.opacity + 5,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Container */}
+      <div className="login-box">
+        <div className="logo">
+          <img src={logo} alt="Logo" />
+        </div>
+
+        <div className="login-card ">
+
+          {/* Neon corners */}
+          <div className="corner tl"></div>
+          <div className="corner tr"></div>
+          <div className="corner bl"></div>
+          <div className="corner br"></div>
+          <span className="corner-bottom-left"></span>
+          <span className="corner-bottom-right"></span>
+          <div className="login-header">
+            <div className="secure-badge">
+              <Shield className="icon" />
+              <span>Secure Access</span>
+              <div className="dots">
+                <div className="dot"></div>
+                <div className="dot"></div>
+                <div className="dot"></div>
+              </div>
+            </div>
+            <p>Enter your credentials to access the dashboard</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="login-form">
+            {/* Username */}
+            <div className="form-group">
+              <label>
+                <User className="form-icon" /> Username
+              </label>
+              <input
+                type="text"
+                placeholder="Enter your username"
+                value={formData.username}
+                onChange={(e) =>
+                  setFormData({ ...formData, username: e.target.value })
                 }
-            );
+                disabled={isLoading}
+              />
+            </div>
 
-            const user = response.data.message;
-            if (!user) {
-                alert("Login failed. User not found.");
-                return;
-            }
+            {/* Password */}
+            <div className="form-group">
+              <label>
+                <Lock className="form-icon" /> Password
+              </label>
+              <div className="password-wrapper">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                  disabled={isLoading}
+                />
+                <button
+                  type="button"
+                  className="toggle-password"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
 
-            localStorage.setItem("username", user.name);
-            localStorage.setItem("userType", user.userType);
+            {/* Error */}
+            {error && (
+              <div className="error-msg">
+                <AlertTriangle className="icon" />
+                {error}
+              </div>
+            )}
 
-            switch (user.userType) {
-                case 1:
-                    navigate("/Dashboard");
-                    break;
-                case 4:
-                    navigate("/Employee-Registration");
-                    break;
-                case 3:
-                    navigate("/checkers-approval");
-                    break;
-                default:
-                    alert("/Makers-creation");
-                    break;
-            }
-        } catch (error) {
-            console.error("Login error:", error.response?.data || error.message);
-            setheadersError("Login error" + error.response?.data || error.message);
-            alert(error.response?.data?.message || "Invalid username or password.");
-        }
-    };
+            {/* Submit */}
+            <button type="submit" className="login-btn" disabled={isLoading}>
+              {isLoading ? (
+                "Authenticating..."
+              ) : (
+                <>
+                  <Fingerprint className="login-btn-icon" /> Login
+                  <ArrowRight className="login-btn-icon " />
+                </>
+              )}
+            </button>
+          </form>
 
-    return (
-       <div className="min-h-screen bg-[#0d0f24] flex items-center justify-center px-4">
-  <div className="w-full max-w-md bg-[#0f122d] rounded-xl shadow-lg p-8 text-white relative">
-    
-    {/* Centered Logo */}
-    <div className="flex justify-center mb-4">
-      <img src={logo} alt="Logo" className="w-10 h-10" />
+          {/* Footer */}
+          <div className="login-footer">
+            <span> SSL Secured</span>
+            <span > 256-bit Encryption</span>
+          </div>
+        </div>
+      </div>
     </div>
-
-    {/* Centered Login Form */}
-    <div className="text-center mt-2 mb-4">
-      <h2 className="text-2xl font-bold mb-2">LogIn</h2>
-    </div>
-
-    {/* Login Form */}
-    <form onSubmit={handleLogin} className="space-y-4">
-      <div>
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Your username"
-          className="w-full px-4 py-2 rounded-md bg-[#1a1d3b] border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-          required
-        />
-      </div>
-
-      <div className="relative">
-        <input
-          type={showPassword ? "text" : "password"}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Your Password"
-          className="w-full px-4 py-2 rounded-md bg-[#1a1d3b] border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-          required
-        />
-        <span
-          onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 top-2.5 text-sm text-gray-400 cursor-pointer"
-        >
-          {showPassword ? "Hide" : "Show"}
-        </span>
-      </div>
-
-      <div className="flex justify-between items-center text-sm text-gray-400">
-        <label className="flex items-center">
-          <input type="checkbox" className="mr-2 accent-purple-500" />
-          Remember me
-        </label>
-        {/* <a href="#" className="hover:text-purple-500">Forgot password?</a> */}
-      </div>
-
-      <button
-        type="submit"
-        className="w-full py-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 font-semibold text-white shadow-md hover:opacity-90"
-      >
-        Submit
-      </button>
-    </form>
-
-  </div>
-</div>
-
-    );
+  );
 };
 
 export default Employeelogin;

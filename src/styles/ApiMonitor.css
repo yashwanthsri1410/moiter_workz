@@ -1,0 +1,110 @@
+.galaxy-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: #0b1023;
+  overflow: hidden;
+}
+
+.galaxy-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.line {
+  stroke-width: 2;
+  stroke-opacity: 0.7;
+}
+
+.line.up {
+  stroke: rgba(0, 255, 128, 0.7);
+  filter: drop-shadow(0 0 6px rgba(0, 255, 128, 0.9));
+}
+
+.line.down {
+  stroke: rgba(255, 0, 64, 0.7);
+  filter: drop-shadow(0 0 6px rgba(255, 0, 64, 0.9));
+}
+
+.database-node {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.database-node.up {
+  background: rgba(0, 255, 128, 0.1);
+  border: 3px solid #00ff80;
+  box-shadow: 0 0 25px #00ff80;
+}
+
+.database-node.down {
+  background: rgba(255, 0, 64, 0.1);
+  border: 3px solid #ff0040;
+  box-shadow: 0 0 25px #ff0040;
+}
+
+.db-icon {
+  font-size: 30px;
+  color: white;
+}
+
+.service-card {
+  position: absolute;
+  width: 220px;
+  padding: 15px;
+  border-radius: 12px;
+  background: rgba(20, 28, 50, 0.95);
+  transform: translate(-50%, -50%);
+  color: white;
+  box-shadow: 0 0 25px rgba(0, 255, 128, 0.1);
+}
+
+.service-card.up {
+  border: 2px solid #00ff80;
+  box-shadow: 0 0 25px rgba(0, 255, 128, 0.6);
+}
+
+.service-card.down {
+  border: 2px solid #ff0040;
+  box-shadow: 0 0 25px rgba(255, 0, 64, 0.6);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.service-icon {
+  font-size: 20px;
+}
+
+.card-body {
+  margin-top: 10px;
+}
+
+.card-body p {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.card-body h2 {
+  margin: 5px 0;
+}
+
+.extra-info {
+  font-size: 11px;
+  opacity: 0.6;
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+}

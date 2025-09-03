@@ -1,0 +1,67 @@
+.bg-custom {
+  min-height: 100vh;
+  background-image: radial-gradient(circle, #091c18 50%, rgba(34, 34, 34, 0.07) 100%), url('/src/assets//background.svg');
+  background-repeat: repeat;
+  background-size: auto, auto;
+  background-color: #091c18;
+}
+
+/* ----------header----------- */
+
+.header-custom {
+  background-color: #091c18;
+  padding: 1rem 1.5rem; /* py-4 px-6 */
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+
+/* ----------sidebar----------- */
+
+.aside-custom {
+  position: fixed;
+  top: 100px;
+  left: 50px;
+  z-index: 20;
+  height: 600px;
+  overflow-y: auto;
+  transition: all 0.3s ease-in-out;
+  padding: 0.75rem; /* p-3 */
+  box-shadow: inset 0 2px 4px rgba(0, 255, 195, 0.125); /* shadow-inner shadow-[#00ffc320] */
+  backdrop-filter: blur(8px); /* backdrop-blur-md */
+  background-color: rgba(9, 28, 24, 0.7); /* bg-[#091c18]/70 */
+  background-image: radial-gradient(
+      circle,
+      #091c18 0%,
+      rgba(255, 255, 255, 0.075) 100%
+    ),
+    url('/src/assets//background.svg');
+  background-repeat: repeat;
+  background-size: auto, auto;
+}
+
+/* Collapsed / expanded width handling */
+.aside-collapsed {
+  width: 4rem; /* w-16 */
+}
+.aside-expanded,
+.aside-custom:hover {
+  width: 16rem; /* w-64 */
+}
+
+/* Optional: custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 195, 0.2);
+  border-radius: 4px;
+}
