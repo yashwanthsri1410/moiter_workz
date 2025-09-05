@@ -4,82 +4,7 @@ import axios from "axios";
 import usePublicIp from "../hooks/usePublicIp";
 import "../styles/styles.css"
 // import { PencilIcon, Plus,SquarePen  } from "lucide-react";
-const getDefaultForm = (ip, username) => ({
-    programType: "",
-    subCategory: "",
-    programDescription: "",
-    issuerType: "Bank",
-    authorizationRequired: false,
-    validityMinDays: 0,
-    validityMaxDays: 0,
-    reloadable: false,
-    transferable: false,
-    autoBlockOnExpiry: false,
-    allowPartialKycActivation: false,
-    currency: "INR",
-    multiUseAllowed: false,
-    minBalance: 0,
-    maxBalance: 0,
-    maxLoadAmount: 0,
-    dailySpendLimit: 0,
-    monthlySpendLimit: 0,
-    yearlySpendLimit: 0,
-    txnCountLimitPerDay: 0,
-    refundLimit: 0,
-    atmWithdrawalEnabled: false,
-    maxCashWithdrawalAmount: 0,
-    coBrandingAllowed: false,
-    validityPeriodMonths: 0,
-    gracePeriodDays: 0,
-    autoRenewal: false,
-    closureAllowedPostExpiry: false,
-    kycRequired: false,
-    kycLevelRequired: "",
-    aadhaarRequired: false,
-    panRequired: false,
-    additionalKycDocsNeeded: false,
-    amlCftApplicable: false,
-    riskProfile: "",
-    pepCheckRequired: false,
-    blacklistCheckRequired: false,
-    ckycUploadRequired: false,
-    domesticTransferAllowed: false,
-    crossBorderAllowed: false,
-    allowedChannels: [],
-    allowedMccCodes: undefined,
-    geoRestrictions: [],
-    merchantWhitelistOnly: false,
-    blockOnFailedKycAttempts: false,
-    regulatoryReportingRequired: false,
-    monthlyBalanceReportRequired: false,
-    auditTrailEnabled: false,
-    transactionReportableFlags: "{\"payroll\": true}",
-    customerAgeMin: 0,
-    customerAgeMax: 0,
-    eligibleCustomerTypes: [],
-    employmentTypesAllowed: [],
-    partnerApiEnabled: false,
-    partnerSettlementModel: "Float",
-    cashLoadingLimit: 0,
-    cardType: "",
-    expiryWarningDays: 0,
-    expiryPeriod: 0,
-    dormantPeriodDays: 0,
-    topupMethod: "",
-    metadata: {
-        ipAddress: "ip",
-        userAgent: navigator.userAgent,
-        headers: "frontend",
-        channel: "web",
-        auditMetadata: {
-            createdBy: "username",
-            createdDate: new Date().toISOString(),
-            modifiedBy: "username",
-            modifiedDate: new Date().toISOString(),
-            header: {}
-        }
-    }
-});
+
 export default function RegulatoryConfig() {
     const [configurations, setConfigurations] = useState([]);
     const [form, setForm] = useState({});
@@ -91,7 +16,86 @@ export default function RegulatoryConfig() {
     const username = localStorage.getItem("username") || "system";
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 5;
-
+    const getDefaultForm = (ip, editingId = null) => ({
+        programType: "",
+        subCategory: "",
+        programDescription: "",
+        issuerType: "Bank",
+        authorizationRequired: false,
+        validityMinDays: 0,
+        validityMaxDays: 0,
+        reloadable: false,
+        transferable: false,
+        autoBlockOnExpiry: false,
+        allowPartialKycActivation: false,
+        currency: "INR",
+        multiUseAllowed: false,
+        minBalance: 0,
+        maxBalance: 0,
+        maxLoadAmount: 0,
+        dailySpendLimit: 0,
+        monthlySpendLimit: 0,
+        yearlySpendLimit: 0,
+        txnCountLimitPerDay: 0,
+        refundLimit: 0,
+        atmWithdrawalEnabled: false,
+        maxCashWithdrawalAmount: 0,
+        coBrandingAllowed: false,
+        validityPeriodMonths: 0,
+        gracePeriodDays: 0,
+        autoRenewal: false,
+        closureAllowedPostExpiry: false,
+        kycRequired: false,
+        kycLevelRequired: "",
+        aadhaarRequired: false,
+        panRequired: false,
+        additionalKycDocsNeeded: false,
+        amlCftApplicable: false,
+        riskProfile: "",
+        pepCheckRequired: false,
+        blacklistCheckRequired: false,
+        ckycUploadRequired: false,
+        domesticTransferAllowed: false,
+        crossBorderAllowed: false,
+        allowedChannels: [],
+        allowedMccCodes: undefined,
+        geoRestrictions: [],
+        merchantWhitelistOnly: false,
+        blockOnFailedKycAttempts: false,
+        regulatoryReportingRequired: false,
+        monthlyBalanceReportRequired: false,
+        auditTrailEnabled: false,
+        transactionReportableFlags: "{\"payroll\": true}",
+        customerAgeMin: 0,
+        customerAgeMax: 0,
+        eligibleCustomerTypes: [],
+        employmentTypesAllowed: [],
+        partnerApiEnabled: false,
+        partnerSettlementModel: "Float",
+        cashLoadingLimit: 0,
+        cardType: "",
+        expiryWarningDays: 0,
+        expiryPeriod: 0,
+        dormantPeriodDays: 0,
+        topupMethod: "",
+        ...(editingId
+            ? { modifiedBy: username }
+            : { createdBy: username }
+        ),
+        metadata: {
+            ipAddress: ip,
+            userAgent: navigator.userAgent,
+            headers: "frontend",
+            channel: "web",
+            auditMetadata: {
+                createdBy: "username",
+                createdDate: new Date().toISOString(),
+                modifiedBy: "username",
+                modifiedDate: new Date().toISOString(),
+                header: {}
+            }
+        }
+    });
     // Filter configurations based on search
     const filteredConfigurations = useMemo(() => {
         return configurations.filter(cfg =>
@@ -168,6 +172,7 @@ export default function RegulatoryConfig() {
                     : [],
 
             allowedMccCodes: undefined, // Remove if not part of schema
+           ...(isEditing ? { modifiedBy: username } : { createdBy: username }),
             metadata: {
                 ...form.metadata,
                 ipAddress: ip || "0.0.0.0",

@@ -698,8 +698,10 @@ export default function Partnercreate() {
                                                 </span>
                                             )}
                                         </td>
-                                        <td className="p-3 text-[#00d4aa] cursor-pointer flex items-center gap-2">
-                                            <SquarePen className="w-3 h-3" /> Edit
+                                        <td className="table-content">
+                                            <button className="header-icon-box" onClick={() => setformOpen(true)}>
+                                                <SquarePen className="text-[#00d4aa] w-3 h-3" />
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}

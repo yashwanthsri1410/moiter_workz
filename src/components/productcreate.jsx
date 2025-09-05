@@ -4,108 +4,120 @@ import axios from "axios";
 import usePublicIp from "../hooks/usePublicIp";
 import "../styles/styles.css"
 
-const getDefaultForm = (ip, username) => ({
-    productName: "",
-    description: "",
-    isActive: true,
-    productId: 0,
-    programType: "",
-    subCategory: "",
-    issuerType: "Bank",
-    authorizationRequired: false,
-    validityMinDays: 0,
-    validityMaxDays: 0,
-    reloadable: false,
-    transferable: false,
-    autoBlockOnExpiry: false,
-    allowPartialKycActivation: false,
-    currency: "INR",
-    multiUseAllowed: false,
-    minBalance: 0,
-    maxBalance: 0,
-    maxLoadAmount: 0,
-    dailySpendLimit: 0,
-    monthlySpendLimit: 0,
-    yearlySpendLimit: 0,
-    txnCountLimitPerDay: 0,
-    refundLimit: 0,
-    atmWithdrawalEnabled: false,
-    maxCashWithdrawalAmount: 0,
-    coBrandingAllowed: false,
-    validityPeriodMonths: 0,
-    gracePeriodDays: 0,
-    autoRenewal: false,
-    closureAllowedPostExpiry: false,
-    kycRequired: false,
-    kycLevelRequired: "",
-    aadhaarRequired: false,
-    panRequired: false,
-    additionalKycDocsNeeded: false,
-    amlCftApplicable: false,
-    riskProfile: "",
-    pepCheckRequired: false,
-    blacklistCheckRequired: false,
-    ckycUploadRequired: false,
-    domesticTransferAllowed: false,
-    crossBorderAllowed: false,
-    allowedChannels: [],
-    allowedMccCodes: [],
-    geoRestrictions: [],
-    merchantWhitelistOnly: false,
-    blockOnFailedKycAttempts: false,
-    regulatoryReportingRequired: false,
-    monthlyBalanceReportRequired: false,
-    auditTrailEnabled: false,
-    transactionReportableFlags: "{\"payroll\": true}",
-    customerAgeMin: 0,
-    customerAgeMax: 0,
-    eligibleCustomerTypes: [],
-    employmentTypesAllowed: [],
-    externalPartnerId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",   // required by schema
-    partnerApiEnabled: false,
-    issuerBankId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",         // required by schema
-    cashLoadingLimit: 0,
-    cardType: "",
-    expiryWarningDays: 0,
-    expiryPeriod: 0,
-    dormantPeriodDays: 0,
-    topUpMethod: "",
-    mccCode: "",
-    metadata: {
-        ipAddress: ip,
-        userAgent: navigator.userAgent,
-        headers: "frontend",
-        channel: "web",
-        auditMetadata: {
-            createdBy: username,
-            createdDate: new Date().toISOString(),
-            modifiedBy: username,
-            modifiedDate: new Date().toISOString(),
-            header: {
-                additionalProp1: {
-                    options: { propertyNameCaseInsensitive: true },
-                    parent: "frontend",
-                    root: "product"
-                },
-                additionalProp2: {
-                    options: { propertyNameCaseInsensitive: true },
-                    parent: "frontend",
-                    root: "product"
-                },
-                additionalProp3: {
-                    options: { propertyNameCaseInsensitive: true },
-                    parent: "frontend",
-                    root: "product"
-                }
-            }
-        }
-    }
-});
 
+// 🔹 Mapper function
+const mapFormToApiSchema = (form, username, ip, isEditing = false, empId) => {
+    const now = new Date().toISOString();
+    const safeUser = username || "system"; // fallback if null
+
+    const basePayload = {
+        productId: form.productId,
+        productName: form.productName || "",
+        description: form.description || "",
+        isActive: form.isActive ?? true,
+        programType: form.programType || "",
+        subCategory: form.subCategory || "",
+        issuerType: form.issuerType || "Bank",
+        authorizationRequired: form.authorizationRequired ?? false,
+        validityMinDays: form.minimumValidityDays ?? 0,
+        validityMaxDays: form.maximumValidityDays ?? 0,
+        reloadable: form.reloadable ?? false,
+        transferable: form.transferable ?? false,
+        autoBlockOnExpiry: form.autoBlockOnExpiry ?? false,
+        allowPartialKycActivation: form.allowPartialKycActivation ?? false,
+        currency: form.currency || "INR",
+        multiUseAllowed: form.multiUseAllowed ?? false,
+        minBalance: form.minBalance ?? 0,
+        maxBalance: form.maxBalance ?? 0,
+        maxLoadAmount: form.maxLoadAmount ?? 0,
+        dailySpendLimit: form.dailySpendLimit ?? 0,
+        monthlySpendLimit: form.monthlySpendLimit ?? 0,
+        yearlySpendLimit: form.yearlySpendLimit ?? 0,
+        txnCountLimitPerDay: form.txnCountLimitPerDay ?? 0,
+        refundLimit: form.refundLimit ?? 0,
+        atmWithdrawalEnabled: form.atmWithdrawalEnabled ?? false,
+        maxCashWithdrawalAmount: form.maxCashWithdrawalAmount ?? 0,
+        coBrandingAllowed: form.coBrandingAllowed ?? false,
+        validityPeriodMonths: form.validityPeriodMonths ?? 0,
+        gracePeriodDays: form.gracePeriodDays ?? 0,
+        autoRenewal: form.autoRenewal ?? false,
+        closureAllowedPostExpiry: form.closureAllowedPostExpiry ?? false,
+        kycRequired: form.kycRequired ?? false,
+        kycLevelRequired: form.kycLevelRequired || "",
+        aadhaarRequired: form.aadhaarRequired ?? false,
+        panRequired: form.panRequired ?? false,
+        additionalKycDocsNeeded: form.additionalKycDocsNeeded ?? false,
+        amlCftApplicable: form.amlCftApplicable ?? false,
+        riskProfile: form.riskProfile || "",
+        pepCheckRequired: form.pepCheckRequired ?? false,
+        blacklistCheckRequired: form.blacklistCheckRequired ?? false,
+        ckycUploadRequired: form.ckycUploadRequired ?? false,
+        domesticTransferAllowed: form.domesticTransferAllowed ?? false,
+        crossBorderAllowed: form.crossBorderAllowed ?? false,
+        allowedChannels: form.allowedChannels || [],
+        allowedMccCodes: form.allowedMccCodes
+            ? String(form.allowedMccCodes)
+                .split(",")
+                .map(c => c.trim())
+                .filter(Boolean)
+            : [],
+        geoRestrictions: form.geoRestrictions || [],
+        merchantWhitelistOnly: form.merchantWhitelistOnly ?? false,
+        blockOnFailedKycAttempts: form.blockOnFailedKycAttempts ?? false,
+        regulatoryReportingRequired: form.regulatoryReportingRequired ?? false,
+        monthlyBalanceReportRequired: form.monthlyBalanceReportRequired ?? false,
+        auditTrailEnabled: form.auditTrailEnabled ?? false,
+        transactionReportableFlags:
+            typeof form.transactionReportableFlags === "string"
+                ? form.transactionReportableFlags
+                : JSON.stringify(form.transactionReportableFlags || "{}"),
+        customerAgeMin: form.customerAgeMin ?? 0,
+        customerAgeMax: form.customerAgeMax ?? 0,
+        eligibleCustomerTypes: form.eligibleCustomerTypes || [],
+        employmentTypesAllowed: form.employmentTypesAllowed || [],
+        externalPartnerId:
+            form.externalPartnerId || "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        partnerApiEnabled: form.partnerApiEnabled ?? false,
+        issuerBankId: form.issuerBankId || "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        cashLoadingLimit: form.cashLoadingLimit ?? 0,
+        cardType: form.cardType || "Both",
+        expiryWarningDays: form.expiryWarningDays ?? 0,
+        dormantPeriodDays: form.dormantPeriodDays ?? 0,
+        topupMethod: Array.isArray(form.topUpMethod)
+            ? form.topUpMethod.join(",")
+            : form.topUpMethod || "",
+        expiryPeriod: form.expiryPeriod ?? 0,
+
+        metadata: {
+            ipAddress: ip,
+            userAgent: navigator.userAgent,
+            headers: "",
+            channel: "web",
+            auditMetadata: {
+                header: {},
+            },
+        },
+    };
+
+    if (isEditing) {
+        // 🔹 UPDATE → only include modifiedBy
+        basePayload.modifiedBy = safeUser; // top-level
+        basePayload.metadata.auditMetadata.modifiedBy = safeUser;
+        basePayload.metadata.auditMetadata.modifiedDate = now;
+    } else {
+        // 🔹 CREATE → only include createdBy
+        basePayload.createdBy = safeUser; // top-level
+        basePayload.metadata.auditMetadata.createdBy = safeUser;
+        basePayload.metadata.auditMetadata.createdDate = now;
+    }
+
+    return basePayload;
+};
 
 export default function Productcreate() {
     const [configurations, setConfigurations] = useState([]);
     const [formOpen, setformOpen] = useState(false);
+    const [empId, setEmpId] = useState("");
     const [rbiConfig, setRbiConfig] = useState([]);
     const [programTypes, setProgramTypes] = useState([]);
     const [filteredSubCategories, setFilteredSubCategories] = useState([]);
@@ -114,11 +126,64 @@ export default function Productcreate() {
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
-    const handleEdit = (cfg) => {
-        setForm(cfg);        // load selected product into form
-        setIsEditing(true);
-        setEditingId(cfg.productId);
-        setformOpen(true);   // show the form modal/section
+
+    const handleEdit = async (cfg) => {
+        try {
+            // First, ensure we have the latest RBI config
+            if (rbiConfig.length === 0) {
+                await fetchRBIConfigurations();
+            }
+
+            // Set program type first to trigger filtering
+            setForm(prev => ({
+                ...prev,
+                programType: cfg.programType || ""
+            }));
+
+            // Filter subcategories based on the program type
+            const filtered = rbiConfig.filter(item => item.programType === cfg.programType);
+            setFilteredSubCategories(filtered);
+
+            // Find the matching RBI configuration
+            const matchedRbiConfig = rbiConfig.find(item =>
+                item.programType === cfg.programType &&
+                item.subCategory === cfg.subCategory
+            );
+
+            // Prepare the form data
+            const rawTopup = cfg.topUpMethod || cfg.topupMethod || "";
+
+            const formData = {
+                ...getDefaultForm(ip, username),
+                ...cfg,
+                programType: cfg.programType || "",
+                subCategory: cfg.subCategory || "",
+                programDescription: matchedRbiConfig ? matchedRbiConfig.programDescription : cfg.programDescription || "",
+                topUpMethod: rawTopup ? rawTopup.split(",").map((m) => m.trim()) : [],
+            };
+
+            // If we found a matching RBI config, apply its values
+            if (matchedRbiConfig) {
+                const channels = Array.isArray(matchedRbiConfig.allowedChannels)
+                    ? matchedRbiConfig.allowedChannels
+                    : typeof matchedRbiConfig.allowedChannels === "string"
+                        ? matchedRbiConfig.allowedChannels.split(",").map((c) => c.trim())
+                        : [];
+
+                formData.allowedChannels = channels;
+                formData.kycLevelRequired = matchedRbiConfig.kycLevelRequired || cfg.kycLevelRequired || "";
+                formData.riskProfile = matchedRbiConfig.riskProfile || cfg.riskProfile || "";
+                // Add other fields from RBI config as needed
+            }
+
+            setForm(formData);
+            setIsEditing(true);
+            setEditingId(cfg.productId);
+            setformOpen(true);
+
+        } catch (error) {
+            console.error("Error in handleEdit:", error);
+        }
     };
     const [form, setForm] = useState({
         productName: "",
@@ -127,14 +192,119 @@ export default function Productcreate() {
         isActive: false,
         createdAt: "",
     });
-    // compute total pages
-    const totalPages = Math.ceil(configurations.length / itemsPerPage);
 
-    // compute paginated data
-    const paginatedConfigurations = configurations.slice(
+
+    const getDefaultForm = (ip, username) => ({
+        productName: "",
+        description: "",
+        isActive: true,
+        productId: 0,
+        programType: "",
+        subCategory: "",
+        issuerType: "Bank",
+        authorizationRequired: false,
+        validityMinDays: 0,
+        validityMaxDays: 0,
+        reloadable: false,
+        transferable: false,
+        autoBlockOnExpiry: false,
+        allowPartialKycActivation: false,
+        currency: "INR",
+        multiUseAllowed: false,
+        minBalance: 0,
+        maxBalance: 0,
+        maxLoadAmount: 0,
+        dailySpendLimit: 0,
+        monthlySpendLimit: 0,
+        yearlySpendLimit: 0,
+        txnCountLimitPerDay: 0,
+        refundLimit: 0,
+        atmWithdrawalEnabled: false,
+        maxCashWithdrawalAmount: 0,
+        coBrandingAllowed: false,
+        validityPeriodMonths: 0,
+        gracePeriodDays: 0,
+        autoRenewal: false,
+        closureAllowedPostExpiry: false,
+        kycRequired: false,
+        kycLevelRequired: "",
+        aadhaarRequired: false,
+        panRequired: false,
+        additionalKycDocsNeeded: false,
+        amlCftApplicable: false,
+        riskProfile: "",
+        pepCheckRequired: false,
+        blacklistCheckRequired: false,
+        ckycUploadRequired: false,
+        domesticTransferAllowed: false,
+        crossBorderAllowed: false,
+        allowedChannels: [],
+        allowedMccCodes: [],
+        geoRestrictions: [],
+        merchantWhitelistOnly: false,
+        blockOnFailedKycAttempts: false,
+        regulatoryReportingRequired: false,
+        monthlyBalanceReportRequired: false,
+        auditTrailEnabled: false,
+        transactionReportableFlags: "{\"payroll\": true}",
+        customerAgeMin: 0,
+        customerAgeMax: 0,
+        eligibleCustomerTypes: [],
+        employmentTypesAllowed: [],
+        externalPartnerId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        partnerApiEnabled: false,
+        issuerBankId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        cashLoadingLimit: 0,
+        cardType: "",
+        expiryWarningDays: 0,
+        expiryPeriod: 0,
+        dormantPeriodDays: 0,
+        topUpMethod: "",
+        metadata: {
+            ipAddress: ip,
+            userAgent: navigator.userAgent,
+            headers: "frontend",
+            channel: "web",
+            auditMetadata: {
+                createdBy: username,
+                createdDate: new Date().toISOString(),
+                modifiedBy: username,
+                modifiedDate: new Date().toISOString(),
+                header: {
+                    additionalProp1: {
+                        options: { propertyNameCaseInsensitive: true },
+                        parent: "frontend",
+                        root: "product"
+                    },
+                    additionalProp2: {
+                        options: { propertyNameCaseInsensitive: true },
+                        parent: "frontend",
+                        root: "product"
+                    },
+                    additionalProp3: {
+                        options: { propertyNameCaseInsensitive: true },
+                        parent: "frontend",
+                        root: "product"
+                    }
+                }
+            }
+        }
+    });
+    // compute total pages
+    const filteredConfigurations = configurations.filter(cfg =>
+        Object.values(cfg).some(val =>
+            String(val).toLowerCase().includes(searchTerm.toLowerCase())
+        )
+    );
+
+    // 2. Pagination
+    const paginatedConfigurations = filteredConfigurations.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
+
+    // 3. Total pages
+    const totalPages = Math.ceil(filteredConfigurations.length / itemsPerPage);
 
     const handlePageChange = (page) => {
         if (page >= 1 && page <= totalPages) {
@@ -144,11 +314,35 @@ export default function Productcreate() {
     const ip = usePublicIp();
     const username = localStorage.getItem("username") || "system";
 
+    // ✅ Add inside Productcreate component
+    const toggleLoading = (method) => {
+        setForm((prev) => {
+            const current = Array.isArray(prev.topUpMethod)
+                ? prev.topUpMethod
+                : (prev.topUpMethod || "").split(",").filter(Boolean);
+            const updated = current.includes(method)
+                ? current.filter((m) => m !== method)
+                : [...current, method];
+            return { ...prev, topUpMethod: updated };
+        });
+    };
+
+    const toggleUnloading = (method) => {
+        setForm((prev) => {
+            const current = prev.allowedChannels || [];
+            const updated = current.includes(method)
+                ? current.filter((m) => m !== method)
+                : [...current, method];
+            return { ...prev, allowedChannels: updated };
+        });
+    };
 
     useEffect(() => {
         setForm(getDefaultForm(ip, username));
         fetchConfigurations();
         fetchRBIConfigurations();
+        const generatedId = Date.now().toString().slice(-6); // last 6 digits of timestamp
+        setEmpId(generatedId);
     }, [ip]);
 
     const fetchConfigurations = async () => {
@@ -171,33 +365,62 @@ export default function Productcreate() {
         }
     };
 
+
     const handleProgramTypeChange = (type) => {
-        setForm(prev => ({ ...prev, programType: type, subCategory: "", programDescription: "" }));
+        setForm(prev => ({
+            ...prev,
+            programType: type,
+            subCategory: "",
+            programDescription: "",
+        }));
         const filtered = rbiConfig.filter(item => item.programType === type);
         setFilteredSubCategories(filtered);
     };
-
     const handleSubCategoryChange = (subCategory) => {
         const matched = filteredSubCategories.find(item => item.subCategory === subCategory);
+
         if (matched) {
             const channels = Array.isArray(matched.allowedChannels)
                 ? matched.allowedChannels
                 : typeof matched.allowedChannels === "string"
-                    ? matched.allowedChannels.split(",").map(c => c.trim())
+                    ? matched.allowedChannels.split(",").map((c) => c.trim())
                     : [];
 
-            setForm(prev => ({
+            const rawTopup = matched.topUpMethod || matched.topupMethod || "";
+
+            setForm((prev) => ({
                 ...prev,
-                ...matched, // ✅ Auto-fill all RBI fields
+                ...matched,
                 subCategory,
-                allowedChannels: channels
+                allowedChannels: channels,
+                topUpMethod: rawTopup ? rawTopup.split(",").map((m) => m.trim()) : [],
             }));
         } else {
-            setForm(prev => ({ ...prev, subCategory, programDescription: "" }));
+            setForm(prev => ({
+                ...prev,
+                subCategory,
+                programDescription: isEditing ? prev.programDescription : "",
+            }));
         }
     };
 
+    useEffect(() => {
+        if (isEditing && form.programType && form.subCategory) {
+            const matched = rbiConfig.find(item =>
+                item.programType === form.programType &&
+                item.subCategory === form.subCategory
+            );
 
+            if (matched) {
+                setForm(prev => ({
+                    ...prev,
+                    programDescription: matched.programDescription || prev.programDescription,
+                    kycLevelRequired: matched.kycLevelRequired || prev.kycLevelRequired,
+                    riskProfile: matched.riskProfile || prev.riskProfile,
+                }));
+            }
+        }
+    }, [rbiConfig, isEditing, form.programType, form.subCategory]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -208,22 +431,23 @@ export default function Productcreate() {
         setForm(prev => ({ ...prev, [field]: value === "yes" }));
     };
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const payload = { ...form };
-            console.log("Submitting payload:", JSON.stringify(payload, null, 2));
+            // Map frontend form → backend schema
+            const payload = mapFormToApiSchema(form, username, ip, isEditing);
+
+            // console.log("Submitting mapped payload:", JSON.stringify(payload, null, 2));
 
             if (isEditing) {
-                // 🔥 Update existing config
+                // Update existing config
                 await axios.put(
-                    "http://192.168.22.247/ps/productConfigurationUpdate",
+                    `http://192.168.22.247/ps/productConfigurationUpdate`,
                     payload
                 );
                 alert("Product configuration updated successfully!");
             } else {
-                // ➕ Create new config
+                // Create new config
                 await axios.post(
                     "http://192.168.22.247/ps/productConfigurationCreate",
                     payload
@@ -231,20 +455,18 @@ export default function Productcreate() {
                 alert("Product configuration created successfully!");
             }
 
-            // reset form
-            setForm({
-                productId: "",
-                productName: "",
-                programType: "",
-                kycLevelRequired: "",
-                isActive: false,
-                createdAt: "",
-            });
+            await fetchConfigurations(); // refresh table after save
+
+            // Reset form and editing state
+            setForm(getDefaultForm(ip, username));
             setIsEditing(false);
             setEditingId(null);
             setformOpen(false);
         } catch (err) {
-            console.error("Error saving product configuration:", err);
+            console.error(
+                "Error saving product configuration:",
+                err.response?.data || err.message
+            );
             alert("Failed to save product configuration");
         }
     };
@@ -325,39 +547,47 @@ export default function Productcreate() {
                                 <label>Program Description</label>
                                 <textarea
                                     name="programDescription"
-                                    value={form.programDescription}
+                                    value={form.programDescription || ""}
                                     onChange={handleChange}
                                     className="form-input"
                                     placeholder="Program description auto-filled"
+                                    readOnly={!!form.subCategory} // Make it read-only when a subcategory is selected
                                 />
                             </div>
                         </div>
 
                         {form.subCategory && (
-                            <div className="form-row">
-                                <div className="form-group">
-                                    <label>Product Name</label>
-                                    <input
-                                        type="text"
-                                        name="productName"
-                                        value={form.productName}
-                                        onChange={handleChange}
-                                        className="form-input"
-                                        placeholder="Enter product name"
-                                    />
+                            <>
+                                <div className="form-row">
+                                    <div className="form-group">
+                                        <label>Product Name</label>
+                                        <input
+                                            type="text"
+                                            name="productName"
+                                            value={form.productName}
+                                            onChange={handleChange}
+                                            className="form-input"
+                                            placeholder="Enter product name"
+                                        />
+                                    </div>
+
                                 </div>
-                                <div className="form-group">
-                                    <label>Description</label>
-                                    <textarea
-                                        type="text"
-                                        name="description"
-                                        value={form.description}
-                                        onChange={handleChange}
-                                        className="form-input"
-                                        placeholder="Enter description"
-                                    />
+                                <div className="form-row">
+                                    <div className="form-group">
+                                        <label>Description</label>
+                                        <textarea
+                                            type="text"
+                                            name="description"
+                                            value={form.description}
+                                            onChange={handleChange}
+                                            className="form-input"
+                                            placeholder="Enter description"
+                                        />
+                                    </div>
                                 </div>
-                            </div>
+
+                            </>
+
                         )}
                     </div>
 
@@ -416,7 +646,7 @@ export default function Productcreate() {
                                                         name={field}
                                                         value="yes"
                                                         checked={form[field] === true}
-                                                        onChange={handleBooleanSelect}
+                                                        onChange={(e) => handleBooleanSelect(field, e.target.value)}
                                                     /> Yes
                                                 </label>
                                                 <label>
@@ -425,7 +655,7 @@ export default function Productcreate() {
                                                         name={field}
                                                         value="no"
                                                         checked={form[field] === false}
-                                                        onChange={handleBooleanSelect}
+                                                        onChange={(e) => handleBooleanSelect(field, e.target.value)}
                                                     /> No
                                                 </label>
                                             </div>
@@ -494,10 +724,6 @@ export default function Productcreate() {
                                         <label>Min Age</label>
                                         <input type="number" name="customerAgeMin" value={form.customerAgeMin || ""} onChange={handleChange} className="form-input" />
                                     </div>
-                                    <div className="form-group">
-                                        <label>Max Age</label>
-                                        <input type="number" name="customerAgeMax" value={form.customerAgeMax || ""} onChange={handleChange} className="form-input" />
-                                    </div>
                                 </div>
                             </div>
 
@@ -517,10 +743,10 @@ export default function Productcreate() {
                                             <span className="compliance-label">{label}</span>
                                             <div className="radio-group">
                                                 <label>
-                                                    <input type="radio" name={field} value="yes" checked={form[field] === true} onChange={handleBooleanSelect} /> Yes
+                                                    <input type="radio" name={field} value="yes" checked={form[field] === true} onChange={(e) => handleBooleanSelect(field, e.target.value)} /> Yes
                                                 </label>
                                                 <label>
-                                                    <input type="radio" name={field} value="no" checked={form[field] === false} onChange={handleBooleanSelect} /> No
+                                                    <input type="radio" name={field} value="no" checked={form[field] === false} onChange={(e) => handleBooleanSelect(field, e.target.value)} /> No
                                                 </label>
                                             </div>
                                         </div>
@@ -538,15 +764,18 @@ export default function Productcreate() {
                             <div>
                                 <h4 className="compliance-title text-gray-200 mb-2">Loading Channels</h4>
                                 <div className="flex flex-col gap-3">
-                                    {options.map(method => {
-                                        const checked = (form.topupMethod || "").split(",").includes(method);
+                                    {options.map((method) => {
+                                        const checked = Array.isArray(form.topUpMethod)
+                                            ? form.topUpMethod.includes(method)
+                                            : (form.topUpMethod || "").split(",").includes(method);
+
                                         return (
                                             <label key={method} className="flex items-center gap-3 cursor-pointer text-gray-300">
                                                 <div
                                                     onClick={() => toggleLoading(method)}
                                                     className={`w-3 h-3 flex items-center justify-center border 
-                    ${checked ? "bg-teal-500 border-teal-500" : "bg-[#0d1220] border-teal-700/50"}
-                  `}
+          ${checked ? "bg-teal-500 border-teal-500" : "bg-[#0d1220] border-teal-700/50"}
+        `}
                                                 >
                                                     {checked && <Check size={14} className="text-black" />}
                                                 </div>
@@ -586,16 +815,21 @@ export default function Productcreate() {
                             <label>MCC Code</label>
                             <input
                                 type="text"
-                                name="mccCode"
-                                value={form.mccCode || ""}
-                                onChange={e => setForm(prev => ({
-                                    ...prev,
-                                    mccCode: e.target.value.replace(/[^0-9,]/g, "")
-                                }))}
+                                name="allowedMccCodes"
+                                value={Array.isArray(form.allowedMccCodes)
+                                    ? form.allowedMccCodes.join(",")
+                                    : (form.allowedMccCodes || "")}
+                                onChange={e =>
+                                    setForm(prev => ({
+                                        ...prev,
+                                        allowedMccCodes: e.target.value // keep as string while typing
+                                    }))
+                                }
                                 className="form-input"
                                 placeholder="Enter MCC codes separated by commas"
                             />
                         </div>
+
                     </div>
 
                     {/* ================= Footer ================= */}
@@ -604,7 +838,7 @@ export default function Productcreate() {
                             <ArrowLeft className="icon" /> Back
                         </button>
                         <div className="footer-right">
-                            <button type="button" className="btn-outline-reset" onClick={() => setForm(getDefaultForm(ip, username))}>
+                            <button type="button" className="btn-outline-reset" onClick={() => { setEditingId(null); setIsEditing(false); setForm(getDefaultForm(ip, username)) }}>
                                 <RotateCcw className="icon" /> Reset
                             </button>
                             <button type="submit" className="btn-outline-reset">
@@ -656,7 +890,7 @@ export default function Productcreate() {
                                     <td className="table-content">{cfg.programType}</td>
                                     <td className="table-content">{cfg.kycLevelRequired || "-"}</td>
                                     <td className="table-content">
-                                        <span className={`status px-2 py-1 rounded text-[10px] ${cfg.isActive ? "checker" : "superuser"}`}>
+                                        <span className={` px-2 py-1 rounded text-[10px] ${cfg.isActive ? "checker" : "superuser"}`}>
                                             {cfg.isActive ? "active" : "Inactive"}
                                         </span>
                                     </td>

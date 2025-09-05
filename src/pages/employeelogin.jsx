@@ -122,10 +122,6 @@ const Employeelogin = () => {
     }
   };
 
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    if (error) setError("");
-  };
   return (
     <div className="login-page">
       {/* Particles */}
