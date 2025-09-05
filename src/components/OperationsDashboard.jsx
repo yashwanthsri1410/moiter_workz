@@ -1,15 +1,31 @@
 import { RefreshCcw, Download } from "lucide-react";
-import PieChart from "../features/pieChart";
-import BarChart from "../features/barChart";
-import LineChart from "../features/lineChart";
-import { loadedDashboard } from "../service/loaded";
-import { loadedUrl, transactionUrl, unLoadedUrl, walletUrl } from "../constants/index";
+import {
+  loadedUrl,
+  partnerUrl,
+  productUrl,
+  transactionUrl,
+  unLoadedUrl,
+  walletPerfomanceUrl,
+} from "../constants/index";
+import axios from "axios";
 import { useOperationStore } from "../store/useOperationStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "../styles/styles.css";
+import LoadedUnLoaded from "../features/loadedUnloaded";
+import WeeklyTrends from "../features/weeklyTrends";
+import WalletSummary from "../features/walletSummary";
+import PerformanceOverview from "../features/perfomanceOverview";
 const OperationsDashboard = () => {
-  const { setLoadedData, setUnLoadedData, setWalletData, setTransactionData } =
-    useOperationStore();
+  const {
+    setLoadedData,
+    setUnLoadedData,
+    setWalletPerfomanceData,
+    setTransactionData,
+    setProductData,
+    setPartnerData,
+    setError,
+  } = useOperationStore();
+
   const icons = [
     {
       id: "refresh",
@@ -18,43 +34,86 @@ const OperationsDashboard = () => {
     { id: "download", icon: <Download size={18} color="#00d4aa" /> },
   ];
 
-  const fetchData = async () => {
-    const loadedRes = await loadedDashboard(loadedUrl);
-    const unloadedRes = await loadedDashboard(unLoadedUrl);
-    const walletRes = await loadedDashboard(walletUrl);
-    const transactionRes = await loadedDashboard(transactionUrl);
-    setLoadedData(loadedRes.data);
-    setUnLoadedData(unloadedRes.data);
-    setWalletData(walletRes.data);
-    setTransactionData(transactionRes.data);
+  const loadedDashboard = async (url) => {
+    const res = await axios.get(url);
+    return res;
   };
+
+  const fetchData = async () => {
+    const apiConfigs = [
+      {
+        key: "loaded",
+        call: loadedDashboard(loadedUrl),
+        setter: setLoadedData,
+        errorMsg: "Failed to load Loaded Data",
+      },
+      {
+        key: "unloaded",
+        call: loadedDashboard(unLoadedUrl),
+        setter: setUnLoadedData,
+        errorMsg: "Failed to load Unloaded Data",
+      },
+      {
+        key: "walletPerfomance",
+        call: loadedDashboard(walletPerfomanceUrl),
+        setter: setWalletPerfomanceData,
+        errorMsg: "Failed to load Wallet Perfomance Data",
+      },
+      {
+        key: "transaction",
+        call: loadedDashboard(transactionUrl),
+        setter: setTransactionData,
+        errorMsg: "Failed to load weekly Trends Data",
+      },
+      {
+        key: "product",
+        call: loadedDashboard(productUrl),
+        setter: setProductData,
+        errorMsg: "Failed to load Product Data",
+      },
+      {
+        key: "partner",
+        call: loadedDashboard(partnerUrl),
+        setter: setPartnerData,
+        errorMsg: "Failed to load Partner Data",
+      },
+    ];
+
+    const results = await Promise.allSettled(apiConfigs.map((api) => api.call));
+
+    results.forEach((res, i) => {
+      const { key, setter, errorMsg } = apiConfigs[i];
+      if (res.status === "fulfilled") {
+        setter(res.value.data);
+        setError((prev) => ({ ...prev, [key]: null }));
+      } else {
+        setter(null);
+        setError((prev) => ({ ...prev, [key]: errorMsg }));
+      }
+    });
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
 
   return (
     <div className="dashboard-container">
-      <div className="flex justify-between items-center">
-        <div className="dashboard-title">
-          <h1 className="dashboard-heading">Operations Dashboard</h1>
-          <p className="dashboard-subtitle">Real Time Data</p>
-        </div>
-        <div className="flex items-center gap-3">
-          {icons && icons.map(({ id, icon }) => (
-            <button key={id} className="dashboard-icon-btn">
-              {icon}
-            </button>
-          ))}
-        </div>
+      <div className="dashboard-title">
+        <h1 className="dashboard-heading">Financial Dashboard Overview</h1>
+        <p className="dashboard-subtitle">
+          Real-time insights into wallet operations, transactions, and system
+          performance
+        </p>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-4 my-6">
-        <PieChart isLoaded={true} />
-        <PieChart />
-        <BarChart />
+        <LoadedUnLoaded isLoaded={true} />
+        <LoadedUnLoaded />
+        <WeeklyTrends />
       </div>
-
-      <LineChart />
+      <PerformanceOverview />
+      <WalletSummary />
     </div>
   );
 };

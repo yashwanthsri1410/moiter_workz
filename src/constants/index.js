@@ -1,7 +1,9 @@
 export const loadedUrl = "Export/wallet-loaded-dashboard";
 export const unLoadedUrl = "Export/wallet-unloaded-dashboard";
-export const walletUrl = "Export/wallet-status-dashboard";
 export const transactionUrl = "Export/wallet-transcation-dashboard";
+export const walletPerfomanceUrl = "Export/wallet-status-dashboard";
+export const productUrl = "Export/user-wallet-cards";
+export const partnerUrl = "Export/partner-performance";
 
 export const weekOrder = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
