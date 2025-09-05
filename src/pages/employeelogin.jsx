@@ -13,7 +13,7 @@ import {
   Fingerprint,
 } from "lucide-react";
 import logo from "../assets/logo.png";
-import "../styles/styles.css"
+import "../styles/styles.css";
 
 const Employeelogin = () => {
   const [formData, setFormData] = useState({ username: "", password: "" });
@@ -82,7 +82,7 @@ const Employeelogin = () => {
 
     try {
       const response = await axios.post(
-        "http://192.168.22.247:5229/ums/api/UserManagement/user_login",
+        "http://192.168.20.254/ums/api/UserManagement/user_login",
         {
           username: formData.username,
           password: formData.password,
@@ -154,7 +154,6 @@ const Employeelogin = () => {
         </div>
 
         <div className="login-card ">
-
           {/* Neon corners */}
           <div className="corner tl"></div>
           <div className="corner tr"></div>
@@ -241,7 +240,7 @@ const Employeelogin = () => {
           {/* Footer */}
           <div className="login-footer">
             <span> SSL Secured</span>
-            <span > 256-bit Encryption</span>
+            <span> 256-bit Encryption</span>
           </div>
         </div>
       </div>

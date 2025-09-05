@@ -7,9 +7,22 @@ export const useOperationStore = create((set) => ({
   unLoadedData: [],
   setUnLoadedData: (data) => set(() => ({ unLoadedData: data })),
 
-  walletData: [],
-  setWalletData: (data) => set(() => ({ walletData: data })),
+  walletPerfomanceData: [],
+  setWalletPerfomanceData: (data) =>
+    set(() => ({ walletPerfomanceData: data })),
 
   transactionData: [],
   setTransactionData: (data) => set(() => ({ transactionData: data })),
+
+  productData: [],
+  setProductData: (data) => set(() => ({ productData: data })),
+
+  partnerData: [],
+  setPartnerData: (data) => set(() => ({ partnerData: data })),
+
+  error: {},
+  setError: (updater) =>
+    set((state) => ({
+      error: typeof updater === "function" ? updater(state.error) : updater,
+    })),
 }));
