@@ -2,17 +2,29 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import usePublicIp from "../hooks/usePublicIp";
 import Select from "react-select";
-import { ArrowLeft, User, Monitor } from "lucide-react";
+import {
+    ArrowLeft,
+    User,
+    Monitor,
+    Search,
+    ChevronLeft,
+    ChevronRight,
+    FileText,
+    EyeIcon,
+    Filter,
+} from "lucide-react";
 import "../styles/styles.css"
 
 const EmployeeCreationForm = ({ onBack }) => {
+
+    const username = localStorage.getItem("username");
     const [empId, setEmpId] = useState("");
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [statusId] = useState(1);
     const [userType, setusertype] = useState();
-    const [createdBy] = useState("admin");
+    const [createdBy] = useState(username);
     const [deptId, setDeptId] = useState("");
     const [designationId, setDesignationId] = useState("");
     const [roleAccessId, setRoleAccessId] = useState("");
@@ -20,9 +32,47 @@ const EmployeeCreationForm = ({ onBack }) => {
     const [accessList, setAccessList] = useState([]);
     const [roleData, setRoleData] = useState([]);
     const [errors, setErrors] = useState({});
-    const username = localStorage.getItem("username");
+    const [employees, setEmployees] = useState([]);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [selectedEmployee, setSelectedEmployee] = useState(null);
     const ip = usePublicIp();
     const userAgent = navigator.userAgent;
+
+    const itemsPerPage = 8;
+    useEffect(() => {
+        const generatedId = Date.now().toString().slice(-6); // last 6 digits of timestamp
+        setEmpId(generatedId);
+    }, []);
+    // 🔹 Sync selectedEmployee → form
+    useEffect(() => {
+        if (selectedEmployee) {
+            setEmpId(selectedEmployee.empId || "");
+            setName(selectedEmployee.userName || "");
+            setEmail(selectedEmployee.email || "");
+            setDeptId(selectedEmployee.deptId?.toString() || "");
+            setDesignationId(selectedEmployee.designationId?.toString() || "");
+            setRoleAccessId(selectedEmployee.roleAccessId?.toString() || "");
+            setusertype(selectedEmployee.userType?.toString() || "");
+            setPassword(""); // don't autofill password for security
+
+            // ✅ Auto-load role screens if role is already assigned
+            if (selectedEmployee.roleAccessId) {
+                const filtered = roleData.filter(
+                    (r) => r.roleAccessId.toString() === selectedEmployee.roleAccessId.toString()
+                );
+
+                const grouped = {};
+                filtered.forEach(({ moduleName, screenDesc }) => {
+                    if (!grouped[moduleName]) grouped[moduleName] = [];
+                    if (!grouped[moduleName].includes(screenDesc)) grouped[moduleName].push(screenDesc);
+                });
+
+                setSelectedRoleScreens(grouped);
+            }
+        }
+    }, [selectedEmployee, roleData]);
+
     useEffect(() => {
         axios
             .get("http://192.168.22.247:7090/api/Export/role-departments")
@@ -33,8 +83,49 @@ const EmployeeCreationForm = ({ onBack }) => {
             .get("http://192.168.22.247:7090/api/Export/role-module-screen")
             .then((res) => setRoleData(res.data))
             .catch((err) => console.error("Error fetching role data:", err));
+        axios
+            .get("http://192.168.22.247:7090/fes/api/Export/pending-employees")
+            .then((res) => setEmployees(res.data))
+            .catch((err) => console.error("Error fetching employees:", err));
     }, []);
+    // 🔹 Select employee → sync form
+    // ✅ Filter + Search logic
+    const filteredConfigurations = employees.filter((cfg) => {
+        const query = searchQuery.toLowerCase();
+        return Object.values(cfg).some(
+            (value) =>
+                value &&
+                value.toString().toLowerCase().includes(query)
+        );
+    });
 
+    const totalPages = Math.ceil(filteredConfigurations.length / itemsPerPage);
+
+    const paginatedConfigurations = filteredConfigurations.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
+
+    const getStatusLabel = (value) => {
+        switch (value) {
+            case 0:
+                return "Approved";
+            case 1:
+                return "Pending";
+            case 2:
+                return "Disapproved";
+            case 3:
+                return "Recheck";
+            default:
+                return "Unknown";
+        }
+    };
     const validate = () => {
         const newErrors = {};
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -86,30 +177,30 @@ const EmployeeCreationForm = ({ onBack }) => {
                             parent: "user",
                             root: "root1",
                         },
-                        additionalProp2: {
-                            options: { propertyNameCaseInsensitive: true },
-                            parent: "user",
-                            root: "root2",
-                        },
-                        additionalProp3: {
-                            options: { propertyNameCaseInsensitive: true },
-                            parent: "user",
-                            root: "root3",
-                        },
                     },
                 },
             },
         };
-        console.log(payload)
+
         try {
-            await axios.post(
-                "http://192.168.22.247:5229/ums/api/UserManagement/createEmployee",
-                payload
-            );
-            alert("✅ Employee created successfully");
+            if (selectedEmployee) {
+                await axios.put(
+                    `http://192.168.22.247/ums/api/UserManagement/updateEmployee/${selectedEmployee.empId}`,
+                    payload,
+                    { headers: { "Content-Type": "application/json" } }
+                );
+                alert("✅ Employee updated successfully");
+            } else {
+                await axios.post(
+                    "http://192.168.22.247/ums/api/UserManagement/createEmployee",
+                    payload,
+                    { headers: { "Content-Type": "application/json" } }
+                );
+                alert("✅ Employee created successfully");
+            }
         } catch (err) {
-            console.error("❌ API error:", err);
-            alert("❌ Failed to create user. See console.");
+            console.error("❌ API error:", err.response?.data || err.message);
+            alert("❌ Failed. See console.");
         }
     };
 
@@ -172,6 +263,7 @@ const EmployeeCreationForm = ({ onBack }) => {
                 </div>
             </div>
 
+
             {/* Form */}
             <form onSubmit={handleSubmit} className="form-container">
                 <div className="form-heading">
@@ -205,7 +297,18 @@ const EmployeeCreationForm = ({ onBack }) => {
                     <p className="helper-text">Password will be sent to this email</p>
                     {errors.email && <p className="error-text">{errors.email}</p>}
                 </div>
-
+                {/* ✅ Password Input */}
+                <div className="label-input">
+                    <label className="form-label">Password</label>
+                    <input
+                        type="password"
+                        placeholder="create user's password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="form-input"
+                    />
+                    {errors.password && <p className="error-text">{errors.password}</p>}
+                </div>
                 {/* Department */}
                 <div className="label-input" >
                     <label className="form-label">Department *</label>
@@ -247,6 +350,7 @@ const EmployeeCreationForm = ({ onBack }) => {
                         onChange={handleRoleChange}
                         placeholder="Select role"
                         isClearable
+                        value={uniqueRoles.find(role => role.value === roleAccessId) || null}
                         styles={{
                             control: (base, state) => ({
                                 ...base,
@@ -326,6 +430,160 @@ const EmployeeCreationForm = ({ onBack }) => {
                 {/* Submit */}
                 <button type="submit" className="submit-btn" >+ Create User</button>
             </form>
+            <div className="config-forms">
+
+                <div className="card-header">
+                    <div className="card-header-left">
+                        <div className="flex items-center gap-[10px]">
+                            <div className="header-icon-box">
+                                <FileText className="text-[#00d4aa] w-4 h-4" />
+                            </div>
+                        </div>
+                        <div>
+                            <h1 className="header-title">Employees</h1>
+                            <p className="header-subtext">View and manage employee records</p>
+                        </div>
+                    </div>
+                    <div className="card-header-right">
+                        <div className="portal-info">
+                            <p className="portal-label">{employees.length} total</p>
+                            <p className="portal-link">Admin Portal</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Filters & Pagination */}
+                <div className="bg-[#0c0f16] border border-[#1a1f2e] rounded-xl p-3 flex flex-col gap-3 mt-6">
+                    <div className="flex items-center gap-2">
+                        {/* Search */}
+                        <div className="search-box relative">
+                            <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => {
+                                    setSearchQuery(e.target.value);
+                                    setCurrentPage(1);
+                                }}
+                                className="search-input-approval"
+                                placeholder="Search employees..."
+                            />
+                        </div>
+
+                        {/* Reset Filters */}
+                        <button
+                            onClick={() => {
+                                setSearchQuery("");
+                                setCurrentPage(1);
+                            }}
+                            className="filter-btn"
+                        >
+                            <Filter className="filter-icon" />
+                            Reset
+                        </button>
+                    </div>
+
+                    {/* Pagination */}
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className={`w-6 h-6 flex items-center justify-center rounded-md transition ${currentPage === 1
+                                ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
+                                : "bg-[#0f131d] text-white hover:border hover:border-[#00d4aa]"
+                                }`}
+                        >
+                            <ChevronLeft className="w-4 h-4" />
+                        </button>
+
+                        <span className="w-6 h-6 flex items-center justify-center rounded-md bg-[#00d4aa] text-black text-[12px]">
+                            {currentPage}
+                        </span>
+
+                        <button
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className={`w-6 h-6 flex items-center justify-center rounded-md transition ${currentPage === totalPages
+                                ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
+                                : "bg-[#0f131d] text-white hover:border hover:border-[#00d4aa]"
+                                }`}
+                        >
+                            <ChevronRight className="w-4 h-4" />
+                        </button>
+                    </div>
+                </div>
+
+                {/* Table */}
+                <div className="table-card mt-[18px]">
+                    <div className="table-header">
+                        <p className="table-title">
+                            <FileText className="w-5 h-5" />
+                            Employee List
+                        </p>
+                    </div>
+
+                    <div className="table-wrapper mt-5">
+                        <table className="w-full text-left">
+                            <thead className="table-head">
+                                <tr>
+                                    <th className="table-cell">ID</th>
+                                    <th className="table-cell">NAME</th>
+                                    <th className="table-cell">EMAIL</th>
+                                    <th className="table-cell">DEPARTMENT</th>
+                                    <th className="table-cell">DESIGNATION</th>
+                                    <th className="table-cell">ROLE</th>
+                                    <th className="table-cell">STATUS</th>
+                                    <th className="table-cell">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {paginatedConfigurations.length > 0 ? (
+                                    paginatedConfigurations.map((emp, idx) => (
+                                        <tr key={idx} className="table-row">
+                                            <td className="table-content">{emp.empId}</td>
+                                            <td className="table-content">{emp.userName}</td>
+                                            <td className="table-content">{emp.email}</td>
+                                            <td className="table-content">{emp.deptName}</td>
+                                            <td className="table-content">{emp.designationDesc}</td>
+                                            <td className="table-content">{emp.roleDescription}</td>
+                                            <td className="table-content">
+                                                <span
+                                                    className={`px-2 py-1 rounded text-[10px] ${emp.status === "1"
+                                                        ? "superuser"
+                                                        : emp.status === "2"
+                                                            ? "checker"
+                                                            : "maker"
+                                                        }`}
+                                                >
+                                                    {emp.status}
+                                                </span>
+                                            </td>
+                                            <td className="table-content flex gap-2">
+                                                <button
+                                                    className="header-icon-box"
+                                                    onClick={() => setSelectedEmployee(emp)}
+                                                >
+                                                    <EyeIcon className="text-[#00d4aa] w-4 h-4" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td
+                                            colSpan="8"
+                                            className="text-center py-4 text-gray-500"
+                                        >
+                                            No employees found.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
         </>
     );
 };
