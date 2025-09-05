@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { ArrowLeft, FileText, Check, X, RotateCcw, Shield, CardSimIcon, Notebook, VaultIcon, Accessibility, ReceiptPoundSterlingIcon, CreditCard, NotebookTabs, NotebookIcon, NotebookPen, RefreshCw } from "lucide-react";
+import { ArrowLeft, FileText, Check, X, Shield, CardSimIcon, Notebook, VaultIcon, ReceiptPoundSterlingIcon, CreditCard, NotebookPen, RefreshCw } from "lucide-react";
 import axios from "axios";
 
 export default function Productview({ selectedProduct, setSelectedProduct }) {
   const [remarks, setRemarks] = useState("");
   const [currentAction, setCurrentAction] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   if (!selectedProduct) return null;
 
   const statusMap = {
@@ -41,7 +42,7 @@ export default function Productview({ selectedProduct, setSelectedProduct }) {
         productAccess: selectedProduct.productAccess,
       };
       await axios.post(
-        "http://192.168.22.247/ps/approveProductConfiguration",
+        `${API_BASE_URL}/ps/approveProductConfiguration`,
         payload
       );
 

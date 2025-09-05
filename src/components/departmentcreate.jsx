@@ -9,12 +9,12 @@ export default function DepartmentCreation({ onBack }) {
   const [editingDeptId, setEditingDeptId] = useState(null);
   const [newDeptName, setNewDeptName] = useState("");
   const [showForm, setShowForm] = useState(false);
-
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   // Fetch departments
   const fetchDepartments = async () => {
     try {
       const res = await axios.get(
-        "http://192.168.22.247:7090/api/Export/simple-departments"
+        `${API_BASE_URL}:7090/api/Export/simple-departments`
       );
       setDepartments(res.data || []);
     } catch (err) {
@@ -38,7 +38,7 @@ export default function DepartmentCreation({ onBack }) {
 
     try {
       await axios.post(
-        "http://192.168.22.247:5229/ums/api/UserManagement/department_create",
+        `${API_BASE_URL}:5229/ums/api/UserManagement/department_create`,
         { deptName: departmentName }
       );
       setDepartmentName("");
@@ -56,7 +56,7 @@ export default function DepartmentCreation({ onBack }) {
 
     try {
       await axios.put(
-        "http://192.168.22.247:5229/ums/api/UserManagement/department_update",
+        `${API_BASE_URL}:5229/ums/api/UserManagement/department_update`,
         { deptId, newName: newDeptName }
       );
       setEditingDeptId(null);
@@ -183,8 +183,8 @@ export default function DepartmentCreation({ onBack }) {
                           className="form-input"
                         />
                       ) : (
-                       
-                        <div className="flex items-center gap-1 "> <Building2 className="w-4 h-4 text-teal-400 " />{ dept.deptName}</div> 
+
+                        <div className="flex items-center gap-1 "> <Building2 className="w-4 h-4 text-teal-400 " />{dept.deptName}</div>
                       )}
                     </td>
                     <td className="table-cell table-cell-muted">

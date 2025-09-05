@@ -38,7 +38,7 @@ const EmployeeCreationForm = ({ onBack }) => {
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const ip = usePublicIp();
     const userAgent = navigator.userAgent;
-
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const itemsPerPage = 8;
     useEffect(() => {
         const generatedId = Date.now().toString().slice(-6); // last 6 digits of timestamp
@@ -75,16 +75,16 @@ const EmployeeCreationForm = ({ onBack }) => {
 
     useEffect(() => {
         axios
-            .get("http://192.168.22.247:7090/api/Export/role-departments")
+            .get( `${API_BASE_URL}:7090/api/Export/role-departments`)
             .then((res) => setAccessList(res.data))
             .catch((err) => console.error("Error fetching access list:", err));
 
         axios
-            .get("http://192.168.22.247:7090/api/Export/role-module-screen")
+            .get( `${API_BASE_URL}:7090/api/Export/role-module-screen`)
             .then((res) => setRoleData(res.data))
             .catch((err) => console.error("Error fetching role data:", err));
         axios
-            .get("http://192.168.22.247:7090/fes/api/Export/pending-employees")
+            .get( `${API_BASE_URL}:7090/fes/api/Export/pending-employees`)
             .then((res) => setEmployees(res.data))
             .catch((err) => console.error("Error fetching employees:", err));
     }, []);
@@ -185,14 +185,14 @@ const EmployeeCreationForm = ({ onBack }) => {
         try {
             if (selectedEmployee) {
                 await axios.put(
-                    `http://192.168.22.247/ums/api/UserManagement/updateEmployee/${selectedEmployee.empId}`,
+                     `${API_BASE_URL}/ums/api/UserManagement/updateEmployee/${selectedEmployee.empId}`,
                     payload,
                     { headers: { "Content-Type": "application/json" } }
                 );
                 alert("✅ Employee updated successfully");
             } else {
                 await axios.post(
-                    "http://192.168.22.247/ums/api/UserManagement/createEmployee",
+                     `${API_BASE_URL}/ums/api/UserManagement/createEmployee`,
                     payload,
                     { headers: { "Content-Type": "application/json" } }
                 );

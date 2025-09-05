@@ -3,7 +3,7 @@ import {
   LogOut,
   ChevronRight,
   ChevronLeft,
-  LayoutGrid ,
+  LayoutGrid,
   PackagePlus,
   ShieldCheck,
   CalculatorIcon,
@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Productcreate from "../components/productcreate";
 import Partnercreate from "../components/partnercreate";
+import Maincheckerdashboard from "../components/maincheckerdashboard";
 
 export default function DashboardLayout() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -84,7 +85,7 @@ export default function DashboardLayout() {
   const renderContent = () => {
     switch (activeTab) {
       case "dashboard":
-        return <div className="content">📊 Dashboard Content</div>;
+        return <div className="content"> <Maincheckerdashboard /></div>;
       case "customer":
         return <div className="content">👤 Customer Management</div>;
       case "wallet":
@@ -126,7 +127,18 @@ export default function DashboardLayout() {
         return <div className="content">Select an option</div>;
     }
   };
-
+  // Define dashboard children tabs
+  const dashboardTabs = [
+    "customer",
+    "wallet",
+    "transactions",
+    "compliance",
+    "risk",
+    "productperformance",
+    "partner",
+    "reports",
+    "system",
+  ];
   return (
     <div className="layout">
       {/* Sidebar */}
@@ -148,15 +160,19 @@ export default function DashboardLayout() {
             {/* Dashboard Dropdown */}
             <div>
               <button
-                onClick={() => toggleDropdown("dashboard")}
-                className={`menu-header ${openDropdown === "dashboard" ? "active" : ""}`}
+                onClick={(e) => { e.stopPropagation(); setActiveTab("dashboard"); toggleDropdown("dashboard"); }}
+                className={`menu-header ${activeTab === "dashboard" ? "active" : ""
+                  }`}
               >
-                <LayoutGrid  size={16}  className="menu-icon" />
+                <LayoutGrid size={16} className="menu-icon" />
                 {!isCollapsed && (
                   <>
                     <span>Dashboard</span>
-                    <span className="arrow-icon">
-                      {openDropdown === "dashboard" ? (
+                    <span
+                      className="arrow-icon"
+                    >
+                      {openDropdown === "dashboard" ||
+                        dashboardTabs.includes(activeTab) ? (
                         <ChevronUp size={14} />
                       ) : (
                         <ChevronDown size={14} />
@@ -166,64 +182,67 @@ export default function DashboardLayout() {
                 )}
               </button>
 
-              {openDropdown === "dashboard" && !isCollapsed && (
-                <div className={`submenu ${openDropdown === "dashboard" ? "submenu-open" : ""}`}>
-                  <button
-                    onClick={() => setActiveTab("customer")}
-                    className={activeTab === "customer" ? "submenu-active" : ""}
-                  >
-                    <User size={14} /> Customer Management
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("wallet")}
-                    className={activeTab === "wallet" ? "submenu-active" : ""}
-                  >
-                    <Wallet size={14} /> Wallet Operations
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("transactions")}
-                    className={activeTab === "transactions" ? "submenu-active" : ""}
-                  >
-                    <BarChart2 size={14} /> Transaction Analytics
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("compliance")}
-                    className={activeTab === "compliance" ? "submenu-active" : ""}
-                  >
-                    <FileCheck size={14} /> Compliance & KYC
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("risk")}
-                    className={activeTab === "risk" ? "submenu-active" : ""}
-                  >
-                    <Shield size={14} /> Risk Management
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("productperformance")}
-                    className={activeTab === "productperformance" ? "submenu-active" : ""}
-                  >
-                    <Activity size={14} /> Product Performance
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("partner")}
-                    className={activeTab === "partner" ? "submenu-active" : ""}
-                  >
-                    <Users size={14} /> Partner Management
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("reports")}
-                    className={activeTab === "reports" ? "submenu-active" : ""}
-                  >
-                    <FileText size={14} /> Reports & Analytics
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("system")}
-                    className={activeTab === "system" ? "submenu-active" : ""}
-                  >
-                    <Settings size={14} /> System Settings
-                  </button>
-                </div>
-              )}
+              {(openDropdown === "dashboard" || dashboardTabs.includes(activeTab)) &&
+                !isCollapsed && (
+                  <div className="submenu submenu-open">
+                    <button
+                      onClick={() => setActiveTab("customer")}
+                      className={activeTab === "customer" ? "submenu-active" : ""}
+                    >
+                      <User size={14} /> Customer Management
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("wallet")}
+                      className={activeTab === "wallet" ? "submenu-active" : ""}
+                    >
+                      <Wallet size={14} /> Wallet Operations
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("transactions")}
+                      className={activeTab === "transactions" ? "submenu-active" : ""}
+                    >
+                      <BarChart2 size={14} /> Transaction Analytics
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("compliance")}
+                      className={activeTab === "compliance" ? "submenu-active" : ""}
+                    >
+                      <FileCheck size={14} /> Compliance & KYC
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("risk")}
+                      className={activeTab === "risk" ? "submenu-active" : ""}
+                    >
+                      <Shield size={14} /> Risk Management
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("productperformance")}
+                      className={
+                        activeTab === "productperformance" ? "submenu-active" : ""
+                      }
+                    >
+                      <Activity size={14} /> Product Performance
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("partner")}
+                      className={activeTab === "partner" ? "submenu-active" : ""}
+                    >
+                      <Users size={14} /> Partner Management
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("reports")}
+                      className={activeTab === "reports" ? "submenu-active" : ""}
+                    >
+                      <FileText size={14} /> Reports & Analytics
+                    </button>
+                    <button
+                      onClick={() => setActiveTab("system")}
+                      className={activeTab === "system" ? "submenu-active" : ""}
+                    >
+                      <Settings size={14} /> System Settings
+                    </button>
+                  </div>
+                )}
             </div>
 
             {/* Maker Console Dropdown */}
@@ -253,13 +272,13 @@ export default function DashboardLayout() {
                     onClick={() => setActiveTab("Regulatory")}
                     className={activeTab === "Regulatory" ? "submenu-active" : ""}
                   >
-                     <FileTextIcon size={14} />  Regulatory
+                    <FileTextIcon size={14} />  Regulatory
                   </button>
                   <button
                     onClick={() => setActiveTab("Product")}
                     className={activeTab === "Product" ? "submenu-active" : ""}
                   >
-                 <PackagePlus size={14} />   Product
+                    <PackagePlus size={14} />   Product
                   </button>
                   <button
                     onClick={() => setActiveTab("partnercreation")}

@@ -12,7 +12,7 @@ export default function ScreenManagement({ onBack }) {
   const [editId, setEditId] = useState(null);
   const [editText, setEditText] = useState("");
   const [showForm, setShowForm] = useState(false);
-
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const ip = usePublicIp();
   const username = localStorage.getItem("username") || "guest";
 
@@ -23,7 +23,7 @@ export default function ScreenManagement({ onBack }) {
 
   const fetchModules = async () => {
     try {
-      const res = await axios.get("http://192.168.22.247:7090/api/Export/modules");
+      const res = await axios.get(`${API_BASE_URL}:7090/api/Export/modules`);
       setModules(res.data || []);
     } catch (err) {
       console.error("Failed to fetch modules:", err);
@@ -32,7 +32,7 @@ export default function ScreenManagement({ onBack }) {
 
   const fetchScreens = async () => {
     try {
-      const res = await axios.get("http://192.168.22.247:7090/api/Export/screens");
+      const res = await axios.get(`${API_BASE_URL}:7090/api/Export/screens`);
       setScreens(res.data || []);
     } catch (err) {
       console.error("Failed to fetch screens:", err);
@@ -64,7 +64,7 @@ export default function ScreenManagement({ onBack }) {
     };
 
     try {
-      await axios.post("http://192.168.22.247:5229/ums/api/UserManagement/screen_create", payload);
+      await axios.post(`${API_BASE_URL}:5229/ums/api/UserManagement/screen_create`, payload);
       setScreenName("");
       fetchScreens();
       setShowForm(false);
@@ -106,7 +106,7 @@ export default function ScreenManagement({ onBack }) {
     };
 
     try {
-      await axios.put("http://192.168.22.247:5229/ums/api/UserManagement/screen_update", payload);
+      await axios.put(`${API_BASE_URL}:5229/ums/api/UserManagement/screen_update`, payload);
       handleCancelEdit();
       fetchScreens();
     } catch (err) {

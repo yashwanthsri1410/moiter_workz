@@ -13,7 +13,7 @@ export default function CreateDesignationForm({ onBack }) {
   const [editId, setEditId] = useState(null);
   const [editText, setEditText] = useState("");
   const [showForm, setShowForm] = useState(false);
-
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const ip = usePublicIp();
   const username = localStorage.getItem("username") || "guest";
 
@@ -24,7 +24,7 @@ export default function CreateDesignationForm({ onBack }) {
 
   const fetchDepartments = async () => {
     try {
-      const res = await axios.get("http://192.168.22.247:7090/api/Export/simple-departments");
+      const res = await axios.get(`${API_BASE_URL}:7090/api/Export/simple-departments`);
       setDepartments(res.data || []);
     } catch (err) {
       console.error("Failed to fetch departments:", err);
@@ -33,7 +33,7 @@ export default function CreateDesignationForm({ onBack }) {
 
   const fetchDesignations = async () => {
     try {
-      const res = await axios.get("http://192.168.22.247:7090/api/Export/designations");
+      const res = await axios.get(`${API_BASE_URL}:7090/api/Export/designations`);
       setDesignations(res.data || []);
     } catch (err) {
       console.error("Failed to fetch designations:", err);
@@ -65,7 +65,7 @@ export default function CreateDesignationForm({ onBack }) {
     };
 
     try {
-      await axios.post("http://192.168.22.247:5229/ums/api/UserManagement/designation_create", payload);
+      await axios.post(`${API_BASE_URL}:5229/ums/api/UserManagement/designation_create`, payload);
       setDesignationDesc("");
       fetchDesignations();
       setShowForm(false);
@@ -107,7 +107,7 @@ export default function CreateDesignationForm({ onBack }) {
     };
 
     try {
-      await axios.put("http://192.168.22.247:5229/ums/api/UserManagement/designation_update", payload);
+      await axios.put(`${API_BASE_URL}:5229/ums/api/UserManagement/designation_update`, payload);
       handleCancelEdit();
       fetchDesignations();
     } catch (err) {
@@ -276,8 +276,8 @@ export default function CreateDesignationForm({ onBack }) {
                   group.designations.map((desig, id) => (
                     <tr key={desig.designationId} className="table-row">
                       <td className="table-cell-name">
-                     
-                          <div className="flex items-center gap-1 ">{id === 0 ? <Building2 className="w-4 h-4 text-teal-400 " /> : ""}    {id === 0 ? group.deptName : ""}</div> 
+
+                        <div className="flex items-center gap-1 ">{id === 0 ? <Building2 className="w-4 h-4 text-teal-400 " /> : ""}    {id === 0 ? group.deptName : ""}</div>
                       </td>
                       <td className="px-4 py-3 text-gray-300">
                         {editId === desig.designationId ? (
@@ -288,7 +288,7 @@ export default function CreateDesignationForm({ onBack }) {
                             className="form-input"
                           />
                         ) : (
-                           <div className="flex items-center gap-1 "> <Badge className="w-4 h-4 text-teal-400 " />{desig.designationDesc}</div> 
+                          <div className="flex items-center gap-1 "> <Badge className="w-4 h-4 text-teal-400 " />{desig.designationDesc}</div>
                         )}
                       </td>
                       <td className="table-cell-icon flex gap-4">

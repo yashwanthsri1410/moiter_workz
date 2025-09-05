@@ -14,13 +14,13 @@ const RoleAccessForm = ({ onBack }) => {
   const [editedRoleName, setEditedRoleName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [showForm, setShowForm] = useState(false);
-
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const username = localStorage.getItem("username");
   const ip = usePublicIp();
 
   useEffect(() => {
     axios
-      .get("http://192.168.22.247:7090/api/Export/modules-screens")
+      .get(`${API_BASE_URL}:7090/api/Export/modules-screens`)
       .then((res) => setModulesData(res.data))
       .catch((err) => console.error("Error fetching modules:", err));
     fetchRoles();
@@ -28,7 +28,7 @@ const RoleAccessForm = ({ onBack }) => {
 
   const fetchRoles = () => {
     axios
-      .get("http://192.168.22.247:7090/api/Export/role-departments")
+      .get(`${API_BASE_URL}:7090/api/Export/role-departments`)
       .then((res) => {
         const uniqueRolesMap = new Map();
         res.data.forEach((item) => {
@@ -116,7 +116,7 @@ const RoleAccessForm = ({ onBack }) => {
 
     try {
       await axios.post(
-        "http://192.168.22.247:5229/ums/api/UserManagement/role-access/bulk",
+        `${API_BASE_URL}:5229/ums/api/UserManagement/role-access/bulk`,
         bulkPayload
       );
       alert("Role access submitted successfully!");
@@ -153,7 +153,7 @@ const RoleAccessForm = ({ onBack }) => {
 
     try {
       await axios.put(
-        "http://192.168.22.247:5229/ums/api/UserManagement/update-role-description",
+        `${API_BASE_URL}:5229/ums/api/UserManagement/update-role-description`,
         payload
       );
       alert("Role description updated!");

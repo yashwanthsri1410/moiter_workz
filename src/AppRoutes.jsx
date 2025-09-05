@@ -3,7 +3,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import Signup from "./pages/Signup";
 import Usercreation from "./pages/Usercreation";
-import Dashboard from "./pages/MainDashboard";
 import Employeelogin from "./pages/employeelogin";
 import CustomerKYCForm from "./pages/CustomerKYCForm";
 import Makerscreation from "./pages/makerscreation";
@@ -33,14 +32,7 @@ function AppRoutes({ setRole }) {
       <Route path="/Employee-Login" element={<Employeelogin setRole={setRole} />} />
 
       {/* Protected routes based on userType */}
-      <Route
-        path="/Dashboard"
-        element={
-          <ProtectedRoute allowedRoles={[1]}>
-            <Dashboard />
-          </ProtectedRoute>
-        }
-      />
+      
       <Route
         path="/Makers-dashboard"
         element={

@@ -15,6 +15,7 @@ export default function RegulatoryConfig() {
     const ip = usePublicIp();
     const username = localStorage.getItem("username") || "system";
     const [currentPage, setCurrentPage] = useState(1);
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const rowsPerPage = 5;
     const getDefaultForm = (ip, editingId = null) => ({
         programType: "",
@@ -122,7 +123,7 @@ export default function RegulatoryConfig() {
 
     const fetchConfigurations = async () => {
         try {
-            const res = await axios.get("http://192.168.22.247:7090/api/Export/export_rbi_configuration");
+            const res = await axios.get(`${API_BASE_URL}:7090/api/Export/export_rbi_configuration`);
             setConfigurations(res.data);
         } catch (err) {
             console.error("Error fetching configurations:", err);
@@ -196,8 +197,8 @@ export default function RegulatoryConfig() {
         };
         try {
             const endpoint = isEditing
-                ? `http://192.168.22.247/ps/updateRbiConfiguration`
-                : `http://192.168.22.247/ps/create-RBI-Config`;
+                ? `${API_BASE_URL}/ps/updateRbiConfiguration`
+                : `${API_BASE_URL}/ps/create-RBI-Config`;
 
             await axios[isEditing ? "put" : "post"](endpoint, payload);
             alert("Configuration saved successfully!");

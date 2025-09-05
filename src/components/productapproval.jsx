@@ -12,6 +12,7 @@ export default function ProductApproval() {
     const [selectedPriority, setSelectedPriority] = useState("");       // filter state
     const [id, setid] = useState(0);
     const [selectedProduct, setSelectedProduct] = useState(null); // ✅ New
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     // filter data by search + dropdowns
     const filteredConfigurations = configurations.filter(cfg => {
         const matchesSearch = Object.values(cfg).some(
@@ -50,7 +51,7 @@ export default function ProductApproval() {
 
     const fetchConfigurations = async () => {
         try {
-            const res = await axios.get("http://192.168.22.247:7090/fes/api/Export/product_Config_export");
+            const res = await axios.get(`${API_BASE_URL}:7090/fes/api/Export/product_Config_export`);
             setConfigurations(res.data);
         } catch (err) {
             console.error("Error fetching configurations:", err);
@@ -88,7 +89,7 @@ export default function ProductApproval() {
 
 
             await axios.post(
-                "http://192.168.22.247/ps/approveProductConfiguration",
+                `${API_BASE_URL}/ps/approveProductConfiguration`,
                 payload
             );
 

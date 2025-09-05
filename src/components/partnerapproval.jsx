@@ -9,6 +9,7 @@ export default function PartnerApproval() {
     const itemsPerPage = 8;
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedPartner, setSelectedPartner] = useState(null);
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     // ✅ Fetch partner data
     useEffect(() => {
@@ -18,10 +19,10 @@ export default function PartnerApproval() {
     const fetchPartners = async () => {
         try {
             const res = await axios.get(
-                "http://192.168.22.247:7090/fes/api/Export/partner_summary_export"
+                `${API_BASE_URL}:7090/fes/api/Export/partner_summary_export`
             );
             setPartners(res.data);
-        // console.log(typeof res.data, res.data);
+            // console.log(typeof res.data, res.data);
         } catch (err) {
             console.error("Error fetching partners:", err);
         }

@@ -8,15 +8,16 @@ import {
   Search,
   MoreVertical,
   Calendar,
-  TrendingUp 
+  TrendingUp
 } from "lucide-react";
 
 export default function UserManagementSystem() {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   useEffect(() => {
-    fetch("http://192.168.22.247:7090/fes/api/Export/usertypes")
+    fetch(`${API_BASE_URL}:7090/fes/api/Export/usertypes`)
       .then((res) => res.json())
       .then((data) => {
         setUsers(data);
@@ -155,9 +156,8 @@ export default function UserManagementSystem() {
                   <td className="table-cell-name">{u.name}</td>
                   <td className="p-3">
                     <span
-                      className={`px-2 py-1 rounded text-[8px] usertype ${
-                        typeColors[u.userType]
-                      }`}
+                      className={`px-2 py-1 rounded text-[8px] usertype ${typeColors[u.userType]
+                        }`}
                     >
                       {u.userType.replace("_", " ").toUpperCase()}
                     </span>

@@ -19,7 +19,7 @@ export default function ModuleCreation({ onBack }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [headersError, setHeadersError] = useState("");
-
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const ip = usePublicIp();
   const username = localStorage.getItem("username");
 
@@ -30,7 +30,7 @@ export default function ModuleCreation({ onBack }) {
   const fetchModules = async () => {
     try {
       const res = await axios.get(
-        "http://192.168.22.247:7090/api/Export/modules"
+       `${API_BASE_URL}:7090/api/Export/modules`
       );
       setModules(res.data || []);
     } catch (error) {
@@ -68,7 +68,7 @@ export default function ModuleCreation({ onBack }) {
 
     try {
       await axios.post(
-        "http://192.168.22.247:5229/ums/api/UserManagement/module_create",
+        `${API_BASE_URL}:5229/ums/api/UserManagement/module_create`,
         payload
       );
       setNewModuleName("");
@@ -122,7 +122,7 @@ export default function ModuleCreation({ onBack }) {
 
     try {
       await axios.put(
-        "http://192.168.22.247:5229/ums/api/UserManagement/module_update",
+        `${API_BASE_URL}:5229/ums/api/UserManagement/module_update`,
         payload
       );
       setEditingModuleId(null);

@@ -10,6 +10,7 @@ const mapFormToApiSchema = (form, username, ip, isEditing = false, empId) => {
     const now = new Date().toISOString();
     const safeUser = username || "system"; // fallback if null
 
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const basePayload = {
         productId: form.productId,
         productName: form.productName || "",
@@ -127,6 +128,7 @@ export default function Productcreate() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
 
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const handleEdit = async (cfg) => {
         try {
             // First, ensure we have the latest RBI config
@@ -347,7 +349,7 @@ export default function Productcreate() {
 
     const fetchConfigurations = async () => {
         try {
-            const res = await axios.get("http://192.168.22.247:7090/fes/api/Export/product_Config_export");
+            const res = await axios.get(`${API_BASE_URL}:7090/fes/api/Export/product_Config_export`);
             setConfigurations(res.data);
         } catch (err) {
             console.error("Error fetching configurations:", err);
@@ -356,7 +358,7 @@ export default function Productcreate() {
 
     const fetchRBIConfigurations = async () => {
         try {
-            const res = await axios.get("http://192.168.22.247:7090/fes/api/Export/export_rbi_configuration");
+            const res = await axios.get(`${API_BASE_URL}:7090/fes/api/Export/export_rbi_configuration`);
             setRbiConfig(res.data);
             const types = Array.from(new Set(res.data.map(item => item.programType)));
             setProgramTypes(types);
@@ -442,14 +444,14 @@ export default function Productcreate() {
             if (isEditing) {
                 // Update existing config
                 await axios.put(
-                    `http://192.168.22.247/ps/productConfigurationUpdate`,
+                    `${API_BASE_URL}/ps/productConfigurationUpdate`,
                     payload
                 );
                 alert("Product configuration updated successfully!");
             } else {
                 // Create new config
                 await axios.post(
-                    "http://192.168.22.247/ps/productConfigurationCreate",
+                     `${API_BASE_URL}/ps/productConfigurationCreate`,
                     payload
                 );
                 alert("Product configuration created successfully!");

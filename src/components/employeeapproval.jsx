@@ -19,6 +19,7 @@ export default function EmployeeApproval() {
     const [selectedPriority, setSelectedPriority] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     const itemsPerPage = 8;
 
@@ -29,7 +30,7 @@ export default function EmployeeApproval() {
     const fetchConfigurations = async () => {
         try {
             const res = await axios.get(
-                "http://192.168.22.247:7090/fes/api/Export/pending-employees"
+                `${API_BASE_URL}:7090/fes/api/Export/pending-employees`
             );
             setConfigurations(res.data);
         } catch (err) {
@@ -89,7 +90,7 @@ export default function EmployeeApproval() {
         <div className="config-forms">
 
             {selectedEmployee ? (<>
-                <EmployeeView selectedEmployee={selectedEmployee} setSelectedEmployee={setSelectedEmployee}/>
+                <EmployeeView selectedEmployee={selectedEmployee} setSelectedEmployee={setSelectedEmployee} />
             </>) : (<>
                 {/* Header */}
                 <div className="card-header">

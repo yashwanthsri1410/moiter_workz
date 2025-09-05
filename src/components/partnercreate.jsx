@@ -15,9 +15,10 @@ export default function Partnercreate() {
     const [currentPage, setCurrentPage] = useState(1);
     const partnersPerPage = 5;
     const ip = usePublicIp();
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     // Fetch API data
     useEffect(() => {
-        fetch("http://192.168.22.247:7090/fes/api/Export/partner_summary_export")
+        fetch(`${API_BASE_URL}:7090/fes/api/Export/partner_summary_export`)
             .then((res) => res.json())
             .then((data) => setPartners(data))
             .catch((err) => console.error("Error fetching partners:", err));
@@ -171,7 +172,7 @@ export default function Partnercreate() {
             console.log("Payload ready:", payload);
 
             const response = await axios.post(
-                "http://192.168.22.247/ps/DistributionPartner-Create",
+                `${API_BASE_URL}/ps/DistributionPartner-Create`,
                 payload,
                 { headers: { "Content-Type": "application/json" } }
             );
