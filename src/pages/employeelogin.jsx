@@ -21,6 +21,7 @@ const Employeelogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [particles, setParticles] = useState([]);
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const navigate = useNavigate();
   const ip = usePublicIp();
@@ -82,7 +83,7 @@ const Employeelogin = () => {
 
     try {
       const response = await axios.post(
-        "http://192.168.20.254/ums/api/UserManagement/user_login",
+         `${API_BASE_URL}:5229/ums/api/UserManagement/user_login`,
         {
           username: formData.username,
           password: formData.password,

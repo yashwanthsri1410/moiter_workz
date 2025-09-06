@@ -1591,6 +1591,7 @@ tbody tr {
     font-size: 12px;
     color: #00d4aa;
     font-weight: normal;
+    width: 400px;
 }
 
 .table-content {

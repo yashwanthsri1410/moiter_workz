@@ -9,6 +9,7 @@ import {
     Search,
     SquarePen,
     User2Icon,
+    UserCheck2Icon,
 } from "lucide-react";
 import EmployeeView from "./employeeview";
 
@@ -97,7 +98,7 @@ export default function EmployeeApproval() {
                     <div className="card-header-left">
                         <div className="flex items-center gap-[10px]">
                             <div className="header-icon-box">
-                                <User2Icon className="text-[#00d4aa] w-4 h-4" />
+                                <UserCheck2Icon className="text-[#00d4aa] w-4 h-4" />
                             </div>
                         </div>
                         <div>
@@ -216,7 +217,7 @@ export default function EmployeeApproval() {
                 <div className="table-card mt-[18px]">
                     <div className="table-header">
                         <p className="table-title">
-                            <FileText className="w-5 h-5" />
+                            <UserCheck2Icon className="w-5 h-5" />
                             Pending Employee Approvals
                         </p>
                     </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { EyeIcon, Power, FileText, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { EyeIcon, Power, FileText, Search, ChevronLeft, ChevronRight, CalculatorIcon } from "lucide-react";
 import Partnerview from "../components/partnerview"
 
 export default function PartnerApproval() {
@@ -64,7 +64,7 @@ export default function PartnerApproval() {
                 <div className="card-header">
                     <div className="card-header-left">
                         <div className="header-icon-box">
-                            <FileText className="text-[#00d4aa] w-4 h-4" />
+                            <CalculatorIcon className="text-[#00d4aa] w-4 h-4" />
                         </div>
                         <div>
                             <h1 className="header-title">Pending Partner Applications</h1>
@@ -129,7 +129,7 @@ export default function PartnerApproval() {
                 <div className="table-card mt-[18px]">
                     <div className="table-header">
                         <p className="table-title">
-                            <FileText className="w-5 h-5" />
+                            <CalculatorIcon className="w-5 h-5" />
                             Pending Partner Applications
                         </p>
                     </div>
