@@ -1,14 +1,17 @@
 {
   "files": {
-    "main.css": "/static/css/main.e8ac25b0.css",
-    "main.js": "/static/js/main.7a62cf24.js",
+    "main.css": "/static/css/main.f050d12c.css",
+    "main.js": "/static/js/main.be4bc041.js",
     "static/media/background.jpeg": "/static/media/background.6d7a887eeb7a944ed764.jpeg",
+    "static/media/orbitron-latin-400-normal.woff": "/static/media/orbitron-latin-400-normal.a5ff8cc5b09578a411aa.woff",
+    "static/media/orbitron-latin-400-normal.woff2": "/static/media/orbitron-latin-400-normal.aa1b8ea4cc46ec30f97f.woff2",
+    "static/media/background.svg": "/static/media/background.ce27a0395ea1d048af0df06a166d5eb9.svg",
     "index.html": "/index.html",
-    "main.e8ac25b0.css.map": "/static/css/main.e8ac25b0.css.map",
-    "main.7a62cf24.js.map": "/static/js/main.7a62cf24.js.map"
+    "main.f050d12c.css.map": "/static/css/main.f050d12c.css.map",
+    "main.be4bc041.js.map": "/static/js/main.be4bc041.js.map"
   },
   "entrypoints": [
-    "static/css/main.e8ac25b0.css",
-    "static/js/main.7a62cf24.js"
+    "static/css/main.f050d12c.css",
+    "static/js/main.be4bc041.js"
   ]
 }

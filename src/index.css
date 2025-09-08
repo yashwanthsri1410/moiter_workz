@@ -29,3 +29,71 @@ body {
 .react-select__option--is-focused {
   background-color: #333;
 }
+
+/* cornerbox */
+
+.corner-box {
+  position: relative;
+  border-radius: 16px;
+  padding: 20px;
+  /* background: #11161a; */
+  overflow: hidden;
+  color: white;
+  border: 1px solid #00d4aa33;
+}
+
+/* Top corners */
+.corner-box::before,
+.corner-box::after {
+  content: "";
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #00d4aa80;
+}
+
+/* Top-left */
+.corner-box::before {
+  top: 0;
+  left: 0;
+  border-right: none;
+  border-bottom: none;
+  border-top-left-radius: 15px;
+}
+
+/* Top-right */
+.corner-box::after {
+  top: 0;
+  right: 0;
+  border-left: none;
+  border-bottom: none;
+  border-top-right-radius: 15px;
+}
+
+/* Bottom corners (from span) */
+.corner-box span::before,
+.corner-box span::after {
+  content: "";
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #00d4aa80;
+}
+
+/* Bottom-left */
+.corner-box span::before {
+  bottom: 0;
+  left: 0;
+  border-right: none;
+  border-top: none;
+  border-bottom-left-radius: 15px;
+}
+
+/* Bottom-right */
+.corner-box span::after {
+  bottom: 0;
+  right: 0;
+  border-left: none;
+  border-top: none;
+  border-bottom-right-radius: 15px;
+}

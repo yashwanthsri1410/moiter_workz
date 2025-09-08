@@ -18,7 +18,8 @@ import {
   Settings,
   ChevronDown,
   ChevronUp,
-  FileTextIcon
+  FileTextIcon,
+  Database,
 } from "lucide-react";
 import "../styles/styles.css";
 import logo from "../assets/logo.png";
@@ -30,6 +31,7 @@ import axios from "axios";
 import Productcreate from "../components/productcreate";
 import Partnercreate from "../components/partnercreate";
 import Maincheckerdashboard from "../components/maincheckerdashboard";
+import Infra from "../features/infra";
 
 export default function DashboardLayout() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -85,7 +87,12 @@ export default function DashboardLayout() {
   const renderContent = () => {
     switch (activeTab) {
       case "dashboard":
-        return <div className="content"> <Maincheckerdashboard /></div>;
+        return (
+          <div className="content">
+            {" "}
+            <Maincheckerdashboard />
+          </div>
+        );
       case "customer":
         return <div className="content">👤 Customer Management</div>;
       case "wallet":
@@ -104,6 +111,12 @@ export default function DashboardLayout() {
         return <div className="content">📑 Reports & Analytics</div>;
       case "system":
         return <div className="content">⚙️ System Settings</div>;
+      case "infra":
+        return (
+          <div className="content">
+            <Infra />
+          </div>
+        );
 
       case "Regulatory":
         return (
@@ -151,7 +164,11 @@ export default function DashboardLayout() {
             className="collapse-btn"
             onClick={() => setIsCollapsed(!isCollapsed)}
           >
-            {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+            {isCollapsed ? (
+              <ChevronRight size={18} />
+            ) : (
+              <ChevronLeft size={18} />
+            )}
           </button>
         </div>
 
@@ -160,19 +177,22 @@ export default function DashboardLayout() {
             {/* Dashboard Dropdown */}
             <div>
               <button
-                onClick={(e) => { e.stopPropagation(); setActiveTab("dashboard"); toggleDropdown("dashboard"); }}
-                className={`menu-header ${activeTab === "dashboard" ? "active" : ""
-                  }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveTab("dashboard");
+                  toggleDropdown("dashboard");
+                }}
+                className={`menu-header ${
+                  activeTab === "dashboard" ? "active" : ""
+                }`}
               >
                 <LayoutGrid size={16} className="menu-icon" />
                 {!isCollapsed && (
                   <>
                     <span>Dashboard</span>
-                    <span
-                      className="arrow-icon"
-                    >
+                    <span className="arrow-icon">
                       {openDropdown === "dashboard" ||
-                        dashboardTabs.includes(activeTab) ? (
+                      dashboardTabs.includes(activeTab) ? (
                         <ChevronUp size={14} />
                       ) : (
                         <ChevronDown size={14} />
@@ -182,12 +202,15 @@ export default function DashboardLayout() {
                 )}
               </button>
 
-              {(openDropdown === "dashboard" || dashboardTabs.includes(activeTab)) &&
+              {(openDropdown === "dashboard" ||
+                dashboardTabs.includes(activeTab)) &&
                 !isCollapsed && (
                   <div className="submenu submenu-open">
                     <button
                       onClick={() => setActiveTab("customer")}
-                      className={activeTab === "customer" ? "submenu-active" : ""}
+                      className={
+                        activeTab === "customer" ? "submenu-active" : ""
+                      }
                     >
                       <User size={14} /> Customer Management
                     </button>
@@ -199,13 +222,17 @@ export default function DashboardLayout() {
                     </button>
                     <button
                       onClick={() => setActiveTab("transactions")}
-                      className={activeTab === "transactions" ? "submenu-active" : ""}
+                      className={
+                        activeTab === "transactions" ? "submenu-active" : ""
+                      }
                     >
                       <BarChart2 size={14} /> Transaction Analytics
                     </button>
                     <button
                       onClick={() => setActiveTab("compliance")}
-                      className={activeTab === "compliance" ? "submenu-active" : ""}
+                      className={
+                        activeTab === "compliance" ? "submenu-active" : ""
+                      }
                     >
                       <FileCheck size={14} /> Compliance & KYC
                     </button>
@@ -218,20 +245,26 @@ export default function DashboardLayout() {
                     <button
                       onClick={() => setActiveTab("productperformance")}
                       className={
-                        activeTab === "productperformance" ? "submenu-active" : ""
+                        activeTab === "productperformance"
+                          ? "submenu-active"
+                          : ""
                       }
                     >
                       <Activity size={14} /> Product Performance
                     </button>
                     <button
                       onClick={() => setActiveTab("partner")}
-                      className={activeTab === "partner" ? "submenu-active" : ""}
+                      className={
+                        activeTab === "partner" ? "submenu-active" : ""
+                      }
                     >
                       <Users size={14} /> Partner Management
                     </button>
                     <button
                       onClick={() => setActiveTab("reports")}
-                      className={activeTab === "reports" ? "submenu-active" : ""}
+                      className={
+                        activeTab === "reports" ? "submenu-active" : ""
+                      }
                     >
                       <FileText size={14} /> Reports & Analytics
                     </button>
@@ -241,6 +274,12 @@ export default function DashboardLayout() {
                     >
                       <Settings size={14} /> System Settings
                     </button>
+                    <button
+                      onClick={() => setActiveTab("infra")}
+                      className={activeTab === "infra" ? "submenu-active" : ""}
+                    >
+                      <Database size={14} /> Infra
+                    </button>
                   </div>
                 )}
             </div>
@@ -249,7 +288,9 @@ export default function DashboardLayout() {
             <div>
               <button
                 onClick={() => toggleDropdown("makerconsole")}
-                className={`menu-header ${openDropdown === "makerconsole" ? "active" : ""}`}
+                className={`menu-header ${
+                  openDropdown === "makerconsole" ? "active" : ""
+                }`}
               >
                 <ShieldCheck size={16} className="menu-icon" />
                 {!isCollapsed && (
@@ -257,7 +298,7 @@ export default function DashboardLayout() {
                     <span>Maker Console</span>
                     <span className="arrow-icon">
                       {openDropdown === "makerconsole" ? (
-                        < ChevronUp size={14} />
+                        <ChevronUp size={14} />
                       ) : (
                         <ChevronDown size={14} />
                       )}
@@ -270,19 +311,23 @@ export default function DashboardLayout() {
                 <div className="submenu submenu-open">
                   <button
                     onClick={() => setActiveTab("Regulatory")}
-                    className={activeTab === "Regulatory" ? "submenu-active" : ""}
+                    className={
+                      activeTab === "Regulatory" ? "submenu-active" : ""
+                    }
                   >
-                    <FileTextIcon size={14} />  Regulatory
+                    <FileTextIcon size={14} /> Regulatory
                   </button>
                   <button
                     onClick={() => setActiveTab("Product")}
                     className={activeTab === "Product" ? "submenu-active" : ""}
                   >
-                    <PackagePlus size={14} />   Product
+                    <PackagePlus size={14} /> Product
                   </button>
                   <button
                     onClick={() => setActiveTab("partnercreation")}
-                    className={activeTab === "partnercreation" ? "submenu-active" : ""}
+                    className={
+                      activeTab === "partnercreation" ? "submenu-active" : ""
+                    }
                   >
                     <CalculatorIcon size={14} /> Partner Creation
                   </button>

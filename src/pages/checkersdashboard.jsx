@@ -20,6 +20,7 @@ import {
   ChevronUp,
   FileTextIcon,
   UserCheck2Icon,
+  Database,
 } from "lucide-react";
 import "../styles/styles.css";
 import logo from "../assets/logo.png";
@@ -29,6 +30,7 @@ import ProductApproval from "../components/productapproval";
 import EmployeeApproval from "../components/employeeapproval";
 import Maincheckerdashboard from "../components/maincheckerdashboard";
 import PartnerApproval from "../components/partnerapproval";
+import Infra from "../features/infra";
 
 export default function CheckersDashboardLayout() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -108,6 +110,12 @@ export default function CheckersDashboardLayout() {
         return <div className="content">📑 Reports & Analytics</div>;
       case "system":
         return <div className="content">⚙️ System Settings</div>;
+      case "infra":
+        return (
+          <div className="content">
+            <Infra />
+          </div>
+        );
 
       case "Regulatory":
         return (
@@ -265,6 +273,13 @@ export default function CheckersDashboardLayout() {
                       className={activeTab === "system" ? "submenu-active" : ""}
                     >
                       <Settings size={14} /> System Settings
+                    </button>
+
+                    <button
+                      onClick={() => setActiveTab("infra")}
+                      className={activeTab === "infra" ? "submenu-active" : ""}
+                    >
+                      <Database size={14} /> Infra
                     </button>
                   </div>
                 )}

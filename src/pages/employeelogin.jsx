@@ -82,7 +82,7 @@ const Employeelogin = () => {
 
     try {
       const response = await axios.post(
-        "http://192.168.20.254/ums/api/UserManagement/user_login",
+        "http://192.168.22.247:5229/ums/api/UserManagement/user_login",
         {
           username: formData.username,
           password: formData.password,
