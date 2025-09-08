@@ -413,14 +413,14 @@ export default function RegulatoryConfig() {
                                 <h4 className="compliance-title">KYC Compliance</h4>
                                 <div className="compliance-table">
                                     {[
-                                        "kycRequired",
-                                        "aadhaarRequired",
-                                        "panRequired",
-                                        "additionalKycDocsNeeded",
-                                        "amlCftApplicable",
+                                        "KYCRequired",
+                                        "AADHAARRequired",
+                                        "PANRequired",
+                                        "additionalKYCDocsNeeded",
+                                        "AMLCFTApplicable",
                                         "pepCheckRequired",
                                         "blacklistCheckRequired",
-                                        "ckycUploadRequired"
+                                        "CKYCUploadRequired"
                                     ].map((field) => (
                                         <div className="compliance-row" key={field}>
                                             <span className="compliance-label">
@@ -758,7 +758,7 @@ export default function RegulatoryConfig() {
                                 <th className="table-cell">Program Type</th>
                                 <th className="table-cell">KYC Level</th>
                                 <th className="table-cell">Status</th>
-                                <th className="table-cell">Created</th>
+                                <th className="table-cell">Remarks</th>
                                 <th className="table-cell">Actions</th>
                             </tr>
                         </thead>
@@ -774,7 +774,7 @@ export default function RegulatoryConfig() {
                                             {cfg.p_Is_Active ? "Active" : "Inactive"}
                                         </span>
                                     </td>
-                                    <td className="table-content">{cfg.createdAt || "-"}</td>
+                                    <td className="table-content">{cfg.remarks || "-"}</td>
                                     <td className="table-content">
                                         <button className="header-icon-box"
                                             onClick={() => {

@@ -14,8 +14,36 @@ export default function Partnercreate() {
     const [search, setSearch] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const partnersPerPage = 5;
+    const [products, setProducts] = useState([]);  // fetched products
+    const [showProductDropdown, setShowProductDropdown] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+
+    const [editingId, setEditingId] = useState(null);
+    useEffect(() => {
+        fetch(`${API_BASE_URL}:7090/fes/api/Export/product_export`)
+            .then((res) => res.json())
+            .then((data) => {
+                // 🔹 Remove duplicates by productName
+                const unique = Array.from(
+                    new Map(data.map((item) => [item.productName, item])).values()
+                );
+                setProducts(unique);
+            })
+            .catch((err) => console.error("Error fetching products:", err));
+    }, []);
+
+    const toggleAllowed = (productName) => {
+        setForm((prev) => {
+            const exists = prev.allowedProducts.includes(productName);
+            const updated = exists
+                ? prev.allowedProducts.filter((p) => p !== productName)
+                : [...new Set([...prev.allowedProducts, productName])]; // 🔹 enforce uniqueness
+            return { ...prev, allowedProducts: updated };
+        });
+    };
+
     const ip = usePublicIp();
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     // Fetch API data
     useEffect(() => {
         fetch(`${API_BASE_URL}:7090/fes/api/Export/partner_summary_export`)
@@ -38,28 +66,6 @@ export default function Partnercreate() {
         if (page >= 1 && page <= totalPages) {
             setCurrentPage(page);
         }
-    };
-    const products = [
-        "Prepaid Wallet",
-        "Payment Gateway",
-        "Digital Banking",
-        "Bill Payment",
-        "Money Transfer",
-        "Merchant Services",
-        "Mobile Payment",
-        "Cryptocurrency Services",
-    ];
-
-    const toggleAllowed = (product) => {
-        setForm((prev) => {
-            const exists = prev.allowedProducts.includes(product);
-            return {
-                ...prev,
-                allowedProducts: exists
-                    ? prev.allowedProducts.filter((p) => p !== product)
-                    : [...prev.allowedProducts, product],
-            };
-        });
     };
 
     const [form, setForm] = useState({
@@ -129,7 +135,7 @@ export default function Partnercreate() {
                 pepCheck: form.pepCheck,
                 sanctionsScreening: form.sanctionsScreening,
                 blacklisted: form.blacklisted,
-                allowedProducts: form.allowedProducts, // string or array depending on API
+                allowedProducts: [...new Set(form.allowedProducts)].join(","),
                 webhookUrl: form.webhookUrl,
                 cardIssuanceCommissionPercent: form.cardIssuanceCommissionPercent,
                 transactionCommissionPercent: form.transactionCommissionPercent,
@@ -356,30 +362,44 @@ export default function Partnercreate() {
                             </select>
                         </div>
                     </div>
-                    <div className="mt-8">
+                    <div className="mt-8 relative">
                         <h3 className="section-title">Allowed Products</h3>
-                        <div className="grid grid-cols-3 gap-4 mt-3">
-                            {products.map((item) => {
-                                const checked = form.allowedProducts?.includes(item); // ✅ check if selected
-                                return (
-                                    <label
-                                        key={item}
-                                        className="flex items-center gap-2 cursor-pointer text-gray-300"
-                                    >
-                                        <div
-                                            onClick={() => toggleAllowed(item)} // ✅ toggle function
-                                            className={`w-3 h-3 flex items-center justify-center border rounded-sm
-              ${checked ? "bg-teal-500 border-teal-500" : "bg-[#0d1220] border-teal-700/50"}
-              transition-colors duration-200`}
+
+                        {/* Dropdown Toggle */}
+                        <button
+                            type="button"
+                            onClick={() => setShowProductDropdown(!showProductDropdown)}
+                            className="w-1/2 mt-2 px-3 py-1 bg-[#0d1220] border border-teal-700/50 rounded-[8px] text-left text-gray-300 text-[13px]"
+                        >
+                            {form.allowedProducts.length > 0
+                                ? form.allowedProducts.join(", ")
+                                : "Select Products"}
+                        </button>
+
+                        {/* Dropdown Menu */}
+                        {showProductDropdown && (
+                            <div className="absolute mt-0 w-1/2 bg-[#0d1220] border border-teal-700/50 rounded-[10px] shadow-lg z-10 max-h-60 overflow-y-auto">
+                                {products.map((product) => {
+                                    const checked = form.allowedProducts?.includes(product.productName);
+                                    return (
+                                        <label
+                                            key={product.productId}
+                                            className="flex items-center gap-2 px-3 py-2 hover:bg-[#1c2b45] cursor-pointer text-gray-300"
                                         >
-                                            {checked && <Check size={14} className="text-[#0d1220]" />}
-                                        </div>
-                                        <span className="text-[12px]">{item}</span>
-                                    </label>
-                                );
-                            })}
-                        </div>
+                                            <input
+                                                type="checkbox"
+                                                checked={checked}
+                                                onChange={() => toggleAllowed(product.productName)}
+                                                className="accent-teal-500"
+                                            />
+                                            <span className="text-sm">{product.productName}</span>
+                                        </label>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
+
 
 
                     <div className="portal-access flex items-center gap-2 text-gray-300">
@@ -574,14 +594,14 @@ export default function Partnercreate() {
                             </div>
                         </div>
                     </div>
-                    <div className="partner-form-footer mt-10 flex items-center gap-3">
+                    {/* <div className="partner-form-footer mt-10 flex items-center gap-3">
                         <button
                             type="submit"
                             className="flex items-center px-5 py-2 bg-[#00d4aa] hover:bg-[#00b896] text-black  rounded-md shadow-md transition"
                             disabled={loading}
                         >
                             <SaveIcon className="w-4 h-4 mr-2" />
-                            {loading ? "Saving..." : "Save Partner"}
+                            {loading ? "creating..." : "create Partner"}
                         </button>
 
                         <button
@@ -592,6 +612,21 @@ export default function Partnercreate() {
                             <X className="w-4 h-4 mr-2" />
                             Cancel
                         </button>
+                    </div> */}
+
+                    <div className="form-footer">
+                        <button type="button" className="btn-outline-back" onClick={() => setformOpen(false)}>
+                            <ArrowLeft className="icon" /> Back
+                        </button>
+                        <div className="footer-right">
+                            <button type="button" className="btn-outline-reset" onClick={() => { setEditingId(null); setIsEditing(false);  }}>
+                                <RotateCcw className="icon" /> Reset
+                            </button>
+                            <button type="submit" className="btn-outline-reset">
+                                <Save className="icon" />
+                                {editingId ? "Update partner" : "Create partner"}
+                            </button>
+                        </div>
                     </div>
                 </form>
             )}
@@ -601,7 +636,7 @@ export default function Partnercreate() {
                     <div className="table-header">
                         <h2 className="table-title flex items-center gap-2">
                             <Building2 className="text-[#00d4aa] w-5 h-5" />
-                            Partner Network
+                            Existing partner Configurations
                         </h2>
                         <div className="search-box">
                             <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />

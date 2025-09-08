@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { ChevronLeft, ChevronRight, EyeIcon, FileText, Filter, Power, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, EyeIcon, FileText, Filter, PackagePlus, Power, Search } from "lucide-react";
 import Productview from "./productview";
 
 export default function ProductApproval() {
@@ -112,7 +112,7 @@ export default function ProductApproval() {
                 <div className="card-header">
                     <div className="card-header-left">
                         <div className="flex items-center gap-[10px]">
-                            <div className="header-icon-box"><FileText className="text-[#00d4aa] w-4 h-4" /></div>
+                            <div className="header-icon-box"><PackagePlus className="text-[#00d4aa] w-4 h-4" /></div>
                         </div>
                         <div>
                             <h1 className="header-title">Product Approvals</h1>
@@ -232,7 +232,7 @@ export default function ProductApproval() {
                 {/* Table */}
                 <div className="table-card mt-[18px]">
                     <div className="table-header">
-                        <p className="table-title"><FileText className="w-5 h-5" />Pending Product Approvals</p>
+                        <p className="table-title"><PackagePlus className="w-5 h-5" />Pending Product Approvals</p>
                     </div>
 
                     <div className="table-wrapper mt-5">

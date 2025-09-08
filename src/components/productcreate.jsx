@@ -485,7 +485,7 @@ export default function Productcreate() {
                         <div className="header-icon-box"><FileText className="text-[#00d4aa] w-4 h-4" /></div>
                     </div>
                     <div>
-                        <h1 className="header-title">Product</h1>
+                        <h1 className="header-title">Product Configuration Management</h1>
                         <p className="header-subtext">Create and manage financial products and services</p>
                     </div>
                 </div>
@@ -628,14 +628,14 @@ export default function Productcreate() {
                                 <h4 className="compliance-title">KYC Compliance</h4>
                                 <div className="compliance-table">
                                     {[
-                                        "kycRequired",
-                                        "aadhaarRequired",
-                                        "panRequired",
-                                        "additionalKycDocsNeeded",
-                                        "amlCftApplicable",
+                                        "KYCRequired",
+                                        "AADHAARRequired",
+                                        "PANRequired",
+                                        "additionalKYCDocsNeeded",
+                                        "AMLCFTApplicable",
                                         "pepCheckRequired",
                                         "blacklistCheckRequired",
-                                        "ckycUploadRequired"
+                                        "CKYCUploadRequired"
                                     ].map(field => (
                                         <div className="compliance-row" key={field}>
                                             <span className="compliance-label">
@@ -856,7 +856,7 @@ export default function Productcreate() {
             {/* Existing Configurations */}
             <div className="table-card mt-[18px]">
                 <div className="table-header">
-                    <p className="table-title"><FileText className="w-5 h-5" />Existing Regulatory Configurations</p>
+                    <p className="table-title"><FileText className="w-5 h-5" />Existing product Configurations</p>
                     {/* Search bar */}
                     <div className="search-box">
                         <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
@@ -881,7 +881,7 @@ export default function Productcreate() {
                                 <th className="table-cell">Program Type</th>
                                 <th className="table-cell">KYC Level</th>
                                 <th className="table-cell">Status</th>
-                                <th className="table-cell">Created</th>
+                                <th className="table-cell">Remarks</th>
                                 <th className="table-cell">Actions</th>
                             </tr>
                         </thead>
@@ -896,7 +896,7 @@ export default function Productcreate() {
                                             {cfg.isActive ? "active" : "Inactive"}
                                         </span>
                                     </td>
-                                    <td className="table-content">{cfg.createdAt || "-"}</td>
+                                    <td className="table-content">{cfg.remarks || "-"}</td>
                                     <td className="table-content">
                                         <button className="header-icon-box" onClick={() => handleEdit(cfg)}>
                                             <SquarePen className="text-[#00d4aa] w-3 h-3" />
