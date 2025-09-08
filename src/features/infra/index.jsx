@@ -14,8 +14,7 @@ const Infra = () => {
 
   const stats = [
     { value: infraSummary?.totalRequests, label: "Total Requests" },
-    // { value: infraSummary?.activeServices, label: "Active Services" },
-    { value: "6/6", label: "Active Services" },
+    { value: infraSummary?.activeServices, label: "Active Services" },
     { value: infraSummary?.liveEndpoints, label: "Live Endpoints" },
   ];
 
@@ -48,6 +47,10 @@ const Infra = () => {
   };
 
   useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
     const interval = setInterval(() => {
       setTime(new Date());
     }, 1000);
@@ -56,7 +59,7 @@ const Infra = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      // fetchData();
+      fetchData();
     }, 3000);
     return () => clearInterval(interval);
   }, []);

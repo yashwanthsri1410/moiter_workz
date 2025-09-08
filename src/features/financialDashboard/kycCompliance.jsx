@@ -1,22 +1,30 @@
 import { Shield, Clock, CheckCircle2 } from "lucide-react";
+import { useOperationStore } from "../../store/operationStore";
 
 export default function KYCCompliance() {
+  const { kycStatusData, error } = useOperationStore();
+  console.log(error);
+
   const stats = [
     {
       label: "KYC Pending",
-      value: "2,847",
+      value: kycStatusData?.[0]?.kycPendingCount.toLocaleString("en-IN") ?? 0,
       color: "text-yellow-400",
       iconBg: "bg-yellow-900/40",
       icon: <Clock className="text-yellow-400" size={20} />,
     },
     {
       label: "KYC Verified",
-      value: "87,450",
+      value: kycStatusData?.[0]?.kycVerifiedCount.toLocaleString("en-IN") ?? 0,
       color: "text-[#00D4AA] ",
       iconBg: "bg-green-900/40",
       icon: <CheckCircle2 className="text-[#00D4AA] " size={20} />,
     },
   ];
+
+  if (error?.kyc) {
+    return <h1 className="text-red-500 text-xs  my-6">{error?.kyc}</h1>;
+  }
 
   return (
     <div className="text-white my-6">

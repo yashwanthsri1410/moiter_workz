@@ -59,6 +59,7 @@
   align-items: center;
   margin-top: 0.75rem; /* mt-3 */
   font-size: 0.875rem;
+  gap: 6px;
 }
 
 .ping-circle {
@@ -67,8 +68,15 @@
   height: 100%;
   width: 100%;
   border-radius: 9999px;
-  background-color: #05df72; /* teal-400 */
+
   animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.ping-wrapper {
+  position: relative;
+  display: flex;
+  height: 0.75rem;
+  width: 0.75rem;
 }
 
 .ping-dot {
@@ -197,9 +205,8 @@
   background-color: rgba(0, 0, 0, 0.3); /* bg-black/30 */
   border-radius: 1rem; /* rounded-2xl */
   padding: 1rem 2rem; /* py-4 px-8 */
-  width: 300px;
+  max-width: 300px;
   transition: transform 0.3s;
-  border: 1px solid #045a4e;
 }
 
 .service-cards:hover {
@@ -277,29 +284,6 @@
   gap: 0.5rem;
 }
 
-.ping-wrapper {
-  position: relative;
-  display: flex;
-  height: 0.75rem;
-  width: 0.75rem;
-}
-
-.ping-circle {
-  position: absolute;
-  display: inline-flex;
-  height: 100%;
-  width: 100%;
-  border-radius: 9999px;
-}
-
-.ping-dot {
-  position: relative;
-  display: inline-flex;
-  height: 0.75rem;
-  width: 0.75rem;
-  border-radius: 9999px;
-}
-
 .green {
   background-color: #05df72; /* green-400 */
 }
@@ -368,6 +352,11 @@
 
 .stat-value.red {
   color: #f87171; /* red-400 */
+}
+
+table thead tr th {
+  color: #2dd4bf;
+  font-weight: 400;
 }
 
 /* Endpoints section */
@@ -523,11 +512,11 @@ input::placeholder {
   0%,
   100% {
     transform: scale(1);
-    opacity: 1; /* normal */
+    opacity: 0.6; /* less opacity when zoomed out */
   }
   50% {
     transform: scale(1.2);
-    opacity: 0.6; /* slightly faded when zoomed out */
+    opacity: 1; /* full opacity when zoomed in */
   }
 }
 

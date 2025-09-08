@@ -8,22 +8,25 @@ import {
 } from "../mock/operationData";
 
 export const useOperationStore = create((set) => ({
-  loadedData: loadedRes,
+  loadedData: [],
   setLoadedData: (data) => set(() => ({ loadedData: data })),
 
-  unLoadedData: unloadedRes,
+  unLoadedData: [],
   setUnLoadedData: (data) => set(() => ({ unLoadedData: data })),
 
-  transactionData: transactionRes,
+  transactionData: [],
   setTransactionData: (data) => set(() => ({ transactionData: data })),
 
-  productData: productRes,
+  productData: [],
   setProductData: (data) => set(() => ({ productData: data })),
+
+  kycStatusData: [],
+  setKycStatusData: (data) => set(() => ({ kycStatusData: data })),
 
   partnerData: [],
   setPartnerData: (data) => set(() => ({ partnerData: data })),
 
-  walletPerformanceData: walletPerformanceRes,
+  walletPerformanceData: [],
   setWalletPerformanceData: (data) =>
     set(() => ({ walletPerformanceData: data })),
 

@@ -4,6 +4,7 @@ export const transactionUrl = "Export/wallet-transcation-dashboard";
 export const walletPerfomanceUrl = "Export/wallet-status-dashboard";
 export const productUrl = "Export/user-wallet-cards";
 export const partnerUrl = "Export/partner-performance";
+export const kycStatusUrl = "Export/customer_Kyc_dashboard_export";
 
 export const weekOrder = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 

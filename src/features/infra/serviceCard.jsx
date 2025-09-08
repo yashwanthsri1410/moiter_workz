@@ -12,9 +12,9 @@ const ServiceCard = ({ service }) => {
 
   return (
     <div
-      className={`service-cards ${isUp ? "card-up" : "card-down"} ${
-        isOpen ? "open" : ""
-      }`}
+      className={`service-cards border ${
+        isUp ? "card-up border-[#045a4e]" : "card-down border-[#f87171]"
+      } ${isOpen ? "open" : ""}`}
       style={{
         animation: isUp
           ? "greenGlow 2s ease-in-out infinite"
@@ -28,7 +28,7 @@ const ServiceCard = ({ service }) => {
       <div className="card-headers">
         <div className="card-headers-left">
           <div className="ping-wrapper">
-            <span className={`ping-circle ${isUp ? "green" : "red"}`} />
+            <span className={`ping-circle ${isUp ? "green" : ""}`} />
             <span className={`ping-dot ${isUp ? "green" : "red"}`} />
           </div>
           <span className={`icon-wrapper ${isUp ? "icon-up" : "icon-down"}`}>

@@ -15,7 +15,8 @@ import { barChartColor } from "../../constants/index";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 export default function WalletSummary() {
-  const { walletPerformanceData } = useOperationStore();
+  const { walletPerformanceData, error } = useOperationStore();
+
   const label = walletPerformanceData?.map((e) => e.status);
   const currentCount = walletPerformanceData?.map((e) => e.currentCount);
 
@@ -87,6 +88,14 @@ export default function WalletSummary() {
       },
     },
   };
+
+  if (error?.walletPerfomance) {
+    return (
+      <h1 className="text-red-500 text-xs text-center">
+        {error?.walletPerfomance}
+      </h1>
+    );
+  }
 
   return (
     <div>

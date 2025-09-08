@@ -1,11 +1,11 @@
 import { create } from "zustand";
-import { infraStatus, infraSummary } from "../features/infra/mockData";
+import { infraStatus, infraSummary } from "../mock/infraData";
 
 export const useMonitoringStore = create((set) => ({
-  infraSummary: infraSummary,
+  infraSummary: {},
   setInfraSummary: (data) => set(() => ({ infraSummary: data })),
 
-  infraStatus: infraStatus,
+  infraStatus: {},
   setInfraStatus: (data) => set(() => ({ infraStatus: data })),
 
   dbStatus: "",

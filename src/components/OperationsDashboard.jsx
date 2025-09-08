@@ -1,5 +1,6 @@
 import { RefreshCcw, Download } from "lucide-react";
 import {
+  kycStatusUrl,
   loadedUrl,
   partnerUrl,
   productUrl,
@@ -17,7 +18,7 @@ import WeeklyTrends from "../features/financialDashboard/weeklyTrends";
 import PerformanceOverview from "../features/financialDashboard/perfomanceOverview";
 import KYCCompliance from "../features/financialDashboard/kycCompliance";
 
-axios.defaults.baseURL = "http://192.168.20.254/fes/api/";
+axios.defaults.baseURL = "http://192.168.22.247/fes/api/";
 
 const OperationsDashboard = () => {
   const {
@@ -28,6 +29,7 @@ const OperationsDashboard = () => {
     setProductData,
     setPartnerData,
     setError,
+    setKycStatusData,
   } = useOperationStore();
   const icons = [
     {
@@ -74,11 +76,17 @@ const OperationsDashboard = () => {
         setter: setProductData,
         errorMsg: "Failed to load Product Data",
       },
+      // {
+      //   key: "partner",
+      //   call: loadedDashboard(partnerUrl),
+      //   setter: setPartnerData,
+      //   errorMsg: "Failed to load Partner Data",
+      // },
       {
-        key: "partner",
-        call: loadedDashboard(partnerUrl),
-        setter: setPartnerData,
-        errorMsg: "Failed to load Partner Data",
+        key: "kyc",
+        call: loadedDashboard(kycStatusUrl),
+        setter: setKycStatusData,
+        errorMsg: "Failed to load KYC Data",
       },
     ];
 
@@ -97,7 +105,7 @@ const OperationsDashboard = () => {
   };
 
   useEffect(() => {
-    // fetchData();
+    fetchData();
   }, []);
 
   return (

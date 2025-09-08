@@ -20,6 +20,7 @@ import {
   ChevronUp,
   FileTextIcon,
   Database,
+  LoaderCircle,
 } from "lucide-react";
 import "../styles/styles.css";
 import logo from "../assets/logo.png";
@@ -37,9 +38,11 @@ export default function DashboardLayout() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
+    setIsLoading(true);
     try {
       const storedUsername = localStorage.getItem("username");
 
@@ -338,9 +341,18 @@ export default function DashboardLayout() {
         </div>
 
         <div className="logout">
-          <button onClick={handleLogout} className="flex items-center gap-2">
-            <LogOut size={16} /> {!isCollapsed && "Logout"}
-          </button>
+          {!isLoading && (
+            <button onClick={handleLogout} className="flex items-center gap-2">
+              <LogOut size={16} /> {!isCollapsed && "Logout"}
+            </button>
+          )}
+          {isLoading && (
+            <LoaderCircle
+              color="red"
+              size="18"
+              className="ms-10 my-[12px] animate-spin flex"
+            />
+          )}
         </div>
       </aside>
 

@@ -8,21 +8,22 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 const COLORS = ["#FFD600", "#FF6D00", "#2962FF", "#7C4DFF", "#00C853"];
 
 export default function PerformanceOverview() {
-  const { productData } = useOperationStore();
-  const totalTransactions = productData.reduce(
+  const { productData, error } = useOperationStore();
+
+  const totalTransactions = productData?.reduce(
     (sum, item) => sum + item.activeWallets,
     0
   );
 
-  const activeProducts = productData.length;
+  const activeProducts = productData?.length;
 
   const chartData = {
-    labels: productData.map((item) => item.walletCategory),
+    labels: productData?.map((item) => item.walletCategory),
     datasets: [
       {
-        data: productData.map((item) => item.activeWallets),
+        data: productData?.map((item) => item.activeWallets),
         backgroundColor: COLORS,
-        borderWidth: 1,
+        borderWidth: 0.5,
         borderColor: "#0f0f0f",
       },
     ],
@@ -39,7 +40,7 @@ export default function PerformanceOverview() {
           label: function (context) {
             let label = context.label || "";
             let value = context.raw || 0;
-            return `${label}: ${value.toLocaleString()}`;
+            return `${label}: ${value?.toLocaleString()}`;
           },
         },
         backgroundColor: "#fff",
@@ -60,7 +61,7 @@ export default function PerformanceOverview() {
   const footerStats = [
     {
       label: "Total Transactions",
-      value: totalTransactions.toLocaleString(),
+      value: totalTransactions?.toLocaleString(),
     },
     {
       label: "Active Products",
@@ -68,6 +69,11 @@ export default function PerformanceOverview() {
     },
   ];
 
+  if (error?.product) {
+    return (
+      <h1 className="text-red-500 text-xs text-center">{error?.product}</h1>
+    );
+  }
   return (
     <div>
       <h2 className="flex items-center gap-2 text-[18px] text-primary mb-6">
@@ -92,7 +98,7 @@ export default function PerformanceOverview() {
         {/* Custom Legend */}
         <div className="flex justify-center my-4 text-xs">
           <div className="grid grid-cols-2 gap-4">
-            {productData.map((item, index) => (
+            {productData?.map((item, index) => (
               <div key={index} className="flex items-center gap-2">
                 <span
                   className="w-2 h-2 rounded-full"
