@@ -20,6 +20,8 @@ import {
   ChevronUp,
   FileTextIcon,
   UserCheck2Icon,
+  Database,
+  LoaderCircle,
 } from "lucide-react";
 import "../styles/styles.css";
 import logo from "../assets/logo.png";
@@ -29,14 +31,17 @@ import ProductApproval from "../components/productapproval";
 import EmployeeApproval from "../components/employeeapproval";
 import Maincheckerdashboard from "../components/maincheckerdashboard";
 import PartnerApproval from "../components/partnerapproval";
+import Infra from "../features/infra";
 
 export default function CheckersDashboardLayout() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
+    setIsLoading(true);
     try {
       const storedUsername = localStorage.getItem("username");
 
@@ -108,6 +113,12 @@ export default function CheckersDashboardLayout() {
         return <div className="content">📑 Reports & Analytics</div>;
       case "system":
         return <div className="content">⚙️ System Settings</div>;
+      case "infra":
+        return (
+          <div className="content">
+            <Infra />
+          </div>
+        );
 
       case "Regulatory":
         return (
@@ -266,6 +277,13 @@ export default function CheckersDashboardLayout() {
                     >
                       <Settings size={14} /> System Settings
                     </button>
+
+                    <button
+                      onClick={() => setActiveTab("infra")}
+                      className={activeTab === "infra" ? "submenu-active" : ""}
+                    >
+                      <Database size={14} /> Infra
+                    </button>
                   </div>
                 )}
             </div>
@@ -324,9 +342,18 @@ export default function CheckersDashboardLayout() {
         </div>
 
         <div className="logout">
-          <button onClick={handleLogout} className="flex items-center gap-2">
-            <LogOut size={16} /> {!isCollapsed && "Logout"}
-          </button>
+          {!isLoading && (
+            <button onClick={handleLogout} className="flex items-center gap-2">
+              <LogOut size={16} /> {!isCollapsed && "Logout"}
+            </button>
+          )}
+          {isLoading && (
+            <LoaderCircle
+              color="red"
+              size="18"
+              className="ms-10 my-[12px] animate-spin flex"
+            />
+          )}
         </div>
       </aside>
 

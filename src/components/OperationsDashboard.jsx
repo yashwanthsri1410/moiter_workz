@@ -1,5 +1,6 @@
 import { RefreshCcw, Download } from "lucide-react";
 import {
+  kycStatusUrl,
   loadedUrl,
   partnerUrl,
   productUrl,
@@ -8,24 +9,28 @@ import {
   walletPerfomanceUrl,
 } from "../constants/index";
 import axios from "axios";
-import { useOperationStore } from "../store/useOperationStore";
 import { useEffect, useState } from "react";
-import "../styles/styles.css";
-import LoadedUnLoaded from "../features/loadedUnloaded";
-import WeeklyTrends from "../features/weeklyTrends";
-import WalletSummary from "../features/walletSummary";
-import PerformanceOverview from "../features/perfomanceOverview";
+import "../styles/dash.css";
+import { useOperationStore } from "../store/operationStore";
+import WalletSummary from "../features/financialDashboard/walletSummary";
+import LoadedUnLoaded from "../features/financialDashboard/loadedUnloaded";
+import WeeklyTrends from "../features/financialDashboard/weeklyTrends";
+import PerformanceOverview from "../features/financialDashboard/perfomanceOverview";
+import KYCCompliance from "../features/financialDashboard/kycCompliance";
+
+axios.defaults.baseURL = "http://192.168.22.247/fes/api/";
+
 const OperationsDashboard = () => {
   const {
     setLoadedData,
     setUnLoadedData,
-    setWalletPerfomanceData,
+    setWalletPerformanceData,
     setTransactionData,
     setProductData,
     setPartnerData,
     setError,
+    setKycStatusData,
   } = useOperationStore();
-
   const icons = [
     {
       id: "refresh",
@@ -56,7 +61,7 @@ const OperationsDashboard = () => {
       {
         key: "walletPerfomance",
         call: loadedDashboard(walletPerfomanceUrl),
-        setter: setWalletPerfomanceData,
+        setter: setWalletPerformanceData,
         errorMsg: "Failed to load Wallet Perfomance Data",
       },
       {
@@ -71,11 +76,17 @@ const OperationsDashboard = () => {
         setter: setProductData,
         errorMsg: "Failed to load Product Data",
       },
+      // {
+      //   key: "partner",
+      //   call: loadedDashboard(partnerUrl),
+      //   setter: setPartnerData,
+      //   errorMsg: "Failed to load Partner Data",
+      // },
       {
-        key: "partner",
-        call: loadedDashboard(partnerUrl),
-        setter: setPartnerData,
-        errorMsg: "Failed to load Partner Data",
+        key: "kyc",
+        call: loadedDashboard(kycStatusUrl),
+        setter: setKycStatusData,
+        errorMsg: "Failed to load KYC Data",
       },
     ];
 
@@ -107,13 +118,25 @@ const OperationsDashboard = () => {
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-4 my-6">
+      <div className="grid lg:grid-cols-3 gap-6 my-6 items-stretch">
         <LoadedUnLoaded isLoaded={true} />
         <LoadedUnLoaded />
         <WeeklyTrends />
       </div>
-      <PerformanceOverview />
-      <WalletSummary />
+      <div className="grid grid-cols-12 gap-6 items-stretch">
+        <div className="col-span-12 lg:col-span-5">
+          <div className="h-full">
+            <PerformanceOverview />
+          </div>
+        </div>
+        <div className="col-span-12 lg:col-span-7">
+          <div className="h-full">
+            <WalletSummary />
+          </div>
+        </div>
+      </div>
+
+      <KYCCompliance />
     </div>
   );
 };

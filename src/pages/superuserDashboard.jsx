@@ -19,6 +19,8 @@ import {
   Activity,
   FileText,
   LayoutGrid,
+  Database,
+  LoaderCircle,
 } from "lucide-react";
 import "../styles/styles.css";
 import logo from "../assets/logo.png";
@@ -31,11 +33,13 @@ import EmployeeCreationForm from "../components/employeecreate";
 import Superuserdasboardcontent from "../components/superuserDashboardcontent";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Infra from "../features/infra";
 
 export default function DashboardLayout() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const toggleDropdown = (menu) => {
@@ -43,6 +47,7 @@ export default function DashboardLayout() {
   };
 
   const handleLogout = async () => {
+    setIsLoading(true);
     try {
       const storedUsername = localStorage.getItem("username");
 
@@ -69,7 +74,7 @@ export default function DashboardLayout() {
         },
       };
       console.log(JSON.stringify(payload, null, 2));
-      console.log(payload)
+      console.log(payload);
       await axios.post(
         `${API_BASE_URL}:5229/ums/api/UserManagement/user_logout`,
         payload
@@ -128,6 +133,12 @@ export default function DashboardLayout() {
             <EmployeeCreationForm onBack={() => setActiveTab("dashboard")} />
           </div>
         );
+      case "infra":
+        return (
+          <div className="content">
+            <Infra />
+          </div>
+        );
       default:
         return <div className="content">Select an option</div>;
     }
@@ -156,7 +167,11 @@ export default function DashboardLayout() {
             className="collapse-btn"
             onClick={() => setIsCollapsed(!isCollapsed)}
           >
-            {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+            {isCollapsed ? (
+              <ChevronRight size={18} />
+            ) : (
+              <ChevronLeft size={18} />
+            )}
           </button>
         </div>
 
@@ -165,19 +180,22 @@ export default function DashboardLayout() {
             {/* Dashboard Dropdown */}
             <div>
               <button
-                onClick={(e) => { e.stopPropagation(); setActiveTab("dashboard"); toggleDropdown("dashboard"); }}
-                className={`menu-header ${activeTab === "dashboard" ? "active" : ""
-                  }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveTab("dashboard");
+                  toggleDropdown("dashboard");
+                }}
+                className={`menu-header ${
+                  activeTab === "dashboard" ? "active" : ""
+                }`}
               >
                 <LayoutGrid size={16} className="menu-icon" />
                 {!isCollapsed && (
                   <>
                     <span>Dashboard</span>
-                    <span
-                      className="arrow-icon"
-                    >
+                    <span className="arrow-icon">
                       {openDropdown === "dashboard" ||
-                        dashboardTabs.includes(activeTab) ? (
+                      dashboardTabs.includes(activeTab) ? (
                         <ChevronUp size={14} />
                       ) : (
                         <ChevronDown size={14} />
@@ -187,12 +205,15 @@ export default function DashboardLayout() {
                 )}
               </button>
 
-              {(openDropdown === "dashboard" || dashboardTabs.includes(activeTab)) &&
+              {(openDropdown === "dashboard" ||
+                dashboardTabs.includes(activeTab)) &&
                 !isCollapsed && (
                   <div className="submenu submenu-open">
                     <button
                       onClick={() => setActiveTab("customer")}
-                      className={activeTab === "customer" ? "submenu-active" : ""}
+                      className={
+                        activeTab === "customer" ? "submenu-active" : ""
+                      }
                     >
                       <User size={14} /> Customer Management
                     </button>
@@ -204,13 +225,17 @@ export default function DashboardLayout() {
                     </button>
                     <button
                       onClick={() => setActiveTab("transactions")}
-                      className={activeTab === "transactions" ? "submenu-active" : ""}
+                      className={
+                        activeTab === "transactions" ? "submenu-active" : ""
+                      }
                     >
                       <BarChart2 size={14} /> Transaction Analytics
                     </button>
                     <button
                       onClick={() => setActiveTab("compliance")}
-                      className={activeTab === "compliance" ? "submenu-active" : ""}
+                      className={
+                        activeTab === "compliance" ? "submenu-active" : ""
+                      }
                     >
                       <FileCheck size={14} /> Compliance & KYC
                     </button>
@@ -223,20 +248,26 @@ export default function DashboardLayout() {
                     <button
                       onClick={() => setActiveTab("productperformance")}
                       className={
-                        activeTab === "productperformance" ? "submenu-active" : ""
+                        activeTab === "productperformance"
+                          ? "submenu-active"
+                          : ""
                       }
                     >
                       <Activity size={14} /> Product Performance
                     </button>
                     <button
                       onClick={() => setActiveTab("partner")}
-                      className={activeTab === "partner" ? "submenu-active" : ""}
+                      className={
+                        activeTab === "partner" ? "submenu-active" : ""
+                      }
                     >
                       <Users size={14} /> Partner Management
                     </button>
                     <button
                       onClick={() => setActiveTab("reports")}
-                      className={activeTab === "reports" ? "submenu-active" : ""}
+                      className={
+                        activeTab === "reports" ? "submenu-active" : ""
+                      }
                     >
                       <FileText size={14} /> Reports & Analytics
                     </button>
@@ -246,6 +277,12 @@ export default function DashboardLayout() {
                     >
                       <Settings size={14} /> System Settings
                     </button>
+                    <button
+                      onClick={() => setActiveTab("infra")}
+                      className={activeTab === "infra" ? "submenu-active" : ""}
+                    >
+                      <Database size={14} /> Infra
+                    </button>
                   </div>
                 )}
             </div>
@@ -253,8 +290,9 @@ export default function DashboardLayout() {
             <div>
               <button
                 onClick={() => toggleDropdown("superuserconsole")}
-                className={`menu-header ${openDropdown === "superuserconsole" ? "active" : ""
-                  }`}
+                className={`menu-header ${
+                  openDropdown === "superuserconsole" ? "active" : ""
+                }`}
               >
                 <Shield size={16} className="menu-icon" />
                 {!isCollapsed && (
@@ -273,18 +311,23 @@ export default function DashboardLayout() {
 
               {openDropdown === "superuserconsole" && !isCollapsed && (
                 <div
-                  className={`submenu ${openDropdown === "superuserconsole" ? "submenu-open" : ""
-                    }`}
+                  className={`submenu ${
+                    openDropdown === "superuserconsole" ? "submenu-open" : ""
+                  }`}
                 >
                   <button
                     onClick={() => setActiveTab("departments")}
-                    className={activeTab === "departments" ? "submenu-active" : ""}
+                    className={
+                      activeTab === "departments" ? "submenu-active" : ""
+                    }
                   >
                     <Building2 size={14} /> Departments
                   </button>
                   <button
                     onClick={() => setActiveTab("designations")}
-                    className={activeTab === "designations" ? "submenu-active" : ""}
+                    className={
+                      activeTab === "designations" ? "submenu-active" : ""
+                    }
                   >
                     <Badge size={14} /> Designations
                   </button>
@@ -319,9 +362,18 @@ export default function DashboardLayout() {
         </div>
 
         <div className="logout">
-          <button onClick={handleLogout} className="flex items-center gap-2">
-            <LogOut size={16} /> {!isCollapsed && "Logout"}
-          </button>
+          {!isLoading && (
+            <button onClick={handleLogout} className="flex items-center gap-2">
+              <LogOut size={16} /> {!isCollapsed && "Logout"}
+            </button>
+          )}
+          {isLoading && (
+            <LoaderCircle
+              color="red"
+              size="18"
+              className="ms-10 my-[12px] animate-spin flex"
+            />
+          )}
         </div>
       </aside>
 
