@@ -15,7 +15,7 @@ export default function RegulatoryConfig() {
     const ip = usePublicIp();
     const username = localStorage.getItem("username") || "system";
     const [currentPage, setCurrentPage] = useState(1);
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const rowsPerPage = 5;
     const getDefaultForm = (ip, editingId = null) => ({
         programType: "",
@@ -173,7 +173,7 @@ export default function RegulatoryConfig() {
                     : [],
 
             allowedMccCodes: undefined, // Remove if not part of schema
-           ...(isEditing ? { modifiedBy: username } : { createdBy: username }),
+            ...(isEditing ? { modifiedBy: username } : { createdBy: username }),
             metadata: {
                 ...form.metadata,
                 ipAddress: ip || "0.0.0.0",
@@ -195,12 +195,15 @@ export default function RegulatoryConfig() {
                 }
             }
         };
+        // console.log(payload)
+        // console.log(JSON.stringify(payload, null, 2));
         try {
             const endpoint = isEditing
                 ? `${API_BASE_URL}/ps/updateRbiConfiguration`
                 : `${API_BASE_URL}/ps/create-RBI-Config`;
 
             await axios[isEditing ? "put" : "post"](endpoint, payload);
+
             alert("Configuration saved successfully!");
             setForm(getDefaultForm(ip, username));
             setEditingId(null);
@@ -233,8 +236,11 @@ export default function RegulatoryConfig() {
         "expiryWarningDays", "dormantPeriodDays", "expiryPeriod"
     ];
 
-    const channels = ["UPI", "ECOM", "POS", "ATM", "Bank Transfer"];
-    const options = ["UPI", "Credit Card", "Debit Card", "Cash Deposit", " Net Banking", "Agent",]
+    // const channels = ["UPI", "Online", "POS", "ATM", "Bank Transfer"];
+    // const options = ["UPI", "Credit Card", "Debit Card", "Cash Deposit", " Net Banking", "Agent",]
+
+    const channels = ["UPI", "Online", "POS", "ATM", "Bank Transfer", "emittance Portal", "Institution Portal"];
+    const options = ["POS", "Online", "Bank Transfer", "Government Portal", "Family Portal", "Corporate Portal", "Others", "ATM",]
 
     const toggleLoading = (method) => {
         let current = form.topupMethod || ""; // always a string
@@ -265,7 +271,7 @@ export default function RegulatoryConfig() {
             });
         }
     };
-
+    // console.log(form)
     return (
         <div className="config-forms">
             {/* Header */}
@@ -409,25 +415,35 @@ export default function RegulatoryConfig() {
                             </div>
 
                             {/* Right Column - Compliance */}
-                            <div className="kyc-right">
-                                <h4 className="compliance-title">KYC Compliance</h4>
-                                <div className="compliance-table">
-                                    {[
-                                        "KYCRequired",
-                                        "AADHAARRequired",
-                                        "PANRequired",
-                                        "additionalKYCDocsNeeded",
-                                        "AMLCFTApplicable",
-                                        "pepCheckRequired",
-                                        "blacklistCheckRequired",
-                                        "CKYCUploadRequired"
-                                    ].map((field) => (
+                            <div className="compliance-table">
+                                {[
+                                    "kycRequired",
+                                    "aadhaarRequired",
+                                    "panRequired",
+                                    "additionalKycDocsNeeded",
+                                    "amlCftApplicable",
+                                    "pepCheckRequired",
+                                    "blacklistCheckRequired",
+                                    "ckycUploadRequired",
+                                ].map((field) => {
+                                    // Custom labels for specific fields
+                                    const customLabels = {
+                                        kycRequired: "KYC Required",
+                                        aadhaarRequired: "AADHAAR Required",
+                                        panRequired: "PAN Required",
+                                        amlCftApplicable: "AML/CFT Applicable",
+                                        ckycUploadRequired: "CKYC UploadRequired",
+                                    };
+
+                                    const label =
+                                        customLabels[field] ||
+                                        field
+                                            .replace(/([A-Z])/g, " $1")
+                                            .replace(/^./, (str) => str.toUpperCase());
+
+                                    return (
                                         <div className="compliance-row" key={field}>
-                                            <span className="compliance-label">
-                                                {field
-                                                    .replace(/([A-Z])/g, " $1")
-                                                    .replace(/^./, (str) => str.toUpperCase())}
-                                            </span>
+                                            <span className="compliance-label">{label}</span>
                                             <div className="radio-group">
                                                 <label>
                                                     <input
@@ -451,9 +467,10 @@ export default function RegulatoryConfig() {
                                                 </label>
                                             </div>
                                         </div>
-                                    ))}
-                                </div>
+                                    );
+                                })}
                             </div>
+
                         </div>
                     </div>
 
@@ -503,7 +520,7 @@ export default function RegulatoryConfig() {
                                 <input
                                     type="number"
                                     name="minBalance"
-                                    value={form.minBalance || ""}
+                                    value={form.minBalance || 0}
                                     onChange={handleChange}
                                     className="form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none"
                                     placeholder="Enter amount"
@@ -545,7 +562,7 @@ export default function RegulatoryConfig() {
                             <div>
                                 <h4 className="text-teal-400 text-[15px] mb-[5px]">Validity & Age Settings</h4>
 
-                                <div className="form-group flex flex-col ">
+                                {/* <div className="form-group flex flex-col ">
                                     <label className="text-sm text-gray-300 mb-1">Validity Period (Months)</label>
                                     <input
                                         type="number"
@@ -555,7 +572,7 @@ export default function RegulatoryConfig() {
                                         className="form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none"
                                         placeholder="Enter months"
                                     />
-                                </div>
+                                </div> */}
 
                                 <div className="form-group flex flex-col ">
                                     <label className="text-sm text-gray-300 mb-1">Grace Period (Days)</label>
@@ -582,7 +599,7 @@ export default function RegulatoryConfig() {
                                         />
                                     </div>
 
-                                    <div className="form-group flex flex-col">
+                                    {/* <div className="form-group flex flex-col">
                                         <label className="text-sm text-gray-300 mb-1">Max Age</label>
                                         <input
                                             type="number"
@@ -592,7 +609,7 @@ export default function RegulatoryConfig() {
                                             className="form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none"
                                             placeholder="Max age"
                                         />
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
 
@@ -647,7 +664,6 @@ export default function RegulatoryConfig() {
                         <h3 className="section-title text-teal-400 mb-4">Payment Methods & Channels</h3>
 
                         <div className="grid grid-cols-2 gap-8">
-                            {/* Left - Loading Channels */}
                             {/* Left - Loading Channels */}
                             <div>
                                 <h4 className="compliance-title text-gray-200 mb-2">Loading Channels</h4>
@@ -757,7 +773,7 @@ export default function RegulatoryConfig() {
                                 <th className="table-cell">Configuration Name</th>
                                 <th className="table-cell">Program Type</th>
                                 <th className="table-cell">KYC Level</th>
-                                <th className="table-cell">Status</th>
+                                {/* <th className="table-cell">Status</th> */}
                                 <th className="table-cell">Remarks</th>
                                 <th className="table-cell">Actions</th>
                             </tr>
@@ -768,12 +784,12 @@ export default function RegulatoryConfig() {
                                     <td className="table-content">{cfg.subCategory}</td>
                                     <td className="table-content">{cfg.programType}</td>
                                     <td className="table-content">{cfg.kycLevelRequired}</td>
-                                    <td className="table-content">
+                                    {/* <td className="table-content">
                                         <span className={`status ${typeColors[cfg.p_Is_Active]
                                             }`} >
                                             {cfg.p_Is_Active ? "Active" : "Inactive"}
                                         </span>
-                                    </td>
+                                    </td> */}
                                     <td className="table-content">{cfg.remarks || "-"}</td>
                                     <td className="table-content">
                                         <button className="header-icon-box"

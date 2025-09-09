@@ -3,9 +3,11 @@ import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import usePublicIp from "../hooks/usePublicIp";
 import "../styles/styles.css"
+import { transformConstraints, toggleAllowed, buildMetadata, buildRequestInfo, prepareDocuments } from "../utils/constraintParser"
 // import { PencilIcon, Plus,SquarePen  } from "lucide-react";
 
 export default function Partnercreate() {
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const [formOpen, setformOpen] = useState(false);
     const [agreementFile, setAgreementFile] = useState(null);
     const [idFile, setIdFile] = useState(null);
@@ -18,9 +20,19 @@ export default function Partnercreate() {
     const [showProductDropdown, setShowProductDropdown] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
 
+    const [constraints, setConstraints] = useState([]);
+    const toBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result.split(",")[1]); // strip "data:...base64,"
+            reader.onerror = (error) => reject(error);
+        });
+    };
+
     const [editingId, setEditingId] = useState(null);
     useEffect(() => {
-        fetch(`${API_BASE_URL}:7090/fes/api/Export/product_export`)
+        fetch(`${API_BASE_URL}:7090/fes/api/Export/product_Config_export`)
             .then((res) => res.json())
             .then((data) => {
                 // 🔹 Remove duplicates by productName
@@ -32,18 +44,20 @@ export default function Partnercreate() {
             .catch((err) => console.error("Error fetching products:", err));
     }, []);
 
-    const toggleAllowed = (productName) => {
-        setForm((prev) => {
-            const exists = prev.allowedProducts.includes(productName);
-            const updated = exists
-                ? prev.allowedProducts.filter((p) => p !== productName)
-                : [...new Set([...prev.allowedProducts, productName])]; // 🔹 enforce uniqueness
-            return { ...prev, allowedProducts: updated };
-        });
-    };
+    useEffect(() => {
+        const fetchConstraints = async () => {
+            try {
+                const res = await axios.get("http://192.168.22.247/fes/api/Export/constraints-disturbution-parnter");
+                setConstraints(transformConstraints(res.data)); // ✅ Use function
+            } catch (err) {
+                console.error("Error fetching constraints", err);
+            }
+        };
+
+        fetchConstraints();
+    }, []);
 
     const ip = usePublicIp();
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     // Fetch API data
     useEffect(() => {
         fetch(`${API_BASE_URL}:7090/fes/api/Export/partner_summary_export`)
@@ -68,34 +82,7 @@ export default function Partnercreate() {
         }
     };
 
-    const [form, setForm] = useState({
-        partnerName: "",
-        contactName: "",
-        contactEmail: "",
-        contactPhone: "",
-        address: "",
-        city: "",
-        state: "",
-        pincode: "",
-        partnerType: "",
-        partnerStatus: "Active",
-        kycLevel: "",
-        panNumber: "",
-        tanNumber: "",
-        gstin: "",
-        riskProfile: "",
-        cardIssuanceCommissionPercent: 0,
-        transactionCommissionPercent: 0,
-        monthlyFixedFee: 0,
-        commissionCurrency: "INR",
-        settlementFrequency: "monthly",
-        allowedProducts: "",
-        portalAccessEnabled: false,
-        portalUrl: "",
-        webhookUrl: "default",
-    });
 
-    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -104,93 +91,131 @@ export default function Partnercreate() {
             [name]: type === "checkbox" ? checked : value,
         }));
     };
-
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        try {
-            // Prepare the payload according to your API schema
-            const payload = {
-                partnerName: form.partnerName,
-                partnerType: form.partnerType,
-                productName: form.productName,
-                contactName: form.contactName,
-                contactEmail: form.contactEmail,
-                contactPhone: form.contactPhone,
-                partnerStatus: form.partnerStatus,
-                portalAccessEnabled: form.portalAccessEnabled,
-                portalUrl: form.portalUrl,
-                kycStatus: form.kycStatus,
-                kycLevel: form.kycLevel,
-                kycSubmittedAt: new Date().toISOString(),
-                kycVerifiedAt: new Date().toISOString(),
-                kycVerifiedBy: form.kycVerifiedBy || "system",
-                panNumber: form.panNumber,
-                tanNumber: form.tanNumber,
-                gstin: form.gstin,
-                address: form.address,
-                financialStatementsJson: form.financialStatementsJson || "{}",
-                riskProfile: form.riskProfile,
-                pepCheck: form.pepCheck,
-                sanctionsScreening: form.sanctionsScreening,
-                blacklisted: form.blacklisted,
-                allowedProducts: [...new Set(form.allowedProducts)].join(","),
-                webhookUrl: form.webhookUrl,
-                cardIssuanceCommissionPercent: form.cardIssuanceCommissionPercent,
-                transactionCommissionPercent: form.transactionCommissionPercent,
-                monthlyFixedFee: form.monthlyFixedFee,
-                revenueShareModel: form.revenueShareModel,
-                commissionCurrency: form.commissionCurrency,
-                settlementFrequency: form.settlementFrequency,
-                lastSettlementDate: new Date().toISOString(),
-                nextSettlementDue: new Date().toISOString(),
-                commissionConfig: form.commissionConfig,
-                status: form.status,
-                pincode: form.pincode,
-                state: form.state,
-                city: form.city,
-                agreementDocument: form.agreementDocument,
-                idProofDocument: form.idProofDocument,
-                addressProofDocument: form.addressProofDocument,
-                metadata: {
-                    createdBy: "system",
-                    createdDate: new Date().toISOString(),
-                    modifiedBy: "system",
-                    modifiedDate: new Date().toISOString(),
-                    header: {}
-                },
-                requestInfo: {
-                    ipAddress: "",
-                    userAgent: "",
-                    headers: "",
-                    channel: "",
-                    auditMetadata: {
-                        createdBy: "system",
-                        createdDate: new Date().toISOString(),
-                        modifiedBy: "system",
-                        modifiedDate: new Date().toISOString(),
-                        header: {}
-                    }
-                }
-            };
-
-            console.log("Payload ready:", payload);
-
-            const response = await axios.post(
-                `${API_BASE_URL}/ps/DistributionPartner-Create`,
-                payload,
-                { headers: { "Content-Type": "application/json" } }
-            );
-
-            console.log("Partner created successfully:", response.data);
-            alert("Partner created successfully!");
-        } catch (error) {
-            console.error("Error creating partner:", error.response || error);
-            alert("Error creating partner: " + (error.response?.data?.message || error.message));
+    const toggleAllowed = (product) => {
+        const current = form.allowedProducts || []; // fallback to []
+        if (current.includes(product)) {
+            setForm({
+                ...form,
+                allowedProducts: current.filter((p) => p !== product),
+            });
+        } else {
+            setForm({
+                ...form,
+                allowedProducts: [...current, product],
+            });
         }
     };
 
+
+    // Default form values with all required keys
+    const defaultFormValues = {
+        partnerName: "",
+        productName: 0,
+        contactName: "",
+        contactEmail: "",
+        contactPhone: "",
+        address: "",
+        city: "",
+        state: "",
+        pincode: 0,
+        partnerType: "Retailer",
+        partnerStatus: "Active",
+        kycLevel: "Basic",
+        kycStatus: "Verified",
+        riskProfile: "Low",
+        sanctionsScreening: false,
+        blacklisted: false,
+        revenueShareModel: "",
+        panNumber: "",
+        tanNumber: "",
+        gstin: "",
+        cardIssuanceCommissionPercent: 0,
+        transactionCommissionPercent: 0,
+        monthlyFixedFee: 0,
+        commissionCurrency: "INR",
+        settlementFrequency: "monthly",
+        pepCheck: false,
+        allowedProducts: [],
+        portalAccessEnabled: false,
+        portalUrl: "",
+        webhookUrl: "default",
+        agreementDocument: "",
+        idProofDocument: "",
+        addressProofDocument: "",
+        commissionConfig: "",
+        status: 1,
+        createdBy: "admin-user",
+        kycSubmittedAt: new Date().toISOString(),
+        kycVerifiedAt: new Date().toISOString(),
+        kycVerifiedBy: "system",
+    };
+
+    // Form state
+    const [form, setForm] = useState({ ...defaultFormValues });
+
+
+    // Submit handler
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+        const payload = {
+            ...defaultFormValues,
+            ...form,
+            pincode: Number(form.pincode) || 0,
+            cardIssuanceCommissionPercent: Number(form.cardIssuanceCommissionPercent) || 0,
+            transactionCommissionPercent: Number(form.transactionCommissionPercent) || 0,
+            monthlyFixedFee: Number(form.monthlyFixedFee) || 0,
+            allowedProducts: Array.isArray(form.allowedProducts) ? form.allowedProducts.join(",") : "",
+           portalUrl: 2,
+            agreementDocument: agreementFile ? await toBase64(agreementFile) : "",
+            idProofDocument: idFile ? await toBase64(idFile) : "",
+            addressProofDocument: addressFile ? await toBase64(addressFile) : "",
+            metadata: buildMetadata("admin-user"),
+            requestInfo: buildRequestInfo(ip, "admin-user"),
+        };
+
+        console.log("Payload to send:", JSON.stringify(payload, null, 2));
+
+        const url = editingId
+            ? `${API_BASE_URL}/ps/DistributionPartner-Update`
+            : `${API_BASE_URL}/ps/DistributionPartner-Create`;
+
+        const res = await axios.post(url, payload, {
+            headers: { "Content-Type": "application/json" },
+        });
+
+        alert(editingId ? "Partner updated successfully!" : "Partner created successfully!");
+        setForm({ ...defaultFormValues });
+        setAgreementFile(null);
+        setIdFile(null);
+        setAddressFile(null);
+        setformOpen(false);
+
+    } catch (error) {
+        console.error("Error creating/updating partner:", error.response || error);
+        alert("Error: " + (error.response?.data?.message || error.message));
+    }
+};
+
+
+
+
+
+    const handleEdit = (partner) => {
+        setForm({
+            ...partner,
+            allowedProducts: partner.allowedProducts ? partner.allowedProducts.split(",") : [],
+        });
+        setAgreementFile(null);
+        setIdFile(null);
+        setAddressFile(null);
+        setEditingId(partner.partnerId);
+        setIsEditing(true);
+        setformOpen(true);
+    };
+    const getConstraintOptions = (constraints, title) => {
+        return constraints.find(c => c.title === title)?.options || [];
+    };
     return (
         <div className="config-forms">
             {/* Header */}
@@ -400,8 +425,6 @@ export default function Partnercreate() {
                         )}
                     </div>
 
-
-
                     <div className="portal-access flex items-center gap-2 text-gray-300">
                         {/* Status Dot */}
                         <div className="status-dot"></div>
@@ -512,18 +535,69 @@ export default function Partnercreate() {
                         <div className="mt-6">
                             <h4 className="text-sm font-semibold text-[#00d4aa] mb-4">Compliance & KYC</h4>
                             <div className="grid grid-cols-2 gap-4">
+
                                 <div className="form-group">
-                                    <label>KYC Level</label>
-                                    <select name="kycLevel" className="form-input" value={form.kycLevel || ""}
-                                        onChange={handleChange}>
-                                        <option value="">Select KYC level</option>
-                                        <option value="min">Min</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="full">Full</option>
-                                        <option value="video">Video</option>
-                                        <option value="nil">Nil</option>
+                                    <label>KYC level</label>
+                                    <select
+                                        name="kycLevel"
+                                        value={form.kycLevel || ""}
+                                        onChange={handleChange}
+                                        className="form-input"
+                                    >
+                                        <option value="">-- Select Status --</option>
+                                        {getConstraintOptions(constraints, "distribution_partner_kyc_level_check")?.map((opt, i) => (
+                                            <option key={i} value={opt}>{opt}</option>
+                                        ))}
                                     </select>
                                 </div>
+                                <div className="form-group">
+                                    <label>kyc Status</label>
+                                    <select
+                                        name="kycStatus"
+                                        value={form.kycStatus || ""}
+                                        onChange={handleChange}
+                                        className="form-input"
+                                    >
+                                        <option value="">-- Select Status --</option>
+                                        {getConstraintOptions(constraints, "distribution_partner_kyc_status_check")?.map((opt, i) => (
+                                            <option key={i} value={opt}>{opt}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Partner Status</label>
+                                    <select
+                                        name="partnerStatus"
+                                        value={form.partnerStatus || ""}
+                                        onChange={handleChange}
+                                        className="form-input"
+                                    >
+                                        <option value="">-- Select Status --</option>
+                                        {getConstraintOptions(constraints, "distribution_partner_status_check")?.map((opt, i) => (
+                                            <option key={i} value={opt}>{opt}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="form-group">
+                                    <label>Risk Profile</label>
+                                    <select
+                                        name="riskProfile"
+                                        value={form.riskProfile || ""}
+                                        onChange={handleChange}
+                                        className="form-input"
+                                    >
+                                        <option value="">-- Select Status --</option>
+                                        {getConstraintOptions(constraints, "distribution_partner_risk_profile_check")?.map((opt, i) => (
+                                            <option key={i} value={opt}>{opt}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+
+
+
                                 <div className="form-group">
                                     <label>PAN Number</label>
                                     <input type="text" name="panNumber" className="form-input" placeholder="Enter PAN number" value={form.panNumber || ""} onChange={handleChange} />
@@ -539,7 +613,7 @@ export default function Partnercreate() {
                                         onChange={handleChange} />
                                 </div>
 
-                                <div className="form-group">
+                                {/* <div className="form-group">
                                     <label>Risk Profile</label>
                                     <select name="riskProfile" className="form-input" value={form.riskProfile || ""}   // ✅ controlled value
                                         onChange={handleChange}    >
@@ -548,7 +622,7 @@ export default function Partnercreate() {
                                         <option value="medium">Medium</option>
                                         <option value="high">High</option>
                                     </select>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
 
@@ -558,18 +632,19 @@ export default function Partnercreate() {
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="form-group">
                                     <label>Card Issuance Commission %</label>
-                                    <input type="number" name="cardIssuanceCommissionPercent" className="form-input" placeholder="0" defaultValue={0} value={form.cardIssuanceCommissionPercent || 0}
+                                    <input type="number" name="cardIssuanceCommissionPercent" className="form-input" placeholder="0" value={form.cardIssuanceCommissionPercent || ""}
                                         onChange={handleChange} />
+
                                 </div>
                                 <div className="form-group">
                                     <label>Transaction Commission %</label>
-                                    <input type="number" name="transactionCommissionPercent" className="form-input" placeholder="0" defaultValue={0} value={form.transactionCommissionPercent || 0}
+                                    <input type="number" name="transactionCommissionPercent" className="form-input" placeholder="0" value={form.transactionCommissionPercent || ""}
                                         onChange={handleChange} />
                                 </div>
 
                                 <div className="form-group">
                                     <label>Monthly Fixed Fee</label>
-                                    <input type="number" name="monthlyFixedFee" className="form-input" placeholder="0" defaultValue={0} value={form.monthlyFixedFee || 0}
+                                    <input type="number" name="monthlyFixedFee" className="form-input" placeholder="0" value={form.monthlyFixedFee || ""}
                                         onChange={handleChange} />
                                 </div>
                                 <div className="form-group">
@@ -594,32 +669,13 @@ export default function Partnercreate() {
                             </div>
                         </div>
                     </div>
-                    {/* <div className="partner-form-footer mt-10 flex items-center gap-3">
-                        <button
-                            type="submit"
-                            className="flex items-center px-5 py-2 bg-[#00d4aa] hover:bg-[#00b896] text-black  rounded-md shadow-md transition"
-                            disabled={loading}
-                        >
-                            <SaveIcon className="w-4 h-4 mr-2" />
-                            {loading ? "creating..." : "create Partner"}
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={() => setformOpen(false)} // 👈 closes form
-                            className="flex items-center px-5 py-2 bg-transparent border border-[#00d4aa]/40 text-gray-400 hover:text-white hover:border-[#00d4aa] rounded-md transition"
-                        >
-                            <X className="w-4 h-4 mr-2" />
-                            Cancel
-                        </button>
-                    </div> */}
 
                     <div className="form-footer">
                         <button type="button" className="btn-outline-back" onClick={() => setformOpen(false)}>
                             <ArrowLeft className="icon" /> Back
                         </button>
                         <div className="footer-right">
-                            <button type="button" className="btn-outline-reset" onClick={() => { setEditingId(null); setIsEditing(false);  }}>
+                            <button type="button" className="btn-outline-reset" onClick={() => { setEditingId(null); setIsEditing(false); }}>
                                 <RotateCcw className="icon" /> Reset
                             </button>
                             <button type="submit" className="btn-outline-reset">
@@ -735,7 +791,7 @@ export default function Partnercreate() {
                                             )}
                                         </td>
                                         <td className="table-content">
-                                            <button className="header-icon-box" onClick={() => setformOpen(true)}>
+                                            <button className="header-icon-box" onClick={() => handleEdit(partner)}>
                                                 <SquarePen className="text-[#00d4aa] w-3 h-3" />
                                             </button>
                                         </td>

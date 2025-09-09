@@ -1,5 +1,5 @@
-import { Building2, Eye, File, FileText, Search, SquarePen, Save, SaveAll, EyeClosed, EyeOff, ArrowLeft, RotateCcw, Check, ChevronLeft, ChevronRight } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import { Eye, FileText, Search, SquarePen, Save, EyeOff, ArrowLeft, RotateCcw, Check, ChevronLeft, ChevronRight } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import usePublicIp from "../hooks/usePublicIp";
 import "../styles/styles.css"
@@ -10,11 +10,10 @@ const mapFormToApiSchema = (form, username, ip, isEditing = false, empId) => {
     const now = new Date().toISOString();
     const safeUser = username || "system"; // fallback if null
 
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const basePayload = {
         productId: form.productId,
         productName: form.productName || "",
-        description: form.description || "",
+        programDescription: form.programDescription || "",
         isActive: form.isActive ?? true,
         programType: form.programType || "",
         subCategory: form.subCategory || "",
@@ -88,7 +87,7 @@ const mapFormToApiSchema = (form, username, ip, isEditing = false, empId) => {
             ? form.topUpMethod.join(",")
             : form.topUpMethod || "",
         expiryPeriod: form.expiryPeriod ?? 0,
-
+        productDescription: form.productDescription || "",
         metadata: {
             ipAddress: ip,
             userAgent: navigator.userAgent,
@@ -99,7 +98,7 @@ const mapFormToApiSchema = (form, username, ip, isEditing = false, empId) => {
             },
         },
     };
-
+    console.log(basePayload)
     if (isEditing) {
         // 🔹 UPDATE → only include modifiedBy
         basePayload.modifiedBy = safeUser; // top-level
@@ -128,7 +127,7 @@ export default function Productcreate() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
 
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const handleEdit = async (cfg) => {
         try {
             // First, ensure we have the latest RBI config
@@ -198,7 +197,7 @@ export default function Productcreate() {
 
     const getDefaultForm = (ip, username) => ({
         productName: "",
-        description: "",
+        programDescription: "",
         isActive: true,
         productId: 0,
         programType: "",
@@ -262,6 +261,7 @@ export default function Productcreate() {
         expiryPeriod: 0,
         dormantPeriodDays: 0,
         topUpMethod: "",
+        productDescription: "",
         metadata: {
             ipAddress: ip,
             userAgent: navigator.userAgent,
@@ -349,7 +349,7 @@ export default function Productcreate() {
 
     const fetchConfigurations = async () => {
         try {
-            const res = await axios.get(`${API_BASE_URL}:7090/fes/api/Export/product_Config_export`);
+            const res = await axios.get(`${API_BASE_URL}/fes/api/Export/product_Config_export`);
             setConfigurations(res.data);
         } catch (err) {
             console.error("Error fetching configurations:", err);
@@ -358,7 +358,7 @@ export default function Productcreate() {
 
     const fetchRBIConfigurations = async () => {
         try {
-            const res = await axios.get(`${API_BASE_URL}:7090/fes/api/Export/export_rbi_configuration`);
+            const res = await axios.get(`${API_BASE_URL}/fes/api/Export/export_rbi_configuration`);
             setRbiConfig(res.data);
             const types = Array.from(new Set(res.data.map(item => item.programType)));
             setProgramTypes(types);
@@ -437,7 +437,7 @@ export default function Productcreate() {
         e.preventDefault();
         try {
             // Map frontend form → backend schema
-            const payload = mapFormToApiSchema(form, username, ip, isEditing);
+            // const payload = mapFormToApiSchema(form, username, ip, isEditing);
 
             // console.log("Submitting mapped payload:", JSON.stringify(payload, null, 2));
 
@@ -451,7 +451,7 @@ export default function Productcreate() {
             } else {
                 // Create new config
                 await axios.post(
-                     `${API_BASE_URL}/ps/productConfigurationCreate`,
+                    `${API_BASE_URL}/ps/productConfigurationCreate`,
                     payload
                 );
                 alert("Product configuration created successfully!");
@@ -473,10 +473,9 @@ export default function Productcreate() {
         }
     };
 
-
-    const channels = ["UPI", "ECOM", "POS", "ATM", "Bank Transfer"];
-    const options = ["UPI", "Credit Card", "Debit Card", "Cash Deposit", " Net Banking", "Agent",]
-
+    const channels = ["UPI", "Online", "POS", "ATM", "Bank Transfer", "emittance Portal", "Institution Portal", "MobileApp"];
+    const options = ["POS", "Online", "Bank Transfer", "Government Portal", "Family Portal", "Corporate Portal", "Others", "ATM", "NetBanking"]
+    // console.log(form)
     return (
         <div className="config-forms">
             <div className="card-header">
@@ -579,8 +578,8 @@ export default function Productcreate() {
                                         <label>Description</label>
                                         <textarea
                                             type="text"
-                                            name="description"
-                                            value={form.description}
+                                            name="productDescription"
+                                            value={form.productDescription}
                                             onChange={handleChange}
                                             className="form-input"
                                             placeholder="Enter description"
@@ -624,23 +623,35 @@ export default function Productcreate() {
 
 
                             {/* Right - Boolean Compliance */}
-                            <div className="kyc-right">
-                                <h4 className="compliance-title">KYC Compliance</h4>
-                                <div className="compliance-table">
-                                    {[
-                                        "KYCRequired",
-                                        "AADHAARRequired",
-                                        "PANRequired",
-                                        "additionalKYCDocsNeeded",
-                                        "AMLCFTApplicable",
-                                        "pepCheckRequired",
-                                        "blacklistCheckRequired",
-                                        "CKYCUploadRequired"
-                                    ].map(field => (
+                            <div className="compliance-table">
+                                {[
+                                    "kycRequired",
+                                    "aadhaarRequired",
+                                    "panRequired",
+                                    "additionalKycDocsNeeded",
+                                    "amlCftApplicable",
+                                    "pepCheckRequired",
+                                    "blacklistCheckRequired",
+                                    "ckycUploadRequired",
+                                ].map((field) => {
+                                    // Custom labels for specific fields
+                                    const customLabels = {
+                                        kycRequired: "KYC Required",
+                                        aadhaarRequired: "AADHAAR Required",
+                                        panRequired: "PAN Required",
+                                        amlCftApplicable: "AML/CFT Applicable",
+                                        ckycUploadRequired: "CKYC UploadRequired",
+                                    };
+
+                                    const label =
+                                        customLabels[field] ||
+                                        field
+                                            .replace(/([A-Z])/g, " $1")
+                                            .replace(/^./, (str) => str.toUpperCase());
+
+                                    return (
                                         <div className="compliance-row" key={field}>
-                                            <span className="compliance-label">
-                                                {field.replace(/([A-Z])/g, " $1").replace(/^./, str => str.toUpperCase())}
-                                            </span>
+                                            <span className="compliance-label">{label}</span>
                                             <div className="radio-group">
                                                 <label>
                                                     <input
@@ -648,8 +659,9 @@ export default function Productcreate() {
                                                         name={field}
                                                         value="yes"
                                                         checked={form[field] === true}
-                                                        onChange={(e) => handleBooleanSelect(field, e.target.value)}
-                                                    /> Yes
+                                                        onChange={handleBooleanSelect}
+                                                    />{" "}
+                                                    Yes
                                                 </label>
                                                 <label>
                                                     <input
@@ -657,13 +669,14 @@ export default function Productcreate() {
                                                         name={field}
                                                         value="no"
                                                         checked={form[field] === false}
-                                                        onChange={(e) => handleBooleanSelect(field, e.target.value)}
-                                                    /> No
+                                                        onChange={handleBooleanSelect}
+                                                    />{" "}
+                                                    No
                                                 </label>
                                             </div>
                                         </div>
-                                    ))}
-                                </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
@@ -688,7 +701,7 @@ export default function Productcreate() {
                                         <input
                                             type="number"
                                             name={field}
-                                            value={form[field] || ""}
+                                            value={form[field] || 0}
                                             max={maxValue} // 🔥 restrict max
                                             onChange={(e) => {
                                                 const newValue = Number(e.target.value);
@@ -713,13 +726,13 @@ export default function Productcreate() {
                             {/* Left - Validity */}
                             <div>
                                 <h4 className="text-teal-400 text-[15px] mb-[5px]">Validity & Age Settings</h4>
-                                <div className="form-group">
+                                {/* <div className="form-group">
                                     <label>Validity Period (Months)</label>
                                     <input type="number" name="validityPeriodMonths" value={form.validityPeriodMonths || ""} onChange={handleChange} className="form-input" />
-                                </div>
+                                </div> */}
                                 <div className="form-group">
                                     <label>Grace Period (Days)</label>
-                                    <input type="number" name="gracePeriodDays" value={form.gracePeriodDays || ""} onChange={handleChange} className="form-input" />
+                                    <input type="number" name="gracePeriodDays" value={form.gracePeriodDays || 0} onChange={handleChange} className="form-input" />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="form-group">
