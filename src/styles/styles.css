@@ -1262,7 +1262,7 @@ tbody tr {
 }
 
 .error-text {
-  font-size: 0.75rem;
+  font-size: 11px;
   color: #f87171;
   /* red-400 */
   margin-top: 0.25rem;
