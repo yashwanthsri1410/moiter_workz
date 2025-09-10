@@ -30,7 +30,7 @@ export default function ModuleCreation({ onBack }) {
   const fetchModules = async () => {
     try {
       const res = await axios.get(
-       `${API_BASE_URL}:7090/api/Export/modules`
+       `${API_BASE_URL}/fes/api/Export/modules`
       );
       setModules(res.data || []);
     } catch (error) {
@@ -295,7 +295,7 @@ export default function ModuleCreation({ onBack }) {
         </div>
         <div className="guidelines-grid">
           <p>✏️ <span>Edit:</span> Modify module names inline</p>
-          <p>🗑️ <span>Delete:</span> Remove unused modules</p>
+          {/* <p>🗑️ <span>Delete:</span> Remove unused modules</p> */}
         </div>
       </div>
     </div>

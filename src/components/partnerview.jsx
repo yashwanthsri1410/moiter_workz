@@ -21,6 +21,7 @@ export default function Partnerview({ selectedPartner, setSelectedPartner }) {
     const [remarks, setRemarks] = useState("");
     const [currentAction, setCurrentAction] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     if (!selectedPartner) return null;
 
     const getStatusLabel = (value) => {
@@ -74,7 +75,7 @@ export default function Partnerview({ selectedPartner, setSelectedPartner }) {
             };
 
             await axios.post(
-                "http://192.168.22.247/ps/approveDistributionPartner",
+                `${API_BASE_URL}/ps/approveDistributionPartner`,
                 payload
             );
 

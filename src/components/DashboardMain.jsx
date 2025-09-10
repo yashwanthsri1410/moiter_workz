@@ -39,7 +39,7 @@ const DashboardMain = ({ username }) => {
 
     const fetchProductData = async () => {
         try {
-            const res = await axios.get("http://192.168.22.247:7090/api/Export/product_export");
+            const res = await axios.get("http://192.168.22.247/fes/api/Export/product_export");
             const data = res.data || [];
             setProductData(data);
 
@@ -82,7 +82,7 @@ const DashboardMain = ({ username }) => {
 
     const fetchPendingCustomers = async () => {
         try {
-            const res = await axios.get("http://192.168.22.247:7090/api/Export/pending-customers");
+            const res = await axios.get("http://192.168.22.247/fes/api/Export/pending-customers");
             const newData = res.data || [];
             const prev = prevCustomersRef.current;
             const newlyAdded = newData.filter(item => !prev.some(p => p.id === item.id));
@@ -99,7 +99,7 @@ const DashboardMain = ({ username }) => {
 
     const fetchPendingEmployees = async () => {
         try {
-            const res = await axios.get("http://192.168.22.247:7090/api/Export/pending-employees");
+            const res = await axios.get("http://192.168.22.247/fes/api/Export/pending-employees");
             const newData = res.data || [];
             const prev = prevEmployeesRef.current;
             const newlyAdded = newData.filter(item => !prev.some(p => p.id === item.id));
@@ -114,7 +114,7 @@ const DashboardMain = ({ username }) => {
 
     const fetchUserTypes = async () => {
         try {
-            const res = await axios.get("http://192.168.22.247:7090/api/Export/usertypes");
+            const res = await axios.get("http://192.168.22.247/fes/api/Export/usertypes");
             const newData = res.data || [];
             const prev = prevUserTypesRef.current;
             const newlyAdded = newData.filter(item => !prev.some(p => p.id === item.id));

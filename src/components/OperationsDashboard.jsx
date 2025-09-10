@@ -17,8 +17,8 @@ import LoadedUnLoaded from "../features/financialDashboard/loadedUnloaded";
 import WeeklyTrends from "../features/financialDashboard/weeklyTrends";
 import PerformanceOverview from "../features/financialDashboard/perfomanceOverview";
 import KYCCompliance from "../features/financialDashboard/kycCompliance";
-
-axios.defaults.baseURL = "http://192.168.22.247/fes/api/";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+axios.defaults.baseURL = `${API_BASE_URL}/fes/api/`;
 
 const OperationsDashboard = () => {
   const {

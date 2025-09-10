@@ -2,10 +2,11 @@ import { useEffect } from "react";
 import axios from "axios";
 
 const SendRequestInfo = () => {
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   useEffect(() => {
     const fetchClientInfo = async () => {
       try {
-        const response = await axios.get("http://192.168.22.247/app1/api/Department/get-request-info", {
+        const response = await axios.get(`${API_BASE_URL}/app1/api/Department/get-request-info`, {
           headers: {
             "X-Custom-Header": "ClientInitCall", // optional custom header
           },

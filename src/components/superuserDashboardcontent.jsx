@@ -31,23 +31,20 @@ export default function UserManagementSystem() {
 
   const fetchEmployees = async () => {
     const res = await axios.get(
-      `${API_BASE_URL}:7090/fes/api/Export/pending-employees`
+      `${API_BASE_URL}/fes/fes/api/Export/pending-employees`
     );
     setEmployees(res.data);
   };
-
+const filteredEmployees = employees.filter((e) =>
+  e.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  e.email?.toLowerCase().includes(searchTerm.toLowerCase())
+);
   // Count different user types
   const totalUsers = users.totalUsers;
   const superUsers = users.superUsers;
   const makers = users.maker;
   const checkers = users.checker;
 
-  // Filter for search
-  // const filteredUsers = users?.filter((u) =>
-  //   u.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
-
-  // Map colors for user types
   const typeColors = {
     super_user: "superuser",
     maker: "maker",
@@ -173,58 +170,45 @@ export default function UserManagementSystem() {
                 <th className="table-cell">Status</th>
               </tr>
             </thead>
-            <tbody>
-              {employees.map((e, i) => (
-                <tr key={i} className="table-row">
-                  <td className="table-cell-name">{e.empId}</td>
-                  <td className="table-cell-name">{e.userName}</td>
-                  <td className="table-cell-name">{e.email}</td>
-                  <td className="table-cell-name">
-                    <span
-                      className={`px-2 py-1 rounded ${
-                        e.status === 0
-                          ? "checker"
-                          : e.status === 1
-                          ? "infra"
-                          : e.status === 2
-                          ? "inactive"
-                          : "maker"
-                      } `}
-                    >
-                      {e.status === 1
-                        ? "Pending"
-                        : e.status === 0
-                        ? "Approved"
-                        : e.status == 2
-                        ? "Rejected"
-                        : "Recheck"}
-                    </span>
-                  </td>
-                  {/* <td className="p-3">
-                    <span
-                      className={`px-2 py-1 rounded text-[8px] usertype ${
-                        typeColors[u.userType]
-                      }`}
-                    >
-                      {u.userType.replace("_", " ").toUpperCase()}
-                    </span>
-                  </td>
-                  <td className="p-3 flex items-center gap-1 text-gray-400">
-                    <Calendar className="w-4 h-4" /> 2024-01-15
-                  </td>
-                  <td className="p-3">
-                    <MoreVertical className="w-5 h-5 text-gray-400 cursor-pointer" />
-                  </td> */}
-                </tr>
-              ))}
-              {employees.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="text-center py-4 text-gray-500">
-                    No users found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
+           <tbody>
+  {filteredEmployees.length > 0 ? (
+    filteredEmployees.map((e, i) => (
+      <tr key={i} className="table-row">
+        <td className="table-cell-name">{e.empId}</td>
+        <td className="table-cell-name">{e.userName}</td>
+        <td className="table-cell-name">{e.email}</td>
+        <td className="table-cell-name">
+          <span
+            className={`px-2 py-1 text-[9px] rounded ${
+              e.status === 0
+                ? "checker"
+                : e.status === 1
+                ? "infra"
+                : e.status === 2
+                ? "inactive"
+                : "maker"
+            } `}
+          >
+            {e.status === 1
+              ? "Pending"
+              : e.status === 0
+              ? "Approved"
+              : e.status === 2
+              ? "Rejected"
+              : "Recheck"}
+          </span>
+        </td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan={4} className="text-center py-4 text-gray-500">
+        No users found.
+      </td>
+    </tr>
+  )}
+</tbody>
+
           </table>
         </div>
       </div>

@@ -5,7 +5,8 @@ import "../../styles/infra.css";
 import axios from "axios";
 import { useMonitoringStore } from "../../store/monitoringStore";
 import { Search } from "lucide-react";
-const url = "http://192.168.22.247/infra/api/Infra/";
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const url = `${API_BASE_URL}/infra/api/Infra/`;
 const Infra = () => {
   const [time, setTime] = useState(new Date());
   const [error, setError] = useState("");

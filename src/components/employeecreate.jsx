@@ -77,16 +77,16 @@ const EmployeeCreationForm = ({ onBack }) => {
 
   useEffect(() => {
     axios
-      .get(`${API_BASE_URL}:7090/api/Export/role-departments`)
+      .get(`${API_BASE_URL}/fes/api/Export/role-departments`)
       .then((res) => setAccessList(res.data))
       .catch((err) => console.error("Error fetching access list:", err));
 
     axios
-      .get(`${API_BASE_URL}:7090/api/Export/role-module-screen`)
+      .get(`${API_BASE_URL}/fes/api/Export/role-module-screen`)
       .then((res) => setRoleData(res.data))
       .catch((err) => console.error("Error fetching role data:", err));
     axios
-      .get(`${API_BASE_URL}:7090/fes/api/Export/pending-employees`)
+      .get(`${API_BASE_URL}/fes/fes/api/Export/pending-employees`)
       .then((res) => setEmployees(res.data))
       .catch((err) => console.error("Error fetching employees:", err));
   }, []);
@@ -253,9 +253,9 @@ const EmployeeCreationForm = ({ onBack }) => {
 
     setSelectedRoleScreens(grouped);
   };
-  console.log(uniqueDesigns);
+  // console.log(uniqueDesigns);
 
-  console.log(accessList);
+  // console.log(accessList);
   return (
     <>
       {/* Top Bar */}

@@ -3,7 +3,7 @@ import { useOperationStore } from "../../store/operationStore";
 
 export default function KYCCompliance() {
   const { kycStatusData, error } = useOperationStore();
-  console.log(error);
+  // console.log(error);
 
   const stats = [
     {

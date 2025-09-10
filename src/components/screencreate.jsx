@@ -32,7 +32,7 @@ export default function ScreenManagement({ onBack }) {
 
   const fetchModules = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}:7090/api/Export/modules`);
+      const res = await axios.get(`${API_BASE_URL}/fes/api/Export/modules`);
       setModules(res.data || []);
     } catch (err) {
       console.error("Failed to fetch modules:", err);
@@ -41,7 +41,7 @@ export default function ScreenManagement({ onBack }) {
 
   const fetchScreens = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}:7090/api/Export/screens`);
+      const res = await axios.get(`${API_BASE_URL}/fes/api/Export/screens`);
       setScreens(res.data || []);
     } catch (err) {
       console.error("Failed to fetch screens:", err);
@@ -360,9 +360,9 @@ export default function ScreenManagement({ onBack }) {
           <p>
             ✏️ <span className="text-white">Edit:</span> Update screen inline
           </p>
-          <p>
+          {/* <p>
             🗑️ <span className="text-white">Delete:</span> Remove unused screens
-          </p>
+          </p> */}
         </div>
       </div>
     </div>

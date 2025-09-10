@@ -14,7 +14,7 @@ export default function DepartmentCreation({ onBack }) {
   const fetchDepartments = async () => {
     try {
       const res = await axios.get(
-        `${API_BASE_URL}:7090/api/Export/simple-departments`
+        `${API_BASE_URL}/fes/api/Export/simple-departments`
       );
       setDepartments(res.data || []);
     } catch (err) {
@@ -234,7 +234,6 @@ export default function DepartmentCreation({ onBack }) {
         </div>
         <div className="guidelines-grid">
           <p>✏️ <span >Edit:</span> Modify department names inline</p>
-          <p>🗑️ <span>Delete:</span> Remove unused departments</p>
 
         </div>
       </div>

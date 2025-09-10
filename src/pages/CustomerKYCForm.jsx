@@ -49,6 +49,7 @@ const CustomerKYCForm = () => {
   const [addressProofImage, setAddressProofImage] = useState(null);
   const [selectedProgramId, setSelectedProgramId] = useState("");
   const [headersError, setheadersError] = useState("");
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   // console.log(headersError)
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -150,7 +151,7 @@ const CustomerKYCForm = () => {
 
       console.log("Final Payload:", payload);
 
-      await axios.post("http://192.168.22.247/cs/api/Customer/kyc", payload, {
+      await axios.post(`${API_BASE_URL}/cs/api/Customer/kyc`, payload, {
         headers: {
           "Content-Type": "application/json",
         },

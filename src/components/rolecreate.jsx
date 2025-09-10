@@ -20,7 +20,7 @@ const RoleAccessForm = ({ onBack }) => {
 
   useEffect(() => {
     axios
-      .get(`${API_BASE_URL}:7090/api/Export/modules-screens`)
+      .get(`${API_BASE_URL}/fes/api/Export/modules-screens`)
       .then((res) => setModulesData(res.data))
       .catch((err) => console.error("Error fetching modules:", err));
     fetchRoles();
@@ -28,7 +28,7 @@ const RoleAccessForm = ({ onBack }) => {
 
   const fetchRoles = () => {
     axios
-      .get(`${API_BASE_URL}:7090/api/Export/role-departments`)
+      .get(`${API_BASE_URL}/fes/api/Export/role-departments`)
       .then((res) => {
         const uniqueRolesMap = new Map();
         res.data.forEach((item) => {
@@ -378,6 +378,30 @@ const RoleAccessForm = ({ onBack }) => {
               )}
             </tbody>
           </table>
+        </div>
+      </div>
+      {/* Guidelines */}
+      <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 mt-6 shadow-lg">
+        <h3 className="text-teal-400 font-semibold mb-3">
+          Role Management Guidelines
+        </h3>
+        <div className="grid md:grid-cols-2 gap-3 text-sm text-gray-300">
+          <p>
+            📘 <span className="text-white">Create:</span> Add new role
+            under departments
+          </p>
+          <p>
+            🔍 <span className="text-white">Search:</span> Quickly find
+            role
+          </p>
+          <p>
+            ✏️ <span className="text-white">Edit:</span> Update designation
+            inline
+          </p>
+          {/* <p>
+            🗑️ <span className="text-white">Delete:</span> Remove unused
+            role
+          </p> */}
         </div>
       </div>
     </div>

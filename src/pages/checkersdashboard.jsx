@@ -209,7 +209,7 @@ export default function CheckersDashboardLayout() {
                 dashboardTabs.includes(activeTab)) &&
                 !isCollapsed && (
                   <div className="submenu submenu-open">
-                    <button
+                    {/* <button
                       onClick={() => setActiveTab("customer")}
                       className={
                         activeTab === "customer" ? "submenu-active" : ""
@@ -276,7 +276,7 @@ export default function CheckersDashboardLayout() {
                       className={activeTab === "system" ? "submenu-active" : ""}
                     >
                       <Settings size={14} /> System Settings
-                    </button>
+                    </button> */}
 
                     <button
                       onClick={() => setActiveTab("infra")}

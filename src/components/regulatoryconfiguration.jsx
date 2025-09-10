@@ -123,7 +123,7 @@ export default function RegulatoryConfig() {
 
     const fetchConfigurations = async () => {
         try {
-            const res = await axios.get(`${API_BASE_URL}:7090/api/Export/export_rbi_configuration`);
+            const res = await axios.get(`${API_BASE_URL}/fes/api/Export/export_rbi_configuration`);
             setConfigurations(res.data);
         } catch (err) {
             console.error("Error fetching configurations:", err);

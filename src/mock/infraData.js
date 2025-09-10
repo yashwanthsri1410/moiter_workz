@@ -1,10 +1,12 @@
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 export const infraStatus = {
+  
   databaseRunning: true,
   services: [
     {
       name: "AES",
       serviceName: "Application Error Service (AES)",
-      url: "http://192.168.22.247/aes",
+      url: `${API_BASE_URL}aes`,
       isRunning: true,
       usageCount: 0,
       endpoints: [],
@@ -12,7 +14,7 @@ export const infraStatus = {
     {
       name: "ATS",
       serviceName: "Audit Trail Service (ATS)",
-      url: "http://192.168.22.247/ats",
+      url: `${API_BASE_URL}ats`,
       isRunning: true,
       usageCount: 6,
       endpoints: [
@@ -26,7 +28,7 @@ export const infraStatus = {
     {
       name: "PS",
       serviceName: "Product Service (PS)",
-      url: "http://192.168.22.247/ps",
+      url: `${API_BASE_URL}ps`,
       isRunning: true,
       usageCount: 0,
       endpoints: [],
@@ -34,7 +36,7 @@ export const infraStatus = {
     {
       name: "UMS",
       serviceName: "User Management Service (UMS)",
-      url: "http://192.168.22.247/ums",
+      url: `${API_BASE_URL}ums`,
       isRunning: true,
       usageCount: 3,
       endpoints: [
@@ -48,7 +50,7 @@ export const infraStatus = {
     {
       name: "CS",
       serviceName: "Customer Service (CS)",
-      url: "http://192.168.22.247/cs",
+      url: `${API_BASE_URL}cs`,
       isRunning: true,
       usageCount: 0,
       endpoints: [],
@@ -56,7 +58,7 @@ export const infraStatus = {
     {
       name: "FES",
       serviceName: "File Export Service (FES)",
-      url: "http://192.168.22.247/fes",
+      url: `${API_BASE_URL}fes`,
       isRunning: true,
       usageCount: 197,
       endpoints: [

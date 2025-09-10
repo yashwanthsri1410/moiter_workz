@@ -32,7 +32,7 @@ export default function CreateDesignationForm({ onBack }) {
   const fetchDepartments = async () => {
     try {
       const res = await axios.get(
-        `${API_BASE_URL}:7090/api/Export/simple-departments`
+        `${API_BASE_URL}/fes/api/Export/simple-departments`
       );
       setDepartments(res.data || []);
     } catch (err) {
@@ -43,7 +43,7 @@ export default function CreateDesignationForm({ onBack }) {
   const fetchDesignations = async () => {
     try {
       const res = await axios.get(
-        `${API_BASE_URL}:7090/api/Export/designations`
+        `${API_BASE_URL}/fes/api/Export/designations`
       );
       setDesignations(res.data || []);
     } catch (err) {
@@ -372,10 +372,10 @@ export default function CreateDesignationForm({ onBack }) {
             ✏️ <span className="text-white">Edit:</span> Update designation
             inline
           </p>
-          <p>
+          {/* <p>
             🗑️ <span className="text-white">Delete:</span> Remove unused
             designations
-          </p>
+          </p> */}
         </div>
       </div>
     </div>
