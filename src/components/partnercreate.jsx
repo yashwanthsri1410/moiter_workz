@@ -19,6 +19,7 @@ export default function Partnercreate() {
     const [products, setProducts] = useState([]);  // fetched products
     const [showProductDropdown, setShowProductDropdown] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+    const [portalOptions, setPortalOptions] = useState([]);
 
     const [constraints, setConstraints] = useState([]);
     const toBase64 = (file) => {
@@ -29,10 +30,23 @@ export default function Partnercreate() {
             reader.onerror = (error) => reject(error);
         });
     };
+const reverseBase64String = (base64String) => {
+    if (!base64String) return "";
+    try {
+        const binaryString = atob(base64String);
+        const reversed = binaryString.split("").reverse().join("");
+        return btoa(reversed);
+    } catch (error) {
+        console.error("Error reversing base64 data:", error);
+        return base64String;
+    }
+};
+
+
 
     const [editingId, setEditingId] = useState(null);
     useEffect(() => {
-        fetch(`${API_BASE_URL}:7090/fes/api/Export/product_Config_export`)
+        fetch(`${API_BASE_URL}/fes/api/Export/product_Config_export`)
             .then((res) => res.json())
             .then((data) => {
                 // 🔹 Remove duplicates by productName
@@ -47,7 +61,7 @@ export default function Partnercreate() {
     useEffect(() => {
         const fetchConstraints = async () => {
             try {
-                const res = await axios.get("http://192.168.22.247/fes/api/Export/constraints-disturbution-parnter");
+                const res = await axios.get(`${API_BASE_URL}/fes/api/Export/constraints-disturbution-parnter`);
                 setConstraints(transformConstraints(res.data)); // ✅ Use function
             } catch (err) {
                 console.error("Error fetching constraints", err);
@@ -55,21 +69,39 @@ export default function Partnercreate() {
         };
 
         fetchConstraints();
+
+        const fetchPortalUrls = async () => {
+            try {
+                const res = await axios.get(`${API_BASE_URL}/fes/api/Export/partner-url`);
+                setPortalOptions(res.data || []);
+            } catch (err) {
+                console.error("Error fetching portal URLs:", err);
+            }
+        };
+        fetchPortalUrls();
     }, []);
 
     const ip = usePublicIp();
     // Fetch API data
     useEffect(() => {
-        fetch(`${API_BASE_URL}:7090/fes/api/Export/partner_summary_export`)
-            .then((res) => res.json())
-            .then((data) => setPartners(data))
-            .catch((err) => console.error("Error fetching partners:", err));
-    }, []);
 
+        fetchConfigurations()
+    }, []);
+    const fetchConfigurations = async () => {
+        try {
+            const res = await axios.get(`${API_BASE_URL}/fes/api/Export/partner_summary_export`);
+            setPartners(res.data);
+        } catch (err) {
+            console.error("Error fetching configurations:", err);
+        }
+    };
     // Filter by search
-    const filteredPartners = partners.filter((p) =>
-        p.partnerName.toLowerCase().includes(search.toLowerCase())
-    );
+    const filteredPartners = partners
+        .filter((p) => p.partnerName) // only keep items with partnerName
+        .filter((p) =>
+            p.partnerName.toLowerCase().includes(search.toLowerCase())
+        );
+
     // Pagination logic
     const totalPages = Math.ceil(filteredPartners.length / partnersPerPage);
     const indexOfLast = currentPage * partnersPerPage;
@@ -123,8 +155,6 @@ export default function Partnercreate() {
         kycLevel: "Basic",
         kycStatus: "Verified",
         riskProfile: "Low",
-        sanctionsScreening: false,
-        blacklisted: false,
         revenueShareModel: "",
         panNumber: "",
         tanNumber: "",
@@ -134,9 +164,7 @@ export default function Partnercreate() {
         monthlyFixedFee: 0,
         commissionCurrency: "INR",
         settlementFrequency: "monthly",
-        pepCheck: false,
         allowedProducts: [],
-        portalAccessEnabled: false,
         portalUrl: "",
         webhookUrl: "default",
         agreementDocument: "",
@@ -152,44 +180,99 @@ export default function Partnercreate() {
 
     // Form state
     const [form, setForm] = useState({ ...defaultFormValues });
+    // ✅ Keys allowed in backend schema
+    const schemaKeys = [
+        "partnerName",
+        "partnerType",
+        "contactName",
+        "contactEmail",
+        "contactPhone",
+        "partnerStatus",
+        "portalAccessEnabled",
+        "portalUrl",
+        "kycStatus",
+        "kycLevel",
+        "panNumber",
+        "tanNumber",
+        "gstin",
+        "address",
+        "pincode",
+        "state",
+        "city",
+        "riskProfile",
+        "allowedProducts",
+        "cardIssuanceCommissionPercent",
+        "transactionCommissionPercent",
+        "monthlyFixedFee",
+        "commissionCurrency",
+        "settlementFrequency",
+        "status",
+        "agreementDocument",
+        "idProofDocument",
+        "addressProofDocument",
+        "createdBy",
+        "metadata",
+        "requestInfo",
+    ];
 
-
-    // Submit handler
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-        const payload = {
-            ...defaultFormValues,
+        let payload = {
             ...form,
             pincode: Number(form.pincode) || 0,
             cardIssuanceCommissionPercent: Number(form.cardIssuanceCommissionPercent) || 0,
             transactionCommissionPercent: Number(form.transactionCommissionPercent) || 0,
             monthlyFixedFee: Number(form.monthlyFixedFee) || 0,
-            allowedProducts: Array.isArray(form.allowedProducts) ? form.allowedProducts.join(",") : "",
-           portalUrl: 2,
+            allowedProducts: Array.isArray(form.allowedProducts)
+                ? form.allowedProducts.join(",")
+                : "",
+            portalUrl: form.portalAccessEnabled ? form.portalUrl : 0,
             agreementDocument: agreementFile ? await toBase64(agreementFile) : "",
             idProofDocument: idFile ? await toBase64(idFile) : "",
             addressProofDocument: addressFile ? await toBase64(addressFile) : "",
             metadata: buildMetadata("admin-user"),
             requestInfo: buildRequestInfo(ip, "admin-user"),
+            createdBy: "admin-user",
         };
 
-        console.log("Payload to send:", JSON.stringify(payload, null, 2));
+        // Only keep allowed keys as per schema
+        payload = Object.fromEntries(
+            Object.entries(payload).filter(([key]) => schemaKeys.includes(key))
+        );
 
-        const url = editingId
+        // Determine method and URL
+        const isEditing = !!editingId; // true if editing
+        const method = isEditing ? "put" : "post";
+        const url = isEditing
             ? `${API_BASE_URL}/ps/DistributionPartner-Update`
             : `${API_BASE_URL}/ps/DistributionPartner-Create`;
 
-        const res = await axios.post(url, payload, {
+        // console.log("Submitting partner form");
+        // console.log("Editing mode:", isEditing);
+        // console.log("URL:", url);
+        // console.log("Payload:", payload);
+
+        const res = await axios({
+            method: method,
+            url: url,
+            data: payload,
             headers: { "Content-Type": "application/json" },
         });
 
-        alert(editingId ? "Partner updated successfully!" : "Partner created successfully!");
+        alert(isEditing ? "Partner updated successfully!" : "Partner created successfully!");
+        
+        // Reset the form
         setForm({ ...defaultFormValues });
         setAgreementFile(null);
         setIdFile(null);
         setAddressFile(null);
         setformOpen(false);
+        setIsEditing(false);
+        setEditingId(null);
+
+        // Refresh the partner list
+        await fetchConfigurations();
 
     } catch (error) {
         console.error("Error creating/updating partner:", error.response || error);
@@ -200,19 +283,32 @@ export default function Partnercreate() {
 
 
 
+const handleEdit = (partnerName, partnerType) => {
+    const partner = partners.find(p => p.partnerName === partnerName && p.partnerType === partnerType);
+    if (!partner) {
+        alert("Partner not found!");
+        return;
+    }
 
-    const handleEdit = (partner) => {
-        setForm({
-            ...partner,
-            allowedProducts: partner.allowedProducts ? partner.allowedProducts.split(",") : [],
-        });
-        setAgreementFile(null);
-        setIdFile(null);
-        setAddressFile(null);
-        setEditingId(partner.partnerId);
-        setIsEditing(true);
-        setformOpen(true);
-    };
+    setForm({
+        ...partner,
+        portalUrl: partner.portalUrl || 0,
+        allowedProducts: partner.allowedProducts ? partner.allowedProducts.split(",") : [],
+        agreementDocumentReversed: reverseBase64String(partner.agreementDocumentBase64),
+        idProofDocumentReversed: reverseBase64String(partner.idProofDocumentBase64),
+        addressProofDocumentReversed: reverseBase64String(partner.addressProofDocumentBase64),
+    });
+    setAgreementFile(null);
+    setIdFile(null);
+    setAddressFile(null);
+
+    // Create a composite editingId for tracking state
+    setEditingId(`${partner.partnerName}-${partner.partnerType}`);
+    setIsEditing(true);
+    setformOpen(true);
+};
+
+
     const getConstraintOptions = (constraints, title) => {
         return constraints.find(c => c.title === title)?.options || [];
     };
@@ -449,15 +545,30 @@ export default function Partnercreate() {
 
                         {/* ✅ Input appears only if checked */}
                         {form.portalAccessEnabled && (
-                            <div className="form-group w-[1/2]">
-                                <input
+                            <div className="label-input">
+                                {/* <input
                                     name="portalUrl"
                                     value={form.portalUrl}
                                     onChange={handleChange}
                                     className="form-input"
                                     type="text"
                                     placeholder="Enter portal details"
-                                />
+                                /> */}
+
+                                <select
+                                    name="portalUrl"
+                                    value={form.portalUrl}
+                                    onChange={(e) => setForm({ ...form, portalUrl: Number(e.target.value) })}
+                                    disabled={!form.portalAccessEnabled}
+                                    className="form-select w-1/2"
+                                >
+                                    <option value="">-- Select Portal URL --</option>
+                                    {portalOptions.map((p) => (
+                                        <option key={p.portalId} value={p.portalId}>
+                                            {p.portalUrl}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                         )}
                     </div>
@@ -612,17 +723,6 @@ export default function Partnercreate() {
                                     <input type="text" name="gstin" className="form-input" placeholder="Enter GSTIN" value={form.gstin || ""}
                                         onChange={handleChange} />
                                 </div>
-
-                                {/* <div className="form-group">
-                                    <label>Risk Profile</label>
-                                    <select name="riskProfile" className="form-input" value={form.riskProfile || ""}   // ✅ controlled value
-                                        onChange={handleChange}    >
-                                        <option value="">Select risk profile</option>
-                                        <option value="low">Low</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="high">High</option>
-                                    </select>
-                                </div> */}
                             </div>
                         </div>
 
@@ -675,7 +775,7 @@ export default function Partnercreate() {
                             <ArrowLeft className="icon" /> Back
                         </button>
                         <div className="footer-right">
-                            <button type="button" className="btn-outline-reset" onClick={() => { setEditingId(null); setIsEditing(false); }}>
+                            <button type="button" className="btn-outline-reset" onClick={() => { setEditingId(null); setIsEditing(false);    setForm({ ...defaultFormValues }); }}>
                                 <RotateCcw className="icon" /> Reset
                             </button>
                             <button type="submit" className="btn-outline-reset">
@@ -703,7 +803,7 @@ export default function Partnercreate() {
                                 value={search}
                                 onChange={(e) => {
                                     setSearch(e.target.value);
-                                    setCurrentPage(1); // reset to first page when searching
+                                    setCurrentPage(1); 
                                 }}
                             />
                         </div>
@@ -791,7 +891,7 @@ export default function Partnercreate() {
                                             )}
                                         </td>
                                         <td className="table-content">
-                                            <button className="header-icon-box" onClick={() => handleEdit(partner)}>
+                                            <button className="header-icon-box" onClick={() => handleEdit(partner.partnerName, partner.partnerType)}>
                                                 <SquarePen className="text-[#00d4aa] w-3 h-3" />
                                             </button>
                                         </td>

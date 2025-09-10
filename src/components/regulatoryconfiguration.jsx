@@ -795,7 +795,7 @@ export default function RegulatoryConfig() {
                                         <button className="header-icon-box"
                                             onClick={() => {
                                                 handleEdit(cfg);
-                                                setformOpen(prev => !prev);
+                                                setformOpen(true);
                                             }}
                                         >
                                             <SquarePen className="text-[#00d4aa] w-3 h-3" />

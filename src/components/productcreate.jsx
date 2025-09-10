@@ -437,7 +437,7 @@ export default function Productcreate() {
         e.preventDefault();
         try {
             // Map frontend form → backend schema
-            // const payload = mapFormToApiSchema(form, username, ip, isEditing);
+            const payload = mapFormToApiSchema(form, username, ip, isEditing);
 
             // console.log("Submitting mapped payload:", JSON.stringify(payload, null, 2));
 

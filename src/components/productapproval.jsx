@@ -51,7 +51,7 @@ export default function ProductApproval() {
 
     const fetchConfigurations = async () => {
         try {
-            const res = await axios.get(`${API_BASE_URL}:7090/fes/api/Export/product_Config_export`);
+            const res = await axios.get(`${API_BASE_URL}/fes/api/Export/product_Config_export`);
             setConfigurations(res.data);
         } catch (err) {
             console.error("Error fetching configurations:", err);

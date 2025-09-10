@@ -19,7 +19,7 @@ export default function PartnerApproval() {
     const fetchPartners = async () => {
         try {
             const res = await axios.get(
-                `${API_BASE_URL}:7090/fes/api/Export/partner_summary_export`
+                `${API_BASE_URL}/fes/api/Export/partner_summary_export`
             );
             setPartners(res.data);
             // console.log(typeof res.data, res.data);

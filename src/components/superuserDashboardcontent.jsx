@@ -17,7 +17,7 @@ export default function UserManagementSystem() {
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}:7090/fes/api/Export/usertypes`)
+    fetch(`${API_BASE_URL}/fes/api/Export/usertypes`)
       .then((res) => res.json())
       .then((data) => {
         setUsers(data);

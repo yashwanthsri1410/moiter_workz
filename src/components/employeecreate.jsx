@@ -84,7 +84,7 @@ const EmployeeCreationForm = ({ onBack }) => {
             .then((res) => setRoleData(res.data))
             .catch((err) => console.error("Error fetching role data:", err));
         axios
-            .get( `${API_BASE_URL}:7090/fes/api/Export/pending-employees`)
+            .get( `${API_BASE_URL}/fes/api/Export/pending-employees`)
             .then((res) => setEmployees(res.data))
             .catch((err) => console.error("Error fetching employees:", err));
     }, []);

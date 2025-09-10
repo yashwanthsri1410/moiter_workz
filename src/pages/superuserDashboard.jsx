@@ -73,8 +73,8 @@ export default function DashboardLayout() {
           },
         },
       };
-      console.log(JSON.stringify(payload, null, 2));
-      console.log(payload);
+      // console.log(JSON.stringify(payload, null, 2));
+      // console.log(payload);
       await axios.post(
         `${API_BASE_URL}:5229/ums/api/UserManagement/user_logout`,
         payload

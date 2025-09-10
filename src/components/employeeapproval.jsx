@@ -31,7 +31,7 @@ export default function EmployeeApproval() {
     const fetchConfigurations = async () => {
         try {
             const res = await axios.get(
-                `${API_BASE_URL}:7090/fes/api/Export/pending-employees`
+                `${API_BASE_URL}/fes/api/Export/pending-employees`
             );
             setConfigurations(res.data);
         } catch (err) {

@@ -111,7 +111,7 @@ export default function Productview({ selectedProduct, setSelectedProduct }) {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2 mb-2">
             <Notebook className="w-4 h-4 text-teal-400" />
-            <h3 className="text-teal-400 text-[15px]">  Product Overview</h3>
+            <h3 className="text-teal-400 text-[15px]">Product Overview</h3>
           </div>
 
         </div>
@@ -139,7 +139,7 @@ export default function Productview({ selectedProduct, setSelectedProduct }) {
 
         {/* Remarks */}
         <div className="mt-4">
-          <p><strong>Description:</strong></p>
+          <p>Description:</p>
           <p className="text-gray-400 mt-1">
             {selectedProduct.productDescription || "No description available."}
           </p>
