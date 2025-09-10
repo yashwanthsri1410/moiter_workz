@@ -12,8 +12,11 @@ import {
   FileText,
   EyeIcon,
   Filter,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import "../styles/styles.css";
+import ErrorText from "./reusable/errorText";
 
 const EmployeeCreationForm = ({ onBack }) => {
   const username = localStorage.getItem("username");
@@ -35,6 +38,7 @@ const EmployeeCreationForm = ({ onBack }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
   const ip = usePublicIp();
   const userAgent = navigator.userAgent;
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -43,18 +47,29 @@ const EmployeeCreationForm = ({ onBack }) => {
     const generatedId = Date.now().toString().slice(-6); // last 6 digits of timestamp
     setEmpId(generatedId);
   }, []);
+
   // 🔹 Sync selectedEmployee → form
   useEffect(() => {
     if (selectedEmployee) {
+      const status = selectedEmployee.status;
       setEmpId(selectedEmployee.empId || "");
       setName(selectedEmployee.userName || "");
       setEmail(selectedEmployee.email || "");
       setDeptId(selectedEmployee.deptName?.toString() || "");
       setDesignationId(selectedEmployee.designationDesc?.toString() || "");
       setRoleAccessId(selectedEmployee.roleAccessId?.toString() || "");
-      setusertype(selectedEmployee.userType?.toString() || "");
+      setusertype(
+        status === 1
+          ? "Super User"
+          : status === 2
+          ? "Normal User"
+          : status === 3
+          ? "Checker"
+          : status === 4
+          ? "Maker"
+          : "Infra Manager"
+      );
       setPassword(""); // don't autofill password for security
-
       // ✅ Auto-load role screens if role is already assigned
       if (selectedEmployee.roleAccessId) {
         const filtered = roleData.filter(
@@ -141,12 +156,16 @@ const EmployeeCreationForm = ({ onBack }) => {
     if (!password) newErrors.password = "Enter password";
     else if (!passwordRegex.test(password)) {
       newErrors.password =
-        "Password must contain at least one uppercase, one lowercase, one number, and one special character.";
+        "One uppercase, One lowercase, One number, and One special character.";
     }
-    if (!deptId) newErrors.deptId = "Enter Department";
-    if (!designationId) newErrors.designationId = "Enter Designation";
-    if (!userType) newErrors.userType = "Enter User Type";
-    if (isRoleLength) newErrors.selectedRoleScreens = "Enter Role";
+    if (!deptId) {
+      newErrors.deptId = "Select Department";
+      newErrors.designationId = "Select Department";
+    }
+    if (deptId && !designationId)
+      newErrors.designationId = "Select Designation";
+    if (!userType) newErrors.userType = "Select User Type";
+    if (isRoleLength) newErrors.selectedRoleScreens = "Select Role";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -253,9 +272,9 @@ const EmployeeCreationForm = ({ onBack }) => {
 
     setSelectedRoleScreens(grouped);
   };
-  console.log(uniqueDesigns);
 
-  console.log(accessList);
+  console.log(selectedRoleScreens);
+
   return (
     <>
       {/* Top Bar */}
@@ -298,7 +317,7 @@ const EmployeeCreationForm = ({ onBack }) => {
             onChange={(e) => setName(e.target.value)}
             className="form-input"
           />
-          {errors.name && <p className="error-text">{errors.name}</p>}
+          <ErrorText errTxt={errors.name} />
         </div>
 
         {/* Email */}
@@ -312,20 +331,33 @@ const EmployeeCreationForm = ({ onBack }) => {
             className="form-input"
           />
           <p className="helper-text">Password will be sent to this email</p>
-          {errors.email && <p className="error-text">{errors.email}</p>}
+          <ErrorText errTxt={errors.email} />
         </div>
         {/* ✅ Password Input */}
-        <div className="label-input">
-          <label className="form-label">Password</label>
-          <input
-            type="password"
-            placeholder="Create user's password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="form-input"
-          />
-          {errors.password && <p className="error-text">{errors.password}</p>}
-        </div>
+        {!selectedEmployee && (
+          <div className="label-input relative">
+            <label className="form-label">Password *</label>
+
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Create user's password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="form-input pr-10" // add padding-right so icon doesn't overlap
+            />
+
+            {/* Toggle icon */}
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-3 top-[36px] text-gray-500 hover:text-gray-700"
+            >
+              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+
+            <ErrorText errTxt={errors.password} />
+          </div>
+        )}
         {/* Department */}
         <div className="label-input">
           <label className="form-label">Department *</label>
@@ -344,7 +376,7 @@ const EmployeeCreationForm = ({ onBack }) => {
               </option>
             ))}
           </select>
-          {errors.deptId && <p className="error-text">{errors.deptId}</p>}
+          <ErrorText errTxt={errors.deptId} />
         </div>
 
         {/* Designation */}
@@ -363,6 +395,7 @@ const EmployeeCreationForm = ({ onBack }) => {
               </option>
             ))}
           </select>
+          <ErrorText errTxt={errors.designationId} />
         </div>
 
         {/* Role */}
@@ -414,6 +447,7 @@ const EmployeeCreationForm = ({ onBack }) => {
               }),
             }}
           />
+          <ErrorText errTxt={errors.selectedRoleScreens} />
         </div>
         {Object.keys(selectedRoleScreens).length > 0 && (
           <div className="accessible-screens">
@@ -437,7 +471,6 @@ const EmployeeCreationForm = ({ onBack }) => {
             </div>
           </div>
         )}
-
         <div className="label-input">
           <label className="form-label">User Type *</label>
           <select
@@ -446,12 +479,13 @@ const EmployeeCreationForm = ({ onBack }) => {
             value={userType}
           >
             <option value="">Select user type</option>
-            <option value="1">Super User</option>
-            <option value="4">Maker</option>
-            <option value="3">Checker</option>
-            <option value="5">Infra manager</option>
+            <option value="Super User">Super User</option>
+            <option value="Maker">Maker</option>
+            <option value="Checker">Checker</option>
+            <option value="Infra Manager">Infra Manager</option>
+            <option value="Normal User">Normal User</option>
           </select>
-          {errors.userType && <p className="error-text">{errors.userType}</p>}
+          <ErrorText errTxt={errors.userType} />
         </div>
 
         {/* Submit */}
@@ -556,7 +590,7 @@ const EmployeeCreationForm = ({ onBack }) => {
             <table className="w-full text-left">
               <thead className="table-head">
                 <tr>
-                  <th className="table-cell">ID</th>
+                  <th className="table-cell">EMP ID</th>
                   <th className="table-cell">NAME</th>
                   <th className="table-cell">EMAIL</th>
                   <th className="table-cell">DEPARTMENT</th>
@@ -586,13 +620,16 @@ const EmployeeCreationForm = ({ onBack }) => {
                             ? "Checker"
                             : emp.status === 4
                             ? "Maker"
-                            : "Infra manager"}
+                            : "Infra Manager"}
                         </span>
                       </td>
                       <td className="table-content flex gap-2">
                         <button
                           className="header-icon-box"
-                          onClick={() => setSelectedEmployee(emp)}
+                          onClick={() => {
+                            setSelectedEmployee(emp);
+                            setErrors({});
+                          }}
                         >
                           <EyeIcon className="text-[#00d4aa] w-4 h-4" />
                         </button>
