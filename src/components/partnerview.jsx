@@ -38,28 +38,32 @@ export default function Partnerview({ selectedPartner, setSelectedPartner }) {
         return "Unknown";
     }
   };
+  const actionMap = {
+    0: "Approve",
+    2: "Reject",
+    3: "Recheck"
+  };
 
   const handleActionClick = (actionStatus) => {
     setCurrentAction(actionStatus);
     setRemarks(selectedPartner.remarks || "");
     setShowModal(true);
   };
-
   const submitAction = async () => {
     try {
       const payload = {
         partnerName: selectedPartner.partnerName,
         partnerType: selectedPartner.partnerType,
-        actionStatus: currentAction,
-        checker: "checkerUser", // Replace with logged-in user
+        actionStatus: Number(currentAction),
+        checker: "checkerUser",
         remarks: remarks,
         metadata: {
-          ipAddress: window.location.hostname, // or get from server
+          ipAddress: window.location.hostname,
           userAgent: navigator.userAgent,
           headers: "custom-headers-if-any",
           channel: "web",
           auditMetadata: {
-            createdBy: "checkerUser", // or logged-in user
+            createdBy: "checkerUser",
             createdDate: new Date().toISOString(),
             modifiedBy: "checkerUser",
             modifiedDate: new Date().toISOString(),
@@ -74,11 +78,7 @@ export default function Partnerview({ selectedPartner, setSelectedPartner }) {
         },
       };
 
-      await axios.post(
-        `${API_BASE_URL}/ps/approveDistributionPartner`,
-        payload
-      );
-
+      await axios.post(`${API_BASE_URL}/ps/approveDistributionPartner`, payload);
       alert("Action submitted successfully!");
       setShowModal(false);
       setRemarks("");
@@ -440,14 +440,10 @@ export default function Partnerview({ selectedPartner, setSelectedPartner }) {
                 Cancel
               </button>
               <button
-                className={`btn-submit ${currentAction === 0
-                  ? "btn-approve-green"
-                  : currentAction === 2
-                    ? "btn-reject-red"
-                    : "btn-recheck-blue"
-                  }`}
+                className={`btn-submit ${currentAction === 0 ? "btn-approve-green" : currentAction === 2 ? "btn-reject-red" : "btn-recheck-blue"}`}
                 onClick={submitAction}
               >
+
                 {currentAction === 0 && (
                   <>
                     <Check className="w-4 h-4" /> Approve Partner

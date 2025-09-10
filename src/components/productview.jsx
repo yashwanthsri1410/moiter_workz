@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 
-export default function Productview({ selectedProduct, setselectedProduct }) {
+export default function Productview({ selectedProduct, setSelectedProduct }) {
   const [remarks, setRemarks] = useState("");
   const [currentAction, setCurrentAction] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -89,7 +89,7 @@ export default function Productview({ selectedProduct, setselectedProduct }) {
         <div className="card-header-left flex items-center gap-3">
           <button
             className="approval-back-button"
-            onClick={() => setselectedProduct(null)}
+            onClick={() => setSelectedProduct(null)}
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Approvals
