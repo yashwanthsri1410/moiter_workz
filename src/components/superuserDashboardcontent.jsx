@@ -8,33 +8,44 @@ import {
   Search,
   MoreVertical,
   Calendar,
-  TrendingUp
+  TrendingUp,
 } from "lucide-react";
+import axios from "axios";
 
 export default function UserManagementSystem() {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [employees, setEmployees] = useState([]);
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/fes/api/Export/usertypes`)
       .then((res) => res.json())
       .then((data) => {
-        setUsers(data);
+        setUsers(data?.[0]);
       })
       .catch((err) => console.error("Error fetching users:", err));
+
+    fetchEmployees();
   }, []);
 
+  const fetchEmployees = async () => {
+    const res = await axios.get(
+      `${API_BASE_URL}:7090/fes/api/Export/pending-employees`
+    );
+    setEmployees(res.data);
+  };
+
   // Count different user types
-  const totalUsers = users.length;
-  const superUsers = users.filter((u) => u.userType === "super_user").length;
-  const makers = users.filter((u) => u.userType === "maker").length;
-  const checkers = users.filter((u) => u.userType === "checker").length;
+  const totalUsers = users.totalUsers;
+  const superUsers = users.superUsers;
+  const makers = users.maker;
+  const checkers = users.checker;
 
   // Filter for search
-  const filteredUsers = users.filter((u) =>
-    u.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredUsers = users?.filter((u) =>
+  //   u.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   // Map colors for user types
   const typeColors = {
@@ -80,7 +91,7 @@ export default function UserManagementSystem() {
             <Users className="w-4 h-4 text-[#00d4aa]" />
           </div>
           <p className="text-2xl font-bold">{totalUsers}</p>
-          <span className="text-xs text-[#00d4aa]">   ↑ Active</span>
+          <span className="text-xs text-[#00d4aa]"> ↑ Active</span>
         </div>
 
         <div className="table-card hover-card">
@@ -89,7 +100,11 @@ export default function UserManagementSystem() {
             <Shield className="w-4 h-4 text-red-500" />
           </div>
           <p className="text-2xl font-bold">{superUsers}</p>
-          <span className="text-xs text-red-500 flex gap-[5px]"> <TrendingUp className="w-4 h-4 text-[#00d4aa]" />Admin Level</span>
+          <span className="text-xs text-red-500 flex gap-[5px]">
+            {" "}
+            <TrendingUp className="w-4 h-4 text-[#00d4aa]" />
+            Admin Level
+          </span>
         </div>
 
         <div className="table-card hover-card">
@@ -98,7 +113,11 @@ export default function UserManagementSystem() {
             <PenTool className="w-4 h-4 text-blue-500" />
           </div>
           <p className="text-2xl font-bold">{makers}</p>
-          <span className="text-xs text-blue-500 flex gap-[5px]"> <TrendingUp className="w-4 h-4 text-[#00d4aa]" />Content Creators</span>
+          <span className="text-xs text-blue-500 flex gap-[5px]">
+            {" "}
+            <TrendingUp className="w-4 h-4 text-[#00d4aa]" />
+            Content Creators
+          </span>
         </div>
 
         <div className="table-card hover-card">
@@ -107,7 +126,11 @@ export default function UserManagementSystem() {
             <CheckCircle2 className="w-4 h-4 text-green-500" />
           </div>
           <p className="text-2xl font-bold">{checkers}</p>
-          <span className="text-xs text-green-500 flex gap-[5px]"> <TrendingUp className="w-4 h-4 text-[#00d4aa]" />Reviewers</span>
+          <span className="text-xs text-green-500 flex gap-[5px]">
+            {" "}
+            <TrendingUp className="w-4 h-4 text-[#00d4aa]" />
+            Reviewers
+          </span>
         </div>
       </div>
 
@@ -144,20 +167,44 @@ export default function UserManagementSystem() {
           <table className="w-full text-sm text-left">
             <thead className="table-head">
               <tr>
-                <th className="table-cell">User</th>
-                <th className="table-cell">User Type</th>
-                <th className="table-cell">Joined Date</th>
-                <th className="table-cell">Actions</th>
+                <th className="table-cell">Emp ID</th>
+                <th className="table-cell">userName</th>
+                <th className="table-cell">Email ID</th>
+                <th className="table-cell">Status</th>
               </tr>
             </thead>
             <tbody>
-              {filteredUsers.map((u, i) => (
+              {employees.map((e, i) => (
                 <tr key={i} className="table-row">
-                  <td className="table-cell-name">{u.name}</td>
-                  <td className="p-3">
+                  <td className="table-cell-name">{e.empId}</td>
+                  <td className="table-cell-name">{e.userName}</td>
+                  <td className="table-cell-name">{e.email}</td>
+                  <td className="table-cell-name">
                     <span
-                      className={`px-2 py-1 rounded text-[8px] usertype ${typeColors[u.userType]
-                        }`}
+                      className={`px-2 py-1 rounded ${
+                        e.status === 0
+                          ? "checker"
+                          : e.status === 1
+                          ? "infra"
+                          : e.status === 2
+                          ? "inactive"
+                          : "maker"
+                      } `}
+                    >
+                      {e.status === 1
+                        ? "Pending"
+                        : e.status === 0
+                        ? "Approved"
+                        : e.status == 2
+                        ? "Rejected"
+                        : "Recheck"}
+                    </span>
+                  </td>
+                  {/* <td className="p-3">
+                    <span
+                      className={`px-2 py-1 rounded text-[8px] usertype ${
+                        typeColors[u.userType]
+                      }`}
                     >
                       {u.userType.replace("_", " ").toUpperCase()}
                     </span>
@@ -167,10 +214,10 @@ export default function UserManagementSystem() {
                   </td>
                   <td className="p-3">
                     <MoreVertical className="w-5 h-5 text-gray-400 cursor-pointer" />
-                  </td>
+                  </td> */}
                 </tr>
               ))}
-              {filteredUsers.length === 0 && (
+              {employees.length === 0 && (
                 <tr>
                   <td colSpan={4} className="text-center py-4 text-gray-500">
                     No users found.

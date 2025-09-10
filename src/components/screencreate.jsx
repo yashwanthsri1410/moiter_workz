@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import usePublicIp from "../hooks/usePublicIp";
-import { ArrowLeft, LayoutGrid, Monitor, Pencil, Plus, ScreenShareIcon, Search, Settings } from "lucide-react";
+import {
+  ArrowLeft,
+  LayoutGrid,
+  Monitor,
+  Pencil,
+  Plus,
+  ScreenShareIcon,
+  Search,
+  Settings,
+} from "lucide-react";
 
 export default function ScreenManagement({ onBack }) {
   const [modules, setModules] = useState([]);
@@ -64,7 +73,10 @@ export default function ScreenManagement({ onBack }) {
     };
 
     try {
-      await axios.post(`${API_BASE_URL}:5229/ums/api/UserManagement/screen_create`, payload);
+      await axios.post(
+        `${API_BASE_URL}:5229/ums/api/UserManagement/screen_create`,
+        payload
+      );
       setScreenName("");
       fetchScreens();
       setShowForm(false);
@@ -106,7 +118,10 @@ export default function ScreenManagement({ onBack }) {
     };
 
     try {
-      await axios.put(`${API_BASE_URL}:5229/ums/api/UserManagement/screen_update`, payload);
+      await axios.put(
+        `${API_BASE_URL}:5229/ums/api/UserManagement/screen_update`,
+        payload
+      );
       handleCancelEdit();
       fetchScreens();
     } catch (err) {
@@ -146,7 +161,9 @@ export default function ScreenManagement({ onBack }) {
 
             <div>
               <h1 className="header-title">Screen Management</h1>
-              <p className="header-subtext">Create and manage screens under modules</p>
+              <p className="header-subtext">
+                Create and manage screens under modules
+              </p>
             </div>
           </div>
 
@@ -154,7 +171,7 @@ export default function ScreenManagement({ onBack }) {
             {/* Active count */}
             <button className="btn-count">
               <span className="w-2 h-2 rounded-full bg-[#04CF6A] plus"></span>
-              {screens.length} Active screens
+              {screens.length} Active Screens
             </button>
           </div>
         </div>
@@ -247,7 +264,9 @@ export default function ScreenManagement({ onBack }) {
               <tr>
                 <th className="table-cell">Module</th>
                 <th className="table-cell">Screen</th>
-                <th className="table-cell-icon color-[#00d4aa] flex gap-4">Actions</th>
+                <th className="table-cell-icon color-[#00d4aa] flex gap-4">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800 text-sm">
@@ -256,7 +275,15 @@ export default function ScreenManagement({ onBack }) {
                   group.screens.map((screen, idx) => (
                     <tr key={screen.screenId} className="table-row">
                       <td className="table-cell-name">
-                       <div className="flex items-center gap-1 "> <Settings className="w-4 h-4 text-teal-400 " />{idx === 0 ? group.moduleName : ""}</div> 
+                        <div className="flex items-center gap-1 ">
+                          {" "}
+                          {idx === 0 ? (
+                            <Settings className="w-4 h-4 text-teal-400 " />
+                          ) : (
+                            ""
+                          )}
+                          {idx === 0 ? group.moduleName : ""}
+                        </div>
                       </td>
                       <td className="px-4 py-3 text-gray-300">
                         {editId === screen.screenId ? (
@@ -267,7 +294,11 @@ export default function ScreenManagement({ onBack }) {
                             className="form-input"
                           />
                         ) : (
-                          <div className="flex items-center gap-1 "> <Monitor className="w-4 h-4 text-teal-400 " />{screen.screenDesc}</div>
+                          <div className="flex items-center gap-1 ">
+                            {" "}
+                            <Monitor className="w-4 h-4 text-teal-400 " />
+                            {screen.screenDesc}
+                          </div>
                         )}
                       </td>
                       <td className="table-cell-icon flex gap-4">
@@ -300,7 +331,10 @@ export default function ScreenManagement({ onBack }) {
                 )
               ) : (
                 <tr>
-                  <td colSpan={3} className="table-cell table-cell-muted text-center">
+                  <td
+                    colSpan={3}
+                    className="table-cell table-cell-muted text-center"
+                  >
                     No screens found.
                   </td>
                 </tr>
@@ -316,13 +350,21 @@ export default function ScreenManagement({ onBack }) {
           Screen Management Guidelines
         </h3>
         <div className="grid md:grid-cols-2 gap-3 text-sm text-gray-300">
-          <p>📘 <span className="text-white">Create:</span> Add new screens under modules</p>
-          <p>🔍 <span className="text-white">Search:</span> Quickly find screens</p>
-          <p>✏️ <span className="text-white">Edit:</span> Update screen inline</p>
-          <p>🗑️ <span className="text-white">Delete:</span> Remove unused screens</p>
+          <p>
+            📘 <span className="text-white">Create:</span> Add new screens under
+            modules
+          </p>
+          <p>
+            🔍 <span className="text-white">Search:</span> Quickly find screens
+          </p>
+          <p>
+            ✏️ <span className="text-white">Edit:</span> Update screen inline
+          </p>
+          <p>
+            🗑️ <span className="text-white">Delete:</span> Remove unused screens
+          </p>
         </div>
       </div>
     </div>
-
   );
 }
