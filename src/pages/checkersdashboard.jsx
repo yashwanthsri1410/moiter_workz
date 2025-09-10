@@ -299,7 +299,7 @@ export default function CheckersDashboardLayout() {
                 <ShieldCheck size={16} className="menu-icon" />
                 {!isCollapsed && (
                   <>
-                    <span>checker Console</span>
+                    <span>Checker Console</span>
                     <span className="arrow-icon">
                       {openDropdown === "makerconsole" ? (
                         <ChevronUp size={14} />
@@ -319,13 +319,13 @@ export default function CheckersDashboardLayout() {
                       activeTab === "Regulatory" ? "submenu-active" : ""
                     }
                   >
-                    <UserCheck2Icon size={14} /> User pending
+                    <UserCheck2Icon size={14} /> User Pending
                   </button>
                   <button
                     onClick={() => setActiveTab("Product")}
                     className={activeTab === "Product" ? "submenu-active" : ""}
                   >
-                    <PackagePlus size={14} /> Product approval
+                    <PackagePlus size={14} /> Product Approval
                   </button>
                   <button
                     onClick={() => setActiveTab("partnerapproval")}
@@ -333,7 +333,7 @@ export default function CheckersDashboardLayout() {
                       activeTab === "partnerapproval" ? "submenu-active" : ""
                     }
                   >
-                    <CalculatorIcon size={14} /> Partner approval
+                    <CalculatorIcon size={14} /> Partner Approval
                   </button>
                 </div>
               )}

@@ -305,7 +305,7 @@
 }
 
 /* Error */
-.error-msg {
+/* .error-msg {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -315,6 +315,35 @@
   border-radius: 8px;
   color: #f87171;
   font-size: 0.875rem;
+} */
+
+.error-section {
+  min-height: 20px; /* fixed height for error slot */
+  /* small gap before button */
+  /* display: flex; */
+  align-items: center;
+  justify-content: flex-start; /* left align under password */
+}
+
+/* Error message box */
+.error-msg {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px; /* smaller height */
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 6px;
+  color: #f87171;
+  font-size: 0.75rem; /* slightly smaller text */
+  margin-top: -20px;
+}
+
+/* Hide visually but keep slot */
+.error-section:empty::before {
+  content: "";
+  display: block;
+  height: 100%;
 }
 
 .form-icon {
@@ -340,7 +369,7 @@
   cursor: pointer;
   border: none;
   transition: opacity 0.2s ease-in-out;
-  margin-top: 20px;
+  margin-top: -20px;
   font-size: 12px;
 }
 

@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import usePublicIp from "../hooks/usePublicIp";
-import { ArrowLeft, Building2, Pencil, Search, Plus, Badge } from "lucide-react";
+import {
+  ArrowLeft,
+  Building2,
+  Pencil,
+  Search,
+  Plus,
+  Badge,
+} from "lucide-react";
 
 export default function CreateDesignationForm({ onBack }) {
   const [departments, setDepartments] = useState([]);
@@ -24,7 +31,9 @@ export default function CreateDesignationForm({ onBack }) {
 
   const fetchDepartments = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}:7090/api/Export/simple-departments`);
+      const res = await axios.get(
+        `${API_BASE_URL}:7090/api/Export/simple-departments`
+      );
       setDepartments(res.data || []);
     } catch (err) {
       console.error("Failed to fetch departments:", err);
@@ -33,7 +42,9 @@ export default function CreateDesignationForm({ onBack }) {
 
   const fetchDesignations = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}:7090/api/Export/designations`);
+      const res = await axios.get(
+        `${API_BASE_URL}:7090/api/Export/designations`
+      );
       setDesignations(res.data || []);
     } catch (err) {
       console.error("Failed to fetch designations:", err);
@@ -53,19 +64,24 @@ export default function CreateDesignationForm({ onBack }) {
       metadata: {
         ipAddress: ip,
         userAgent: navigator.userAgent,
-        headers: headersError || JSON.stringify({ "content-type": "application/json" }),
+        headers:
+          headersError ||
+          JSON.stringify({ "content-type": "application/json" }),
         channel: "web",
         auditMetadata: {
           createdBy: username,
           createdDate: now,
           modifiedBy: username,
           modifiedDate: now,
-        }
-      }
+        },
+      },
     };
 
     try {
-      await axios.post(`${API_BASE_URL}:5229/ums/api/UserManagement/designation_create`, payload);
+      await axios.post(
+        `${API_BASE_URL}:5229/ums/api/UserManagement/designation_create`,
+        payload
+      );
       setDesignationDesc("");
       fetchDesignations();
       setShowForm(false);
@@ -95,19 +111,24 @@ export default function CreateDesignationForm({ onBack }) {
       metadata: {
         ipAddress: ip,
         userAgent: navigator.userAgent,
-        headers: headersError || JSON.stringify({ "content-type": "application/json" }),
+        headers:
+          headersError ||
+          JSON.stringify({ "content-type": "application/json" }),
         channel: "web",
         auditMetadata: {
           createdBy: username,
           createdDate: now,
           modifiedBy: username,
           modifiedDate: now,
-        }
-      }
+        },
+      },
     };
 
     try {
-      await axios.put(`${API_BASE_URL}:5229/ums/api/UserManagement/designation_update`, payload);
+      await axios.put(
+        `${API_BASE_URL}:5229/ums/api/UserManagement/designation_update`,
+        payload
+      );
       handleCancelEdit();
       fetchDesignations();
     } catch (err) {
@@ -136,7 +157,6 @@ export default function CreateDesignationForm({ onBack }) {
 
   return (
     <div className="department-page">
-
       {/* Header */}
       <div className="form-header">
         <div className="back-title">
@@ -151,22 +171,20 @@ export default function CreateDesignationForm({ onBack }) {
               </div>
             </div>
             <div>
-              <h1 className="header-title">  Designation Management</h1>
-              <p className="header-subtext">  Create and manage designations under departments</p>
+              <h1 className="header-title"> Designation Management</h1>
+              <p className="header-subtext">
+                {" "}
+                Create and manage designations under departments
+              </p>
             </div>
-
           </div>
 
           <div className="flex items-center gap-4">
-
-
             {/* Active count */}
             <button className="btn-count">
               <span className="w-2 h-2 rounded-full bg-[#04CF6A]  plus"></span>
-              {designations.length} Active designations
+              {designations.length} Active Designations
             </button>
-
-
           </div>
         </div>
         <div className="search-toggle">
@@ -184,25 +202,18 @@ export default function CreateDesignationForm({ onBack }) {
           {/* Toggle form */}
           <button onClick={() => setShowForm(!showForm)} className="btn-toggle">
             <Plus className="w-3 h-3" />
-            {showForm ? "Close Form" : "Create designations"}
+            {showForm ? "Close Form" : "Create Designations"}
           </button>
         </div>
       </div>
       {/* Create Form */}
       {showForm && (
-        <form
-          onSubmit={handleSubmit}
-          className="department-form"
-        >
-          <h2 className="form-title">
-            Create New Designation
-          </h2>
+        <form onSubmit={handleSubmit} className="department-form">
+          <h2 className="form-title">Create New Designation</h2>
 
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="form-label">
-                Select Department
-              </label>
+              <label className="form-label">Select Department</label>
               <select
                 value={selectedDeptId}
                 onChange={(e) => setSelectedDeptId(e.target.value)}
@@ -218,9 +229,7 @@ export default function CreateDesignationForm({ onBack }) {
             </div>
 
             <div>
-              <label className="form-label">
-                Designation Name
-              </label>
+              <label className="form-label">Designation Name</label>
               <input
                 type="text"
                 value={designationDesc}
@@ -240,10 +249,7 @@ export default function CreateDesignationForm({ onBack }) {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              className="btn-toggle"
-            >
+            <button type="submit" className="btn-toggle">
               Create Designation
             </button>
           </div>
@@ -267,7 +273,9 @@ export default function CreateDesignationForm({ onBack }) {
               <tr>
                 <th className="table-cell">Department</th>
                 <th className="table-cell">Designation</th>
-                <th className="table-cell-icon color-[#00d4aa]  flex gap-4">Actions</th>
+                <th className="table-cell-icon color-[#00d4aa]  flex gap-4">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800 text-sm">
@@ -276,8 +284,14 @@ export default function CreateDesignationForm({ onBack }) {
                   group.designations.map((desig, id) => (
                     <tr key={desig.designationId} className="table-row">
                       <td className="table-cell-name">
-
-                        <div className="flex items-center gap-1 ">{id === 0 ? <Building2 className="w-4 h-4 text-teal-400 " /> : ""}    {id === 0 ? group.deptName : ""}</div>
+                        <div className="flex items-center gap-1 ">
+                          {id === 0 ? (
+                            <Building2 className="w-4 h-4 text-teal-400 " />
+                          ) : (
+                            ""
+                          )}{" "}
+                          {id === 0 ? group.deptName : ""}
+                        </div>
                       </td>
                       <td className="px-4 py-3 text-gray-300">
                         {editId === desig.designationId ? (
@@ -288,14 +302,20 @@ export default function CreateDesignationForm({ onBack }) {
                             className="form-input"
                           />
                         ) : (
-                          <div className="flex items-center gap-1 "> <Badge className="w-4 h-4 text-teal-400 " />{desig.designationDesc}</div>
+                          <div className="flex items-center gap-1 ">
+                            {" "}
+                            <Badge className="w-4 h-4 text-teal-400 " />
+                            {desig.designationDesc}
+                          </div>
                         )}
                       </td>
                       <td className="table-cell-icon flex gap-4">
                         {editId === desig.designationId ? (
                           <>
                             <button
-                              onClick={() => handleSaveEdit(desig.designationId)}
+                              onClick={() =>
+                                handleSaveEdit(desig.designationId)
+                              }
                               className="text-teal-400 hover:underline"
                             >
                               Save
@@ -321,7 +341,10 @@ export default function CreateDesignationForm({ onBack }) {
                 )
               ) : (
                 <tr>
-                  <td colSpan={3} className="table-cell table-cell-muted text-center">
+                  <td
+                    colSpan={3}
+                    className="table-cell table-cell-muted text-center"
+                  >
                     No designations found.
                   </td>
                 </tr>
@@ -337,10 +360,22 @@ export default function CreateDesignationForm({ onBack }) {
           Designation Management Guidelines
         </h3>
         <div className="grid md:grid-cols-2 gap-3 text-sm text-gray-300">
-          <p>📘 <span className="text-white">Create:</span> Add new designations under departments</p>
-          <p>🔍 <span className="text-white">Search:</span> Quickly find designations</p>
-          <p>✏️ <span className="text-white">Edit:</span> Update designation inline</p>
-          <p>🗑️ <span className="text-white">Delete:</span> Remove unused designations</p>
+          <p>
+            📘 <span className="text-white">Create:</span> Add new designations
+            under departments
+          </p>
+          <p>
+            🔍 <span className="text-white">Search:</span> Quickly find
+            designations
+          </p>
+          <p>
+            ✏️ <span className="text-white">Edit:</span> Update designation
+            inline
+          </p>
+          <p>
+            🗑️ <span className="text-white">Delete:</span> Remove unused
+            designations
+          </p>
         </div>
       </div>
     </div>

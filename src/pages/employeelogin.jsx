@@ -189,6 +189,7 @@ const Employeelogin = () => {
             </div>
 
             {/* Password */}
+
             <div className="form-group">
               <label>
                 <Lock className="form-icon" /> Password
@@ -214,12 +215,14 @@ const Employeelogin = () => {
             </div>
 
             {/* Error */}
-            {error && (
-              <div className="error-msg">
-                <AlertTriangle className="icon" />
-                {error}
-              </div>
-            )}
+            <div className="error-section">
+              {error && (
+                <div className="error-msg">
+                  <AlertTriangle color="red" size="16" />
+                  {error}
+                </div>
+              )}
+            </div>
 
             {/* Submit */}
             <button type="submit" className="login-btn" disabled={isLoading}>
