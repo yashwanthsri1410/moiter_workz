@@ -83,7 +83,7 @@ const Employeelogin = () => {
 
     try {
       const response = await axios.post(
-        "http://192.168.22.247:5229/ums/api/UserManagement/user_login",
+        `${API_BASE_URL}/ums/api/UserManagement/user_login`,
         {
           username: formData.username,
           password: formData.password,

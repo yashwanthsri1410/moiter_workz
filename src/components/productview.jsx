@@ -1,8 +1,21 @@
 import React, { useState } from "react";
-import { ArrowLeft, FileText, Check, X, Shield, CardSimIcon, Notebook, VaultIcon, ReceiptPoundSterlingIcon, CreditCard, NotebookPen, RefreshCw } from "lucide-react";
+import {
+  ArrowLeft,
+  FileText,
+  Check,
+  X,
+  Shield,
+  CardSimIcon,
+  Notebook,
+  VaultIcon,
+  ReceiptPoundSterlingIcon,
+  CreditCard,
+  NotebookPen,
+  RefreshCw,
+} from "lucide-react";
 import axios from "axios";
 
-export default function Productview({ selectedProduct, setSelectedProduct }) {
+export default function Productview({ selectedProduct, setselectedProduct }) {
   const [remarks, setRemarks] = useState("");
   const [currentAction, setCurrentAction] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -52,24 +65,32 @@ export default function Productview({ selectedProduct, setSelectedProduct }) {
     } catch (err) {
       console.error("Error submitting action:", err);
       alert("Failed to submit action");
+      setShowModal(false)
     }
   };
   const getStatusLabel = (value) => {
     switch (value) {
-      case 0: return "Approved";
-      case 1: return "Pending";
-      case 2: return "Disapproved";
-      case 3: return "Recheck";
-      default: return "Unknown";
+      case 0:
+        return "Approved";
+      case 1:
+        return "Pending";
+      case 2:
+        return "Disapproved";
+      case 3:
+        return "Recheck";
+      default:
+        return "Unknown";
     }
   };
   return (
     <div className="config-forms">
       {/* Header */}
       <div className="card-header">
-
         <div className="card-header-left flex items-center gap-3">
-          <button class="approval-back-button" onClick={() => setSelectedProduct(null)}>
+          <button
+            className="approval-back-button"
+            onClick={() => setselectedProduct(null)}
+          >
             <ArrowLeft className="w-4 h-4" />
             Back to Approvals
           </button>
@@ -87,7 +108,15 @@ export default function Productview({ selectedProduct, setSelectedProduct }) {
           <div className="portal-info flex gap-2">
             <p className="portal-link">
               <span
-                className={`px-2 py-1 rounded text-[10px] ${selectedProduct.programType === "Closed" ? "checker" : selectedProduct.programType === "Semi-Closed" ? "infra" : selectedProduct.programType === "opened" ? "superuser" : selectedProduct.programType === "open" ? "maker" : ""
+                className={`px-2 py-1 rounded text-[10px] ${selectedProduct.programType === "Closed"
+                    ? "checker"
+                    : selectedProduct.programType === "Semi-Closed"
+                      ? "infra"
+                      : selectedProduct.programType === "opened"
+                        ? "superuser"
+                        : selectedProduct.programType === "open"
+                          ? "maker"
+                          : ""
                   }`}
               >
                 {selectedProduct.programType}
@@ -95,13 +124,20 @@ export default function Productview({ selectedProduct, setSelectedProduct }) {
             </p>
             <p className="portal-link">
               <span
-                className={`px-2 py-1 rounded text-[10px] ${selectedProduct.status === 0 ? "checker" : selectedProduct.status === 1 ? "infra" : selectedProduct.status === 2 ? "superuser" : selectedProduct.status === 3 ? "maker" : ""
+                className={`px-2 py-1 rounded text-[10px] ${selectedProduct.status === 0
+                    ? "checker"
+                    : selectedProduct.status === 1
+                      ? "infra"
+                      : selectedProduct.status === 2
+                        ? "superuser"
+                        : selectedProduct.status === 3
+                          ? "maker"
+                          : ""
                   }`}
               >
                 {getStatusLabel(selectedProduct.status)}
               </span>
             </p>
-
           </div>
         </div>
       </div>
@@ -113,36 +149,64 @@ export default function Productview({ selectedProduct, setSelectedProduct }) {
             <Notebook className="w-4 h-4 text-teal-400" />
             <h3 className="text-teal-400 text-[15px]">Product Overview</h3>
           </div>
-
         </div>
 
         <div className="grid grid-cols-2 gap-6 text-sm text-gray-300">
           <div>
-            <p className="mt-3"><strong>ID:</strong> {selectedProduct.productId}</p>
-            <p className="mt-3"><strong>Name:</strong> {selectedProduct.productName}</p>
-            <p className="mt-3"><strong>Program:</strong>    <span
-              className={`px-2 py-1 rounded text-[10px] ${selectedProduct.programType === "Closed" ? "checker" : selectedProduct.programType === "Semi-Closed" ? "infra" : selectedProduct.programType === "opened" ? "superuser" : selectedProduct.programType === "open" ? "maker" : ""
-                }`}
-            >
-              {selectedProduct.programType}
-            </span></p>
-            <p className="mt-3"><strong>Sub Category:</strong> {selectedProduct.subCategory}</p>
-            <p className="mt-3"><strong>Status:</strong> {statusMap[selectedProduct.status]}</p>
+            <p className="mt-3">
+              <strong>ID:</strong> {selectedProduct.productId}
+            </p>
+            <p className="mt-3">
+              <strong>Name:</strong> {selectedProduct.productName}
+            </p>
+            <p className="mt-3">
+              <strong>Program:</strong>{" "}
+              <span
+                className={`px-2 py-1 rounded text-[10px] ${selectedProduct.programType === "Closed"
+                    ? "checker"
+                    : selectedProduct.programType === "Semi-Closed"
+                      ? "infra"
+                      : selectedProduct.programType === "opened"
+                        ? "superuser"
+                        : selectedProduct.programType === "open"
+                          ? "maker"
+                          : ""
+                  }`}
+              >
+                {selectedProduct.programType}
+              </span>
+            </p>
+            <p className="mt-3" >
+              <strong>Sub Category:</strong> {selectedProduct.subCategory}
+            </p>
+            <p className="mt-3">
+              <strong>Status:</strong> {statusMap[selectedProduct.status]}
+            </p>
           </div>
           <div>
-            <p className="mt-3"><strong>Currency:</strong> {selectedProduct.currency}</p>
-            <p className="mt-3"><strong>Card Type:</strong> {selectedProduct.cardType}</p>
-            <p className="mt-3"><strong>Validity:</strong> {selectedProduct.minimumValidityDays} - {selectedProduct.maximumValidityDays} days</p>
-            <p className="mt-3"><strong>Access:</strong> {accessMap[selectedProduct.productAccess]}</p>
+            <p className="mt-3">
+              <strong>Currency:</strong> {selectedProduct.currency}
+            </p>
+            <p className="mt-3">
+              <strong>Card Type:</strong> {selectedProduct.cardType}
+            </p>
+            <p className="mt-3">
+              <strong>Validity:</strong> {selectedProduct.minimumValidityDays} -{" "}
+              {selectedProduct.maximumValidityDays} days
+            </p>
+            <p className="mt-3">
+              <strong>Access:</strong>{" "}
+              {accessMap[selectedProduct.productAccess]}
+            </p>
           </div>
         </div>
 
         {/* Remarks */}
         <div className="mt-4">
-          <p>Description:</p>
-          <p className="text-gray-400 mt-1">
-            {selectedProduct.productDescription || "No description available."}
-          </p>
+        
+        <p className="mt-3 text-[15px]">
+          <strong>Description:</strong> {selectedProduct.productDescription || "No description available."}
+        </p>
         </div>
       </div>
 
@@ -150,15 +214,27 @@ export default function Productview({ selectedProduct, setSelectedProduct }) {
       <div className="bg-[#0c0f16] border border-[#1a1f2e] rounded-xl p-6 mt-6">
         <div className="flex items-center space-x-2 mb-2">
           <CardSimIcon className="w-4 h-4 text-teal-400" />
-          <h3 className="text-teal-400 text-[15px]">   Transaction Limits</h3>
+          <h3 className="text-teal-400 text-[15px]"> Transaction Limits</h3>
         </div>
         <div className="grid grid-cols-3 gap-4 text-sm text-gray-300">
-          <p><strong>Max Balance:</strong> {selectedProduct.maxBalance}</p>
-          <p><strong>Max Load:</strong> {selectedProduct.maxLoadAmount}</p>
-          <p><strong>Daily Spend:</strong> {selectedProduct.dailySpendLimit}</p>
-          <p><strong>Monthly Spend:</strong> {selectedProduct.monthlySpendLimit}</p>
-          <p><strong>Refund Limit:</strong> {selectedProduct.refundLimit}</p>
-          <p><strong>Txn/Day:</strong> {selectedProduct.txnCountLimitPerDay}</p>
+          <p>
+            <strong>Max Balance:</strong> {selectedProduct.maxBalance}
+          </p>
+          <p>
+            <strong>Max Load:</strong> {selectedProduct.maxLoadAmount}
+          </p>
+          <p>
+            <strong>Daily Spend:</strong> {selectedProduct.dailySpendLimit}
+          </p>
+          <p>
+            <strong>Monthly Spend:</strong> {selectedProduct.monthlySpendLimit}
+          </p>
+          <p>
+            <strong>Refund Limit:</strong> {selectedProduct.refundLimit}
+          </p>
+          <p>
+            <strong>Txn/Day:</strong> {selectedProduct.txnCountLimitPerDay}
+          </p>
         </div>
       </div>
 
@@ -169,12 +245,29 @@ export default function Productview({ selectedProduct, setSelectedProduct }) {
           <h3 className="text-teal-400 text-[15px]">Compliance</h3>
         </div>
         <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
-          <p><strong>KYC Required:</strong> {formatValue(selectedProduct.kycRequired)}</p>
-          <p><strong>KYC Level:</strong> {selectedProduct.kycLevelRequired}</p>
-          <p><strong>Aadhaar Required:</strong> {formatValue(selectedProduct.aadhaarRequired)}</p>
-          <p><strong>PAN Required:</strong> {formatValue(selectedProduct.panRequired)}</p>
-          <p><strong>AML/CFT:</strong> {formatValue(selectedProduct.amlCftApplicable)}</p>
-          <p><strong>PEP Check:</strong> {formatValue(selectedProduct.pepCheckRequired)}</p>
+          <p>
+            <strong>KYC Required:</strong>{" "}
+            {formatValue(selectedProduct.kycRequired)}
+          </p>
+          <p>
+            <strong>KYC Level:</strong> {selectedProduct.kycLevelRequired}
+          </p>
+          <p>
+            <strong>Aadhaar Required:</strong>{" "}
+            {formatValue(selectedProduct.aadhaarRequired)}
+          </p>
+          <p>
+            <strong>PAN Required:</strong>{" "}
+            {formatValue(selectedProduct.panRequired)}
+          </p>
+          <p>
+            <strong>AML/CFT:</strong>{" "}
+            {formatValue(selectedProduct.amlCftApplicable)}
+          </p>
+          <p>
+            <strong>PEP Check:</strong>{" "}
+            {formatValue(selectedProduct.pepCheckRequired)}
+          </p>
         </div>
       </div>
 
@@ -186,13 +279,17 @@ export default function Productview({ selectedProduct, setSelectedProduct }) {
         </div>
         <div className="flex gap-2 flex-wrap mb-2">
           {selectedProduct.allowedChannels?.map((ch, idx) => (
-            <span key={idx} className="px-2 py-1 bg-gray-800 rounded text-xs text-[#00d4aa]">
+            <span
+              key={idx}
+              className="px-2 py-1 bg-gray-800 rounded text-xs text-[#00d4aa]"
+            >
               {ch}
             </span>
           ))}
         </div>
         <div className="text-sm text-gray-300">
-          <strong>MCC Codes:</strong> {selectedProduct.allowedMccCodes?.join(", ") || "-"}
+          <strong>MCC Codes:</strong>{" "}
+          {selectedProduct.allowedMccCodes?.join(", ") || "-"}
         </div>
       </div>
 
@@ -203,11 +300,26 @@ export default function Productview({ selectedProduct, setSelectedProduct }) {
           <h3 className="text-teal-400 text-[15px]">Validity Settings</h3>
         </div>
         <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
-          <p><strong>Validity Period (Months):</strong> {selectedProduct.validityPeriodMonths}</p>
-          <p><strong>Auto Renewal:</strong> {formatValue(selectedProduct.autoRenewal)}</p>
-          <p><strong>Expiry Warning Days:</strong> {selectedProduct.expiryWarningDays}</p>
-          <p><strong>Dormant Period Days:</strong> {selectedProduct.dormantPeriodDays}</p>
-          <p><strong>Closure Allowed Post Expiry:</strong> {formatValue(selectedProduct.closureAllowedPostExpiry)}</p>
+          <p>
+            <strong>Validity Period (Months):</strong>{" "}
+            {selectedProduct.validityPeriodMonths}
+          </p>
+          <p>
+            <strong>Auto Renewal:</strong>{" "}
+            {formatValue(selectedProduct.autoRenewal)}
+          </p>
+          <p>
+            <strong>Expiry Warning Days:</strong>{" "}
+            {selectedProduct.expiryWarningDays}
+          </p>
+          <p>
+            <strong>Dormant Period Days:</strong>{" "}
+            {selectedProduct.dormantPeriodDays}
+          </p>
+          <p>
+            <strong>Closure Allowed Post Expiry:</strong>{" "}
+            {formatValue(selectedProduct.closureAllowedPostExpiry)}
+          </p>
         </div>
       </div>
 
@@ -218,12 +330,30 @@ export default function Productview({ selectedProduct, setSelectedProduct }) {
           <h3 className="text-teal-400 text-[15px]">Other Settings</h3>
         </div>
         <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
-          <p><strong>Reloadable:</strong> {formatValue(selectedProduct.reloadable)}</p>
-          <p><strong>Transferable:</strong> {formatValue(selectedProduct.transferable)}</p>
-          <p><strong>Multi Use Allowed:</strong> {formatValue(selectedProduct.multiUseAllowed)}</p>
-          <p><strong>Audit Trail:</strong> {formatValue(selectedProduct.auditTrailEnabled)}</p>
-          <p><strong>Domestic Transfer:</strong> {formatValue(selectedProduct.domesticTransferAllowed)}</p>
-          <p><strong>Cross Border Allowed:</strong> {formatValue(selectedProduct.crossBorderAllowed)}</p>
+          <p>
+            <strong>Reloadable:</strong>{" "}
+            {formatValue(selectedProduct.reloadable)}
+          </p>
+          <p>
+            <strong>Transferable:</strong>{" "}
+            {formatValue(selectedProduct.transferable)}
+          </p>
+          <p>
+            <strong>Multi Use Allowed:</strong>{" "}
+            {formatValue(selectedProduct.multiUseAllowed)}
+          </p>
+          <p>
+            <strong>Audit Trail:</strong>{" "}
+            {formatValue(selectedProduct.auditTrailEnabled)}
+          </p>
+          <p>
+            <strong>Domestic Transfer:</strong>{" "}
+            {formatValue(selectedProduct.domesticTransferAllowed)}
+          </p>
+          <p>
+            <strong>Cross Border Allowed:</strong>{" "}
+            {formatValue(selectedProduct.crossBorderAllowed)}
+          </p>
         </div>
       </div>
 
@@ -234,9 +364,18 @@ export default function Productview({ selectedProduct, setSelectedProduct }) {
           <h3 className="text-teal-400 text-[15px]">Eligibility</h3>
         </div>
         <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
-          <p><strong>Age:</strong> {selectedProduct.customerAgeMin} - {selectedProduct.customerAgeMax}</p>
-          <p><strong>Customer Types:</strong> {selectedProduct.eligibleCustomerTypes?.join(", ")}</p>
-          <p><strong>Employment Types:</strong> {selectedProduct.employmentTypesAllowed?.join(", ")}</p>
+          <p>
+            <strong>Age:</strong> {selectedProduct.customerAgeMin} -{" "}
+            {selectedProduct.customerAgeMax}
+          </p>
+          <p>
+            <strong>Customer Types:</strong>{" "}
+            {selectedProduct.eligibleCustomerTypes?.join(", ")}
+          </p>
+          <p>
+            <strong>Employment Types:</strong>{" "}
+            {selectedProduct.employmentTypesAllowed?.join(", ")}
+          </p>
         </div>
       </div>
 
@@ -246,7 +385,9 @@ export default function Productview({ selectedProduct, setSelectedProduct }) {
           <NotebookPen className="w-4 h-4 text-teal-400" />
           <h3 className="text-teal-400 text-[15px]">Remarks</h3>
         </div>
-        <p className="text-gray-300 text-[16px]">{selectedProduct.remarks || "No remarks available"}</p>
+        <p className="text-gray-300 text-[16px]">
+          {selectedProduct.remarks || "No remarks available"}
+        </p>
       </div>
 
       {/* Product Review Actions */}
@@ -291,37 +432,71 @@ export default function Productview({ selectedProduct, setSelectedProduct }) {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-container">
-            {/* Title */}
-            <h2 className="modal-title">Confirm Product Approval</h2>
+            <h2 className="modal-title">
+              {currentAction === 0 && "Confirm product Approval"}
+              {currentAction === 2 && "Confirm product Rejection"}
+              {currentAction === 3 && "Confirm product Recheck"}
+            </h2>
 
-            {/* Subtext */}
             <p className="modal-subtext">
-              Are you sure you want to approve product {selectedProduct.productName}?
-              This action cannot be undone.
+              Are you sure you want to{" "}
+              {currentAction === 0
+                ? "approve"
+                : currentAction === 2
+                  ? "reject"
+                  : "recheck"}{" "}
+              <b>{selectedProduct.productName}</b>? This action cannot be
+              undone.
             </p>
 
-            {/* Remarks */}
-            <label className="modal-label">Approval Reason (Optional)</label>
+            <label className="modal-label">
+              {currentAction === 0 && "Approval Remarks (Optional)"}
+              {currentAction === 2 && "Rejection Remarks (Optional)"}
+              {currentAction === 3 && "Recheck Remarks (Optional)"}
+            </label>
             <textarea
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
               className="modal-textarea"
-              placeholder="Enter reason for approval..."
+              placeholder="Enter remarks..."
             />
 
-            {/* Buttons */}
             <div className="modal-footer">
-              <button className="btn-cancel" onClick={() => setShowModal(false)}>
+              <button
+                className="btn-cancel"
+                onClick={() => setShowModal(false)}
+              >
                 Cancel
               </button>
-              <button className="btn-approve" onClick={submitAction}>
-                <Check className="w-4 h-4" />Approve Product
+              <button
+                className={`btn-submit ${currentAction === 0
+                    ? "btn-approve-green"
+                    : currentAction === 2
+                      ? "btn-reject-red"
+                      : "btn-recheck-blue"
+                  }`}
+                onClick={submitAction}
+              >
+                {currentAction === 0 && (
+                  <>
+                    <Check className="w-4 h-4" /> Approve product
+                  </>
+                )}
+                {currentAction === 2 && (
+                  <>
+                    <X className="w-4 h-4" /> Reject product
+                  </>
+                )}
+                {currentAction === 3 && (
+                  <>
+                    <RefreshCw className="w-4 h-4" /> Recheck product
+                  </>
+                )}
               </button>
             </div>
           </div>
         </div>
       )}
-
     </div>
   );
 }

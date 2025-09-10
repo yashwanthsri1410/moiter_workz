@@ -135,41 +135,7 @@ export default function EmployeeApproval() {
                   className="search-input-approval"
                   placeholder="Search employees..."
                 />
-              </div>
-
-              {/* Program Type Filter */}
-              <div className="form-group">
-                <select
-                  value={selectedProgramType}
-                  onChange={(e) => {
-                    setSelectedProgramType(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className="form-input"
-                >
-                  <option value="">All Program Types</option>
-                  <option value="Closed">Closed</option>
-                  <option value="Open">Open</option>
-                  <option value="Semi-Closed">Semi-Closed</option>
-                </select>
-              </div>
-
-              {/* Priority Filter */}
-              <div className="form-group">
-                <select
-                  value={selectedPriority}
-                  onChange={(e) => {
-                    setSelectedPriority(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className="form-input"
-                >
-                  <option value="">All Priorities</option>
-                  <option value="High">High</option>
-                  <option value="Medium">Medium</option>
-                  <option value="Low">Low</option>
-                </select>
-              </div>
+              </div>            
 
               {/* Reset Filters */}
               <button

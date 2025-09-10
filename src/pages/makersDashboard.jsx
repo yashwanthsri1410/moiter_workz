@@ -70,7 +70,7 @@ export default function DashboardLayout() {
       };
 
       await axios.post(
-        "http://192.168.22.247:5229/ums/api/UserManagement/user_logout",
+        `${API_BASE_URL}/ums/api/UserManagement/user_logout`,
         payload
       );
 

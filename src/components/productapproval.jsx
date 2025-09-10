@@ -161,26 +161,7 @@ export default function ProductApproval() {
                                 <option value="Open">Open</option>
                                 <option value="Semi-Closed">Semi-Closed</option>
                             </select>
-                        </div>
-
-                        {/* Priority Filter */}
-                        <div className="form-group">
-                            <select
-                                name="priority"
-                                value={selectedPriority}
-                                onChange={(e) => {
-                                    setSelectedPriority(e.target.value);
-                                    setCurrentPage(1);
-                                }}
-                                className="form-input"
-                            >
-                                <option value="">All Priorities</option>
-                                <option value="High">High</option>
-                                <option value="Medium">Medium</option>
-                                <option value="Low">Low</option>
-                            </select>
-                        </div>
-
+                        </div>                        
                         {/* Filter Button (can be used to reset filters later) */}
                         <button
                             onClick={() => {

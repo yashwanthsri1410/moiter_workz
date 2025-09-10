@@ -6,8 +6,6 @@ import {
   PenTool,
   CheckCircle2,
   Search,
-  MoreVertical,
-  Calendar,
   TrendingUp,
 } from "lucide-react";
 import axios from "axios";
@@ -19,7 +17,7 @@ export default function UserManagementSystem() {
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/fes/api/Export/usertypes`)
+      fetch(`${API_BASE_URL}/fes/api/Export/user-type-summary`)
       .then((res) => res.json())
       .then((data) => {
         setUsers(data?.[0]);
@@ -31,14 +29,14 @@ export default function UserManagementSystem() {
 
   const fetchEmployees = async () => {
     const res = await axios.get(
-      `${API_BASE_URL}/fes/fes/api/Export/pending-employees`
+      `${API_BASE_URL}/fes/api/Export/pending-employees`
     );
     setEmployees(res.data);
   };
-const filteredEmployees = employees.filter((e) =>
-  e.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  e.email?.toLowerCase().includes(searchTerm.toLowerCase())
-);
+  const filteredEmployees = employees.filter((e) =>
+    e.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    e.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   // Count different user types
   const totalUsers = users.totalUsers;
   const superUsers = users.superUsers;
@@ -170,44 +168,43 @@ const filteredEmployees = employees.filter((e) =>
                 <th className="table-cell">Status</th>
               </tr>
             </thead>
-           <tbody>
-  {filteredEmployees.length > 0 ? (
-    filteredEmployees.map((e, i) => (
-      <tr key={i} className="table-row">
-        <td className="table-cell-name">{e.empId}</td>
-        <td className="table-cell-name">{e.userName}</td>
-        <td className="table-cell-name">{e.email}</td>
-        <td className="table-cell-name">
-          <span
-            className={`px-2 py-1 text-[9px] rounded ${
-              e.status === 0
-                ? "checker"
-                : e.status === 1
-                ? "infra"
-                : e.status === 2
-                ? "inactive"
-                : "maker"
-            } `}
-          >
-            {e.status === 1
-              ? "Pending"
-              : e.status === 0
-              ? "Approved"
-              : e.status === 2
-              ? "Rejected"
-              : "Recheck"}
-          </span>
-        </td>
-      </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan={4} className="text-center py-4 text-gray-500">
-        No users found.
-      </td>
-    </tr>
-  )}
-</tbody>
+            <tbody>
+              {filteredEmployees.length > 0 ? (
+                filteredEmployees.map((e, i) => (
+                  <tr key={i} className="table-row">
+                    <td className="table-cell-name">{e.empId}</td>
+                    <td className="table-cell-name">{e.userName}</td>
+                    <td className="table-cell-name">{e.email}</td>
+                    <td className="table-cell-name">
+                      <span
+                        className={`px-2 py-1 text-[9px] rounded ${e.status === 0
+                            ? "checker"
+                            : e.status === 1
+                              ? "infra"
+                              : e.status === 2
+                                ? "inactive"
+                                : "maker"
+                          } `}
+                      >
+                        {e.status === 1
+                          ? "Pending"
+                          : e.status === 0
+                            ? "Approved"
+                            : e.status === 2
+                              ? "Rejected"
+                              : "Recheck"}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="text-center py-4 text-gray-500">
+                    No users found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
 
           </table>
         </div>

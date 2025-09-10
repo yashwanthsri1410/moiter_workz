@@ -30,27 +30,37 @@ export default function EmployeeView({
     setShowModal(true);
   };
   const submitAction = async () => {
+      const storedUsername = localStorage.getItem("username");
     try {
+      // Only block Recheck action if employee is not pending
+      if (currentAction === 3 && selectedEmployee.status !== 1) {
+        alert("Recheck action is only allowed for pending employees.");
+        return;
+      }
+
+      // Require remarks for Reject or Recheck
+      if ((currentAction === 2 || currentAction === 3) && remarks.trim() === "") {
+        alert("Remarks are required for this action.");
+        return;
+      }
+
       const payload = {
-        name: selectedEmployee.userName, // from selectedEmployee
-        checker: "checkerUser", // replace with logged-in user if available
-        actionStatus: currentAction, // 0 = Approved, 2 = Rejected, 3 = Recheck
+        name: selectedEmployee.userName,
+        checker: storedUsername,
+        actionStatus: currentAction,
         remarks: remarks,
         metadata: {
           ipAddress: window.location.hostname,
           userAgent: navigator.userAgent,
-          headers: JSON.stringify({}), // optional, can pass request headers if available
           channel: "web",
           auditMetadata: {
-            createdBy: "checkerUser",
+            createdBy: storedUsername,
             createdDate: new Date().toISOString(),
-            modifiedBy: "checkerUser",
+            modifiedBy: storedUsername,
             modifiedDate: new Date().toISOString(),
-            header: {},
           },
         },
       };
-
       await axios.post(
         `${API_BASE_URL}/ums/api/UserManagement/ApproveEmployee`,
         payload
@@ -60,12 +70,14 @@ export default function EmployeeView({
       setShowModal(false);
       setRemarks("");
     } catch (err) {
-      console.error("Error submitting employee action:", err);
-      alert("Failed to submit employee action");
+      console.error("Error submitting employee action:", err.response || err);
+      alert("Approval not permitted for users in Recheck status. Please ensure Maker review is completed first.");
       setShowModal(false);
     }
   };
-  // console.log(selectedEmployee)
+
+
+
   return (
     <>
       <div className="card-header mb-6">
@@ -91,17 +103,16 @@ export default function EmployeeView({
           <div className="portal-info flex gap-2">
             <p className="portal-link">
               <span
-                className={`px-2 py-1 rounded text-[10px] ${
-                  selectedEmployee.status === 0
-                    ? "checker"
-                    : selectedEmployee.status === 1
+                className={`px-2 py-1 rounded text-[10px] ${selectedEmployee.status === 0
+                  ? "checker"
+                  : selectedEmployee.status === 1
                     ? "infra"
                     : selectedEmployee.status === 2
-                    ? "superuser"
-                    : selectedEmployee.status === 3
-                    ? "maker"
-                    : ""
-                }`}
+                      ? "superuser"
+                      : selectedEmployee.status === 3
+                        ? "maker"
+                        : ""
+                  }`}
               >
                 {getStatusLabel(selectedEmployee.status)}
               </span>
@@ -189,23 +200,6 @@ export default function EmployeeView({
               </p>
             </div>
           </div>
-
-          {/* Submission Details */}
-          {/* <div className="card cards">
-                        <h4 className="section-title-sub">Submission Details</h4>
-                        <div className="info-block">
-                            <p className="label">Submitted By</p>
-                            <p className="value">HR Department</p>
-                        </div>
-                        <div className="info-block">
-                            <p className="label">Submitted Time</p>
-                            <p className="value">1 hours ago</p>
-                        </div>
-                        <div className="info-block">
-                            <p className="label">Application ID</p>
-                            <p className="value">USER-001</p>
-                        </div>
-                    </div> */}
         </div>
         {/* Remarks Modal */}
         {showModal && (
@@ -222,11 +216,16 @@ export default function EmployeeView({
                 {currentAction === 0
                   ? "approve"
                   : currentAction === 2
-                  ? "reject"
-                  : "recheck"}{" "}
-                <b>{selectedEmployee.EmployeeName}</b>? This action cannot be
-                undone.
+                    ? "reject"
+                    : "recheck"}{" "}
+                <b>{selectedEmployee.EmployeeName}</b>? This action cannot be undone.
               </p>
+
+              {currentAction !== 0 && Number(selectedEmployee.status) !== 1 && (
+                <p className="text-red-500 text-[12px] mb-1">
+                  Recheck and Reject actions are only allowed for pending employees.
+                </p>
+              )}
 
               <label className="modal-label">
                 {currentAction === 0 && "Approval Remarks (Optional)"}
@@ -238,6 +237,7 @@ export default function EmployeeView({
                 onChange={(e) => setRemarks(e.target.value)}
                 className="modal-textarea"
                 placeholder="Enter remarks..."
+                disabled={currentAction !== 0 && Number(selectedEmployee.status) !== 1}
               />
 
               <div className="modal-footer">
@@ -248,14 +248,15 @@ export default function EmployeeView({
                   Cancel
                 </button>
                 <button
-                  className={`btn-submit ${
-                    currentAction === 0
-                      ? "btn-approve-green"
-                      : currentAction === 2
+                  className={`btn-submit ${currentAction === 0
+                    ? "btn-approve-green"
+                    : currentAction === 2
                       ? "btn-reject-red"
                       : "btn-recheck-blue"
-                  }`}
+                    }`}
                   onClick={submitAction}
+                  disabled={currentAction === 3 && Number(selectedEmployee.status) !== 1}
+                  aria-disabled={currentAction === 3 && Number(selectedEmployee.status) !== 1}
                 >
                   {currentAction === 0 && (
                     <>
@@ -273,11 +274,13 @@ export default function EmployeeView({
                     </>
                   )}
                 </button>
+
               </div>
             </div>
           </div>
         )}
-      </div>
+
+      </div >
     </>
   );
 }
