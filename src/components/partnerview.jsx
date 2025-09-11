@@ -17,7 +17,7 @@ import {
 import axios from "axios";
 import "../styles/styles.css";
 
-export default function Partnerview({ selectedPartner, setSelectedPartner }) {
+export default function Partnerview({ selectedPartner, setSelectedPartner ,fetchPartners}) {
   const [remarks, setRemarks] = useState("");
   const [currentAction, setCurrentAction] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -82,6 +82,7 @@ export default function Partnerview({ selectedPartner, setSelectedPartner }) {
       alert("Action submitted successfully!");
       setShowModal(false);
       setRemarks("");
+      fetchPartners();
     } catch (err) {
       console.error("Error submitting action:", err);
       alert("Failed to submit action");
