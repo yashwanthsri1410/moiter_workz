@@ -698,15 +698,27 @@ const EmployeeCreationForm = ({ onBack }) => {
                       <td className="table-content">{emp.designationDesc}</td>
                       <td className="table-content">{emp.roleDescription}</td>
                       <td className="table-content">
-                        {emp.status === 0
-                          ? "Approved"
-                          : emp.status === 1
-                          ? "Pending"
-                          : emp.status === 2
-                          ? "Rejected"
-                          : emp.status === 3
-                          ? "Recheck"
-                          : ""}
+                        <span
+                          className={`px-2 py-1 text-[9px] rounded ${
+                            emp.status === 0
+                              ? "checker"
+                              : emp.status === 1
+                              ? "infra"
+                              : emp.status === 2
+                              ? "inactive"
+                              : "maker"
+                          }`}
+                        >
+                          {emp.status === 0
+                            ? "Approved"
+                            : emp.status === 1
+                            ? "Pending"
+                            : emp.status === 2
+                            ? "Rejected"
+                            : emp.status === 3
+                            ? "Recheck"
+                            : ""}
+                        </span>
                       </td>
                       <td className="table-content flex gap-2">
                         <button

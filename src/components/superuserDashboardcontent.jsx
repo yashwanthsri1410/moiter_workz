@@ -17,7 +17,7 @@ export default function UserManagementSystem() {
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   useEffect(() => {
-      fetch(`${API_BASE_URL}/fes/api/Export/user-type-summary`)
+    fetch(`${API_BASE_URL}/fes/api/Export/user-type-summary`)
       .then((res) => res.json())
       .then((data) => {
         setUsers(data?.[0]);
@@ -33,9 +33,10 @@ export default function UserManagementSystem() {
     );
     setEmployees(res.data);
   };
-  const filteredEmployees = employees.filter((e) =>
-    e.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    e.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredEmployees = employees.filter(
+    (e) =>
+      e.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      e.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
   // Count different user types
   const totalUsers = users.totalUsers;
@@ -177,22 +178,25 @@ export default function UserManagementSystem() {
                     <td className="table-cell-name">{e.email}</td>
                     <td className="table-cell-name">
                       <span
-                        className={`px-2 py-1 text-[9px] rounded ${e.status === 0
+                        className={`px-2 py-1 text-[9px] rounded ${
+                          e.status === 0
                             ? "checker"
                             : e.status === 1
-                              ? "infra"
-                              : e.status === 2
-                                ? "inactive"
-                                : "maker"
-                          } `}
-                      >
-                        {e.status === 1
-                          ? "Pending"
-                          : e.status === 0
-                            ? "Approved"
+                            ? "infra"
                             : e.status === 2
-                              ? "Rejected"
-                              : "Recheck"}
+                            ? "inactive"
+                            : "maker"
+                        } `}
+                      >
+                        {e.status === 0
+                          ? "Approved"
+                          : e.status === 1
+                          ? "Pending"
+                          : e.status === 2
+                          ? "Rejected"
+                          : e.status === 3
+                          ? "Recheck"
+                          : ""}
                       </span>
                     </td>
                   </tr>
@@ -205,7 +209,6 @@ export default function UserManagementSystem() {
                 </tr>
               )}
             </tbody>
-
           </table>
         </div>
       </div>
