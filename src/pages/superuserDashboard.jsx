@@ -76,7 +76,7 @@ export default function DashboardLayout() {
       // console.log(JSON.stringify(payload, null, 2));
       // console.log(payload);
       await axios.post(
-        `${API_BASE_URL}:5229/ums/api/UserManagement/user_logout`,
+        `${API_BASE_URL}/ums/api/UserManagement/user_logout`,
         payload
       );
 
@@ -297,7 +297,7 @@ export default function DashboardLayout() {
                 <Shield size={16} className="menu-icon" />
                 {!isCollapsed && (
                   <>
-                    <span>Superuser Console</span>
+                    <span>Super Console</span>
                     <span className="arrow-icon">
                       {openDropdown === "superuserconsole" ? (
                         <ChevronUp size={14} />
@@ -353,7 +353,7 @@ export default function DashboardLayout() {
                     onClick={() => setActiveTab("Users")}
                     className={activeTab === "Users" ? "submenu-active" : ""}
                   >
-                    <Users size={14} /> Users
+                    <User size={14} /> Users
                   </button>
                 </div>
               )}

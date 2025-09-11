@@ -28,7 +28,7 @@ const RoleAccessForm = ({ onBack }) => {
 
   const fetchRoles = () => {
     axios
-      .get(`${API_BASE_URL}/fes/api/Export/role-departments`)
+      .get(`${API_BASE_URL}/fes/api/Export/role-module-screen`)
       .then((res) => {
         const uniqueRolesMap = new Map();
         res.data.forEach((item) => {
@@ -116,7 +116,7 @@ const RoleAccessForm = ({ onBack }) => {
 
     try {
       await axios.post(
-        `${API_BASE_URL}:5229/ums/api/UserManagement/role-access/bulk`,
+        `${API_BASE_URL}/ums/api/UserManagement/role-access/bulk`,
         bulkPayload
       );
       alert("Role access submitted successfully!");
@@ -153,7 +153,7 @@ const RoleAccessForm = ({ onBack }) => {
 
     try {
       await axios.put(
-        `${API_BASE_URL}:5229/ums/api/UserManagement/update-role-description`,
+        `${API_BASE_URL}/ums/api/UserManagement/update-role-description`,
         payload
       );
       alert("Role description updated!");
@@ -165,7 +165,9 @@ const RoleAccessForm = ({ onBack }) => {
       alert("Update failed!");
     }
   };
-
+  const filteredRoles = roleDescriptions.filter((role) =>
+    role.roleDescription.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   return (
     <div className="p-6 space-y-6 min-h-screen text-white">
       {/* Header */}
@@ -178,7 +180,7 @@ const RoleAccessForm = ({ onBack }) => {
               </button>
 
               <div className="header-icon-box">
-                <Users className="text-[#00d4aa] w-4 h-4" />
+                <UserCog className="text-[#00d4aa] w-4 h-4" />
               </div>
             </div>
             <div>
@@ -215,7 +217,7 @@ const RoleAccessForm = ({ onBack }) => {
           {/* Toggle form */}
           <button onClick={() => setShowForm(!showForm)} className="btn-toggle">
             <Plus className="w-3 h-3" />
-            {showForm ? "Close Form" : "Add Role"}
+            {showForm ? "Close Form" : "Create Role"}
           </button>
         </div>
       </div>
@@ -239,12 +241,12 @@ const RoleAccessForm = ({ onBack }) => {
 
           {/* Modules */}
           <div className="mt-[15px]">
-            <label className="form-label">Select Modules</label>
+            <label className="form-label-role ">Select Modules</label>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {uniqueModules.map((module) => (
                 <label
                   key={module}
-                  className="flex items-center gap-2 text-gray-200 text-sm"
+                  className="flex items-center gap-2 text-gray-200 text-sm "
                 >
                   <input
                     type="checkbox"
@@ -261,7 +263,7 @@ const RoleAccessForm = ({ onBack }) => {
           {/* Screens */}
           {selectedModules.map((module) => (
             <div key={module}>
-              <label className="form-label">Screens for {module}</label>
+              <label className="form-label-role ">Screens for {module}</label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {(screensPerModule[module] || []).map((screen) => (
                   <label
@@ -302,7 +304,7 @@ const RoleAccessForm = ({ onBack }) => {
       <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 shadow-lg">
         <div className="flex items-center justify-between mb-4">
           <h2 className="flex items-center gap-2 text-teal-400 font-semibold text-lg">
-            <Users className="w-5 h-5" /> Existing Roles
+            <UserCog className="w-5 h-5" /> Existing Roles
           </h2>
           <span className="text-sm text-gray-400">
             Total: {roleDescriptions.length} roles
@@ -318,8 +320,8 @@ const RoleAccessForm = ({ onBack }) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800 text-sm">
-              {roleDescriptions.length > 0 ? (
-                roleDescriptions
+              {filteredRoles.length > 0 ? (
+                filteredRoles
                   .filter((role) =>
                     role.roleDescription
                       .toLowerCase()

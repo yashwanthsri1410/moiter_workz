@@ -68,7 +68,7 @@ export default function ModuleCreation({ onBack }) {
 
     try {
       await axios.post(
-        `${API_BASE_URL}:5229/ums/api/UserManagement/module_create`,
+        `${API_BASE_URL}/ums/api/UserManagement/module_create`,
         payload
       );
       setNewModuleName("");
@@ -122,7 +122,7 @@ export default function ModuleCreation({ onBack }) {
 
     try {
       await axios.put(
-        `${API_BASE_URL}:5229/ums/api/UserManagement/module_update`,
+        `${API_BASE_URL}/ums/api/UserManagement/module_update`,
         payload
       );
       setEditingModuleId(null);
@@ -150,7 +150,7 @@ export default function ModuleCreation({ onBack }) {
               </button>
 
               <div className="header-icon-box">
-                <Boxes className="text-[#00f5a0] w-5 h-5" />
+                <Settings className="text-[#00f5a0] w-5 h-5" />
               </div>
             </div>
             <div>
@@ -217,7 +217,7 @@ export default function ModuleCreation({ onBack }) {
       {/* Table */}
       <div className="table-card">
         <div className="table-header">
-          <p className="table-title"><Boxes className="w-5 h-5" /> Existing Modules</p>
+          <p className="table-title"><Settings className="w-5 h-5" /> Existing Modules</p>
           <span className="table-subtext">
             Total: {filteredModules.length} modules
           </span>

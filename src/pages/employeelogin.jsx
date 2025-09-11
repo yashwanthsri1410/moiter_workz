@@ -70,58 +70,64 @@ const Employeelogin = () => {
       },
     };
   };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+  setIsLoading(true);
 
-    if (!formData.username || !formData.password) {
-      setError("Please enter both username and password");
+  if (!formData.username || !formData.password) {
+    setError("Please enter both username and password");
+    setIsLoading(false);
+    return;
+  }
+
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/ums/api/UserManagement/user_login`,
+      {
+        username: formData.username,
+        password: formData.password,
+        metadata: getMetadata(),
+      },
+      { headers: { "Content-Type": "application/json" } }
+    );
+
+    const user = response.data.message;
+
+    // ✅ Check if user is valid before proceeding
+    if (!user || !user.username || ![1, 3, 4].includes(user.userType)) {
+      setError("Login failed. Invalid username or password.");
       setIsLoading(false);
       return;
     }
 
-    try {
-      const response = await axios.post(
-        `${API_BASE_URL}/ums/api/UserManagement/user_login`,
-        {
-          username: formData.username,
-          password: formData.password,
-          metadata: getMetadata(),
-        },
-        { headers: { "Content-Type": "application/json" } }
-      );
+    localStorage.setItem("username", user.username);
+    localStorage.setItem("userType", user.userType);
 
-      const user = response.data.message;
-      if (!user) {
-        setError("Login failed. User not found.");
-        setIsLoading(false);
-        return;
-      }
-      localStorage.setItem("username", user.username);
-      localStorage.setItem("userType", user.userType);
-
-      switch (user.userType) {
-        case 1:
-          navigate("/superuser-workplace");
-          break;
-        case 4:
-          navigate("/Makers-dashboard");
-          break;
-        case 3:
-          navigate("/Checkers-dashboard");
-          break;
-        default:
-          navigate("/Makers-creation");
-          break;
-      }
-    } catch (err) {
-      console.error("Login error:", err.response?.data || err.message);
-      setError(err.response?.data?.message || "Invalid username or password.");
-    } finally {
-      setIsLoading(false);
+    switch (user.userType) {
+      case 1:
+        navigate("/superuser-workplace");
+        break;
+      case 4:
+        navigate("/Makers-dashboard");
+        break;
+      case 3:
+        navigate("/Checkers-dashboard");
+        break;
+      default:
+        navigate("/Makers-creation");
+        break;
     }
-  };
+  } catch (err) {
+    console.error("Login error:", err.response?.data || err.message);
+    setError(err.response?.data?.message || "Invalid username or password.");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
+
 
   return (
     <div className="login-page">

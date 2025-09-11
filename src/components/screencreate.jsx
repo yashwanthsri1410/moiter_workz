@@ -74,7 +74,7 @@ export default function ScreenManagement({ onBack }) {
 
     try {
       await axios.post(
-        `${API_BASE_URL}:5229/ums/api/UserManagement/screen_create`,
+        `${API_BASE_URL}/ums/api/UserManagement/screen_create`,
         payload
       );
       setScreenName("");
@@ -119,7 +119,7 @@ export default function ScreenManagement({ onBack }) {
 
     try {
       await axios.put(
-        `${API_BASE_URL}:5229/ums/api/UserManagement/screen_update`,
+        `${API_BASE_URL}/ums/api/UserManagement/screen_update`,
         payload
       );
       handleCancelEdit();
@@ -155,7 +155,7 @@ export default function ScreenManagement({ onBack }) {
               </button>
 
               <div className="header-icon-box">
-                <LayoutGrid className="text-[#00d4aa] w-4 h-4" />
+                <Monitor className="text-[#00d4aa] w-4 h-4" />
               </div>
             </div>
 

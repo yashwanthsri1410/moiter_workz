@@ -1146,10 +1146,19 @@ tbody tr {
 /* Labels */
 .form-label {
   display: block;
-  font-size: 12px;
+  font-size: 15px;
   color: #d1d5db;
   /* gray-300 */
-  margin-bottom: 0.25rem;
+  margin-bottom: 10px;
+}
+
+.form-label-role {
+  display: block;
+  font-size: 18px;
+  color: #2dd4bf;
+  text-align: center;
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 .label-input {
@@ -1497,12 +1506,6 @@ tbody tr {
   margin-bottom: 20px;
 }
 
-.form-label {
-  display: block;
-  font-size: 0.875rem;
-  color: #d1d5db;
-  margin-bottom: 0.5rem;
-}
 
 .form-input {
   width: 100%;
@@ -2846,7 +2849,7 @@ textarea.form-input {
   background-color: #ef4444;
   /* Tailwind's red-500 */
   color: black;
-  
+
   font-weight: 600;
 }
 

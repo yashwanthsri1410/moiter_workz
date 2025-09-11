@@ -38,7 +38,7 @@ export default function DepartmentCreation({ onBack }) {
 
     try {
       await axios.post(
-        `${API_BASE_URL}:5229/ums/api/UserManagement/department_create`,
+        `${API_BASE_URL}/ums/api/UserManagement/department_create`,
         { deptName: departmentName }
       );
       setDepartmentName("");
@@ -56,7 +56,7 @@ export default function DepartmentCreation({ onBack }) {
 
     try {
       await axios.put(
-        `${API_BASE_URL}:5229/ums/api/UserManagement/department_update`,
+        `${API_BASE_URL}/ums/api/UserManagement/department_update`,
         { deptId, newName: newDeptName }
       );
       setEditingDeptId(null);
@@ -166,7 +166,6 @@ export default function DepartmentCreation({ onBack }) {
             <thead className="table-head">
               <tr>
                 <th className="table-cell">Department Name</th>
-                <th className="table-cell">Created Date</th>
                 <th className="table-cell-icon color-[#00d4aa]  flex gap-4">Actions</th>
               </tr>
             </thead>
@@ -186,9 +185,6 @@ export default function DepartmentCreation({ onBack }) {
 
                         <div className="flex items-center gap-1 "> <Building2 className="w-4 h-4 text-teal-400 " />{dept.deptName}</div>
                       )}
-                    </td>
-                    <td className="table-cell table-cell-muted">
-                      {dept.createdDate?.split("T")[0]}
                     </td>
                     <td className="table-cell-icon flex gap-4 ">
                       {editingDeptId === dept.deptId ? (

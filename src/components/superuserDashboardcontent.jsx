@@ -97,7 +97,7 @@ export default function UserManagementSystem() {
           <p className="text-2xl font-bold">{superUsers}</p>
           <span className="text-xs text-red-500 flex gap-[5px]">
             {" "}
-            <TrendingUp className="w-4 h-4 text-[#00d4aa]" />
+            <TrendingUp className="w-4 h-4 text-red-500" />
             Admin Level
           </span>
         </div>
@@ -110,7 +110,7 @@ export default function UserManagementSystem() {
           <p className="text-2xl font-bold">{makers}</p>
           <span className="text-xs text-blue-500 flex gap-[5px]">
             {" "}
-            <TrendingUp className="w-4 h-4 text-[#00d4aa]" />
+            <TrendingUp className="w-4 h-4 text-blue-500" />
             Content Creators
           </span>
         </div>
@@ -123,7 +123,7 @@ export default function UserManagementSystem() {
           <p className="text-2xl font-bold">{checkers}</p>
           <span className="text-xs text-green-500 flex gap-[5px]">
             {" "}
-            <TrendingUp className="w-4 h-4 text-[#00d4aa]" />
+            <TrendingUp className="w-4 h-4 text-green-500" />
             Reviewers
           </span>
         </div>

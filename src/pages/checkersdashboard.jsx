@@ -69,7 +69,7 @@ export default function CheckersDashboardLayout() {
       };
 
       await axios.post(
-        "http://192.168.22.247:5229/ums/api/UserManagement/user_logout",
+        "http://192.168.22.247/ums/api/UserManagement/user_logout",
         payload
       );
 

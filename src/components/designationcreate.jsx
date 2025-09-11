@@ -79,7 +79,7 @@ export default function CreateDesignationForm({ onBack }) {
 
     try {
       await axios.post(
-        `${API_BASE_URL}:5229/ums/api/UserManagement/designation_create`,
+        `${API_BASE_URL}/ums/api/UserManagement/designation_create`,
         payload
       );
       setDesignationDesc("");
@@ -126,7 +126,7 @@ export default function CreateDesignationForm({ onBack }) {
 
     try {
       await axios.put(
-        `${API_BASE_URL}:5229/ums/api/UserManagement/designation_update`,
+        `${API_BASE_URL}/ums/api/UserManagement/designation_update`,
         payload
       );
       handleCancelEdit();
@@ -167,7 +167,7 @@ export default function CreateDesignationForm({ onBack }) {
               </button>
 
               <div className="header-icon-box">
-                <Building2 className="text-[#00d4aa] w-4 h-4" />
+                <Badge className="text-[#00d4aa] w-4 h-4" />
               </div>
             </div>
             <div>
@@ -260,7 +260,7 @@ export default function CreateDesignationForm({ onBack }) {
       <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 shadow-lg">
         <div className="flex items-center justify-between mb-4">
           <h2 className="flex items-center gap-2 text-teal-400 font-semibold text-lg">
-            <Building2 className="w-5 h-5" /> Existing Designations
+            <Badge className="w-5 h-5" /> Existing Designations
           </h2>
           <span className="text-sm text-gray-400">
             Total: {designations.length} designations
