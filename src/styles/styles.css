@@ -2931,8 +2931,9 @@ textarea.form-input {
 }
 /* -----------------------------piechart--------------------------------- */
 .chart-box-a91z {
-  width: 100%;
+  width: 97%;
   height: 420px;
+  /* width: 600px; */
   background: #0d1017;
   padding: 18px;
   border-radius: 10px;

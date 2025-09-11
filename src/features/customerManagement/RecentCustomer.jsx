@@ -75,7 +75,7 @@ const RecentCustomer = () => {
       {/* Header with title + search */}
       <div className="rc-header flex justify-between items-center">
         <h3 className="rc-title flex items-center gap-2">Recent Customers</h3>
-        <div className="search-box relative">
+        {/* <div className="search-box relative">
           <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
           <input
             type="text"
@@ -84,7 +84,7 @@ const RecentCustomer = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-        </div>
+        </div> */}
       </div>
 
       {/* Table wrapper */}
