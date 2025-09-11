@@ -25,7 +25,7 @@ const EmployeeCreationForm = ({ onBack }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [statusId] = useState(1);
-  const [userType, setusertype] = useState();
+  const [userType, setusertype] = useState("");
   const [createdBy] = useState(username);
   const [deptId, setDeptId] = useState("");
   const [designationId, setDesignationId] = useState("");
@@ -446,7 +446,9 @@ const EmployeeCreationForm = ({ onBack }) => {
             }}
             className="form-select"
           >
-            <option value="">Select department</option>
+            <option value="" disabled hidden>
+              Select department
+            </option>
             {uniqueDepts.map((ele) => (
               <option key={ele} value={ele}>
                 {ele}
@@ -465,7 +467,9 @@ const EmployeeCreationForm = ({ onBack }) => {
             className="form-select"
             disabled={!deptId}
           >
-            <option value="">Select designation</option>
+            <option value="" disabled hidden>
+              Select designation
+            </option>
             {uniqueDesigns.map((ele) => (
               <option key={ele} value={ele}>
                 {ele}
@@ -560,7 +564,9 @@ const EmployeeCreationForm = ({ onBack }) => {
             className="form-select"
             value={userType}
           >
-            <option value="">Select user type</option>
+            <option value="" disabled hidden>
+              Select user type
+            </option>
             <option value="Super User">Super User</option>
             <option value="Maker">Maker</option>
             <option value="Checker">Checker</option>
