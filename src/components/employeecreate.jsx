@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import usePublicIp from "../hooks/usePublicIp";
-import Select from "react-select";
 import {
   ArrowLeft,
   User,
@@ -40,6 +39,7 @@ const EmployeeCreationForm = ({ onBack }) => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [designation, setDesignation] = useState([]);
+  const [isApiCalled, setIsApiCalled] = useState(false);
   const ip = usePublicIp();
   const targetRef = useRef(null);
   const userAgent = navigator.userAgent;
@@ -51,11 +51,10 @@ const EmployeeCreationForm = ({ onBack }) => {
   };
 
   useEffect(() => {
-    const generatedId = Date.now().toString().slice(-6); // last 6 digits of timestamp
+    const generatedId = Date.now().toString().slice(-6);
     setEmpId(generatedId);
   }, []);
 
-  // 🔹 Sync selectedEmployee → form
   useEffect(() => {
     if (selectedEmployee) {
       const status = selectedEmployee.status;
@@ -76,8 +75,7 @@ const EmployeeCreationForm = ({ onBack }) => {
           ? "Maker"
           : "Infra Manager"
       );
-      setPassword(""); // don't autofill password for security
-      // ✅ Auto-load role screens if role is already assigned
+      setPassword("");
       if (selectedEmployee.roleAccessId) {
         const filtered = roleData.filter(
           (r) =>
@@ -107,6 +105,7 @@ const EmployeeCreationForm = ({ onBack }) => {
     setusertype("");
     setErrors({});
   };
+
   const api = `${API_BASE_URL}/fes/api/Export/`;
 
   useEffect(() => {
@@ -147,20 +146,6 @@ const EmployeeCreationForm = ({ onBack }) => {
     .filter((d) => d.deptName === deptId)
     .map((e) => e.designationDesc);
 
-  // const uniqueDepts = Array.from(
-  //   new Map(accessList.map((item) => [item.deptId, item])).values()
-  // );
-
-  // const uniqueDesigns = Array.from(
-  //   new Map(
-  //     accessList
-  //       .filter((item) => item.deptName.toString() === deptId)
-  //       .map((item) => [item.designationId, item])
-  //   ).values()
-  // );
-
-  // 🔹 Select employee → sync form
-  // ✅ Filter + Search logic
   const filteredConfigurations = employees.filter((cfg) => {
     const query = searchQuery.toLowerCase();
     return Object.values(cfg).some(
@@ -181,20 +166,6 @@ const EmployeeCreationForm = ({ onBack }) => {
     }
   };
 
-  const getStatusLabel = (value) => {
-    switch (value) {
-      case 0:
-        return "Approved";
-      case 1:
-        return "Pending";
-      case 2:
-        return "Disapproved";
-      case 3:
-        return "Recheck";
-      default:
-        return "Unknown";
-    }
-  };
   const validate = (isUpdate) => {
     const newErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -216,7 +187,6 @@ const EmployeeCreationForm = ({ onBack }) => {
           "One uppercase, One lowercase, One number, and One special character.";
       }
     }
-
     if (!deptId) {
       newErrors.deptId = "Select Department";
       newErrors.designationId = "Select Department";
@@ -239,9 +209,7 @@ const EmployeeCreationForm = ({ onBack }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // if (!selectedEmployee) {
     if (!validate(selectedEmployee)) return;
-    // }
     if (selectedEmployee && !designationId) return;
 
     const timestamp = new Date().toISOString();
@@ -255,7 +223,6 @@ const EmployeeCreationForm = ({ onBack }) => {
       statusId,
       roleAccessId: parseInt(roleAccessId),
       userType,
-      // 👇 dynamically set key name
       ...(selectedEmployee
         ? {
             modifiedBy: createdBy,
@@ -273,13 +240,6 @@ const EmployeeCreationForm = ({ onBack }) => {
           createdDate: timestamp,
           modifiedBy: username,
           modifiedDate: timestamp,
-          header: {
-            additionalProp1: {
-              options: { propertyNameCaseInsensitive: true },
-              parent: "user",
-              root: "root1",
-            },
-          },
         },
       },
     };
@@ -287,13 +247,11 @@ const EmployeeCreationForm = ({ onBack }) => {
     const deptObj = designation.find((d) => d.deptName === payload.deptId);
     if (deptObj) payload.deptId = deptObj.deptId;
 
-    // ✅ Transform designationId
     const desigObj = designation.find(
       (d) => d.designationDesc === payload.designationId
     );
     if (desigObj) payload.designationId = desigObj.designationId;
 
-    // ✅ Transform userType
     if (usersId[payload.userType]) payload.userType = usersId[payload.userType];
 
     try {
@@ -319,34 +277,30 @@ const EmployeeCreationForm = ({ onBack }) => {
       fetchData();
       clearState();
       setSelectedEmployee("");
+      setIsApiCalled(true);
     }
   };
 
-  const handleRoleChange = (selectedOption) => {
-    if (!selectedOption) {
-      setRoleAccessId("");
+  const handleRoleChange = (e) => {
+    const roleId = e.target.value;
+    setRoleAccessId(roleId);
+
+    if (!roleId) {
       setSelectedRoleScreens({});
       return;
     }
-
-    const roleId = selectedOption.value;
-    setRoleAccessId(roleId);
 
     const filtered = roleData.filter(
       (r) => r.roleAccessId.toString() === roleId
     );
     const grouped = {};
-
     filtered.forEach(({ moduleName, screenDesc }) => {
       if (!grouped[moduleName]) grouped[moduleName] = [];
       if (!grouped[moduleName].includes(screenDesc))
         grouped[moduleName].push(screenDesc);
     });
-
     setSelectedRoleScreens(grouped);
   };
-
-  console.log(paginatedConfigurations);
 
   return (
     <>
@@ -364,26 +318,10 @@ const EmployeeCreationForm = ({ onBack }) => {
             <p className="top-subtitle">Create new team members</p>
           </div>
         </div>
-
-        <div className="badge">
-          <span className="badge-dot"></span>
-          <span className="badge-text">4 Users type</span>
-        </div>
       </div>
 
       {/* Form */}
       <form ref={targetRef} onSubmit={handleSubmit} className="form-container">
-        <div className="form-heading">
-          <h2 className="form-title">{`User ${
-            selectedEmployee ? "Updation" : "Creation"
-          }`}</h2>
-          <p className="form-subtitle">
-            {`${
-              selectedEmployee ? "Update" : "Add new"
-            } team member with role-based access`}
-          </p>
-        </div>
-
         {/* Full Name */}
         <div className="label-input">
           <label className="form-label">Full Name *</label>
@@ -407,23 +345,20 @@ const EmployeeCreationForm = ({ onBack }) => {
             onChange={(e) => setEmail(e.target.value)}
             className="form-input"
           />
-          <p className="helper-text">Password will be sent to this email</p>
           <ErrorText errTxt={errors.email} />
         </div>
-        {/* ✅ Password Input */}
+
+        {/* Password */}
         {!selectedEmployee && (
           <div className="label-input relative">
             <label className="form-label">Password *</label>
-
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Create user's password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="form-input pr-10" // add padding-right so icon doesn't overlap
+              className="form-input pr-10"
             />
-
-            {/* Toggle icon */}
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
@@ -431,10 +366,10 @@ const EmployeeCreationForm = ({ onBack }) => {
             >
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
-
             <ErrorText errTxt={errors.password} />
           </div>
         )}
+
         {/* Department */}
         <div className="label-input">
           <label className="form-label">Department *</label>
@@ -476,72 +411,36 @@ const EmployeeCreationForm = ({ onBack }) => {
               </option>
             ))}
           </select>
-          {selectedEmployee ? (
-            selectedEmployee &&
-            !designationId && <ErrorText errTxt="Select Designation" />
-          ) : (
-            <ErrorText errTxt={errors.designationId} />
-          )}
+          <ErrorText errTxt={errors.designationId} />
         </div>
 
         {/* Role */}
         <div className="label-input">
           <label className="form-label">Role *</label>
-          <Select
-            className="react-select-container"
-            classNamePrefix="react-select"
-            options={dedupedRoles}
+          <select
+            value={roleAccessId}
             onChange={handleRoleChange}
-            placeholder="Select role"
-            isClearable
-            value={
-              dedupedRoles.find((role) => role.value === roleAccessId) || null
-            }
-            styles={{
-              control: (base, state) => ({
-                ...base,
-                background: "#10141a", // background color
-                color: "#fff", // text color
-                borderColor: state.isFocused ? "#134e4a" : "#134e4a",
-                boxShadow: state.isFocused ? "0 0 0 1px #134e4a" : "none",
-                "&:hover": {
-                  borderColor: "#134e4a",
-                },
-              }),
-              menu: (base) => ({
-                ...base,
-                background: "#10141a", // dropdown background
-                color: "#fff",
-              }),
-              option: (base, state) => ({
-                ...base,
-                backgroundColor: state.isSelected
-                  ? "#10141a"
-                  : state.isFocused
-                  ? "#10141a"
-                  : "#10141a",
-                color: "#fff",
-                cursor: "pointer",
-              }),
-              singleValue: (base) => ({
-                ...base,
-                color: "#fff",
-              }),
-              placeholder: (base) => ({
-                ...base,
-                color: "#94a3b8",
-              }),
-            }}
-          />
+            className="form-select"
+            disabled={!designationId}
+          >
+            <option value="" disabled hidden>
+              Select role
+            </option>
+            {dedupedRoles.map((ele) => (
+              <option key={ele.value} value={ele.value}>
+                {ele.label}
+              </option>
+            ))}
+          </select>
           <ErrorText errTxt={errors.selectedRoleScreens} />
         </div>
-        {Object.keys(selectedRoleScreens).length > 0 && (
+
+        {!isApiCalled && Object.keys(selectedRoleScreens).length > 0 && (
           <div className="accessible-screens">
             <div className="accessible-header">
               <Monitor className="icon" size={16} />
               <label>Accessible Screens</label>
             </div>
-
             <div className="accessible-box">
               {Object.entries(selectedRoleScreens).map(
                 ([moduleName, screens]) => (
@@ -557,6 +456,8 @@ const EmployeeCreationForm = ({ onBack }) => {
             </div>
           </div>
         )}
+
+        {/* User Type */}
         <div className="label-input">
           <label className="form-label">User Type *</label>
           <select
@@ -575,7 +476,6 @@ const EmployeeCreationForm = ({ onBack }) => {
           <ErrorText errTxt={errors.userType} />
         </div>
 
-        {/* Submit */}
         <button type="submit" className="submit-btn">
           {selectedEmployee ? "Update User" : "+ Create User"}
         </button>
