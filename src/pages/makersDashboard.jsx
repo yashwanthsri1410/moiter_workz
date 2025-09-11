@@ -33,6 +33,7 @@ import Productcreate from "../components/productcreate";
 import Partnercreate from "../components/partnercreate";
 import Maincheckerdashboard from "../components/maincheckerdashboard";
 import Infra from "../features/infra";
+import CustomerManagement from "../features/customerManagement/CustomerManagement";
 
 export default function DashboardLayout() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -94,6 +95,12 @@ export default function DashboardLayout() {
           <div className="content">
             {" "}
             <Maincheckerdashboard />
+          </div>
+        );
+      case "customer":
+        return (
+          <div className="content">
+            <CustomerManagement />
           </div>
         );
       case "customer":
@@ -209,7 +216,7 @@ export default function DashboardLayout() {
                 dashboardTabs.includes(activeTab)) &&
                 !isCollapsed && (
                   <div className="submenu submenu-open">
-                    {/* <button
+                    <button
                       onClick={() => setActiveTab("customer")}
                       className={
                         activeTab === "customer" ? "submenu-active" : ""
@@ -276,7 +283,7 @@ export default function DashboardLayout() {
                       className={activeTab === "system" ? "submenu-active" : ""}
                     >
                       <Settings size={14} /> System Settings
-                    </button> */}
+                    </button>
                     <button
                       onClick={() => setActiveTab("infra")}
                       className={activeTab === "infra" ? "submenu-active" : ""}

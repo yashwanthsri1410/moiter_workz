@@ -34,6 +34,7 @@ import Superuserdasboardcontent from "../components/superuserDashboardcontent";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Infra from "../features/infra";
+import CustomerManagement from "../features/customerManagement/CustomerManagement";
 
 export default function DashboardLayout() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -95,6 +96,12 @@ export default function DashboardLayout() {
         return (
           <div className="content">
             <Superuserdasboardcontent />
+          </div>
+        );
+      case "customer":
+        return (
+          <div className="content">
+            <CustomerManagement />
           </div>
         );
       case "departments":
@@ -209,7 +216,7 @@ export default function DashboardLayout() {
                 dashboardTabs.includes(activeTab)) &&
                 !isCollapsed && (
                   <div className="submenu submenu-open">
-                    {/* <button
+                    <button
                       onClick={() => setActiveTab("customer")}
                       className={
                         activeTab === "customer" ? "submenu-active" : ""
@@ -276,7 +283,7 @@ export default function DashboardLayout() {
                       className={activeTab === "system" ? "submenu-active" : ""}
                     >
                       <Settings size={14} /> System Settings
-                    </button> */}
+                    </button>
                     <button
                       onClick={() => setActiveTab("infra")}
                       className={activeTab === "infra" ? "submenu-active" : ""}
