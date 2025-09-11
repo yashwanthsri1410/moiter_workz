@@ -18,6 +18,13 @@ const RoleAccessForm = ({ onBack }) => {
   const username = localStorage.getItem("username");
   const ip = usePublicIp();
 
+  // Function to validate input - allows only letters, spaces, and hyphens
+  const validateInput = (input) => {
+    // Regular expression to allow only letters, spaces, and hyphens
+    const regex = /^[a-zA-Z\s-]*$/;
+    return regex.test(input);
+  };
+
   useEffect(() => {
     axios
       .get(`${API_BASE_URL}/fes/api/Export/modules-screens`)
@@ -46,6 +53,22 @@ const RoleAccessForm = ({ onBack }) => {
   };
 
   const uniqueModules = [...new Set(modulesData.map((item) => item.moduleName))];
+
+  // Handle role description input change with validation
+  const handleRoleDescriptionChange = (e) => {
+    const value = e.target.value;
+    if (validateInput(value)) {
+      setRoleDescription(value);
+    }
+  };
+
+  // Handle edited role name input change with validation
+  const handleEditedRoleNameChange = (e) => {
+    const value = e.target.value;
+    if (validateInput(value)) {
+      setEditedRoleName(value);
+    }
+  };
 
   const handleModuleCheckboxChange = (module) => {
     const updatedModules = selectedModules.includes(module)
@@ -232,11 +255,12 @@ const RoleAccessForm = ({ onBack }) => {
             <input
               type="text"
               value={roleDescription}
-              onChange={(e) => setRoleDescription(e.target.value)}
-              placeholder="Enter role description..."
+              onChange={handleRoleDescriptionChange}
+              placeholder="Enter role description (letters only)..."
               className="form-input"
               required
             />
+            <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
           </div>
 
           {/* Modules */}
@@ -331,12 +355,16 @@ const RoleAccessForm = ({ onBack }) => {
                     <tr key={role.roleAccessId} className="table-row">
                       <td className="table-cell-name">
                         {editRole?.roleAccessId === role.roleAccessId ? (
-                          <input
-                            type="text"
-                            value={editedRoleName}
-                            onChange={(e) => setEditedRoleName(e.target.value)}
-                            className="form-input"
-                          />
+                          <div>
+                            <input
+                              type="text"
+                              value={editedRoleName}
+                              onChange={handleEditedRoleNameChange}
+                              className="form-input"
+                              placeholder="Enter new name (letters only)..."
+                            />
+                            <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
+                          </div>
                         ) : (
                           <div className="flex items-center gap-1 "> <UserCog className="w-4 h-4 text-teal-400 " />{role.roleDescription}</div>
                         )}
@@ -400,10 +428,9 @@ const RoleAccessForm = ({ onBack }) => {
             ✏️ <span className="text-white">Edit:</span> Update designation
             inline
           </p>
-          {/* <p>
-            🗑️ <span className="text-white">Delete:</span> Remove unused
-            role
-          </p> */}
+          <p>
+            ⚠️ <span className="text-white">Validation:</span> Only letters, spaces, and hyphens allowed
+          </p>
         </div>
       </div>
     </div>

@@ -25,6 +25,13 @@ export default function ScreenManagement({ onBack }) {
   const ip = usePublicIp();
   const username = localStorage.getItem("username") || "guest";
 
+  // Function to validate input - allows only letters, spaces, and hyphens
+  const validateInput = (input) => {
+    // Regular expression to allow only letters, spaces, and hyphens
+    const regex = /^[a-zA-Z\s-]*$/;
+    return regex.test(input);
+  };
+
   useEffect(() => {
     fetchModules();
     fetchScreens();
@@ -45,6 +52,22 @@ export default function ScreenManagement({ onBack }) {
       setScreens(res.data || []);
     } catch (err) {
       console.error("Failed to fetch screens:", err);
+    }
+  };
+
+  // Handle screen name input change with validation
+  const handleScreenNameChange = (e) => {
+    const value = e.target.value;
+    if (validateInput(value)) {
+      setScreenName(value);
+    }
+  };
+
+  // Handle edit text input change with validation
+  const handleEditTextChange = (e) => {
+    const value = e.target.value;
+    if (validateInput(value)) {
+      setEditText(value);
     }
   };
 
@@ -224,11 +247,12 @@ export default function ScreenManagement({ onBack }) {
               <input
                 type="text"
                 value={screenName}
-                onChange={(e) => setScreenName(e.target.value)}
-                placeholder="Enter screen name..."
+                onChange={handleScreenNameChange}
+                placeholder="Enter screen name (letters only)..."
                 maxLength={50}
                 className="form-input"
               />
+              <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
             </div>
           </div>
 
@@ -251,7 +275,7 @@ export default function ScreenManagement({ onBack }) {
       <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 shadow-lg">
         <div className="flex items-center justify-between mb-4">
           <h2 className="flex items-center gap-2 text-teal-400 font-semibold text-lg">
-            <LayoutGrid className="w-5 h-5" /> Existing Screens
+            <Monitor className="w-5 h-5" /> Existing Screens
           </h2>
           <span className="text-sm text-gray-400">
             Total: {screens.length} screens
@@ -287,12 +311,16 @@ export default function ScreenManagement({ onBack }) {
                       </td>
                       <td className="px-4 py-3 text-gray-300">
                         {editId === screen.screenId ? (
-                          <input
-                            type="text"
-                            value={editText}
-                            onChange={(e) => setEditText(e.target.value)}
-                            className="form-input"
-                          />
+                          <div>
+                            <input
+                              type="text"
+                              value={editText}
+                              onChange={handleEditTextChange}
+                              className="form-input"
+                              placeholder="Enter new name (letters only)..."
+                            />
+                            <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
+                          </div>
                         ) : (
                           <div className="flex items-center gap-1 ">
                             {" "}
@@ -360,9 +388,9 @@ export default function ScreenManagement({ onBack }) {
           <p>
             ✏️ <span className="text-white">Edit:</span> Update screen inline
           </p>
-          {/* <p>
-            🗑️ <span className="text-white">Delete:</span> Remove unused screens
-          </p> */}
+          <p>
+            ⚠️ <span className="text-white">Validation:</span> Only letters, spaces, and hyphens allowed
+          </p>
         </div>
       </div>
     </div>

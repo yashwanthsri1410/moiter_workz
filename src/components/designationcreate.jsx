@@ -24,6 +24,13 @@ export default function CreateDesignationForm({ onBack }) {
   const ip = usePublicIp();
   const username = localStorage.getItem("username") || "guest";
 
+  // Function to validate input - allows only letters, spaces, and hyphens
+  const validateInput = (input) => {
+    // Regular expression to allow only letters, spaces, and hyphens
+    const regex = /^[a-zA-Z\s-]*$/;
+    return regex.test(input);
+  };
+
   useEffect(() => {
     fetchDepartments();
     fetchDesignations();
@@ -48,6 +55,22 @@ export default function CreateDesignationForm({ onBack }) {
       setDesignations(res.data || []);
     } catch (err) {
       console.error("Failed to fetch designations:", err);
+    }
+  };
+
+  // Handle designation description input change with validation
+  const handleDesignationDescChange = (e) => {
+    const value = e.target.value;
+    if (validateInput(value)) {
+      setDesignationDesc(value);
+    }
+  };
+
+  // Handle edit text input change with validation
+  const handleEditTextChange = (e) => {
+    const value = e.target.value;
+    if (validateInput(value)) {
+      setEditText(value);
     }
   };
 
@@ -233,11 +256,12 @@ export default function CreateDesignationForm({ onBack }) {
               <input
                 type="text"
                 value={designationDesc}
-                onChange={(e) => setDesignationDesc(e.target.value)}
-                placeholder="Enter designation name..."
+                onChange={handleDesignationDescChange}
+                placeholder="Enter designation name (letters only)..."
                 maxLength={50}
                 className="form-input"
               />
+              <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
             </div>
           </div>
 
@@ -295,12 +319,16 @@ export default function CreateDesignationForm({ onBack }) {
                       </td>
                       <td className="px-4 py-3 text-gray-300">
                         {editId === desig.designationId ? (
-                          <input
-                            type="text"
-                            value={editText}
-                            onChange={(e) => setEditText(e.target.value)}
-                            className="form-input"
-                          />
+                          <div>
+                            <input
+                              type="text"
+                              value={editText}
+                              onChange={handleEditTextChange}
+                              className="form-input"
+                              placeholder="Enter new name (letters only)..."
+                            />
+                            <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
+                          </div>
                         ) : (
                           <div className="flex items-center gap-1 ">
                             {" "}
@@ -372,10 +400,9 @@ export default function CreateDesignationForm({ onBack }) {
             ✏️ <span className="text-white">Edit:</span> Update designation
             inline
           </p>
-          {/* <p>
-            🗑️ <span className="text-white">Delete:</span> Remove unused
-            designations
-          </p> */}
+          <p>
+            ⚠️ <span className="text-white">Validation:</span> Only letters, spaces, and hyphens allowed
+          </p>
         </div>
       </div>
     </div>

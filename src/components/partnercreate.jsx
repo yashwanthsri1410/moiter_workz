@@ -30,17 +30,17 @@ export default function Partnercreate() {
             reader.onerror = (error) => reject(error);
         });
     };
-const reverseBase64String = (base64String) => {
-    if (!base64String) return "";
-    try {
-        const binaryString = atob(base64String);
-        const reversed = binaryString.split("").reverse().join("");
-        return btoa(reversed);
-    } catch (error) {
-        console.error("Error reversing base64 data:", error);
-        return base64String;
-    }
-};
+    const reverseBase64String = (base64String) => {
+        if (!base64String) return "";
+        try {
+            const binaryString = atob(base64String);
+            const reversed = binaryString.split("").reverse().join("");
+            return btoa(reversed);
+        } catch (error) {
+            console.error("Error reversing base64 data:", error);
+            return base64String;
+        }
+    };
 
 
 
@@ -215,98 +215,98 @@ const reverseBase64String = (base64String) => {
         "requestInfo",
     ];
 
-const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-        let payload = {
-            ...form,
-            pincode: Number(form.pincode) || 0,
-            cardIssuanceCommissionPercent: Number(form.cardIssuanceCommissionPercent) || 0,
-            transactionCommissionPercent: Number(form.transactionCommissionPercent) || 0,
-            monthlyFixedFee: Number(form.monthlyFixedFee) || 0,
-            allowedProducts: Array.isArray(form.allowedProducts)
-                ? form.allowedProducts.join(",")
-                : "",
-            portalUrl: form.portalAccessEnabled ? form.portalUrl : 0,
-            agreementDocument: agreementFile ? await toBase64(agreementFile) : "",
-            idProofDocument: idFile ? await toBase64(idFile) : "",
-            addressProofDocument: addressFile ? await toBase64(addressFile) : "",
-            metadata: buildMetadata("admin-user"),
-            requestInfo: buildRequestInfo(ip, "admin-user"),
-            createdBy: "admin-user",
-        };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            let payload = {
+                ...form,
+                pincode: Number(form.pincode) || 0,
+                cardIssuanceCommissionPercent: Number(form.cardIssuanceCommissionPercent) || 0,
+                transactionCommissionPercent: Number(form.transactionCommissionPercent) || 0,
+                monthlyFixedFee: Number(form.monthlyFixedFee) || 0,
+                allowedProducts: Array.isArray(form.allowedProducts)
+                    ? form.allowedProducts.join(",")
+                    : "",
+                portalUrl: form.portalAccessEnabled ? form.portalUrl : 0,
+                agreementDocument: agreementFile ? await toBase64(agreementFile) : "",
+                idProofDocument: idFile ? await toBase64(idFile) : "",
+                addressProofDocument: addressFile ? await toBase64(addressFile) : "",
+                metadata: buildMetadata("admin-user"),
+                requestInfo: buildRequestInfo(ip, "admin-user"),
+                createdBy: "admin-user",
+            };
 
-        // Only keep allowed keys as per schema
-        payload = Object.fromEntries(
-            Object.entries(payload).filter(([key]) => schemaKeys.includes(key))
-        );
+            // Only keep allowed keys as per schema
+            payload = Object.fromEntries(
+                Object.entries(payload).filter(([key]) => schemaKeys.includes(key))
+            );
 
-        // Determine method and URL
-        const isEditing = !!editingId; // true if editing
-        const method = isEditing ? "put" : "post";
-        const url = isEditing
-            ? `${API_BASE_URL}/ps/DistributionPartner-Update`
-            : `${API_BASE_URL}/ps/DistributionPartner-Create`;
+            // Determine method and URL
+            const isEditing = !!editingId; // true if editing
+            const method = isEditing ? "put" : "post";
+            const url = isEditing
+                ? `${API_BASE_URL}/ps/DistributionPartner-Update`
+                : `${API_BASE_URL}/ps/DistributionPartner-Create`;
 
-        // console.log("Submitting partner form");
-        // console.log("Editing mode:", isEditing);
-        // console.log("URL:", url);
-        // console.log("Payload:", payload);
+            // console.log("Submitting partner form");
+            // console.log("Editing mode:", isEditing);
+            // console.log("URL:", url);
+            // console.log("Payload:", payload);
 
-        const res = await axios({
-            method: method,
-            url: url,
-            data: payload,
-            headers: { "Content-Type": "application/json" },
+            const res = await axios({
+                method: method,
+                url: url,
+                data: payload,
+                headers: { "Content-Type": "application/json" },
+            });
+
+            alert(isEditing ? "Partner updated successfully!" : "Partner created successfully!");
+
+            // Reset the form
+            setForm({ ...defaultFormValues });
+            setAgreementFile(null);
+            setIdFile(null);
+            setAddressFile(null);
+            setformOpen(false);
+            setIsEditing(false);
+            setEditingId(null);
+
+            // Refresh the partner list
+            await fetchConfigurations();
+
+        } catch (error) {
+            console.error("Error creating/updating partner:", error.response || error);
+            alert("Error: " + (error.response?.data?.message || error.message));
+        }
+    };
+
+
+
+
+    const handleEdit = (partnerName, partnerType) => {
+        const partner = partners.find(p => p.partnerName === partnerName && p.partnerType === partnerType);
+        if (!partner) {
+            alert("Partner not found!");
+            return;
+        }
+
+        setForm({
+            ...partner,
+            portalUrl: partner.portalUrl || 0,
+            allowedProducts: partner.allowedProducts ? partner.allowedProducts.split(",") : [],
+            agreementDocumentReversed: reverseBase64String(partner.agreementDocumentBase64),
+            idProofDocumentReversed: reverseBase64String(partner.idProofDocumentBase64),
+            addressProofDocumentReversed: reverseBase64String(partner.addressProofDocumentBase64),
         });
-
-        alert(isEditing ? "Partner updated successfully!" : "Partner created successfully!");
-        
-        // Reset the form
-        setForm({ ...defaultFormValues });
         setAgreementFile(null);
         setIdFile(null);
         setAddressFile(null);
-        setformOpen(false);
-        setIsEditing(false);
-        setEditingId(null);
 
-        // Refresh the partner list
-        await fetchConfigurations();
-
-    } catch (error) {
-        console.error("Error creating/updating partner:", error.response || error);
-        alert("Error: " + (error.response?.data?.message || error.message));
-    }
-};
-
-
-
-
-const handleEdit = (partnerName, partnerType) => {
-    const partner = partners.find(p => p.partnerName === partnerName && p.partnerType === partnerType);
-    if (!partner) {
-        alert("Partner not found!");
-        return;
-    }
-
-    setForm({
-        ...partner,
-        portalUrl: partner.portalUrl || 0,
-        allowedProducts: partner.allowedProducts ? partner.allowedProducts.split(",") : [],
-        agreementDocumentReversed: reverseBase64String(partner.agreementDocumentBase64),
-        idProofDocumentReversed: reverseBase64String(partner.idProofDocumentBase64),
-        addressProofDocumentReversed: reverseBase64String(partner.addressProofDocumentBase64),
-    });
-    setAgreementFile(null);
-    setIdFile(null);
-    setAddressFile(null);
-
-    // Create a composite editingId for tracking state
-    setEditingId(`${partner.partnerName}-${partner.partnerType}`);
-    setIsEditing(true);
-    setformOpen(true);
-};
+        // Create a composite editingId for tracking state
+        setEditingId(`${partner.partnerName}-${partner.partnerType}`);
+        setIsEditing(true);
+        setformOpen(true);
+    };
 
 
     const getConstraintOptions = (constraints, title) => {
@@ -447,6 +447,7 @@ const handleEdit = (partnerName, partnerType) => {
                                 placeholder="Enter pincode"
                                 value={form.pincode}
                                 onChange={handleChange}
+                                maxLength={6}
                             />
                         </div>
 
@@ -464,7 +465,7 @@ const handleEdit = (partnerName, partnerType) => {
                                 <option value="Bank">Bank</option>
                                 <option value="Fintech">Fintech</option>
                                 <option value="Distributor">Distributor</option>
-                                <option value="SuperDistributor">SuperDistributor</option>
+                                <option value="SuperDistributor">Super Distributor</option>
                                 <option value="Corporate">Corporate</option>
                                 <option value="Agent">Agent</option>
                                 <option value="Franchise">Franchise</option>
@@ -648,7 +649,7 @@ const handleEdit = (partnerName, partnerType) => {
                             <div className="grid grid-cols-2 gap-4">
 
                                 <div className="form-group">
-                                    <label>KYC level</label>
+                                    <label>KYC Level</label>
                                     <select
                                         name="kycLevel"
                                         value={form.kycLevel || ""}
@@ -662,7 +663,7 @@ const handleEdit = (partnerName, partnerType) => {
                                     </select>
                                 </div>
                                 <div className="form-group">
-                                    <label>kyc Status</label>
+                                    <label>KYC Status</label>
                                     <select
                                         name="kycStatus"
                                         value={form.kycStatus || ""}
@@ -711,17 +712,17 @@ const handleEdit = (partnerName, partnerType) => {
 
                                 <div className="form-group">
                                     <label>PAN Number</label>
-                                    <input type="text" name="panNumber" className="form-input" placeholder="Enter PAN number" value={form.panNumber || ""} onChange={handleChange} />
+                                    <input type="text" name="panNumber" className="form-input" placeholder="Enter PAN number" value={form.panNumber || ""} onChange={handleChange} maxLength={10} />
                                 </div>
 
                                 <div className="form-group">
                                     <label>TAN Number</label>
-                                    <input type="text" name="tanNumber" className="form-input" placeholder="Enter TAN number" value={form.tanNumber || ""} onChange={handleChange} />
+                                    <input type="text" name="tanNumber" className="form-input" placeholder="Enter TAN number" value={form.tanNumber || ""} onChange={handleChange} maxLength={10} />
                                 </div>
                                 <div className="form-group">
                                     <label>GSTIN</label>
                                     <input type="text" name="gstin" className="form-input" placeholder="Enter GSTIN" value={form.gstin || ""}
-                                        onChange={handleChange} />
+                                        onChange={handleChange} maxLength={15} />
                                 </div>
                             </div>
                         </div>
@@ -732,14 +733,21 @@ const handleEdit = (partnerName, partnerType) => {
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="form-group">
                                     <label>Card Issuance Commission %</label>
-                                    <input type="number" name="cardIssuanceCommissionPercent" className="form-input" placeholder="0" value={form.cardIssuanceCommissionPercent || ""}
-                                        onChange={handleChange} />
+                                    <input type="number" name="cardIssuanceCommissionPercent" className="form-input" placeholder="0" value={form.cardIssuanceCommissionPercent || ""} min="0" max="100"
+                                        onChange={handleChange}  onInput={(e) => {
+                                        if (e.target.value > 100) {
+                                            e.target.value = 100;
+                                        }
+                                    }}  />
 
                                 </div>
                                 <div className="form-group">
                                     <label>Transaction Commission %</label>
-                                    <input type="number" name="transactionCommissionPercent" className="form-input" placeholder="0" value={form.transactionCommissionPercent || ""}
-                                        onChange={handleChange} />
+                                    <input type="number" name="transactionCommissionPercent" className="form-input" placeholder="0" value={form.transactionCommissionPercent || ""} min="0" max="100" onChange={handleChange} onInput={(e) => {
+                                        if (e.target.value > 100) {
+                                            e.target.value = 100;
+                                        }
+                                    }} />
                                 </div>
 
                                 <div className="form-group">
@@ -775,7 +783,7 @@ const handleEdit = (partnerName, partnerType) => {
                             <ArrowLeft className="icon" /> Back
                         </button>
                         <div className="footer-right">
-                            <button type="button" className="btn-outline-reset" onClick={() => { setEditingId(null); setIsEditing(false);    setForm({ ...defaultFormValues }); }}>
+                            <button type="button" className="btn-outline-reset" onClick={() => { setEditingId(null); setIsEditing(false); setForm({ ...defaultFormValues }); }}>
                                 <RotateCcw className="icon" /> Reset
                             </button>
                             <button type="submit" className="btn-outline-reset">
@@ -792,7 +800,7 @@ const handleEdit = (partnerName, partnerType) => {
                     <div className="table-header">
                         <h2 className="table-title flex items-center gap-2">
                             <Building2 className="text-[#00d4aa] w-5 h-5" />
-                            Existing partner Configurations
+                            Existing Partner Configurations
                         </h2>
                         <div className="search-box">
                             <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
@@ -803,7 +811,7 @@ const handleEdit = (partnerName, partnerType) => {
                                 value={search}
                                 onChange={(e) => {
                                     setSearch(e.target.value);
-                                    setCurrentPage(1); 
+                                    setCurrentPage(1);
                                 }}
                             />
                         </div>

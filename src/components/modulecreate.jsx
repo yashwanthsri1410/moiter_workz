@@ -23,6 +23,13 @@ export default function ModuleCreation({ onBack }) {
   const ip = usePublicIp();
   const username = localStorage.getItem("username");
 
+  // Function to validate input - allows only letters, spaces, and hyphens
+  const validateInput = (input) => {
+    // Regular expression to allow only letters, spaces, and hyphens
+    const regex = /^[a-zA-Z\s-]*$/;
+    return regex.test(input);
+  };
+
   useEffect(() => {
     fetchModules();
   }, []);
@@ -35,6 +42,22 @@ export default function ModuleCreation({ onBack }) {
       setModules(res.data || []);
     } catch (error) {
       console.error("Error fetching modules:", error);
+    }
+  };
+
+  // Handle new module name input change with validation
+  const handleNewModuleNameChange = (e) => {
+    const value = e.target.value;
+    if (validateInput(value)) {
+      setNewModuleName(value);
+    }
+  };
+
+  // Handle edited module name input change with validation
+  const handleEditedModuleNameChange = (e) => {
+    const value = e.target.value;
+    if (validateInput(value)) {
+      setEditedModuleName(value);
     }
   };
 
@@ -199,10 +222,11 @@ export default function ModuleCreation({ onBack }) {
             <input
               type="text"
               value={newModuleName}
-              onChange={(e) => setNewModuleName(e.target.value)}
-              placeholder="Enter module name..."
+              onChange={handleNewModuleNameChange}
+              placeholder="Enter module name (letters only)..."
               className="form-input"
             />
+            <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
           </div>
 
           <div className="form-actions">
@@ -237,15 +261,18 @@ export default function ModuleCreation({ onBack }) {
                   <tr key={mod.moduleId} className="table-row">
                     <td className="table-cell-name">
                       {editingModuleId === mod.moduleId ? (
-                        <input
-                          type="text"
-                          value={editedModuleName}
-                          onChange={(e) => setEditedModuleName(e.target.value)}
-                          className="form-input"
-                        />
+                        <div>
+                          <input
+                            type="text"
+                            value={editedModuleName}
+                            onChange={handleEditedModuleNameChange}
+                            className="form-input"
+                            placeholder="Enter new name (letters only)..."
+                          />
+                          <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
+                        </div>
                       ) : (
                         <div className="flex items-center gap-1 "> <Settings className="w-4 h-4 text-teal-400 " />{mod.moduleName}</div>
-
                       )}
                     </td>
                     <td className="table-cell-icon flex gap-4">
@@ -295,10 +322,9 @@ export default function ModuleCreation({ onBack }) {
         </div>
         <div className="guidelines-grid">
           <p>✏️ <span>Edit:</span> Modify module names inline</p>
-          {/* <p>🗑️ <span>Delete:</span> Remove unused modules</p> */}
+          <p>⚠️ <span>Validation:</span> Only letters, spaces, and hyphens allowed</p>
         </div>
       </div>
     </div>
-
   );
 }

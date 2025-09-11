@@ -73,7 +73,7 @@ export const loadedRes = [
 
 export const unloadedRes = [
   {
-    channel: "ATM-withdraw",
+    channel: "ATM-Withdraw",
     userCount: 10803,
     txnCount: 11892,
     totalAmount: 57715847,

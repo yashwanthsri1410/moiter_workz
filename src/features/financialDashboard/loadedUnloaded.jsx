@@ -85,7 +85,7 @@ const LoadedUnLoaded = ({ isLoaded }) => {
                 <ArrowDown size="18" className="icon-danger" />
               )}
               <span className="card-text">
-                {isLoaded ? "Current Day loading" : "Current Day Unloading"}
+                {isLoaded ? "Current Day Loading" : "Current Day Unloading"}
               </span>
             </p>
             <div className="px-0 xl:px-4">

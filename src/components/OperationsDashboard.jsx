@@ -113,7 +113,7 @@ const OperationsDashboard = () => {
       <div className="dashboard-title">
         <h1 className="dashboard-heading">Financial Dashboard Overview</h1>
         <p className="dashboard-subtitle">
-          Real-time insights into wallet operations, transactions, and system
+          Real-time insights into wallet operations, transactions and system
           performance
         </p>
       </div>

@@ -10,6 +10,14 @@ export default function DepartmentCreation({ onBack }) {
   const [newDeptName, setNewDeptName] = useState("");
   const [showForm, setShowForm] = useState(false);
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  
+  // Function to validate input - allows only letters, spaces, and hyphens
+  const validateInput = (input) => {
+    // Regular expression to allow only letters, spaces, and hyphens
+    const regex = /^[a-zA-Z\s-]*$/;
+    return regex.test(input);
+  };
+
   // Fetch departments
   const fetchDepartments = async () => {
     try {
@@ -25,6 +33,22 @@ export default function DepartmentCreation({ onBack }) {
   useEffect(() => {
     fetchDepartments();
   }, []);
+
+  // Handle department name input change with validation
+  const handleDepartmentNameChange = (e) => {
+    const value = e.target.value;
+    if (validateInput(value)) {
+      setDepartmentName(value);
+    }
+  };
+
+  // Handle new department name input change with validation
+  const handleNewDeptNameChange = (e) => {
+    const value = e.target.value;
+    if (validateInput(value)) {
+      setNewDeptName(value);
+    }
+  };
 
   // Create department
   const handleSubmit = async (e) => {
@@ -137,10 +161,11 @@ export default function DepartmentCreation({ onBack }) {
             <input
               type="text"
               value={departmentName}
-              onChange={(e) => setDepartmentName(e.target.value)}
-              placeholder="Enter department name..."
+              onChange={handleDepartmentNameChange}
+              placeholder="Enter department name (letters only)..."
               className="form-input"
             />
+            <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
           </div>
 
           <div className="form-actions">
@@ -175,12 +200,16 @@ export default function DepartmentCreation({ onBack }) {
                   <tr key={dept.deptId} className="table-row">
                     <td className="table-cell-name">
                       {editingDeptId === dept.deptId ? (
-                        <input
-                          type="text"
-                          value={newDeptName}
-                          onChange={(e) => setNewDeptName(e.target.value)}
-                          className="form-input"
-                        />
+                        <div>
+                          <input
+                            type="text"
+                            value={newDeptName}
+                            onChange={handleNewDeptNameChange}
+                            className="form-input"
+                            placeholder="Enter new name (letters only)..."
+                          />
+                          <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
+                        </div>
                       ) : (
 
                         <div className="flex items-center gap-1 "> <Building2 className="w-4 h-4 text-teal-400 " />{dept.deptName}</div>
@@ -230,7 +259,7 @@ export default function DepartmentCreation({ onBack }) {
         </div>
         <div className="guidelines-grid">
           <p>✏️ <span >Edit:</span> Modify department names inline</p>
-
+          <p>⚠️ <span>Validation:</span> Only letters, spaces, and hyphens allowed</p>
         </div>
       </div>
     </div>

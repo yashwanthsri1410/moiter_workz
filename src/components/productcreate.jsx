@@ -474,7 +474,7 @@ export default function Productcreate() {
     };
 
     const channels = ["UPI", "Online", "POS", "ATM", "Bank Transfer", "emittance Portal", "Institution Portal", "MobileApp"];
-    const options = ["POS", "Online", "Bank Transfer", "Government Portal", "Family Portal", "Corporate Portal", "Others", "ATM", "NetBanking"]
+    const options = ["POS", "Online", "Bank Transfer", "Government Portal", "Family Portal", "Corporate Portal", "ATM", "NetBanking", "Others"]
     // console.log(form)
     return (
         <div className="config-forms">
@@ -640,7 +640,7 @@ export default function Productcreate() {
                                         aadhaarRequired: "AADHAAR Required",
                                         panRequired: "PAN Required",
                                         amlCftApplicable: "AML/CFT Applicable",
-                                        ckycUploadRequired: "CKYC UploadRequired",
+                                        ckycUploadRequired: "CKYC Upload Required",
                                     };
 
                                     const label =
@@ -807,6 +807,13 @@ export default function Productcreate() {
                                 <div className="flex flex-col gap-3">
                                     {channels.map(method => {
                                         const checked = form.allowedChannels?.includes(method);
+                                        const alwaysUppercase = ["pos", "atm", "upi"];
+                                        const formattedMethod = alwaysUppercase.includes(method.toLowerCase())
+                                            ? method.toUpperCase() 
+                                            : method
+                                                .split(" ")
+                                                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                                                .join(" ");
                                         return (
                                             <label key={method} className="flex items-center gap-3 cursor-pointer text-gray-300">
                                                 <div
@@ -817,7 +824,7 @@ export default function Productcreate() {
                                                 >
                                                     {checked && <Check size={14} className="text-black" />}
                                                 </div>
-                                                <span className="text-[12px]">{method}</span>
+                                                <span className="text-[12px]">{formattedMethod}</span>
                                             </label>
                                         );
                                     })}
@@ -899,24 +906,27 @@ export default function Productcreate() {
                             </tr>
                         </thead>
                         <tbody>
-                            {paginatedConfigurations.map((cfg, idx) => (
-                                <tr key={cfg.productId || idx} className="table-row">
-                                    <td className="table-content">{cfg.productName}</td>
-                                    <td className="table-content">{cfg.programType}</td>
-                                    <td className="table-content">{cfg.kycLevelRequired || "-"}</td>
-                                    <td className="table-content">
-                                        <span className={` px-2 py-1 rounded text-[10px] ${cfg.isActive ? "checker" : "superuser"}`}>
-                                            {cfg.isActive ? "active" : "Inactive"}
-                                        </span>
-                                    </td>
-                                    <td className="table-content">{cfg.remarks || "-"}</td>
-                                    <td className="table-content">
-                                        <button className="header-icon-box" onClick={() => handleEdit(cfg)}>
-                                            <SquarePen className="text-[#00d4aa] w-3 h-3" />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                            {paginatedConfigurations && paginatedConfigurations.map((cfg, idx) => {
+                                const formattedKYCLevel = cfg.kycLevelRequired.charAt(0).toUpperCase() + cfg.kycLevelRequired.slice(1).toLowerCase();
+                                return (
+                                    <tr key={cfg.productId || idx} className="table-row">
+                                        <td className="table-content">{cfg.productName}</td>
+                                        <td className="table-content">{cfg.programType}</td>
+                                        <td className="table-content">{formattedKYCLevel || "-"}</td>
+                                        <td className="table-content">
+                                            <span className={` px-2 py-1 rounded text-[10px] ${cfg.isActive ? "checker" : "superuser"}`}>
+                                                {cfg.isActive ? "active" : "Inactive"}
+                                            </span>
+                                        </td>
+                                        <td className="table-content">{cfg.remarks || "-"}</td>
+                                        <td className="table-content">
+                                            <button className="header-icon-box" onClick={() => handleEdit(cfg)}>
+                                                <SquarePen className="text-[#00d4aa] w-3 h-3" />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
                             {paginatedConfigurations.length === 0 && (
                                 <tr>
                                     <td colSpan="9" className="text-center py-4 text-gray-500">

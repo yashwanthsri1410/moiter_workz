@@ -236,11 +236,9 @@ export default function RegulatoryConfig() {
         "expiryWarningDays", "dormantPeriodDays", "expiryPeriod"
     ];
 
-    // const channels = ["UPI", "Online", "POS", "ATM", "Bank Transfer"];
-    // const options = ["UPI", "Credit Card", "Debit Card", "Cash Deposit", " Net Banking", "Agent",]
 
     const channels = ["UPI", "Online", "POS", "ATM", "Bank Transfer", "emittance Portal", "Institution Portal"];
-    const options = ["POS", "Online", "Bank Transfer", "Government Portal", "Family Portal", "Corporate Portal", "Others", "ATM",]
+    const options = ["POS", "Online", "Bank Transfer", "Government Portal", "Family Portal", "Corporate Portal", "ATM", "Others"]
 
     const toggleLoading = (method) => {
         let current = form.topupMethod || ""; // always a string
@@ -432,7 +430,7 @@ export default function RegulatoryConfig() {
                                         aadhaarRequired: "AADHAAR Required",
                                         panRequired: "PAN Required",
                                         amlCftApplicable: "AML/CFT Applicable",
-                                        ckycUploadRequired: "CKYC UploadRequired",
+                                        ckycUploadRequired: "CKYC Upload Required",
                                     };
 
                                     const label =
@@ -693,6 +691,13 @@ export default function RegulatoryConfig() {
                                 <div className="flex flex-col gap-3">
                                     {channels.map((method) => {
                                         const checked = form.allowedChannels?.includes(method);
+                                        const alwaysUppercase = ["pos", "atm", "upi"];
+                                        const formattedMethod = alwaysUppercase.includes(method.toLowerCase())
+                                            ? method.toUpperCase() 
+                                            : method
+                                                .split(" ")
+                                                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                                                .join(" ");
                                         return (
                                             <label
                                                 key={method}
@@ -706,7 +711,7 @@ export default function RegulatoryConfig() {
                                                 >
                                                     {checked && <Check size={14} className="text-black" />}
                                                 </div>
-                                                <span className="text-[12px]">{method}</span>
+                                                <span className="text-[12px]">{formattedMethod}</span>
                                             </label>
                                         );
                                     })}
@@ -779,30 +784,34 @@ export default function RegulatoryConfig() {
                             </tr>
                         </thead>
                         <tbody>
-                            {paginatedData && paginatedData.map((cfg, idx) => (
-                                <tr key={cfg.productId || idx} className="table-row">
-                                    <td className="table-content">{cfg.subCategory}</td>
-                                    <td className="table-content">{cfg.programType}</td>
-                                    <td className="table-content">{cfg.kycLevelRequired}</td>
-                                    {/* <td className="table-content">
+                            {paginatedData && paginatedData.map((cfg, idx) => {
+                                const formattedKYCLevel = cfg.kycLevelRequired.charAt(0).toUpperCase() + cfg.kycLevelRequired.slice(1).toLowerCase();
+                                return (
+
+                                    <tr key={cfg.productId || idx} className="table-row">
+                                        <td className="table-content">{cfg.subCategory}</td>
+                                        <td className="table-content">{cfg.programType}</td>
+                                        <td className="table-content">{formattedKYCLevel}</td>
+                                        {/* <td className="table-content">
                                         <span className={`status ${typeColors[cfg.p_Is_Active]
                                             }`} >
                                             {cfg.p_Is_Active ? "Active" : "Inactive"}
                                         </span>
                                     </td> */}
-                                    <td className="table-content">{cfg.remarks || "-"}</td>
-                                    <td className="table-content">
-                                        <button className="header-icon-box"
-                                            onClick={() => {
-                                                handleEdit(cfg);
-                                                setformOpen(true);
-                                            }}
-                                        >
-                                            <SquarePen className="text-[#00d4aa] w-3 h-3" />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                                        <td className="table-content">{cfg.remarks || "-"}</td>
+                                        <td className="table-content">
+                                            <button className="header-icon-box"
+                                                onClick={() => {
+                                                    handleEdit(cfg);
+                                                    setformOpen(true);
+                                                }}
+                                            >
+                                                <SquarePen className="text-[#00d4aa] w-3 h-3" />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
                             {paginatedData.length === 0 && (
                                 <tr>
                                     <td colSpan="9" className="text-center py-4 text-gray-500">

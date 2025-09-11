@@ -111,7 +111,7 @@ export default function WalletSummary() {
         <div className="flex justify-between items-center mb-4">
           <div className="text-primary flex items-center gap-2">
             <WalletCards size={16} />
-            <p className="text-sm">Wallet Status Distribution</p>
+            <p className="text-sm">Wallet Distribution Status</p>
           </div>
         </div>
 
