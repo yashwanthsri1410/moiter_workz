@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import usePublicIp from "../hooks/usePublicIp";
 import Select from "react-select";
@@ -39,10 +39,17 @@ const EmployeeCreationForm = ({ onBack }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [designation, setDesignation] = useState([]);
   const ip = usePublicIp();
+  const targetRef = useRef(null);
   const userAgent = navigator.userAgent;
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const itemsPerPage = 8;
+
+  const handleScroll = () => {
+    targetRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   useEffect(() => {
     const generatedId = Date.now().toString().slice(-6); // last 6 digits of timestamp
     setEmpId(generatedId);
@@ -90,21 +97,68 @@ const EmployeeCreationForm = ({ onBack }) => {
     }
   }, [selectedEmployee, roleData]);
 
-  useEffect(() => {
-    axios
-      .get(`${API_BASE_URL}/fes/api/Export/role-departments`)
-      .then((res) => setAccessList(res.data))
-      .catch((err) => console.error("Error fetching access list:", err));
+  const clearState = () => {
+    setName("");
+    setEmail("");
+    setPassword("");
+    setDeptId("");
+    setDesignationId("");
+    setRoleAccessId("");
+    setusertype("");
+    setErrors({});
+  };
+  const api = `${API_BASE_URL}/fes/api/Export/`;
 
-    axios
-      .get(`${API_BASE_URL}/fes/api/Export/role-module-screen`)
-      .then((res) => setRoleData(res.data))
-      .catch((err) => console.error("Error fetching role data:", err));
-    axios
-      .get(`${API_BASE_URL}/fes/fes/api/Export/pending-employees`)
-      .then((res) => setEmployees(res.data))
-      .catch((err) => console.error("Error fetching employees:", err));
+  useEffect(() => {
+    fetchData();
   }, []);
+  const fetchData = () => {
+    Promise.all([
+      axios.get(`${api}simple-departments`),
+      axios.get(`${api}role-module-screen`),
+      axios.get(`${api}pending-employees`),
+      axios.get(`${api}designations`),
+    ])
+      .then(([departmentsRes, modulesRes, employeesRes, designationsRes]) => {
+        setAccessList(departmentsRes.data);
+        setRoleData(modulesRes.data);
+        setEmployees(employeesRes.data);
+        setDesignation(designationsRes.data);
+      })
+      .catch((err) => console.error("Error fetching data:", err));
+  };
+
+  const uniqueDepts = Array.from(
+    new Set(designation.map((item) => item.deptName))
+  );
+
+  const uniqueRoles = Array.from(
+    new Map(roleData?.map((item) => [item.roleAccessId, item])).values()
+  ).map((role) => ({
+    value: role.roleAccessId.toString(),
+    label: role.roleDescription,
+  }));
+
+  const dedupedRoles = Array.from(
+    new Map(uniqueRoles.map((item) => [item.label, item])).values()
+  );
+
+  const uniqueDesigns = designation
+    .filter((d) => d.deptName === deptId)
+    .map((e) => e.designationDesc);
+
+  // const uniqueDepts = Array.from(
+  //   new Map(accessList.map((item) => [item.deptId, item])).values()
+  // );
+
+  // const uniqueDesigns = Array.from(
+  //   new Map(
+  //     accessList
+  //       .filter((item) => item.deptName.toString() === deptId)
+  //       .map((item) => [item.designationId, item])
+  //   ).values()
+  // );
+
   // 🔹 Select employee → sync form
   // ✅ Filter + Search logic
   const filteredConfigurations = employees.filter((cfg) => {
@@ -141,7 +195,7 @@ const EmployeeCreationForm = ({ onBack }) => {
         return "Unknown";
     }
   };
-  const validate = () => {
+  const validate = (isUpdate) => {
     const newErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegex =
@@ -151,13 +205,18 @@ const EmployeeCreationForm = ({ onBack }) => {
     else if (name.length > 25) newErrors.name = "Name max 25 characters";
     if (!email) newErrors.email = "Enter Email Id";
     else if (!emailRegex.test(email)) newErrors.email = "Invalid email";
-    if (!/^[0-9]+$/.test(empId))
-      newErrors.empId = "Employee ID must be numeric";
-    if (!password) newErrors.password = "Enter password";
-    else if (!passwordRegex.test(password)) {
-      newErrors.password =
-        "One uppercase, One lowercase, One number, and One special character.";
+    if (!isUpdate) {
+      if (!/^[0-9]+$/.test(empId))
+        newErrors.empId = "Employee ID must be numeric";
     }
+    if (!isUpdate) {
+      if (!password) newErrors.password = "Enter password";
+      else if (!passwordRegex.test(password)) {
+        newErrors.password =
+          "One uppercase, One lowercase, One number, and One special character.";
+      }
+    }
+
     if (!deptId) {
       newErrors.deptId = "Select Department";
       newErrors.designationId = "Select Department";
@@ -170,23 +229,40 @@ const EmployeeCreationForm = ({ onBack }) => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const usersId = {
+    "Super User": 1,
+    "Normal User": 2,
+    Checker: 3,
+    Maker: 4,
+    "Infra Manager": 5,
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
+    // if (!selectedEmployee) {
+    if (!validate(selectedEmployee)) return;
+    // }
+    if (selectedEmployee && !designationId) return;
 
     const timestamp = new Date().toISOString();
 
     const payload = {
-      empId: `Emp${empId}`,
-      deptId: parseInt(deptId),
-      designationId: parseInt(designationId),
+      deptId,
+      designationId,
       name,
       email,
       password,
       statusId,
       roleAccessId: parseInt(roleAccessId),
-      createdBy,
-      userType: parseInt(userType),
+      userType,
+      // 👇 dynamically set key name
+      ...(selectedEmployee
+        ? {
+            modifiedBy: createdBy,
+            userId: selectedEmployee?.userId,
+            empId: selectedEmployee?.empId,
+          }
+        : { createdBy: createdBy, empId: `Emp${empId}` }),
       metadata: {
         ipAddress: ip || "0.0.0.0",
         userAgent,
@@ -208,10 +284,22 @@ const EmployeeCreationForm = ({ onBack }) => {
       },
     };
 
+    const deptObj = designation.find((d) => d.deptName === payload.deptId);
+    if (deptObj) payload.deptId = deptObj.deptId;
+
+    // ✅ Transform designationId
+    const desigObj = designation.find(
+      (d) => d.designationDesc === payload.designationId
+    );
+    if (desigObj) payload.designationId = desigObj.designationId;
+
+    // ✅ Transform userType
+    if (usersId[payload.userType]) payload.userType = usersId[payload.userType];
+
     try {
       if (selectedEmployee) {
         await axios.put(
-          `${API_BASE_URL}/ums/api/UserManagement/updateEmployee/${selectedEmployee.empId}`,
+          `${API_BASE_URL}/ums/api/UserManagement/updateEmployee`,
           payload,
           { headers: { "Content-Type": "application/json" } }
         );
@@ -227,27 +315,12 @@ const EmployeeCreationForm = ({ onBack }) => {
     } catch (err) {
       console.error("❌ API error:", err.response?.data || err.message);
       alert("❌ Failed. See console.");
+    } finally {
+      fetchData();
+      clearState();
+      setSelectedEmployee("");
     }
   };
-
-  const uniqueDepts = Array.from(
-    new Map(accessList.map((item) => [item.deptId, item])).values()
-  );
-
-  const uniqueDesigns = Array.from(
-    new Map(
-      accessList
-        .filter((item) => item.deptName.toString() === deptId)
-        .map((item) => [item.designationId, item])
-    ).values()
-  );
-
-  const uniqueRoles = Array.from(
-    new Map(roleData.map((item) => [item.roleAccessId, item])).values()
-  ).map((role) => ({
-    value: role.roleAccessId.toString(),
-    label: role.roleDescription,
-  }));
 
   const handleRoleChange = (selectedOption) => {
     if (!selectedOption) {
@@ -272,9 +345,9 @@ const EmployeeCreationForm = ({ onBack }) => {
 
     setSelectedRoleScreens(grouped);
   };
-  // console.log(uniqueDesigns);
 
-  // console.log(accessList);
+  console.log(paginatedConfigurations);
+
   return (
     <>
       {/* Top Bar */}
@@ -299,11 +372,15 @@ const EmployeeCreationForm = ({ onBack }) => {
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="form-container">
+      <form ref={targetRef} onSubmit={handleSubmit} className="form-container">
         <div className="form-heading">
-          <h2 className="form-title">User Creation</h2>
+          <h2 className="form-title">{`User ${
+            selectedEmployee ? "Updation" : "Creation"
+          }`}</h2>
           <p className="form-subtitle">
-            Add new team member with role-based access
+            {`${
+              selectedEmployee ? "Update" : "Add new"
+            } team member with role-based access`}
           </p>
         </div>
 
@@ -350,7 +427,7 @@ const EmployeeCreationForm = ({ onBack }) => {
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute right-3 top-[36px] text-gray-500 hover:text-gray-700"
+              className="absolute right-3 top-[40px] text-gray-500 hover:text-gray-700"
             >
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
@@ -370,9 +447,9 @@ const EmployeeCreationForm = ({ onBack }) => {
             className="form-select"
           >
             <option value="">Select department</option>
-            {uniqueDepts.map((d) => (
-              <option key={d.deptId} value={d.deptName}>
-                {d.deptName}
+            {uniqueDepts.map((ele) => (
+              <option key={ele} value={ele}>
+                {ele}
               </option>
             ))}
           </select>
@@ -389,13 +466,18 @@ const EmployeeCreationForm = ({ onBack }) => {
             disabled={!deptId}
           >
             <option value="">Select designation</option>
-            {uniqueDesigns.map((d) => (
-              <option key={d.designationId} value={d.designationDesc}>
-                {d.designationDesc}
+            {uniqueDesigns.map((ele) => (
+              <option key={ele} value={ele}>
+                {ele}
               </option>
             ))}
           </select>
-          <ErrorText errTxt={errors.designationId} />
+          {selectedEmployee ? (
+            selectedEmployee &&
+            !designationId && <ErrorText errTxt="Select Designation" />
+          ) : (
+            <ErrorText errTxt={errors.designationId} />
+          )}
         </div>
 
         {/* Role */}
@@ -404,12 +486,12 @@ const EmployeeCreationForm = ({ onBack }) => {
           <Select
             className="react-select-container"
             classNamePrefix="react-select"
-            options={uniqueRoles}
+            options={dedupedRoles}
             onChange={handleRoleChange}
             placeholder="Select role"
             isClearable
             value={
-              uniqueRoles.find((role) => role.value === roleAccessId) || null
+              dedupedRoles.find((role) => role.value === roleAccessId) || null
             }
             styles={{
               control: (base, state) => ({
@@ -483,14 +565,13 @@ const EmployeeCreationForm = ({ onBack }) => {
             <option value="Maker">Maker</option>
             <option value="Checker">Checker</option>
             <option value="Infra Manager">Infra Manager</option>
-            <option value="Normal User">Normal User</option>
           </select>
           <ErrorText errTxt={errors.userType} />
         </div>
 
         {/* Submit */}
         <button type="submit" className="submit-btn">
-          + Create User
+          {selectedEmployee ? "Update User" : "+ Create User"}
         </button>
       </form>
       <div className="config-forms">
@@ -611,17 +692,15 @@ const EmployeeCreationForm = ({ onBack }) => {
                       <td className="table-content">{emp.designationDesc}</td>
                       <td className="table-content">{emp.roleDescription}</td>
                       <td className="table-content">
-                        <span className={`px-2 py-1 rounded text-[10px] `}>
-                          {emp.status === 1
-                            ? "Super User"
-                            : emp.status === 2
-                            ? "Normal User"
-                            : emp.status === 3
-                            ? "Checker"
-                            : emp.status === 4
-                            ? "Maker"
-                            : "Infra Manager"}
-                        </span>
+                        {emp.status === 0
+                          ? "Approved"
+                          : emp.status === 1
+                          ? "Pending"
+                          : emp.status === 2
+                          ? "Rejected"
+                          : emp.status === 3
+                          ? "Recheck"
+                          : ""}
                       </td>
                       <td className="table-content flex gap-2">
                         <button
@@ -629,6 +708,7 @@ const EmployeeCreationForm = ({ onBack }) => {
                           onClick={() => {
                             setSelectedEmployee(emp);
                             setErrors({});
+                            handleScroll();
                           }}
                         >
                           <EyeIcon className="text-[#00d4aa] w-4 h-4" />
