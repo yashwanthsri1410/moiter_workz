@@ -4,6 +4,7 @@ import axios from "axios";
 export default function EmployeeView({
   selectedEmployee,
   setSelectedEmployee,
+  fetchConfigurations
 }) {
   const [remarks, setRemarks] = useState("");
   const [currentAction, setCurrentAction] = useState(null);
@@ -30,7 +31,7 @@ export default function EmployeeView({
     setShowModal(true);
   };
   const submitAction = async () => {
-      const storedUsername = localStorage.getItem("username");
+    const storedUsername = localStorage.getItem("username");
     try {
       // Only block Recheck action if employee is not pending
       if (currentAction === 3 && selectedEmployee.status !== 1) {
@@ -69,6 +70,7 @@ export default function EmployeeView({
       alert("Employee action submitted successfully!");
       setShowModal(false);
       setRemarks("");
+      fetchConfigurations();
     } catch (err) {
       console.error("Error submitting employee action:", err.response || err);
       alert("Approval not permitted for users in Recheck status. Please ensure Maker review is completed first.");
@@ -185,12 +187,18 @@ export default function EmployeeView({
                 </button>
 
                 <button
-                  className="btn approval-btn-red"
+                  className={`btn approval-btn-red ${selectedEmployee.status === 3 ? "opacity-20 cursor-not-allowed" : ""}`}
                   onClick={() => handleActionClick(2)}
+                  disabled={selectedEmployee.status === 3} // ✅ Disable if status is 3
                 >
                   <X className="w-4 h-4" />
-                  <span>Reject user</span>
+                  <span>
+                    {selectedEmployee.status === 3
+                      ? "Reject action disabled – pending maker review"
+                      : "Reject user"}
+                  </span>
                 </button>
+
               </div>
             </div>
 

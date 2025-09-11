@@ -15,20 +15,23 @@ export default function ProductApproval() {
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     // filter data by search + dropdowns
     const filteredConfigurations = configurations.filter(cfg => {
-        const matchesSearch = Object.values(cfg).some(
-            value =>
-                value &&
-                value.toString().toLowerCase().includes(searchQuery.toLowerCase())
-        );
+    if (cfg.status !== 1) return false; // ✅ only show pending items
 
-        const matchesProgramType =
-            !selectedProgramType || cfg.programType?.toLowerCase() === selectedProgramType.toLowerCase();
+    const matchesSearch = Object.values(cfg).some(
+        value =>
+            value &&
+            value.toString().toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
-        const matchesPriority =
-            !selectedPriority || cfg.priority?.toLowerCase() === selectedPriority.toLowerCase();
+    const matchesProgramType =
+        !selectedProgramType || cfg.programType?.toLowerCase() === selectedProgramType.toLowerCase();
 
-        return matchesSearch && matchesProgramType && matchesPriority;
-    });
+    const matchesPriority =
+        !selectedPriority || cfg.priority?.toLowerCase() === selectedPriority.toLowerCase();
+
+    return matchesSearch && matchesProgramType && matchesPriority;
+});
+
 
     // compute total pages (based on filtered results)
     const totalPages = Math.ceil(filteredConfigurations.length / itemsPerPage);
@@ -106,6 +109,7 @@ export default function ProductApproval() {
                 <><Productview
                     selectedProduct={selectedProduct}
                     setSelectedProduct={setSelectedProduct}
+                    fetchConfigurations={fetchConfigurations}
                 /></>
             ) : (<>
 
@@ -224,9 +228,9 @@ export default function ProductApproval() {
                                     <th className="table-cell">Configuration Name</th>
                                     <th className="table-cell">Program Type</th>
                                     <th className="table-cell">Sub Category</th>
-                                    <th className="table-cell">Product Status</th>
+                                    <th className="table-cell"> Status</th>
                                     <th className="table-cell">Remarks</th>
-                                    <th className="table-cell">Product Accessibility</th>
+                                    {/* <th className="table-cell">Product Accessibility</th> */}
                                     <th className="table-cell">Actions</th>
                                 </tr>
                             </thead>
@@ -237,7 +241,7 @@ export default function ProductApproval() {
                                         <td className="table-content">{cfg.productName}</td>
                                         <td className="table-content">
                                             <span
-                                                className={`px-2 py-1 rounded text-[10px] ${cfg.programType === "Closed" ? "checker" : cfg.programType === "Semi-Closed" ? "infra" : cfg.programType === "opened" ? "superuser" : cfg.programType === "open" ? "maker" : ""
+                                                className={`px-2 py-1 rounded text-[10px] ${cfg.programType === "Closed" ? "checker" : cfg.programType === "Semi-Closed" ? "infra" : cfg.programType === "Open" ? "superuser" : cfg.programType === "open" ? "maker" : ""
                                                     }`}
                                             >
                                                 {cfg.programType}
@@ -254,7 +258,7 @@ export default function ProductApproval() {
                                             </span>
                                         </td>
                                         <td className="table-content ">{cfg.remarks}</td>
-                                        <td >
+                                        {/* <td >
 
                                             <span
                                                 className={`w-[70px] gap-[5px] flex items-center px-2 py-1 rounded text-[10px] leading-none ${cfg.productAccess === 1 ? " checker" : cfg.productAccess === 2 ? "superuser" : ""
@@ -264,7 +268,7 @@ export default function ProductApproval() {
                                                 {getproductacessLabel(cfg.productAccess)}
                                             </span>
 
-                                        </td>
+                                        </td> */}
 
                                         <td className="table-content">
                                             <button className="header-icon-box"

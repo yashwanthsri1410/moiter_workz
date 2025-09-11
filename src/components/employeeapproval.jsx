@@ -41,6 +41,8 @@ export default function EmployeeApproval() {
 
   // ✅ Filter + Search logic
   const filteredConfigurations = configurations.filter((cfg) => {
+    if (cfg.status !== 1) return false; // Only include pending employees
+    
     const query = searchQuery.toLowerCase();
     const matchesSearch = Object.values(cfg).some(
       (value) => value && value.toString().toLowerCase().includes(query)
@@ -55,7 +57,8 @@ export default function EmployeeApproval() {
       cfg.priority?.toLowerCase() === selectedPriority.toLowerCase();
 
     return matchesSearch && matchesProgramType && matchesPriority;
-  });
+});
+
 
   const totalPages = Math.ceil(filteredConfigurations.length / itemsPerPage);
 
@@ -92,6 +95,7 @@ export default function EmployeeApproval() {
           <EmployeeView
             selectedEmployee={selectedEmployee}
             setSelectedEmployee={setSelectedEmployee}
+             fetchConfigurations={fetchConfigurations} 
           />
         </>
       ) : (
@@ -205,7 +209,7 @@ export default function EmployeeApproval() {
                     <th className="table-cell">ROLE</th>
                     <th className="table-cell">USER STATUS</th>
                     <th className="table-cell">REMARKS</th>
-                    <th className="table-cell">Actions</th>
+                    <th className="table-cell">ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>

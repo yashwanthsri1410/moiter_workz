@@ -15,7 +15,15 @@ export default function PartnerApproval() {
     useEffect(() => {
         fetchPartners();
     }, []);
-
+    const getStatusLabel = (value) => {
+        switch (value) {
+            case 0: return "Approved";
+            case 1: return "Pending";
+            case 2: return "Disapproved";
+            case 3: return "Recheck";
+            default: return "Unknown";
+        }
+    };
     const fetchPartners = async () => {
         try {
             const res = await axios.get(
@@ -29,13 +37,15 @@ export default function PartnerApproval() {
     };
 
     // ✅ Search filter
-    const filteredPartners = partners.filter((partner) =>
-        Object.values(partner).some(
+    const filteredPartners = partners.filter((partner) => {
+        if (partner.status !== 1) return false; // ✅ only show partners with status 1
+
+        return Object.values(partner).some(
             (value) =>
                 value &&
                 value.toString().toLowerCase().includes(searchQuery.toLowerCase())
-        )
-    );
+        );
+    });
 
     // ✅ Pagination
     const totalPages = Math.ceil(filteredPartners.length / itemsPerPage);
@@ -49,7 +59,6 @@ export default function PartnerApproval() {
             setCurrentPage(page);
         }
     };
-    // console.log(selectedPartner)
     return (
         <div className="config-forms">
 
@@ -57,7 +66,7 @@ export default function PartnerApproval() {
                 <Partnerview
                     selectedPartner={selectedPartner}
                     setSelectedPartner={setSelectedPartner}
-
+                    fetchPartners={fetchPartners}
                 />
             </>) : (<>
                 {/* Header */}
@@ -142,6 +151,7 @@ export default function PartnerApproval() {
                                     <th className="table-cell">Partner Type</th>
                                     <th className="table-cell">KYC Status</th>
                                     <th className="table-cell">Partner Status</th>
+                                    <th className="table-cell">Status</th>
                                     <th className="table-cell">Remarks</th>
                                     <th className="table-cell">Partner Accessibility</th>
                                     <th className="table-cell">Actions</th>
@@ -156,11 +166,11 @@ export default function PartnerApproval() {
                                             <span
                                                 className={`px-2 py-1 rounded text-[10px] ${partner.kycStatus === "Verified"
                                                     ? "checker"
-                                                    : partner.kycStatus === "Under Review"
+                                                    : partner.kycStatus === "Pending"
                                                         ? "infra"
                                                         : partner.kycStatus === "Rejected"
                                                             ? "superuser"
-                                                            : partner.kycStatus === "Incomplete"
+                                                            : partner.kycStatus === "Pending"
                                                                 ? "maker"
                                                                 : ""
                                                     }`}
@@ -169,8 +179,22 @@ export default function PartnerApproval() {
                                             </span>
                                         </td>
                                         <td className="table-content">
-                                            <span className="px-2 py-1 rounded text-[10px] infra">
+                                            <span className="px-2 py-1 rounded text-[10px] ">
                                                 {partner.partnerStatus}
+                                            </span>
+                                        </td>
+                                        <td className="table-content">
+                                            <span className={`px-2 py-1 rounded text-[10px] ${partner.kycStatus === 0
+                                                ? "checker"
+                                                : partner.status === 1
+                                                    ? "infra"
+                                                    : partner.status === 2
+                                                        ? "superuser"
+                                                        : partner.status === 3
+                                                            ? "maker"
+                                                            : ""
+                                                }`}>
+                                                {getStatusLabel(partner.status)}
                                             </span>
                                         </td>
                                         <td className="table-content">{partner.remarks || "-"}</td>

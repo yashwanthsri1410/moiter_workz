@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 
-export default function Productview({ selectedProduct, setSelectedProduct }) {
+export default function Productview({ selectedProduct, setSelectedProduct,fetchConfigurations }) {
   const [remarks, setRemarks] = useState("");
   const [currentAction, setCurrentAction] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -62,6 +62,7 @@ export default function Productview({ selectedProduct, setSelectedProduct }) {
       alert("Action submitted successfully!");
       setShowModal(false);
       setRemarks("");
+      fetchConfigurations();
     } catch (err) {
       console.error("Error submitting action:", err);
       alert("Failed to submit action");
