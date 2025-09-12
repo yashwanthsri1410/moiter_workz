@@ -765,6 +765,7 @@
 /* Animate in when submenu opens */
 .submenu-open button {
   animation: slideIn 0.3s forwards;
+  font-size: 12px;
 }
 
 /* Stagger effect */
@@ -1262,6 +1263,10 @@ tbody tr {
 .screen-pill:hover {
   background: rgba(16, 185, 129, 0.15);
   box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+}
+
+.menu-header span {
+  font-size: 13px;
 }
 
 /* Helper text + errors */

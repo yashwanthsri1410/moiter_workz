@@ -325,7 +325,7 @@ export default function CheckersDashboardLayout() {
                       activeTab === "Regulatory" ? "submenu-active" : ""
                     }
                   >
-                    <UserCheck2Icon size={14} /> Employee Approvals
+                    <UserCheck2Icon size={14} /> Employee Approval
                   </button>
                   <button
                     onClick={() => setActiveTab("Product")}

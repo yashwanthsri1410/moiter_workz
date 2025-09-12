@@ -37,3 +37,14 @@ export const barChartColor = [
   "#94a3b8", // gray (inactive)
   "#ef4444", // red (blocked)
 ];
+
+export const channels = ["POS", "ECOM", "QR_Code", "ATM", "Fund_transfer"];
+
+export const options = [
+  "Payment Gateway",
+  "Credit Card",
+  "Debit Card",
+  "Net Banking",
+  "UPI",
+  "Cash",
+];
