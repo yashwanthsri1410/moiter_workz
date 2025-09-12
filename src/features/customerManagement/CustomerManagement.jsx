@@ -100,10 +100,10 @@ const CustomerManagement = () => {
 
       {/* Row 2 */}
       <div className="dashboard-row2-dx91u">
-        <div>
+        <div className="piechart-box-dx91u">
           <PieChart />
         </div>
-        <div>
+        <div className="piechart-box-dx91u">
           <BarChart />
         </div>
       </div>
