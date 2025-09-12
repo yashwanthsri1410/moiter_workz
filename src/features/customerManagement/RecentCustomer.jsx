@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import axios from "axios";
 
 const RecentCustomer = () => {
   const [customers, setCustomers] = useState([]);
@@ -22,30 +23,60 @@ const RecentCustomer = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-  useEffect(() => {
-    fetch("http://192.168.22.247/fes/api/Export/customer_dashboard_export")
-      .then((res) => res.json())
-      .then((data) => {
-        const mapped = data.map((item) => ({
-          id: item.serialNo,
-          name: item.fullName,
-          email: item.email,
-          phone: item.mobileNumber,
-          kyc: item.kycStatus,
-          risk: item.riskCategory,
-          activity: item.lastActivity,
-        }));
-        setCustomers(mapped);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch customers:", err);
-        setLoading(false);
-      });
-  }, []);
+  // useEffect(() => {
+  //   fetch("http://192.168.22.247/fes/api/Export/customer_dashboard_export")
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       const mapped = data.map((item) => ({
+  //         id: item.serialNo,
+  //         name: item.fullName,
+  //         email: item.email,
+  //         phone: item.mobileNumber,
+  //         kyc: item.kycStatus,
+  //         risk: item.riskCategory,
+  //         activity: item.lastActivity,
+  //       }));
+  //       setCustomers(mapped);
+  //       setLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       console.error("Failed to fetch customers:", err);
+  //       setLoading(false);
+  //     });
+  // }, []);
 
   // ✅ Filter customers by search
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const res = await axios.get(
+          `${API_BASE_URL}/fes/api/Export/customer_dashboard_export`
+        );
+        const data = res.data;
+
+        if (Array.isArray(data)) {
+          const mapped = data.map((item) => ({
+            id: item.serialNo,
+            name: item.fullName,
+            email: item.email,
+            phone: item.mobileNumber,
+            kyc: item.kycStatus,
+            risk: item.riskCategory,
+            activity: item.lastActivity,
+          }));
+          setCustomers(mapped);
+        }
+      } catch (err) {
+        console.error("Failed to fetch customers:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCustomers();
+  }, []);
   const filteredCustomers = customers.filter(
     (cust) =>
       cust.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

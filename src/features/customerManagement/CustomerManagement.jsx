@@ -10,8 +10,9 @@ import RecentCustomer from "./RecentCustomer";
 const CustomerManagement = () => {
   const [data, setData] = useState(null);
 
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   useEffect(() => {
-    fetch("http://192.168.22.247/fes/api/Export/customer_dashboard_export")
+    fetch(`${API_BASE_URL}/fes/api/Export/customer_dashboard_export`)
       .then((res) => res.json())
       .then((json) => {
         if (json.length > 0) {
@@ -99,10 +100,10 @@ const CustomerManagement = () => {
 
       {/* Row 2 */}
       <div className="dashboard-row2-dx91u">
-        <div>
+        <div className="piechart-box-dx91u">
           <PieChart />
         </div>
-        <div>
+        <div className="piechart-box-dx91u">
           <BarChart />
         </div>
       </div>

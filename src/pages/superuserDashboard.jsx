@@ -35,6 +35,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Infra from "../features/infra";
 import CustomerManagement from "../features/customerManagement/CustomerManagement";
+import ComplianceKYC from "../features/Compliance&KYC/Compliance&KYC";
+import Productperformance from "../features/productperformance/productperformance";
+import Walletranscation from "../features/Walletoperation/Walletranscation";
 
 export default function DashboardLayout() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -98,10 +101,28 @@ export default function DashboardLayout() {
             <Superuserdasboardcontent />
           </div>
         );
+        case "compliance":
+        return (
+          <div className="content">
+            <ComplianceKYC />
+          </div>
+        );
+        case "productperformance":
+        return (
+          <div className="content">
+            <Productperformance />
+          </div>
+        );
       case "customer":
         return (
           <div className="content">
             <CustomerManagement />
+          </div>
+        );
+      case "wallet":
+        return (
+          <div className="content">
+            <Walletranscation />
           </div>
         );
       case "departments":
@@ -230,14 +251,14 @@ export default function DashboardLayout() {
                     >
                       <Wallet size={14} /> Wallet Operations
                     </button>
-                    <button
+                    {/* <button
                       onClick={() => setActiveTab("transactions")}
                       className={
                         activeTab === "transactions" ? "submenu-active" : ""
                       }
                     >
                       <BarChart2 size={14} /> Transaction Analytics
-                    </button>
+                    </button> */}
                     <button
                       onClick={() => setActiveTab("compliance")}
                       className={
@@ -246,12 +267,12 @@ export default function DashboardLayout() {
                     >
                       <FileCheck size={14} /> Compliance & KYC
                     </button>
-                    <button
+                    {/* <button
                       onClick={() => setActiveTab("risk")}
                       className={activeTab === "risk" ? "submenu-active" : ""}
                     >
                       <Shield size={14} /> Risk Management
-                    </button>
+                    </button> */}
                     <button
                       onClick={() => setActiveTab("productperformance")}
                       className={
@@ -262,28 +283,28 @@ export default function DashboardLayout() {
                     >
                       <Activity size={14} /> Product Performance
                     </button>
-                    <button
+                    {/* <button
                       onClick={() => setActiveTab("partner")}
                       className={
                         activeTab === "partner" ? "submenu-active" : ""
                       }
                     >
                       <Users size={14} /> Partner Management
-                    </button>
-                    <button
+                    </button> */}
+                    {/* <button
                       onClick={() => setActiveTab("reports")}
                       className={
                         activeTab === "reports" ? "submenu-active" : ""
                       }
                     >
                       <FileText size={14} /> Reports & Analytics
-                    </button>
-                    <button
+                    </button> */}
+                    {/* <button
                       onClick={() => setActiveTab("system")}
                       className={activeTab === "system" ? "submenu-active" : ""}
                     >
                       <Settings size={14} /> System Settings
-                    </button>
+                    </button> */}
                     <button
                       onClick={() => setActiveTab("infra")}
                       className={activeTab === "infra" ? "submenu-active" : ""}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../../styles/styles.css";
+import axios from "axios";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,7 +10,6 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import axios from "axios";
 
 ChartJS.register(
   CategoryScale,
@@ -22,7 +21,7 @@ ChartJS.register(
 );
 
 const BarChart = () => {
-  const [chartData, setChartData] = useState(null);
+  const [chartData, setChartData] = useState(null); // null if no data
   const [yAxisConfig, setYAxisConfig] = useState({
     max: 10,
     step: 2,
@@ -31,37 +30,25 @@ const BarChart = () => {
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   // useEffect(() => {
-  //   fetch("http://192.168.22.247/fes/api/Export/onboarded_customers_export")
-  //     .then((res) => res.json())
-  //     .then((data) => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const res = await fetch(
+  //         "http://192.168.22.247/fes/api/Export/wallet-transcation-dashboard"
+  //       );
+  //       if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  //       const data = await res.json();
 
-  //       const monthOrder = [
-  //         "Jan",
-  //         "Feb",
-  //         "Mar",
-  //         "Apr",
-  //         "May",
-  //         "Jun",
-  //         "Jul",
-  //         "Aug",
-  //         "Sep",
-  //         "Oct",
-  //         "Nov",
-  //         "Dec",
-  //       ];
+  //       if (!Array.isArray(data) || data.length === 0) {
+  //         setChartData(null);
+  //         return;
+  //       }
 
-  //       const sortedData = data
-  //         .sort(
-  //           (a, b) =>
-  //             monthOrder.indexOf(a.monthLabel) -
-  //             monthOrder.indexOf(b.monthLabel)
-  //         )
-  //         .slice(-6);
+  //       const labels = data.map((d) => d.dayOfWeek);
+  //       const load = data.map((d) => d.totalLoadAmountMillion);
+  //       const spend = data.map((d) => d.totalUnloadAmountMillion);
 
-  //       const labels = sortedData.map((item) => item.monthLabel);
-  //       const customers = sortedData.map((item) => item.onboardedCustomers);
-
-  //       const maxValue = Math.max(...customers);
+  //       const allValues = [...load, ...spend];
+  //       const maxValue = Math.max(...allValues);
 
   //       const totalTicks = 5;
   //       const rawStep = maxValue / (totalTicks - 1);
@@ -76,56 +63,40 @@ const BarChart = () => {
   //       setChartData({
   //         labels,
   //         datasets: [
-  //           {
-  //             label: "Customers",
-  //             data: customers,
-  //             backgroundColor: "#00D4FF",
-  //           },
+  //           { label: "Load", data: load, backgroundColor: "#00D4FF" },
+  //           { label: "Unload", data: spend, backgroundColor: "#ff5252" },
   //         ],
   //       });
-  //     })
-  //     .catch((err) => {
-  //       console.error("Failed to fetch chart data:", err);
-  //     });
+  //     } catch (error) {
+  //       console.error("Error fetching chart data:", error);
+  //       setChartData(null);
+  //     }
+  //   };
+
+  //   fetchData();
   // }, []);
   useEffect(() => {
-    const fetchOnboardedCustomers = async () => {
+    const fetchChartData = async () => {
       try {
         const res = await axios.get(
-          `${API_BASE_URL}/fes/api/Export/onboarded_customers_export`
+          `${API_BASE_URL}/fes/api/Export/wallet-transcation-dashboard`
         );
         const data = res.data;
 
-        // Define month order for chronological sorting
-        const monthOrder = [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ];
+        if (!Array.isArray(data) || data.length === 0) {
+          setChartData(null); // No data
+          return;
+        }
 
-        // Sort by month and take last 6 months
-        const sortedData = data
-          .sort(
-            (a, b) =>
-              monthOrder.indexOf(a.monthLabel) -
-              monthOrder.indexOf(b.monthLabel)
-          )
-          .slice(-6);
+        // Extract values
+        const labels = data.map((d) => d.dayOfWeek);
+        const load = data.map((d) => d.totalLoadAmountMillion);
+        const spend = data.map((d) => d.totalUnloadAmountMillion);
 
-        const labels = sortedData.map((item) => item.monthLabel);
-        const customers = sortedData.map((item) => item.onboardedCustomers);
+        const allValues = [...load, ...spend];
+        const maxValue = Math.max(...allValues);
 
-        const maxValue = Math.max(...customers);
-
+        // Exactly 5 ticks: 0 + 4 intervals
         const totalTicks = 5;
         const rawStep = maxValue / (totalTicks - 1);
         const step = Math.ceil(rawStep);
@@ -139,20 +110,17 @@ const BarChart = () => {
         setChartData({
           labels,
           datasets: [
-            {
-              label: "Customers",
-              data: customers,
-              backgroundColor: "#00D4FF",
-            },
+            { label: "Load", data: load, backgroundColor: "#00D4FF" },
+            { label: "Unload", data: spend, backgroundColor: "#ff5252" },
           ],
         });
-      } catch (err) {
-        console.error("Failed to fetch chart data:", err);
-        setChartData(null); // optional: reset chart on error
+      } catch (error) {
+        console.error("Error fetching chart data:", error);
+        setChartData(null); // API failure
       }
     };
 
-    fetchOnboardedCustomers();
+    fetchChartData();
   }, []);
   const isVisibleTick = (value) => {
     return yAxisConfig?.ticks?.some((t) => Math.abs(t - value) < 1e-6);
@@ -166,11 +134,11 @@ const BarChart = () => {
       legend: { display: false },
       title: {
         display: true,
-        text: "Customer Onboarding (Last 6 Months)",
+        text: "Daily Load vs Unload (7 Days)",
         color: "#00d4aa",
         font: { size: 14, weight: "200" },
         align: "start",
-        padding: { top: 10, bottom: 20 },
+        padding: { top: 10, bottom: 40 },
       },
       tooltip: {
         enabled: false,
@@ -178,11 +146,9 @@ const BarChart = () => {
           const { chart, tooltip } = context;
           let tooltipEl = document.getElementById("chartjs-tooltip");
 
-          // Create tooltip element if missing
           if (!tooltipEl) {
             tooltipEl = document.createElement("div");
             tooltipEl.id = "chartjs-tooltip";
-            // inline styles (you can move these to CSS if preferred)
             Object.assign(tooltipEl.style, {
               background: "#11161a",
               border: "1px solid #50887dff",
@@ -201,7 +167,7 @@ const BarChart = () => {
             document.body.appendChild(tooltipEl);
           }
 
-          // Hide if no tooltip
+          // Hide tooltip if not visible
           if (tooltip.opacity === 0) {
             tooltipEl.style.opacity = "0";
             tooltipEl.style.left = "-9999px";
@@ -211,53 +177,40 @@ const BarChart = () => {
           // Build tooltip content
           if (tooltip.body) {
             const title = tooltip.title?.[0] ?? "";
-            const value = tooltip.dataPoints?.[0]?.raw ?? "";
+            const load = tooltip.dataPoints[0]?.raw ?? "";
+            const unload = tooltip.dataPoints[1]?.raw ?? "";
+
             tooltipEl.innerHTML = `
         <div style="margin-bottom:6px; font-weight:600; color:#aeb6bd">${title}</div>
-        <div style="color:#00d4aa; font-weight:700">${value} New Customers</div>
+        <div style="color:#00d4aa; font-weight:700">Loaded: ₹${load}M</div>
+        <div style="color:#ff5252; font-weight:700">Unloaded: ₹${unload}M</div>
       `;
           }
 
-          // Force offscreen placement briefly so we can measure dimensions reliably
+          // Force offscreen to measure size
           tooltipEl.style.left = "-9999px";
           tooltipEl.style.top = "0px";
           tooltipEl.style.opacity = "0";
 
-          // Measure tooltip size
           const rect = tooltipEl.getBoundingClientRect();
           const tooltipW = rect.width;
           const tooltipH = rect.height;
 
-          // Compute absolute pixel position for the hovered bar
-          // Prefer tooltip.caretX / caretY, fallback to x-scale pixel for the data index
-          let caretX = tooltip.caretX;
-          let caretY = tooltip.caretY;
-          if (
-            (typeof caretX === "undefined" || typeof caretY === "undefined") &&
-            tooltip.dataPoints?.length
-          ) {
-            const index = tooltip.dataPoints[0].dataIndex;
-            const xScale = chart.scales.x;
-            // getPixelForTick exists for category scale; fallback to 0 if not available
-            if (xScale && typeof xScale.getPixelForTick === "function") {
-              caretX = xScale.getPixelForTick(index);
-              // place vertically near top of chart area (or center)
-              caretY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
-            } else {
-              caretX = 0;
-              caretY = chart.chartArea.top;
-            }
-          }
+          // Compute caret position
+          const caretX =
+            tooltip.caretX ??
+            chart.getDatasetMeta(0).data[tooltip.dataPoints[0].dataIndex].x;
+          const caretY = tooltip.caretY ?? chart.chartArea.top;
 
           const canvasRect = chart.canvas.getBoundingClientRect();
-          const pageX = canvasRect.left + window.pageXOffset + (caretX ?? 0);
-          const pageY = canvasRect.top + window.pageYOffset + (caretY ?? 0);
+          const pageX = canvasRect.left + window.pageXOffset + caretX;
+          const pageY = canvasRect.top + window.pageYOffset + caretY;
 
-          // Default: place tooltip to the RIGHT of the caret
+          // Default position: above and slightly to the right
           let left = pageX + 10;
           let top = pageY - tooltipH - 10;
 
-          // If it would overflow the right edge of viewport, flip to LEFT side
+          // If tooltip would overflow right, flip to left
           const screenWidth = window.innerWidth;
           if (left + tooltipW > screenWidth - 8) {
             left = pageX - tooltipW - 10;
@@ -266,12 +219,9 @@ const BarChart = () => {
           // Clamp to viewport left edge
           if (left < 8) left = 8;
 
-          // If top would go above the viewport, position it below the caret instead
-          if (top < 8) {
-            top = pageY + 10;
-          }
+          // If tooltip goes above viewport, place below the bar
+          if (top < 8) top = pageY + 10;
 
-          // Finally show it
           tooltipEl.style.left = `${Math.round(left)}px`;
           tooltipEl.style.top = `${Math.round(top)}px`;
           tooltipEl.style.opacity = "1";
@@ -292,7 +242,8 @@ const BarChart = () => {
             isVisibleTick(ctx.tick.value) ? "#7C828D" : "transparent",
         },
         ticks: {
-          callback: (value) => (isVisibleTick(value) ? `${value}` : ""),
+          callback: (value) =>
+            isVisibleTick(value) ? `₹${value.toFixed(1)}M` : "",
           color: "#7C828D",
           maxTicksLimit: 5,
           stepSize: yAxisConfig.step,
@@ -358,9 +309,20 @@ const BarChart = () => {
       </span>
     );
   }
-
   return (
-    <div className="corner-box chart-box-a91z">
+    <div
+      className="corner-box"
+      style={{
+        height: "500px",
+        padding: "20px",
+        width: "100",
+        // width: "615px",
+        backgroundColor: "#0d1017",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <span></span>
       <Bar
         data={chartData}

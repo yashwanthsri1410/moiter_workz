@@ -331,7 +331,7 @@ export default function Partnerview({ selectedPartner, setSelectedPartner ,fetch
       </div>
 
       {/* Performance Metrics */}
-      <div className="partner-overview-card partner-overview-secondary">
+      {/* <div className="partner-overview-card partner-overview-secondary">
         <h2 className="partner-overview-title">
           <Users size={18} color="#14B8A6" className="partner-overview-icon" />{" "}
           Performance Metrics
@@ -362,7 +362,7 @@ export default function Partnerview({ selectedPartner, setSelectedPartner ,fetch
             </p>
           </div>
         </div>
-      </div>
+      </div> */}
       {/* Partner Review Actions */}
 
       <div className="product-actions mt-6">

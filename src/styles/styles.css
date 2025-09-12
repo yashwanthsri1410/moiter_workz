@@ -2530,7 +2530,7 @@ textarea.form-input {
   font-weight: 700;
   display: flex;
   align-items: center;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .cards .info-block {
@@ -2936,7 +2936,8 @@ textarea.form-input {
 }
 /* -----------------------------piechart--------------------------------- */
 .chart-box-a91z {
-  width: 97%;
+  width: 100%;
+  max-width: 100%;
   height: 420px;
   /* width: 600px; */
   background: #0d1017;
@@ -2944,6 +2945,40 @@ textarea.form-input {
   border-radius: 10px;
   position: relative;
   box-sizing: border-box;
+}
+.chart-box-a91z {
+  width: 100%;
+  max-width: 100%;
+  height: 420px;
+  background: #0d1017;
+  padding: 18px;
+  border-radius: 10px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Tablet screens */
+@media (max-width: 1024px) {
+  .chart-box-a91z {
+    height: 360px; /* shrink height */
+    padding: 15px; /* smaller padding */
+  }
+}
+
+/* Mobile screens */
+@media (max-width: 768px) {
+  .chart-box-a91z {
+    height: 300px; /* even smaller height */
+    padding: 12px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .chart-box-a91z {
+    height: 240px;
+    padding: 10px;
+  }
 }
 
 /* --------------------------------cards---------------------------------------- */
@@ -3027,7 +3062,9 @@ textarea.form-input {
 .highlight-yellow-dx91u {
   color: #eab308;
 }
-
+.highlight-green-dx91u {
+  color: #30d80e;
+}
 .highlight-red-dx91u {
   color: #ef4444;
 }
@@ -3204,4 +3241,13 @@ textarea.form-input {
 .rc-activity {
   font-size: 13px;
   color: #9ca3af;
+}
+.piechart-box-dx91u {
+  /* width: 600px; */
+  width: 100%;
+  max-width: 100%;
+  height: 420px;
+  display: grid;
+  grid-template-columns: 2fr;
+  gap: 20px;
 }
