@@ -153,7 +153,7 @@ export default function PartnerApproval() {
                                     <th className="table-cell">Partner Status</th>
                                     <th className="table-cell">Status</th>
                                     <th className="table-cell">Remarks</th>
-                                    <th className="table-cell">Partner Accessibility</th>
+                                    {/* <th className="table-cell">Partner Accessibility</th> */}
                                     <th className="table-cell">Actions</th>
                                 </tr>
                             </thead>
@@ -198,7 +198,7 @@ export default function PartnerApproval() {
                                             </span>
                                         </td>
                                         <td className="table-content">{partner.remarks || "-"}</td>
-                                        <td className="table-content">
+                                        {/* <td className="table-content">
                                             <span
                                                 className={`w-[70px] gap-[5px] flex items-center px-2 py-1 rounded text-[10px] leading-none ${partner.portalAccessEnabled ? "checker" : "superuser"
                                                     }`}
@@ -206,7 +206,7 @@ export default function PartnerApproval() {
                                                 <Power className="w-3 h-3" />
                                                 {partner.portalAccessEnabled ? "Enabled" : "Disabled"}
                                             </span>
-                                        </td>
+                                        </td> */}
                                         <td className="table-content">
                                             <button
                                                 className="header-icon-box"

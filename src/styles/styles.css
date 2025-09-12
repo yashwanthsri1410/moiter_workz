@@ -2530,7 +2530,7 @@ textarea.form-input {
   font-weight: 700;
   display: flex;
   align-items: center;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .cards .info-block {
@@ -3027,7 +3027,9 @@ textarea.form-input {
 .highlight-yellow-dx91u {
   color: #eab308;
 }
-
+.highlight-green-dx91u {
+  color: #30d80e;
+}
 .highlight-red-dx91u {
   color: #ef4444;
 }

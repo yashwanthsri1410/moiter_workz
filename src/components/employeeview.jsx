@@ -134,7 +134,7 @@ export default function EmployeeView({
             <div className="info-grid">
               <div className="info-block">
                 <p className="label">Full Name</p>
-                <p className="value">{selectedEmployee?.userName}</p>
+                <p className="value ">{selectedEmployee?.userName}</p>
               </div>
               <div className="info-block">
                 <p className="label">Designation</p>

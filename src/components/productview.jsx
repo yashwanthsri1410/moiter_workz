@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 
-export default function Productview({ selectedProduct, setSelectedProduct,fetchConfigurations }) {
+export default function Productview({ selectedProduct, setSelectedProduct, fetchConfigurations }) {
   const [remarks, setRemarks] = useState("");
   const [currentAction, setCurrentAction] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -110,14 +110,14 @@ export default function Productview({ selectedProduct, setSelectedProduct,fetchC
             <p className="portal-link">
               <span
                 className={`px-2 py-1 rounded text-[10px] ${selectedProduct.programType === "Closed"
-                    ? "checker"
-                    : selectedProduct.programType === "Semi-Closed"
-                      ? "infra"
-                      : selectedProduct.programType === "opened"
-                        ? "superuser"
-                        : selectedProduct.programType === "open"
-                          ? "maker"
-                          : ""
+                  ? "checker"
+                  : selectedProduct.programType === "Semi-Closed"
+                    ? "infra"
+                    : selectedProduct.programType === "Open"
+                      ? "superuser"
+                      : selectedProduct.programType === "Open"
+                        ? "maker"
+                        : ""
                   }`}
               >
                 {selectedProduct.programType}
@@ -126,14 +126,14 @@ export default function Productview({ selectedProduct, setSelectedProduct,fetchC
             <p className="portal-link">
               <span
                 className={`px-2 py-1 rounded text-[10px] ${selectedProduct.status === 0
-                    ? "checker"
-                    : selectedProduct.status === 1
-                      ? "infra"
-                      : selectedProduct.status === 2
-                        ? "superuser"
-                        : selectedProduct.status === 3
-                          ? "maker"
-                          : ""
+                  ? "checker"
+                  : selectedProduct.status === 1
+                    ? "infra"
+                    : selectedProduct.status === 2
+                      ? "superuser"
+                      : selectedProduct.status === 3
+                        ? "maker"
+                        : ""
                   }`}
               >
                 {getStatusLabel(selectedProduct.status)}
@@ -155,48 +155,48 @@ export default function Productview({ selectedProduct, setSelectedProduct,fetchC
         <div className="grid grid-cols-2 gap-6 text-sm text-gray-300">
           <div>
             <p className="mt-3">
-              <strong>ID:</strong> {selectedProduct.productId}
+              <strong className="text-[15px]">ID:</strong> {selectedProduct.productId}
             </p>
             <p className="mt-3">
-              <strong>Name:</strong> {selectedProduct.productName}
+              <strong className="text-[15px]">Name:</strong> {selectedProduct.productName}
             </p>
             <p className="mt-3">
-              <strong>Program:</strong>{" "}
+              <strong className="text-[15px]">Program:</strong>{" "}
               <span
                 className={`px-2 py-1 rounded text-[10px] ${selectedProduct.programType === "Closed"
-                    ? "checker"
-                    : selectedProduct.programType === "Semi-Closed"
-                      ? "infra"
-                      : selectedProduct.programType === "opened"
-                        ? "superuser"
-                        : selectedProduct.programType === "open"
-                          ? "maker"
-                          : ""
+                  ? "checker"
+                  : selectedProduct.programType === "Semi-Closed"
+                    ? "infra"
+                    : selectedProduct.programType === "Open"
+                      ? "superuser"
+                      : selectedProduct.programType === "open"
+                        ? "maker"
+                        : ""
                   }`}
               >
                 {selectedProduct.programType}
               </span>
             </p>
             <p className="mt-3" >
-              <strong>Sub Category:</strong> {selectedProduct.subCategory}
+              <strong className="text-[15px]">Sub Category:</strong> {selectedProduct.subCategory}
             </p>
             <p className="mt-3">
-              <strong>Status:</strong> {statusMap[selectedProduct.status]}
+              <strong className="text-[15px]">Status:</strong> {statusMap[selectedProduct.status]}
             </p>
           </div>
           <div>
             <p className="mt-3">
-              <strong>Currency:</strong> {selectedProduct.currency}
+              <strong className="text-[15px]">Currency:</strong> {selectedProduct.currency}
             </p>
             <p className="mt-3">
-              <strong>Card Type:</strong> {selectedProduct.cardType}
+              <strong className="text-[15px]">Card Type:</strong> {selectedProduct.cardType}
             </p>
             <p className="mt-3">
-              <strong>Validity:</strong> {selectedProduct.minimumValidityDays} -{" "}
+              <strong className="text-[15px]">Validity:</strong> {selectedProduct.minimumValidityDays} -{" "}
               {selectedProduct.maximumValidityDays} days
             </p>
             <p className="mt-3">
-              <strong>Access:</strong>{" "}
+              <strong className="text-[15px]">Access:</strong>{" "}
               {accessMap[selectedProduct.productAccess]}
             </p>
           </div>
@@ -204,10 +204,10 @@ export default function Productview({ selectedProduct, setSelectedProduct,fetchC
 
         {/* Remarks */}
         <div className="mt-4">
-        
-        <p className="mt-3 text-[15px]">
-          <strong>Description:</strong> {selectedProduct.productDescription || "No description available."}
-        </p>
+
+          <p className="mt-3 text-[15px]">
+            <strong className="text-[15px]">Description:</strong> {selectedProduct.productDescription || "No description available."}
+          </p>
         </div>
       </div>
 
@@ -219,22 +219,22 @@ export default function Productview({ selectedProduct, setSelectedProduct,fetchC
         </div>
         <div className="grid grid-cols-3 gap-4 text-sm text-gray-300">
           <p>
-            <strong>Max Balance:</strong> {selectedProduct.maxBalance}
+            <strong className="text-[15px]">Max Balance:</strong> {selectedProduct.maxBalance}
           </p>
           <p>
-            <strong>Max Load:</strong> {selectedProduct.maxLoadAmount}
+            <strong className="text-[15px]">Max Load:</strong> {selectedProduct.maxLoadAmount}
           </p>
           <p>
-            <strong>Daily Spend:</strong> {selectedProduct.dailySpendLimit}
+            <strong className="text-[15px]">Daily Spend:</strong> {selectedProduct.dailySpendLimit}
           </p>
           <p>
-            <strong>Monthly Spend:</strong> {selectedProduct.monthlySpendLimit}
+            <strong className="text-[15px]">Monthly Spend:</strong> {selectedProduct.monthlySpendLimit}
           </p>
           <p>
-            <strong>Refund Limit:</strong> {selectedProduct.refundLimit}
+            <strong className="text-[15px]">Refund Limit:</strong> {selectedProduct.refundLimit}
           </p>
           <p>
-            <strong>Txn/Day:</strong> {selectedProduct.txnCountLimitPerDay}
+            <strong className="text-[15px]">Txn/Day:</strong> {selectedProduct.txnCountLimitPerDay}
           </p>
         </div>
       </div>
@@ -247,26 +247,26 @@ export default function Productview({ selectedProduct, setSelectedProduct,fetchC
         </div>
         <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
           <p>
-            <strong>KYC Required:</strong>{" "}
+            <strong className="text-[15px]">KYC Required:</strong>{" "}
             {formatValue(selectedProduct.kycRequired)}
           </p>
           <p>
-            <strong>KYC Level:</strong> {selectedProduct.kycLevelRequired}
+            <strong className="text-[15px]">KYC Level:</strong> {selectedProduct.kycLevelRequired}
           </p>
           <p>
-            <strong>Aadhaar Required:</strong>{" "}
+            <strong className="text-[15px]">Aadhaar Required:</strong>{" "}
             {formatValue(selectedProduct.aadhaarRequired)}
           </p>
           <p>
-            <strong>PAN Required:</strong>{" "}
+            <strong className="text-[15px]">PAN Required:</strong>{" "}
             {formatValue(selectedProduct.panRequired)}
           </p>
           <p>
-            <strong>AML/CFT:</strong>{" "}
+            <strong className="text-[15px]">AML/CFT:</strong>{" "}
             {formatValue(selectedProduct.amlCftApplicable)}
           </p>
           <p>
-            <strong>PEP Check:</strong>{" "}
+            <strong  className="text-[15px]">PEP Check:</strong>{" "}
             {formatValue(selectedProduct.pepCheckRequired)}
           </p>
         </div>
@@ -284,12 +284,23 @@ export default function Productview({ selectedProduct, setSelectedProduct,fetchC
               key={idx}
               className="px-2 py-1 bg-gray-800 rounded text-xs text-[#00d4aa]"
             >
-              {ch}
+
+              {ch.includes('_') || ch.includes('-') ? (
+                ch
+                  .replace(/[_-]/g, ' ')
+                  .split(' ')
+                  .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                  .join(' ')
+              ) : /^[A-Z]+$/.test(ch) ? (
+                ch
+              ) : (
+                ch.charAt(0).toUpperCase() + ch.slice(1).toLowerCase()
+              )}
             </span>
           ))}
         </div>
         <div className="text-sm text-gray-300">
-          <strong>MCC Codes:</strong>{" "}
+          <strong className="text-[15px]">MCC Codes:</strong>{" "}
           {selectedProduct.allowedMccCodes?.join(", ") || "-"}
         </div>
       </div>
@@ -302,23 +313,23 @@ export default function Productview({ selectedProduct, setSelectedProduct,fetchC
         </div>
         <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
           <p>
-            <strong>Validity Period (Months):</strong>{" "}
+            <strong className="text-[15px]">Validity Period (Months):</strong>{" "}
             {selectedProduct.validityPeriodMonths}
           </p>
           <p>
-            <strong>Auto Renewal:</strong>{" "}
+            <strong className="text-[15px]">Auto Renewal:</strong>{" "}
             {formatValue(selectedProduct.autoRenewal)}
           </p>
           <p>
-            <strong>Expiry Warning Days:</strong>{" "}
+            <strong className="text-[15px]">Expiry Warning Days:</strong>{" "}
             {selectedProduct.expiryWarningDays}
           </p>
           <p>
-            <strong>Dormant Period Days:</strong>{" "}
+            <strong className="text-[15px]">Dormant Period Days:</strong>{" "}
             {selectedProduct.dormantPeriodDays}
           </p>
           <p>
-            <strong>Closure Allowed Post Expiry:</strong>{" "}
+            <strong className="text-[15px]">Closure Allowed Post Expiry:</strong>{" "}
             {formatValue(selectedProduct.closureAllowedPostExpiry)}
           </p>
         </div>
@@ -332,27 +343,27 @@ export default function Productview({ selectedProduct, setSelectedProduct,fetchC
         </div>
         <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
           <p>
-            <strong>Reloadable:</strong>{" "}
+            <strong className="text-[15px]">Reloadable:</strong>{" "}
             {formatValue(selectedProduct.reloadable)}
           </p>
           <p>
-            <strong>Transferable:</strong>{" "}
+            <strong className="text-[15px]">Transferable:</strong>{" "}
             {formatValue(selectedProduct.transferable)}
           </p>
           <p>
-            <strong>Multi Use Allowed:</strong>{" "}
+            <strong className="text-[15px]">Multi Use Allowed:</strong>{" "}
             {formatValue(selectedProduct.multiUseAllowed)}
           </p>
           <p>
-            <strong>Audit Trail:</strong>{" "}
+            <strong className="text-[15px]">Audit Trail:</strong>{" "}
             {formatValue(selectedProduct.auditTrailEnabled)}
           </p>
           <p>
-            <strong>Domestic Transfer:</strong>{" "}
+            <strong className="text-[15px]">Domestic Transfer:</strong>{" "}
             {formatValue(selectedProduct.domesticTransferAllowed)}
           </p>
           <p>
-            <strong>Cross Border Allowed:</strong>{" "}
+            <strong className="text-[15px]">Cross Border Allowed:</strong>{" "}
             {formatValue(selectedProduct.crossBorderAllowed)}
           </p>
         </div>
@@ -366,15 +377,15 @@ export default function Productview({ selectedProduct, setSelectedProduct,fetchC
         </div>
         <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
           <p>
-            <strong>Age:</strong> {selectedProduct.customerAgeMin} -{" "}
+            <strong className="text-[15px]">Age:</strong> {selectedProduct.customerAgeMin} -{" "}
             {selectedProduct.customerAgeMax}
           </p>
           <p>
-            <strong>Customer Types:</strong>{" "}
+            <strong className="text-[15px]">Customer Types:</strong>{" "}
             {selectedProduct.eligibleCustomerTypes?.join(", ")}
           </p>
           <p>
-            <strong>Employment Types:</strong>{" "}
+            <strong className="text-[15px]">Employment Types:</strong>{" "}
             {selectedProduct.employmentTypesAllowed?.join(", ")}
           </p>
         </div>
@@ -471,10 +482,10 @@ export default function Productview({ selectedProduct, setSelectedProduct,fetchC
               </button>
               <button
                 className={`btn-submit ${currentAction === 0
-                    ? "btn-approve-green"
-                    : currentAction === 2
-                      ? "btn-reject-red"
-                      : "btn-recheck-blue"
+                  ? "btn-approve-green"
+                  : currentAction === 2
+                    ? "btn-reject-red"
+                    : "btn-recheck-blue"
                   }`}
                 onClick={submitAction}
               >

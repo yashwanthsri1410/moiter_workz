@@ -35,6 +35,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Infra from "../features/infra";
 import CustomerManagement from "../features/customerManagement/CustomerManagement";
+import ComplianceKYC from "../features/Compliance&KYC/Compliance&KYC";
+import Productperformance from "../features/productperformance/productperformance";
 
 export default function DashboardLayout() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -96,6 +98,18 @@ export default function DashboardLayout() {
         return (
           <div className="content">
             <Superuserdasboardcontent />
+          </div>
+        );
+        case "compliance":
+        return (
+          <div className="content">
+            <ComplianceKYC />
+          </div>
+        );
+        case "productperformance":
+        return (
+          <div className="content">
+            <Productperformance />
           </div>
         );
       case "customer":
