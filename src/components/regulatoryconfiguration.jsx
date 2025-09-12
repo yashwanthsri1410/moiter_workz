@@ -19,7 +19,8 @@ import React, { useEffect, useRef, useState, useMemo } from "react";
 import axios from "axios";
 import usePublicIp from "../hooks/usePublicIp";
 import "../styles/styles.css";
-import { channels, options } from "../constants";
+import { channels, inputStyle, options, transErr } from "../constants";
+import ErrorText from "./reusable/errorText";
 // import { PencilIcon, Plus,SquarePen  } from "lucide-react";
 
 export default function RegulatoryConfig() {
@@ -28,6 +29,7 @@ export default function RegulatoryConfig() {
   const [formOpen, setformOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [search, setSearch] = useState("");
+  const [error, setError] = useState({});
   const editingIdRef = useRef(null); // ✅ initialize ref
   const ip = usePublicIp();
   const username = localStorage.getItem("username") || "system";
@@ -145,18 +147,6 @@ export default function RegulatoryConfig() {
     } catch (err) {
       console.error("Error fetching configurations:", err);
     }
-  };
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: numberFields.includes(name)
-        ? Number(value)
-        : type === "checkbox"
-        ? checked
-        : value,
-    }));
   };
 
   const handleBooleanSelect = (e) => {
@@ -296,6 +286,88 @@ export default function RegulatoryConfig() {
       });
     }
   };
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: numberFields.includes(name)
+        ? Number(value)
+        : type === "checkbox"
+        ? checked
+        : value,
+    }));
+  };
+
+  // Min Balance lower than everything
+  const minBalCheck =
+    form.minBalance < form.dailySpendLimit &&
+    form.minBalance < form.monthlySpendLimit &&
+    form.minBalance < form.cashLoadingLimit &&
+    form.minBalance < form.maxBalance &&
+    form.minBalance < form.maxLoadAmount;
+
+  // Daily Spend Limit will be lower than Monthly Spend Limit
+  const dailySpendCheck = form.dailySpendLimit > form.monthlySpendLimit;
+
+  // Max Balance will be equal  or lesser than cash load
+  const maxBalCheck = form.maxBalance <= form.cashLoadingLimit;
+
+  // Max Load Amount will be equal or lesser than cash load
+  const maxLoadAmtCheck = form.maxLoadAmount <= form.cashLoadingLimit;
+
+  // cash load limit is highest than everything
+  const cashLoadCheck =
+    form.cashLoadingLimit > form.dailySpendLimit &&
+    form.cashLoadingLimit > form.monthlySpendLimit &&
+    form.cashLoadingLimit > form.minBalance &&
+    form.cashLoadingLimit > form.maxBalance &&
+    form.cashLoadingLimit > form.maxLoadAmount;
+
+  const validateTxnLimits = () => {
+    const newErrors = {};
+
+    if (form.maxLoadAmount && form.cashLoadingLimit) {
+      newErrors.maxLoadAmount = maxLoadAmtCheck ? "" : transErr.msg4;
+    }
+
+    if (form.maxBalance && form.cashLoadingLimit) {
+      newErrors.maxBalance = maxBalCheck ? "" : transErr.msg3;
+    }
+
+    if (form.monthlySpendLimit && form.dailySpendLimit) {
+      newErrors.dailySpendLimit = dailySpendCheck ? transErr.msg1 : "";
+    }
+
+    if (
+      form.dailySpendLimit &&
+      form.monthlySpendLimit &&
+      form.cashLoadingLimit &&
+      form.maxBalance &&
+      form.maxLoadAmount &&
+      form.minBalance
+    ) {
+      newErrors.minBalance = minBalCheck ? "" : transErr.msg2;
+      newErrors.cashLoadingLimit = cashLoadCheck ? "" : transErr.msg5;
+    }
+
+    setError(newErrors);
+  };
+
+  useEffect(() => {
+    validateTxnLimits();
+  }, [
+    form,
+    maxLoadAmtCheck,
+    maxBalCheck,
+    dailySpendCheck,
+    minBalCheck,
+    transErr,
+    cashLoadCheck,
+  ]);
+
+  console.log(error);
+
   return (
     <div className="config-forms">
       {/* Header */}
@@ -529,9 +601,10 @@ export default function RegulatoryConfig() {
                   name="cashLoadingLimit"
                   value={form.cashLoadingLimit || ""}
                   onChange={handleChange}
-                  className="form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none"
+                  className={inputStyle}
                   placeholder="Enter amount"
                 />
+                <ErrorText errTxt={error.cashLoadingLimit} />
               </div>
 
               <div className="form-group flex flex-col">
@@ -543,9 +616,10 @@ export default function RegulatoryConfig() {
                   name="dailySpendLimit"
                   value={form.dailySpendLimit || ""}
                   onChange={handleChange}
-                  className="form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none"
+                  className={inputStyle}
                   placeholder="Enter amount"
                 />
+                <ErrorText errTxt={error.dailySpendLimit} />
               </div>
 
               <div className="form-group flex flex-col">
@@ -557,7 +631,7 @@ export default function RegulatoryConfig() {
                   name="monthlySpendLimit"
                   value={form.monthlySpendLimit || ""}
                   onChange={handleChange}
-                  className="form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none"
+                  className={inputStyle}
                   placeholder="Enter amount"
                 />
               </div>
@@ -569,11 +643,12 @@ export default function RegulatoryConfig() {
                 <input
                   type="number"
                   name="minBalance"
-                  value={form.minBalance || 0}
+                  value={form.minBalance || ""}
                   onChange={handleChange}
-                  className="form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none"
+                  className={inputStyle}
                   placeholder="Enter amount"
                 />
+                <ErrorText errTxt={error.minBalance} />
               </div>
 
               <div className="form-group flex flex-col">
@@ -585,9 +660,10 @@ export default function RegulatoryConfig() {
                   name="maxBalance"
                   value={form.maxBalance || ""}
                   onChange={handleChange}
-                  className="form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none"
+                  className={inputStyle}
                   placeholder="Enter amount"
                 />
+                <ErrorText errTxt={error.maxBalance} />
               </div>
 
               <div className="form-group flex flex-col">
@@ -599,9 +675,10 @@ export default function RegulatoryConfig() {
                   name="maxLoadAmount"
                   value={form.maxLoadAmount || ""}
                   onChange={handleChange}
-                  className="form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none"
+                  className={inputStyle}
                   placeholder="Enter amount"
                 />
+                <ErrorText errTxt={error.maxLoadAmount} />
               </div>
             </div>
           </div>
@@ -626,7 +703,7 @@ export default function RegulatoryConfig() {
                                         name="validityPeriodMonths"
                                         value={form.validityPeriodMonths || ""}
                                         onChange={handleChange}
-                                        className="form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none"
+                                        className={inputStyle}
                                         placeholder="Enter months"
                                     />
                                 </div> */}
@@ -640,7 +717,7 @@ export default function RegulatoryConfig() {
                     name="gracePeriodDays"
                     value={form.gracePeriodDays || ""}
                     onChange={handleChange}
-                    className="form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none"
+                    className={inputStyle}
                     placeholder="Enter days"
                   />
                 </div>
@@ -655,7 +732,7 @@ export default function RegulatoryConfig() {
                       name="customerAgeMin"
                       value={form.customerAgeMin || ""}
                       onChange={handleChange}
-                      className="form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none"
+                      className={inputStyle}
                       placeholder="Min age"
                     />
                   </div>
@@ -667,7 +744,7 @@ export default function RegulatoryConfig() {
                                             name="customerAgeMax"
                                             value={form.customerAgeMax || ""}
                                             onChange={handleChange}
-                                            className="form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none"
+                                            className={inputStyle}
                                             placeholder="Max age"
                                         />
                                     </div> */}

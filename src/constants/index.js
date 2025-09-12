@@ -48,3 +48,14 @@ export const options = [
   "UPI",
   "Cash",
 ];
+
+export const transErr = {
+  msg1: "Daily spend limit cannot exceed the monthly spend limit.",
+  msg2: "Minimum balance must be lower than all other limits",
+  msg3: "Max Balance must be equal to or lower than Cash Load Limit.",
+  msg4: "Max Load Amount must be equal to or less than the Cash Load Limit.",
+  msg5: "Cash load balance must be higher than all other limits",
+};
+
+export const inputStyle =
+  "form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none";
