@@ -18,16 +18,16 @@ const KYCReviewQueue = () => {
     const [customers, setCustomers] = useState([]);
     const [loading, setLoading] = useState(true);
 
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     // ✅ Add search + pagination states
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
 
     useEffect(() => {
-        fetch("http://192.168.22.247/fes/api/Export/customer_Kyc_dashboard_export")
+        fetch(`${API_BASE_URL}/fes/api/Export/customer_Kyc_dashboard_export`)
             .then((res) => res.json())
             .then((data) => {
-                console.log(data);
                 const mapped = data.map((item) => ({
                     id: item.serialNo,
                     serialNo: item.serialNo,
@@ -71,7 +71,6 @@ const KYCReviewQueue = () => {
 
     if (loading) return <p>Loading recent customers...</p>;
     if (customers.length === 0) return <p>No customers found.</p>;
-    console.log(paginatedCustomers)
     return (
         <div className="rc-wrapper corner-box mt-[18px]">
             {/* Header with title + search */}

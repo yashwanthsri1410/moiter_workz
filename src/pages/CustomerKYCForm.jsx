@@ -149,7 +149,7 @@ const CustomerKYCForm = () => {
         metadata,
       };
 
-      console.log("Final Payload:", payload);
+      // console.log("Final Payload:", payload);
 
       await axios.post(`${API_BASE_URL}/cs/api/Customer/kyc`, payload, {
         headers: {

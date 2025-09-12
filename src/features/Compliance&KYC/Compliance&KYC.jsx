@@ -37,14 +37,13 @@ const ComplianceKYC = () => {
             <div className="dashboard-row1-dx91u">
                 {/* Total Customers */}
                 <div className="stat-card-dx91u total-customers-dx91u corner-box">
-                    <span></span>
+
                     <div className="card-top-dx91u">
                         <div className="card-header-dx91u">
                             <h3>KYC Pending</h3>
                             <Clock10 className="w-4 h-4 text-[#ffeb00]" />
                         </div>
                     </div>
-
                     <div className="card-bottom-dx91u">
                         <p className="stat-value-dx91u highlight-yellow-dx91u">
                             {data?.kycPendingCount}
@@ -70,7 +69,7 @@ const ComplianceKYC = () => {
 
                 {/* KYC Verified*/}
                 <div className="stat-card-dx91u customer-today-dx91u corner-box">
-                    <span></span>
+
                     <div className="card-header-dx91u">
                         <h3>KYC Verified</h3>
                         <UserCheck className="w-4 h-4 text-[#00ff00fa]" />
@@ -94,7 +93,7 @@ const ComplianceKYC = () => {
 
                 {/* AML Alerts */}
                 <div className="stat-card-dx91u kyc-pending-dx91u corner-box">
-                    <span></span>
+
                     <div className="card-header-dx91u">
                         <h3>AML Alerts</h3>
                         <AlertTriangle className="w-4 h-4  text-[#ff6467]" />
@@ -118,7 +117,7 @@ const ComplianceKYC = () => {
 
                 {/* Compliance Score */}
                 <div className="stat-card-dx91u high-risk-dx91u corner-box">
-                    <span></span>
+
                     <div className="card-header-dx91u">
                         <h3>Compliance Score</h3>
                         <Shield className="w-4 h-4   text-[#00d4aa]" />
@@ -129,6 +128,7 @@ const ComplianceKYC = () => {
                             <span className="text-[#00ff00fa] ">+0.8%  </span>improvement
                         </p>
                     </p>
+              
                     <div>
                         <div className="active-row-dx91u">
                             <p className="stat-percentage-dx91u">Target:67%</p>

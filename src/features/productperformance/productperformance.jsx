@@ -23,7 +23,7 @@ const Productperformance = () => {
 
     //   const { total_customers, active_customers, active_percentage } =
     //     data.customerSummary;
-    console.log(data)
+    // console.log(data)
 
     return (
         <div className="dashboard-container-dx91u">
