@@ -1,0 +1,27 @@
+.dashboard-container-dx91u {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Row 1: single component full width */
+.dashboard-row1-dx91uz {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+/* Row 2: 2 components side by side */
+.dashboard-row2-dx91u {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Row 3: full width */
+.dashboard-row3-dx91u {
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+}

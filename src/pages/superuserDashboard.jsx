@@ -35,6 +35,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Infra from "../features/infra";
 import CustomerManagement from "../features/customerManagement/CustomerManagement";
+import Walletranscation from "../features/Walletoperation/Walletranscation";
 
 export default function DashboardLayout() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -102,6 +103,12 @@ export default function DashboardLayout() {
         return (
           <div className="content">
             <CustomerManagement />
+          </div>
+        );
+      case "wallet":
+        return (
+          <div className="content">
+            <Walletranscation />
           </div>
         );
       case "departments":

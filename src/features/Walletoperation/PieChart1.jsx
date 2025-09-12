@@ -2,93 +2,64 @@ import React, { useEffect, useRef, useState } from "react";
 import "../../styles/styles.css";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import axios from "axios";
-// register required controllers
+
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const PieChart = () => {
+const PieChart1 = () => {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
   const [chartData, setChartData] = useState(null);
+  const [hasData, setHasData] = useState(true);
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-  // useEffect(() => {
-  //   fetch("http://192.168.22.247/fes/api/Export/customer_dashboard_export")
-  //     .then(async (res) => {
-  //       if (!res.ok) {
-  //         const text = await res.text();
-  //         throw new Error(`HTTP ${res.status}: ${text}`);
-  //       }
-  //       return res.json();
-  //     })
-  //     .then((data) => {
-  //       // console.log("✅ API Data:", data);
-  //       if (Array.isArray(data) && data.length > 0) {
-  //         const first = data[0];
-  //         setChartData({
-  //           labels: ["Verified", "Rejected", "Pending"],
-  //           datasets: [
-  //             {
-  //               data: [
-  //                 first.kycVerifiedPct,
-  //                 first.kycRejectedPct,
-  //                 first.kycPendingPct,
-  //               ],
-  //               backgroundColor: ["#00D4FF", "#ef4444", "#F59E0B"],
-  //               borderColor: "#f0f0f0",
-  //               borderWidth: 1,
-  //               radius: "70%",
-  //             },
-  //           ],
-  //         });
-  //       }
-  //     })
-  //     .catch((err) => console.error("🚨 Error fetching API data:", err));
-  // }, []);
   useEffect(() => {
-    const fetchCustomerDashboardChart = async () => {
+    const fetchWalletChartData = async () => {
       try {
         const res = await axios.get(
-          `${API_BASE_URL}/fes/api/Export/customer_dashboard_export`
+          `${API_BASE_URL}/fes/api/Export/user-wallet-cards`
         );
         const data = res.data;
 
         if (Array.isArray(data) && data.length > 0) {
-          const first = data[0];
           setChartData({
-            labels: ["Verified", "Rejected", "Pending"],
+            labels: data.map((item) => item.walletCategory),
             datasets: [
               {
-                data: [
-                  first.kycVerifiedPct,
-                  first.kycRejectedPct,
-                  first.kycPendingPct,
+                data: data.map((item) => item.activeWallets),
+                backgroundColor: [
+                  "#F59E0B",
+                  "#6366F1",
+                  "#EF4444",
+                  "#00D4FF",
+                  "#8B5CF6",
                 ],
-                backgroundColor: ["#00D4FF", "#ef4444", "#F59E0B"],
                 borderColor: "#f0f0f0",
                 borderWidth: 1,
-                radius: "70%",
+                radius: "80%",
               },
             ],
           });
+          setHasData(true);
+        } else {
+          setHasData(false);
         }
       } catch (err) {
-        console.error("🚨 Error fetching API data:", err);
+        console.error("Error fetching wallet chart data:", err);
+        setHasData(false);
       }
     };
 
-    fetchCustomerDashboardChart();
+    fetchWalletChartData();
   }, []);
-  useEffect(() => {
-    if (!chartData) return;
-    const ctx = canvasRef.current.getContext("2d");
 
-    if (chartRef.current) {
-      chartRef.current.destroy(); // ✅ destroy old instance
-    }
+  useEffect(() => {
+    if (!chartData || !hasData) return;
+
+    const ctx = canvasRef.current.getContext("2d");
+    if (chartRef.current) chartRef.current.destroy();
 
     let animationDone = false;
 
-    // leader line plugin
     const leaderLinesPlugin = {
       id: "leaderLines",
       afterDatasetsDraw(chart) {
@@ -129,7 +100,7 @@ const PieChart = () => {
 
           const val = ds.data[i];
           const pct = Math.round((val / total) * 100);
-          const text = `${chart.data.labels[i]} ${val}%`;
+          const text = `${chart.data.labels[i]}(${pct}%)`;
 
           ctx.textAlign = Math.cos(mid) >= 0 ? "left" : "right";
           const pad = 6;
@@ -143,14 +114,13 @@ const PieChart = () => {
       },
     };
 
-    // custom tooltip
     const externalTooltipHandler = (context) => {
       let tooltipEl = document.getElementById("chartjs-tooltip");
       if (!tooltipEl) {
         tooltipEl = document.createElement("div");
         tooltipEl.id = "chartjs-tooltip";
         tooltipEl.style.background = "#11161a";
-        tooltipEl.style.width = "120px";
+        tooltipEl.style.width = "140px";
         tooltipEl.style.border = "1px solid #50887dff";
         tooltipEl.style.borderRadius = "10px";
         tooltipEl.style.color = "white";
@@ -165,7 +135,6 @@ const PieChart = () => {
       }
 
       const tooltipModel = context.tooltip;
-
       if (tooltipModel.opacity === 0) {
         tooltipEl.style.opacity = 0;
         return;
@@ -178,7 +147,7 @@ const PieChart = () => {
 
         tooltipEl.innerHTML = `
           <div style="margin-bottom:5px;">${label}</div>
-          <div style="color:#00d4aa;">${value} customers</div>
+          <div style="color:#00d4aa;">${value} wallets</div>
         `;
       }
 
@@ -214,34 +183,34 @@ const PieChart = () => {
           legend: { display: false },
           title: {
             display: true,
-            text: "Wallet Types Distribution",
+            text: "Active Wallets Distribution",
             color: "#00d4aa",
             font: { size: 14, weight: "200" },
             align: "start",
             padding: { top: 10, bottom: 10 },
           },
-          tooltip: {
-            enabled: false,
-            external: externalTooltipHandler,
-          },
+          tooltip: { enabled: false, external: externalTooltipHandler },
         },
       },
       plugins: [leaderLinesPlugin],
     });
 
-    return () => {
-      if (chartRef.current) {
-        chartRef.current.destroy();
-      }
-    };
-  }, [chartData]);
+    return () => chartRef.current && chartRef.current.destroy();
+  }, [chartData, hasData]);
 
+  if (!hasData) {
+    return (
+      <span style={{ color: "red", fontSize: "18px", fontWeight: "bold" }}>
+        No Data Available
+      </span>
+    );
+  }
   return (
-    <div className="corner-box chart-box-a91z">
+    <div className="corner-box chart-box-a91z ">
       <span></span>
       <canvas ref={canvasRef}></canvas>
     </div>
   );
 };
 
-export default PieChart;
+export default PieChart1;
