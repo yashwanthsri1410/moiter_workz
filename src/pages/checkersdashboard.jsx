@@ -41,6 +41,7 @@ export default function CheckersDashboardLayout() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const handleLogout = async () => {
     setIsLoading(true);
     try {
@@ -70,7 +71,7 @@ export default function CheckersDashboardLayout() {
       };
 
       await axios.post(
-        "http://192.168.22.247/ums/api/UserManagement/user_logout",
+        `${API_BASE_URL}/ums/api/UserManagement/user_logout`,
         payload
       );
 
@@ -192,9 +193,8 @@ export default function CheckersDashboardLayout() {
                   setActiveTab("dashboard");
                   toggleDropdown("dashboard");
                 }}
-                className={`menu-header ${
-                  activeTab === "dashboard" ? "active" : ""
-                }`}
+                className={`menu-header ${activeTab === "dashboard" ? "active" : ""
+                  }`}
               >
                 <LayoutGrid size={16} className="menu-icon" />
                 {!isCollapsed && (
@@ -202,7 +202,7 @@ export default function CheckersDashboardLayout() {
                     <span>Dashboard</span>
                     <span className="arrow-icon">
                       {openDropdown === "dashboard" ||
-                      dashboardTabs.includes(activeTab) ? (
+                        dashboardTabs.includes(activeTab) ? (
                         <ChevronUp size={14} />
                       ) : (
                         <ChevronDown size={14} />
@@ -299,9 +299,8 @@ export default function CheckersDashboardLayout() {
             <div>
               <button
                 onClick={() => toggleDropdown("makerconsole")}
-                className={`menu-header ${
-                  openDropdown === "makerconsole" ? "active" : ""
-                }`}
+                className={`menu-header ${openDropdown === "makerconsole" ? "active" : ""
+                  }`}
               >
                 <ShieldCheck size={16} className="menu-icon" />
                 {!isCollapsed && (

@@ -224,7 +224,7 @@ export default function DashboardLayout() {
                     >
                       <User size={14} /> Customer Management
                     </button>
-                    <button
+                    {/* <button
                       onClick={() => setActiveTab("wallet")}
                       className={activeTab === "wallet" ? "submenu-active" : ""}
                     >
@@ -283,7 +283,7 @@ export default function DashboardLayout() {
                       className={activeTab === "system" ? "submenu-active" : ""}
                     >
                       <Settings size={14} /> System Settings
-                    </button>
+                    </button> */}
                     <button
                       onClick={() => setActiveTab("infra")}
                       className={activeTab === "infra" ? "submenu-active" : ""}
