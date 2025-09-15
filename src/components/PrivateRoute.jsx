@@ -7,7 +7,7 @@ const PrivateRoute = ({ children, allowedUserTypes }) => {
   const userType = parseInt(localStorage.getItem("userType"));
 
   if (!username || !allowedUserTypes.includes(userType)) {
-    return <Navigate to="/Employee-Login" replace />;
+    return <Navigate to="/Login" replace />;
   }
 
   return children;

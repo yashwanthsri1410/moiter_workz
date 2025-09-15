@@ -11,8 +11,8 @@ import CheckersDashboardLayout from "./pages/checkersdashboard";
 function AppRoutes({ setRole }) {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/Employee-Login" />} />
-      <Route path="/Employee-Login" element={<Employeelogin setRole={setRole} />} />
+      <Route path="/" element={<Navigate to="/Login" />} />
+      <Route path="/Login" element={<Employeelogin setRole={setRole} />} />
 
       {/* Protected routes based on userType */}
       

@@ -83,11 +83,11 @@ export default function DashboardLayout() {
       );
 
       localStorage.clear();
-      navigate("/employee-login");
+      navigate("/Login");
     } catch (error) {
       console.error("Logout failed:", error);
       localStorage.clear();
-      navigate("/employee-login");
+      navigate("/Login");
     }
   };
 
