@@ -23,7 +23,7 @@ function App() {
   }, [showAlert]);
 
   return (
-    <Router>
+    <Router basename={"/MW-Prepaid"}>
       <AppRoutes setRole={setRole} />
     </Router>
   );

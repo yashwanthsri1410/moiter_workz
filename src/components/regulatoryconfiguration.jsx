@@ -442,7 +442,7 @@ export default function RegulatoryConfig() {
                 >
                   <option value="">Select</option>
                   <option value="Closed">Closed</option>
-                  <option value="Semi Closed">Semi-Closed</option>
+                  <option value="Semi-Closed">Semi-Closed</option>
                   <option value="Open">Open</option>
                 </select>
               </div>
