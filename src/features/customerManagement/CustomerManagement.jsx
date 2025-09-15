@@ -34,14 +34,13 @@ const CustomerManagement = () => {
       <div className="dashboard-row1-dx91u">
         {/* Total Customers */}
         <div className="stat-card-dx91u total-customers-dx91u corner-box">
-          <span></span>
           <div className="card-top-dx91u">
             <div className="card-header-dx91u">
               <h3>Total Customers</h3>
               <Users className="card-icon-dx91u" />
             </div>
           </div>
-
+          <span></span>
           <div className="card-bottom-dx91u">
             <p className="stat-value-dx91u">
               {total_customers.toLocaleString()}
@@ -65,21 +64,21 @@ const CustomerManagement = () => {
 
         {/* Customer Added Today */}
         <div className="stat-card-dx91u customer-today-dx91u corner-box">
-          <span></span>
           <div className="card-header-dx91u">
             <h3>Customer Added Today</h3>
             <UserPlus className="card-icon-dx91u" />
           </div>
+          <span></span>
           <p className="stat-value-dx91u">{data.customersAddedToday}</p>
         </div>
 
         {/* KYC Pending */}
         <div className="stat-card-dx91u kyc-pending-dx91u corner-box">
-          <span></span>
           <div className="card-header-dx91u">
             <h3>KYC Pending</h3>
             <Clock className="card-icon-dx91u warning-dx91u" />
           </div>
+          <span></span>
           <p className="stat-value-dx91u highlight-yellow-dx91u">
             {data.kycPendingCount.toLocaleString()}
           </p>
@@ -87,11 +86,11 @@ const CustomerManagement = () => {
 
         {/* High Risk */}
         <div className="stat-card-dx91u high-risk-dx91u corner-box">
-          <span></span>
           <div className="card-header-dx91u">
             <h3>High Risk</h3>
             <Shield className="card-icon-dx91u danger-dx91u" />
           </div>
+          <span></span>
           <p className="stat-value-dx91u highlight-red-dx91u">
             {data.highRiskCount.toLocaleString()}
           </p>

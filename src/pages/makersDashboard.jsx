@@ -37,6 +37,10 @@ import CustomerManagement from "../features/customerManagement/CustomerManagemen
 import Walletranscation from "../features/Walletoperation/Walletranscation";
 import ComplianceKYC from "../features/Compliance&KYC/Compliance&KYC";
 import Productperformance from "../features/productperformance/productperformance";
+import RiskManagement from "../features/riskManagement";
+import PartnerMangement from "../features/partnerManagement";
+import ReportsAndAnalytics from "../features/reportsAnalytics";
+import SystemSettings from "../features/systemSettings";
 
 export default function DashboardLayout() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -107,23 +111,35 @@ export default function DashboardLayout() {
           </div>
         );
       case "customer":
-        return <div className="content">    <CustomerManagement /></div>;
+        return (
+          <div className="content">
+            {" "}
+            <CustomerManagement />
+          </div>
+        );
       case "wallet":
-        return <div className="content"> <Walletranscation /></div>;
+        return (
+          <div className="content">
+            {" "}
+            <Walletranscation />
+          </div>
+        );
       case "transactions":
         return <div className="content">📈 Transaction Analytics</div>;
       case "compliance":
-        return <div className="content">  <ComplianceKYC /></div>;
-      case "risk":
-        return <div className="content">🛡️ Risk Management</div>;
+        return (
+          <div className="content">
+            {" "}
+            <ComplianceKYC />
+          </div>
+        );
       case "productperformance":
-        return <div className="content"> <Productperformance /></div>;
-      case "partner":
-        return <div className="content">🤝 Partner Management</div>;
-      case "reports":
-        return <div className="content">📑 Reports & Analytics</div>;
-      case "system":
-        return <div className="content">⚙️ System Settings</div>;
+        return (
+          <div className="content">
+            {" "}
+            <Productperformance />
+          </div>
+        );
       case "infra":
         return (
           <div className="content">
@@ -147,6 +163,30 @@ export default function DashboardLayout() {
         return (
           <div className="content">
             <Partnercreate />
+          </div>
+        );
+      case "partner":
+        return (
+          <div className="content">
+            <PartnerMangement />
+          </div>
+        );
+      case "reports":
+        return (
+          <div className="content">
+            <ReportsAndAnalytics />
+          </div>
+        );
+      case "system":
+        return (
+          <div className="content">
+            <SystemSettings />
+          </div>
+        );
+      case "risk":
+        return (
+          <div className="content">
+            <RiskManagement />
           </div>
         );
       default:
@@ -195,8 +235,9 @@ export default function DashboardLayout() {
                   setActiveTab("dashboard");
                   toggleDropdown("dashboard");
                 }}
-                className={`menu-header ${activeTab === "dashboard" ? "active" : ""
-                  }`}
+                className={`menu-header ${
+                  activeTab === "dashboard" ? "active" : ""
+                }`}
               >
                 <LayoutGrid size={16} className="menu-icon" />
                 {!isCollapsed && (
@@ -204,7 +245,7 @@ export default function DashboardLayout() {
                     <span>Dashboard</span>
                     <span className="arrow-icon">
                       {openDropdown === "dashboard" ||
-                        dashboardTabs.includes(activeTab) ? (
+                      dashboardTabs.includes(activeTab) ? (
                         <ChevronUp size={14} />
                       ) : (
                         <ChevronDown size={14} />
@@ -258,14 +299,14 @@ export default function DashboardLayout() {
                     >
                       <BarChart2 size={14} /> Transaction Analytics
                     </button>
-                    
+                    */}
                     <button
                       onClick={() => setActiveTab("risk")}
                       className={activeTab === "risk" ? "submenu-active" : ""}
                     >
                       <Shield size={14} /> Risk Management
                     </button>
-                  
+
                     <button
                       onClick={() => setActiveTab("partner")}
                       className={
@@ -287,7 +328,7 @@ export default function DashboardLayout() {
                       className={activeTab === "system" ? "submenu-active" : ""}
                     >
                       <Settings size={14} /> System Settings
-                    </button> */}
+                    </button>
                     <button
                       onClick={() => setActiveTab("infra")}
                       className={activeTab === "infra" ? "submenu-active" : ""}
@@ -302,8 +343,9 @@ export default function DashboardLayout() {
             <div>
               <button
                 onClick={() => toggleDropdown("makerconsole")}
-                className={`menu-header ${openDropdown === "makerconsole" ? "active" : ""
-                  }`}
+                className={`menu-header ${
+                  openDropdown === "makerconsole" ? "active" : ""
+                }`}
               >
                 <ShieldCheck size={16} className="menu-icon" />
                 {!isCollapsed && (

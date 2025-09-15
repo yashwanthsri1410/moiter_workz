@@ -107,15 +107,27 @@ export default function CheckersDashboardLayout() {
           </div>
         );
       case "wallet":
-        return <div className="content"> <Walletranscation /></div>;
+        return (
+          <div className="content">
+            {" "}
+            <Walletranscation />
+          </div>
+        );
       case "transactions":
         return <div className="content">📈 Transaction Analytics</div>;
       case "compliance":
-        return <div className="content"><ComplianceKYC /></div>;
-      case "risk":
-        return <div className="content">🛡️ Risk Management</div>;
+        return (
+          <div className="content">
+            <ComplianceKYC />
+          </div>
+        );
       case "productperformance":
-        return <div className="content"> <Productperformance /></div>;
+        return (
+          <div className="content">
+            {" "}
+            <Productperformance />
+          </div>
+        );
       case "partner":
         return <div className="content">🤝 Partner Management</div>;
       case "reports":
@@ -145,6 +157,24 @@ export default function CheckersDashboardLayout() {
         return (
           <div className="content">
             <PartnerApproval />
+          </div>
+        );
+      case "partner":
+        return (
+          <div className="content">
+            <PartnerMangement />
+          </div>
+        );
+      case "system":
+        return (
+          <div className="content">
+            <SystemSettings />
+          </div>
+        );
+      case "risk":
+        return (
+          <div className="content">
+            <RiskManagement />
           </div>
         );
       default:
@@ -194,8 +224,9 @@ export default function CheckersDashboardLayout() {
                   setActiveTab("dashboard");
                   toggleDropdown("dashboard");
                 }}
-                className={`menu-header ${activeTab === "dashboard" ? "active" : ""
-                  }`}
+                className={`menu-header ${
+                  activeTab === "dashboard" ? "active" : ""
+                }`}
               >
                 <LayoutGrid size={16} className="menu-icon" />
                 {!isCollapsed && (
@@ -203,7 +234,7 @@ export default function CheckersDashboardLayout() {
                     <span>Dashboard</span>
                     <span className="arrow-icon">
                       {openDropdown === "dashboard" ||
-                        dashboardTabs.includes(activeTab) ? (
+                      dashboardTabs.includes(activeTab) ? (
                         <ChevronUp size={14} />
                       ) : (
                         <ChevronDown size={14} />
@@ -247,12 +278,12 @@ export default function CheckersDashboardLayout() {
                     >
                       <FileCheck size={14} /> Compliance & KYC
                     </button>
-                    {/* <button
+                    <button
                       onClick={() => setActiveTab("risk")}
                       className={activeTab === "risk" ? "submenu-active" : ""}
                     >
                       <Shield size={14} /> Risk Management
-                    </button> */}
+                    </button>
                     <button
                       onClick={() => setActiveTab("productperformance")}
                       className={
@@ -263,28 +294,28 @@ export default function CheckersDashboardLayout() {
                     >
                       <Activity size={14} /> Product Performance
                     </button>
-                    {/* <button
+                    <button
                       onClick={() => setActiveTab("partner")}
                       className={
                         activeTab === "partner" ? "submenu-active" : ""
                       }
                     >
                       <Users size={14} /> Partner Management
-                    </button> */}
-                    {/* <button
+                    </button>
+                    <button
                       onClick={() => setActiveTab("reports")}
                       className={
                         activeTab === "reports" ? "submenu-active" : ""
                       }
                     >
                       <FileText size={14} /> Reports & Analytics
-                    </button> */}
-                    {/* <button
+                    </button>
+                    <button
                       onClick={() => setActiveTab("system")}
                       className={activeTab === "system" ? "submenu-active" : ""}
                     >
                       <Settings size={14} /> System Settings
-                    </button> */}
+                    </button>
 
                     <button
                       onClick={() => setActiveTab("infra")}
@@ -300,8 +331,9 @@ export default function CheckersDashboardLayout() {
             <div>
               <button
                 onClick={() => toggleDropdown("makerconsole")}
-                className={`menu-header ${openDropdown === "makerconsole" ? "active" : ""
-                  }`}
+                className={`menu-header ${
+                  openDropdown === "makerconsole" ? "active" : ""
+                }`}
               >
                 <ShieldCheck size={16} className="menu-icon" />
                 {!isCollapsed && (
