@@ -369,7 +369,7 @@ export default function Partnercreate() {
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
-      backgroundColor: "transparent", // 🔹 transparent bg
+      backgroundColor: "#11161a", // 🔹 transparent bg
       border: state.isFocused
         ? "2px solid rgba(0, 245, 160, 0.7)" // ✅ apply full border when focused
         : "1px solid rgb(153 255 217 / 40%)",
@@ -410,7 +410,7 @@ export default function Partnercreate() {
     }),
     menu: (provided) => ({
       ...provided,
-      backgroundColor: "#0d1220",
+      backgroundColor: "#0f1114",
       border: "1px solid rgba(20, 184, 166, 0.5)",
       borderRadius: "10px",
       zIndex: 10,
@@ -425,13 +425,16 @@ export default function Partnercreate() {
     option: (provided, state) => ({
       ...provided,
       backgroundColor: state.isSelected
-        ? "rgba(20, 184, 166, 0.3)"
+        ? "#1452A8"
         : state.isFocused
-        ? "#1c2b45"
+        ? "#1452A8"
         : "transparent", // 🔹 transparent instead of solid
-      color: "#d1d5db",
-      fontSize: "13px",
+      color: "#fff",
+      fontSize: "12px",
       cursor: "pointer",
+      ":hover": {
+        backgroundColor: "#1452A8",
+      },
       ":active": {
         backgroundColor: "#14b8a6",
         color: "white",
@@ -439,8 +442,8 @@ export default function Partnercreate() {
     }),
     placeholder: (provided) => ({
       ...provided,
-      color: "#9ca3af",
-      fontSize: "13px",
+      color: "#fff",
+      fontSize: "12px",
     }),
     singleValue: (provided) => ({
       ...provided,
@@ -678,6 +681,7 @@ export default function Partnercreate() {
             <div className="w-1/2 mt-2">
               <Select
                 isMulti
+                closeMenuOnSelect={false}
                 options={options}
                 value={options.filter((opt) =>
                   form.allowedProducts.includes(opt.value)

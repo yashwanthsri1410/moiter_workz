@@ -29,6 +29,7 @@ const OperationsDashboard = () => {
     setProductData,
     setPartnerData,
     setError,
+    error,
     setKycStatusData,
   } = useOperationStore();
   const icons = [
@@ -108,6 +109,14 @@ const OperationsDashboard = () => {
     fetchData();
   }, []);
 
+  if (Object.values(error).every(Boolean)) {
+    return (
+      <h1 className="text-red-500 text-center mt-5">
+        Failed to Load Dashboard datas
+      </h1>
+    );
+  }
+
   return (
     <div className="dashboard-container">
       <div className="dashboard-title">
@@ -117,7 +126,6 @@ const OperationsDashboard = () => {
           performance
         </p>
       </div>
-
       <div className="grid lg:grid-cols-3 gap-6 my-6 items-stretch">
         <LoadedUnLoaded isLoaded={true} />
         <LoadedUnLoaded />
@@ -135,7 +143,6 @@ const OperationsDashboard = () => {
           </div>
         </div>
       </div>
-
       <KYCCompliance />
     </div>
   );

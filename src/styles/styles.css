@@ -280,6 +280,16 @@
   margin-bottom: 10px;
 }
 
+select {
+  border: 1px solid rgb(153 255 217 / 40%) !important;
+  background: #11161a !important;
+}
+
+select:focus {
+  border-color: #34d399 !important;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.5) !important;
+}
+
 .form-group input:focus {
   border-color: #34d399;
   box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.5);
