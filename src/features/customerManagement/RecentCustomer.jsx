@@ -1,53 +1,21 @@
 import React, { useEffect, useState } from "react";
 import "../../styles/styles.css";
-import {
-  Eye,
-  FileText,
-  Search,
-  SquarePen,
-  Save,
-  EyeOff,
-  ArrowLeft,
-  RotateCcw,
-  Check,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Download } from "lucide-react";
 import axios from "axios";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 
 const RecentCustomer = () => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Add search + pagination states
+  // ✅ Search + pagination
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-  // useEffect(() => {
-  //   fetch("http://192.168.22.247/fes/api/Export/customer_dashboard_export")
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       const mapped = data.map((item) => ({
-  //         id: item.serialNo,
-  //         name: item.fullName,
-  //         email: item.email,
-  //         phone: item.mobileNumber,
-  //         kyc: item.kycStatus,
-  //         risk: item.riskCategory,
-  //         activity: item.lastActivity,
-  //       }));
-  //       setCustomers(mapped);
-  //       setLoading(false);
-  //     })
-  //     .catch((err) => {
-  //       console.error("Failed to fetch customers:", err);
-  //       setLoading(false);
-  //     });
-  // }, []);
-
-  // ✅ Filter customers by search
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
@@ -77,6 +45,8 @@ const RecentCustomer = () => {
 
     fetchCustomers();
   }, []);
+
+  // ✅ Filter customers by search
   const filteredCustomers = customers.filter(
     (cust) =>
       cust.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -98,27 +68,120 @@ const RecentCustomer = () => {
     }
   };
 
+  // ✅ Export PDF function
+  const exportPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Recent Customers", 14, 15);
+    autoTable(doc, {
+      startY: 25,
+      head: [
+        [
+          "Customer ID",
+          "Name",
+          "Email",
+          "Phone",
+          "KYC",
+          "Risk",
+          "Last Activity",
+        ],
+      ],
+      body: filteredCustomers.map((cust) => [
+        cust.id,
+        cust.name,
+        cust.email,
+        cust.phone,
+        cust.kyc,
+        cust.risk,
+        cust.activity,
+      ]),
+    });
+    doc.save("recent_customers.pdf");
+  };
+
   if (loading) return <p>Loading recent customers...</p>;
   if (customers.length === 0) return <p>No customers found.</p>;
+  // 🔹 KYC status labels + classes
+  const getKycLabel = (kyc) => {
+    switch (kyc?.toLowerCase()) {
+      case "approved":
+        return "Approved";
+      case "pending":
+        return "Pending";
+      case "rejected":
+        return "Rejected";
+      default:
+        return "Unknown";
+    }
+  };
+
+  const getKycClass = (kyc) => {
+    switch (kyc?.toLowerCase()) {
+      case "approved":
+        return "checker"; // green
+      case "pending":
+        return "infra"; // yellow
+      case "rejected":
+        return "superuser"; // red
+      default:
+        return "maker"; // gray
+    }
+  };
+
+  // 🔹 Risk level labels + classes
+  const getRiskLabel = (risk) => {
+    switch (risk?.toLowerCase()) {
+      case "low":
+        return "Low";
+      case "medium":
+        return "Medium";
+      case "high":
+        return "High";
+      default:
+        return "Unknown";
+    }
+  };
+
+  const getRiskClass = (risk) => {
+    switch (risk?.toLowerCase()) {
+      case "low":
+        return "checker"; // green
+      case "medium":
+        return "infra"; // yellow
+      case "high":
+        return "superuser"; // red
+      default:
+        return "maker"; // gray
+    }
+  };
 
   return (
     <div className="rc-wrapper corner-box mt-[18px]">
-      {/* Header with title + search */}
+      {/* ✅ Header with title + search + export */}
       <div className="rc-header flex justify-between items-center">
         <h3 className="rc-title flex items-center gap-2">Recent Customers</h3>
-        {/* <div className="search-box relative">
-          <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
-          <input
-            type="text"
-            className="search-input pl-8"
-            placeholder="Search customers..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div> */}
+
+        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+          {/* Search */}
+          <div className="search-box relative">
+            <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
+            <input
+              type="text"
+              className="search-input pl-8"
+              placeholder="Search customers..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          {/* Export PDF */}
+          <button className="filter-btn" onClick={exportPDF}>
+            <Download className="filter-icon" />
+            Export PDF
+          </button>
+        </div>
       </div>
 
-      {/* Table wrapper */}
+      {/* Table */}
       <div className="table-wrapper">
         <table className="rc-table w-full text-left">
           <thead className="rc-thead">
@@ -144,18 +207,23 @@ const RecentCustomer = () => {
                   </td>
                   <td>
                     <span
-                      className={`rc-badge rc-kyc-${cust.kyc.toLowerCase()}`}
+                      className={`px-2 py-1 rounded text-[10px] ${getKycClass(
+                        cust.kyc
+                      )}`}
                     >
-                      {cust.kyc}
+                      {getKycLabel(cust.kyc)}
                     </span>
                   </td>
                   <td>
                     <span
-                      className={`rc-badge rc-risk-${cust.risk.toLowerCase()}`}
+                      className={`px-2 py-1 rounded text-[10px] ${getRiskClass(
+                        cust.risk
+                      )}`}
                     >
-                      {cust.risk}
+                      {getRiskLabel(cust.risk)}
                     </span>
                   </td>
+
                   <td className="rc-activity">{cust.activity}</td>
                 </tr>
               ))
@@ -185,19 +253,26 @@ const RecentCustomer = () => {
         </button>
 
         <div className="flex gap-2">
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i}
-              onClick={() => handlePageChange(i + 1)}
-              className={`px-3 py-1 rounded-lg text-sm ${
-                currentPage === i + 1
-                  ? "bg-[#00d4aa] text-black font-bold"
-                  : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
-              }`}
-            >
-              {i + 1}
-            </button>
-          ))}
+          {Array.from({ length: totalPages }, (_, i) => i + 1)
+            .filter(
+              (page) =>
+                page === currentPage ||
+                page === currentPage - 1 ||
+                page === currentPage + 1
+            )
+            .map((page) => (
+              <button
+                key={page}
+                onClick={() => handlePageChange(page)}
+                className={`px-3 py-1 rounded-lg text-sm ${
+                  currentPage === page
+                    ? "bg-[#00d4aa] text-black font-bold"
+                    : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
         </div>
 
         <button
