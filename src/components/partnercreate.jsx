@@ -47,8 +47,45 @@ export default function Partnercreate() {
   const [showProductDropdown, setShowProductDropdown] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [portalOptions, setPortalOptions] = useState([]);
+  const [removedImages, setRemovedImages] = useState({
+    agreementDocument: null,
+    idProofDocument: null,
+    addressProofDocument: null,
+  });
 
   const [constraints, setConstraints] = useState([]);
+
+  const handleRemoveImage = (type) => {
+    setRemovedImages((prev) => ({
+      ...prev,
+      [type]: form[type]  // Save the image before removing
+    }));
+
+    setForm((prev) => ({
+      ...prev,
+      [type]: null  // Remove the image from form state
+    }));
+  };
+
+  const handleUndoImage = (type) => {
+    setForm((prev) => ({
+      ...prev,
+      [type]: removedImages[type]  // Restore the removed image
+    }));
+
+    setRemovedImages((prev) => ({
+      ...prev,
+      [type]: null  // Clear the removed image state
+    }));
+  };
+  const handleFileChange = (file, type) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result.split(",")[1];
+      setForm((prev) => ({ ...prev, [type]: base64 }));
+    };
+    reader.readAsDataURL(file);
+  };
   const toBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -255,13 +292,22 @@ export default function Partnercreate() {
           ? form.allowedProducts.join(",")
           : "",
         portalUrl: form.portalAccessEnabled ? form.portalUrl : 0,
-        agreementDocument: agreementFile ? await toBase64(agreementFile) : "",
-        idProofDocument: idFile ? await toBase64(idFile) : "",
-        addressProofDocument: addressFile ? await toBase64(addressFile) : "",
+        // agreementDocument: agreementFile ? await toBase64(agreementFile) : "",
+        // idProofDocument: idFile ? await toBase64(idFile) : "",
+        // addressProofDocument: addressFile ? await toBase64(addressFile) : "",
         metadata: buildMetadata("admin-user"),
         requestInfo: buildRequestInfo(ip, "admin-user"),
         createdBy: "admin-user",
       };
+      if (agreementFile) {
+        payload.agreementDocument = await toBase64(agreementFile);
+      }
+      if (idFile) {
+        payload.idProofDocument = await toBase64(idFile);
+      }
+      if (addressFile) {
+        payload.addressProofDocument = await toBase64(addressFile);
+      }
 
       // Only keep allowed keys as per schema
       payload = Object.fromEntries(
@@ -427,8 +473,8 @@ export default function Partnercreate() {
       backgroundColor: state.isSelected
         ? "#1452A8"
         : state.isFocused
-        ? "#1452A8"
-        : "transparent", // 🔹 transparent instead of solid
+          ? "#1452A8"
+          : "transparent", // 🔹 transparent instead of solid
       color: "#fff",
       fontSize: "12px",
       cursor: "pointer",
@@ -706,11 +752,10 @@ export default function Partnercreate() {
                 }))
               }
               className={`w-3 h-3 flex items-center justify-center border rounded-sm cursor-pointer
-      ${
-        form.portalAccessEnabled
-          ? "bg-teal-500 border-teal-500"
-          : "bg-[#0d1220] border-teal-700/50"
-      }
+      ${form.portalAccessEnabled
+                  ? "bg-teal-500 border-teal-500"
+                  : "bg-[#0d1220] border-teal-700/50"
+                }
       transition-colors duration-200`}
             >
               {form.portalAccessEnabled && (
@@ -757,76 +802,163 @@ export default function Partnercreate() {
             <h3 className="section-title">Documents</h3>
             <div className="grid grid-cols-3 gap-6 mt-4">
               {/* Agreement */}
-              <div>
-                <label className="text-[#00d4aa] text-[15px]">
-                  Agreement Document
-                </label>
-                <p className="text-[10px] text-gray-400">
-                  (PDF/JPG/PNG, Max 5MB)
-                </p>
-                <div className="file-upload mt-2">
-                  <label className="choose-btn cursor-pointer">
-                    Choose File
-                    <input
-                      type="file"
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      className="hidden"
-                      onChange={(e) => setAgreementFile(e.target.files[0])}
+              <div className="relative">
+                <label className="text-[#00d4aa] text-[15px]">Agreement Document</label>
+                <p className="text-[10px] text-gray-400">(PDF/JPG/PNG, Max 5MB)</p>
+
+                {form.agreementDocument ? (
+                  <div className="mt-2 relative group">
+                    <img
+                      src={`data:image/png;base64,${form.agreementDocument}`}
+                      alt="Agreement Document Preview"
+                      style={{ maxWidth: "100px", cursor: "pointer", border: "1px solid #ccc" }}
+                      onClick={() => setModalImage(`data:image/png;base64,${form.agreementDocument}`)}
                     />
-                  </label>
-                  <span className="file-name">
-                    {agreementFile ? agreementFile.name : "No file chosen"}
-                  </span>
-                </div>
+                    <button
+                      onClick={() => handleRemoveImage("agreementDocument")}
+                      className="absolute top-1 right-1 bg-red-600 text-white rounded px-2 py-0.5 text-xs opacity-0 group-hover:opacity-100 transition"
+                    >
+                      Edit
+                    </button>
+                  </div>
+                ) : (
+                  <div className="mt-2 space-y-2">
+                    {removedImages.agreementDocument && (
+                      <button
+                        onClick={() => handleUndoImage("agreementDocument")}
+                        className="bg-yellow-500 text-white rounded px-3 py-1 text-xs"
+                      >
+                        Undo
+                      </button>
+                    )}
+                    <div className="file-upload">
+                      <label className="choose-btn cursor-pointer bg-gray-800 text-white px-3 py-1 rounded">
+                        Choose File
+                        <input
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            setAgreementFile(file);
+                            handleFileChange(file, "agreementDocument");
+                          }}
+                        />
+                      </label>
+                      <span className="file-name ml-2 text-sm text-gray-300">
+                        {agreementFile ? agreementFile.name : "No file chosen"}
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
+
 
               {/* ID Proof */}
-              <div>
-                <label className="text-[#00d4aa] text-[15px]">
-                  ID Proof Document
-                </label>
-                <p className="text-[10px] text-gray-400">
-                  (PDF/JPG/PNG, Max 2MB)
-                </p>
-                <div className="file-upload mt-2">
-                  <label className="choose-btn cursor-pointer">
-                    Choose File
-                    <input
-                      type="file"
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      className="hidden"
-                      onChange={(e) => setIdFile(e.target.files[0])}
+              <div className="relative">
+                <label className="text-[#00d4aa] text-[15px]">ID Proof Document</label>
+                <p className="text-[10px] text-gray-400">(PDF/JPG/PNG, Max 2MB)</p>
+
+                {form.idProofDocument ? (
+                  <div className="mt-2 relative group">
+                    <img
+                      src={`data:image/png;base64,${form.idProofDocument}`}
+                      alt="ID Proof Document Preview"
+                      style={{ maxWidth: "100px", cursor: "pointer", border: "1px solid #ccc" }}
+                      onClick={() => setModalImage(`data:image/png;base64,${form.idProofDocument}`)}
                     />
-                  </label>
-                  <span className="file-name">
-                    {idFile ? idFile.name : "No file chosen"}
-                  </span>
-                </div>
+                    <button
+                      onClick={() => handleRemoveImage("idProofDocument")}
+                      className="absolute top-1 right-1 bg-red-600 text-white rounded px-2 py-0.5 text-xs opacity-0 group-hover:opacity-100 transition"
+                    >
+                      Edit
+                    </button>
+                  </div>
+                ) : (
+                  <div className="mt-2 space-y-2">
+                    {removedImages.idProofDocument && (
+                      <button
+                        onClick={() => handleUndoImage("idProofDocument")}
+                        className="bg-yellow-500 text-white rounded px-3 py-1 text-xs"
+                      >
+                        Undo
+                      </button>
+                    )}
+                    <div className="file-upload">
+                      <label className="choose-btn cursor-pointer bg-gray-800 text-white px-3 py-1 rounded">
+                        Choose File
+                        <input
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            setIdFile(file);
+                            handleFileChange(file, "idProofDocument");
+                          }}
+                        />
+                      </label>
+                      <span className="file-name ml-2 text-sm text-gray-300">
+                        {idFile ? idFile.name : "No file chosen"}
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
 
+
               {/* Address Proof */}
-              <div>
-                <label className="text-[#00d4aa] text-[15px]">
-                  Address Proof Document
-                </label>
-                <p className="text-[10px] text-gray-400">
-                  (PDF/JPG/PNG, Max 2MB)
-                </p>
-                <div className="file-upload mt-2">
-                  <label className="choose-btn cursor-pointer">
-                    Choose File
-                    <input
-                      type="file"
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      className="hidden"
-                      onChange={(e) => setAddressFile(e.target.files[0])}
+              <div className="relative">
+                <label className="text-[#00d4aa] text-[15px]">Address Proof Document</label>
+                <p className="text-[10px] text-gray-400">(PDF/JPG/PNG, Max 2MB)</p>
+
+                {form.addressProofDocument ? (
+                  <div className="mt-2 relative group">
+                    <img
+                      src={`data:image/png;base64,${form.addressProofDocument}`}
+                      alt="Address Proof Document Preview"
+                      style={{ maxWidth: "100px", cursor: "pointer", border: "1px solid #ccc" }}
+                      onClick={() => setModalImage(`data:image/png;base64,${form.addressProofDocument}`)}
                     />
-                  </label>
-                  <span className="file-name">
-                    {addressFile ? addressFile.name : "No file chosen"}
-                  </span>
-                </div>
+                    <button
+                      onClick={() => handleRemoveImage("addressProofDocument")}
+                      className="absolute top-1 right-1 bg-red-600 text-white rounded px-2 py-0.5 text-xs opacity-0 group-hover:opacity-100 transition"
+                    >
+                      Edit
+                    </button>
+                  </div>
+                ) : (
+                  <div className="mt-2 space-y-2">
+                    {removedImages.addressProofDocument && (
+                      <button
+                        onClick={() => handleUndoImage("addressProofDocument")}
+                        className="bg-yellow-500 text-white rounded px-3 py-1 text-xs"
+                      >
+                        Undo
+                      </button>
+                    )}
+                    <div className="file-upload">
+                      <label className="choose-btn cursor-pointer bg-gray-800 text-white px-3 py-1 rounded">
+                        Choose File
+                        <input
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            setAddressFile(file);
+                            handleFileChange(file, "addressProofDocument");
+                          }}
+                        />
+                      </label>
+                      <span className="file-name ml-2 text-sm text-gray-300">
+                        {addressFile ? addressFile.name : "No file chosen"}
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
+
             </div>
           </div>
           {/* Advanced Configuration Section */}
@@ -1116,14 +1248,14 @@ export default function Partnercreate() {
                 {currentPartners.map((partner, index) => (
                   <tr key={index} className="table-row">
                     <td className="table-cell-name max-w-[100px]">
-                      <p class="truncate" title={partner.partnerName}>
+                      <p className="truncate" title={partner.partnerName}>
                         {partner.partnerName}
                       </p>
                     </td>
                     <td className="p-3">{partner.partnerType}</td>
                     <td className="p-3 max-w-[100px]">
                       <p
-                        class="truncate"
+                        className ="truncate"
                         title={`${partner.contactName} ${partner.contactPhone}`}
                       >
                         {partner.contactName} {partner.contactPhone}
@@ -1131,26 +1263,24 @@ export default function Partnercreate() {
                     </td>
                     <td className="p-3">
                       <span
-                        className={`px-2 py-1 rounded text-[10px] ${
-                          partner.partnerStatus === "Active"
-                            ? "checker"
-                            : partner.partnerStatus === "Onboarded"
+                        className={`px-2 py-1 rounded text-[10px] ${partner.partnerStatus === "Active"
+                          ? "checker"
+                          : partner.partnerStatus === "Onboarded"
                             ? "maker"
                             : partner.partnerStatus === "Inactive"
-                            ? "superuser"
-                            : ""
-                        }`}
+                              ? "superuser"
+                              : ""
+                          }`}
                       >
                         {partner.partnerStatus}
                       </span>
                     </td>
                     <td className="p-3">
                       <span
-                        className={`px-2 py-1 rounded text-[10px] ${
-                          partner.kycStatus === "Verified"
-                            ? "checker"
-                            : "superuser"
-                        }`}
+                        className={`px-2 py-1 rounded text-[10px] ${partner.kycStatus === "Verified"
+                          ? "checker"
+                          : "superuser"
+                          }`}
                       >
                         {partner.kycStatus}
                       </span>
@@ -1217,11 +1347,10 @@ export default function Partnercreate() {
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
-                currentPage === 1
-                  ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                  : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
-              }`}
+              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${currentPage === 1
+                ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
+                : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
+                }`}
             >
               <ChevronLeft className="w-4 h-4" /> Prev
             </button>
@@ -1231,11 +1360,10 @@ export default function Partnercreate() {
                 <button
                   key={i}
                   onClick={() => handlePageChange(i + 1)}
-                  className={`px-3 py-1 rounded-lg text-sm ${
-                    currentPage === i + 1
-                      ? "bg-[#00d4aa] text-black font-bold"
-                      : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
-                  }`}
+                  className={`px-3 py-1 rounded-lg text-sm ${currentPage === i + 1
+                    ? "bg-[#00d4aa] text-black font-bold"
+                    : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
+                    }`}
                 >
                   {i + 1}
                 </button>
@@ -1245,11 +1373,10 @@ export default function Partnercreate() {
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
-                currentPage === totalPages
-                  ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                  : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
-              }`}
+              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${currentPage === totalPages
+                ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
+                : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
+                }`}
             >
               Next <ChevronRight className="w-4 h-4" />
             </button>
