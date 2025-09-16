@@ -31,11 +31,15 @@ import ProductApproval from "../components/productapproval";
 import EmployeeApproval from "../components/employeeapproval";
 import Maincheckerdashboard from "../components/maincheckerdashboard";
 import PartnerApproval from "../components/partnerapproval";
+import RiskManagement from "../features/riskManagement";
 import Infra from "../features/infra";
 import CustomerManagement from "../features/customerManagement/CustomerManagement";
 import ComplianceKYC from "../features/Compliance&KYC/Compliance&KYC";
 import Walletranscation from "../features/Walletoperation/Walletranscation";
 import Productperformance from "../features/productperformance/productperformance";
+import PartnerMangement from "../features/partnerManagement";
+import SystemSettings from "../features/systemSettings";
+import ReportsAndAnalytics from "../features/reportsAnalytics";
 
 export default function CheckersDashboardLayout() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -128,12 +132,6 @@ export default function CheckersDashboardLayout() {
             <Productperformance />
           </div>
         );
-      case "partner":
-        return <div className="content">🤝 Partner Management</div>;
-      case "reports":
-        return <div className="content">📑 Reports & Analytics</div>;
-      case "system":
-        return <div className="content">⚙️ System Settings</div>;
       case "infra":
         return (
           <div className="content">
@@ -163,6 +161,12 @@ export default function CheckersDashboardLayout() {
         return (
           <div className="content">
             <PartnerMangement />
+          </div>
+        );
+      case "reports":
+        return (
+          <div className="content">
+            <ReportsAndAnalytics />
           </div>
         );
       case "system":

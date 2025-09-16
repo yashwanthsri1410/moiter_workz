@@ -3,6 +3,7 @@ import "../../styles/styles.css";
 import { ShieldAlert, TrendingUp, TriangleAlert, Users } from "lucide-react";
 import "../../styles/styles.css";
 import axios from "axios";
+import StatCards from "../../components/reusable/statCards";
 const RiskManagement = () => {
   const [riskData, setRiskData] = useState({});
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -57,33 +58,7 @@ const RiskManagement = () => {
   }, []);
   return (
     <div className="mx-5">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-5">
-        {stats.map(
-          (
-            { title, value, subValue, desc, icon: Icon, color, subColor },
-            i
-          ) => (
-            <div
-              key={i}
-              className="stat-card-dx91u corner-box p-4 shadow-md rounded-lg"
-            >
-              <div className="card-header-dx91u flex items-center justify-between mb-2">
-                <h3>{title}</h3>
-                <Icon className="w-4 h-4" style={{ color }} />
-              </div>
-              <div className="[line-height:23px]">
-                <p className="text-[25px]" style={{ color }}>
-                  {value?.toLocaleString("en-IN")}
-                </p>
-                <span className="text-[11px]" style={{ color: subColor }}>
-                  {subValue}
-                </span>
-                <span className="text-[#94a3b8] text-[11px]"> {desc}</span>
-              </div>
-            </div>
-          )
-        )}
-      </div>
+      <StatCards stats={stats} />
       <div className="stat-card-dx91u corner-box p-2 shadow-md rounded-lg mt-5">
         {/* Header */}
         <h2 className="text-[#00d4aa] text-sm">Risk Management Dashboard</h2>
