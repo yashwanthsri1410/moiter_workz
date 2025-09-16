@@ -34,7 +34,17 @@ const RecentCustomer = () => {
             risk: item.riskCategory,
             activity: item.lastActivity,
           }));
-          setCustomers(mapped);
+          const removedDuplicates = mapped?.filter(
+            (obj, index, self) =>
+              index ===
+              self.findIndex(
+                (t) =>
+                  t.name === obj.name &&
+                  t.email === obj.email &&
+                  t.phone === obj.phone
+              )
+          );
+          setCustomers(removedDuplicates);
         }
       } catch (err) {
         console.error("Failed to fetch customers:", err);
@@ -140,6 +150,8 @@ const RecentCustomer = () => {
         return "Unknown";
     }
   };
+
+  console.log(customers);
 
   const getRiskClass = (risk) => {
     switch (risk?.toLowerCase()) {

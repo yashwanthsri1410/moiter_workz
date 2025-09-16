@@ -1115,10 +1115,19 @@ export default function Partnercreate() {
               <tbody>
                 {currentPartners.map((partner, index) => (
                   <tr key={index} className="table-row">
-                    <td className="table-cell-name">{partner.partnerName}</td>
+                    <td className="table-cell-name max-w-[100px]">
+                      <p class="truncate" title={partner.partnerName}>
+                        {partner.partnerName}
+                      </p>
+                    </td>
                     <td className="p-3">{partner.partnerType}</td>
-                    <td className="p-3">
-                      {partner.contactName} ({partner.contactPhone})
+                    <td className="p-3 max-w-[100px]">
+                      <p
+                        class="truncate"
+                        title={`${partner.contactName} ${partner.contactPhone}`}
+                      >
+                        {partner.contactName} {partner.contactPhone}
+                      </p>
                     </td>
                     <td className="p-3">
                       <span

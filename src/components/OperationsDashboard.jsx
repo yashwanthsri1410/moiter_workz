@@ -109,6 +109,10 @@ const OperationsDashboard = () => {
     fetchData();
   }, []);
 
+  if (Object.values(error).length === 0) {
+    return null;
+  }
+
   if (Object.values(error).every(Boolean)) {
     return (
       <h1 className="text-red-500 text-center mt-5">
@@ -116,6 +120,8 @@ const OperationsDashboard = () => {
       </h1>
     );
   }
+
+  console.log(error);
 
   return (
     <div className="dashboard-container">
