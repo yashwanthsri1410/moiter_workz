@@ -53,6 +53,7 @@ export default function Partnercreate() {
     addressProofDocument: null,
   });
 
+  const [modalImage, setModalImage] = useState(null);
   const [constraints, setConstraints] = useState([]);
 
   const handleRemoveImage = (type) => {
@@ -958,7 +959,14 @@ export default function Partnercreate() {
                   </div>
                 )}
               </div>
-
+              {modalImage && (
+                <div
+                  className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+                  onClick={() => setModalImage(null)}
+                >
+                  <img src={modalImage} alt="Zoomed Document" className="max-w-full max-h-full" />
+                </div>
+              )}
             </div>
           </div>
           {/* Advanced Configuration Section */}
@@ -1255,7 +1263,7 @@ export default function Partnercreate() {
                     <td className="p-3">{partner.partnerType}</td>
                     <td className="p-3 max-w-[100px]">
                       <p
-                        className ="truncate"
+                        className="truncate"
                         title={`${partner.contactName} ${partner.contactPhone}`}
                       >
                         {partner.contactName} {partner.contactPhone}
