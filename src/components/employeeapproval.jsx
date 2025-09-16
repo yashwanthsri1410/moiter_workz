@@ -254,7 +254,7 @@ export default function EmployeeApproval() {
                         colSpan="9"
                         className="text-center py-4 text-gray-500"
                       >
-                        No employees found.
+                        No employees found for Approval.
                       </td>
                     </tr>
                   )}

@@ -1,6 +1,6 @@
 import {
   Eye,
-  FileText,
+  PackagePlus,
   Search,
   SquarePen,
   Save,
@@ -508,7 +508,7 @@ export default function Productcreate() {
         <div className="card-header-left">
           <div className="flex items-center gap-[10px]">
             <div className="header-icon-box">
-              <FileText className="text-[#00d4aa] w-4 h-4" />
+              <PackagePlus className="text-[#00d4aa] w-4 h-4" />
             </div>
           </div>
           <div>
@@ -550,7 +550,7 @@ export default function Productcreate() {
         <form onSubmit={handleSubmit} className="department-form mt-[18px]">
           <div className="page-header">
             <h2 className="form-title flex ">
-              <FileText className="text-[#00d4aa] w-5 h-5 mr-[10px]" />
+              <PackagePlus className="text-[#00d4aa] w-5 h-5 mr-[10px]" />
               {editingId
                 ? "Update Product Configuration"
                 : "Create Product Configuration"}
@@ -1025,7 +1025,7 @@ export default function Productcreate() {
       <div className="table-card mt-[18px]">
         <div className="table-header">
           <p className="table-title">
-            <FileText className="w-5 h-5" />
+            <PackagePlus className="w-5 h-5" />
             Existing product Configurations
           </p>
           {/* Search bar */}

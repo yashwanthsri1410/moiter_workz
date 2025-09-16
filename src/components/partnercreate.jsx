@@ -1,5 +1,5 @@
-import { Building2, Eye, File, FileText, Search, SquarePen, Save, SaveAll, EyeClosed, EyeOff, ArrowLeft, RotateCcw, Check, CalculatorIcon, X, Lock, SaveIcon, ChevronLeft, ChevronRight } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import { Eye, Search, SquarePen, Save, EyeOff, ArrowLeft, RotateCcw, Check, CalculatorIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import usePublicIp from "../hooks/usePublicIp";
 import "../styles/styles.css"
@@ -20,8 +20,12 @@ export default function Partnercreate() {
     const [showProductDropdown, setShowProductDropdown] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [portalOptions, setPortalOptions] = useState([]);
-
     const [constraints, setConstraints] = useState([]);
+    const [removedImages, setRemovedImages] = useState({
+        agreementDocument: null,
+        idProofDocument: null,
+        addressProofDocument: null,
+    });
     const toBase64 = (file) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -30,18 +34,6 @@ export default function Partnercreate() {
             reader.onerror = (error) => reject(error);
         });
     };
-    const reverseBase64String = (base64String) => {
-        if (!base64String) return "";
-        try {
-            const binaryString = atob(base64String);
-            const reversed = binaryString.split("").reverse().join("");
-            return btoa(reversed);
-        } catch (error) {
-            console.error("Error reversing base64 data:", error);
-            return base64String;
-        }
-    };
-
 
 
     const [editingId, setEditingId] = useState(null);
@@ -228,14 +220,22 @@ export default function Partnercreate() {
                     ? form.allowedProducts.join(",")
                     : "",
                 portalUrl: form.portalAccessEnabled ? form.portalUrl : 0,
-                agreementDocument: agreementFile ? await toBase64(agreementFile) : "",
-                idProofDocument: idFile ? await toBase64(idFile) : "",
-                addressProofDocument: addressFile ? await toBase64(addressFile) : "",
+                // agreementDocument: agreementFile ? await toBase64(agreementFile) : "",
+                // idProofDocument: idFile ? await toBase64(idFile) : "",
+                // addressProofDocument: addressFile ? await toBase64(addressFile) : "",
                 metadata: buildMetadata("admin-user"),
                 requestInfo: buildRequestInfo(ip, "admin-user"),
                 createdBy: "admin-user",
             };
-
+            if (agreementFile) {
+                payload.agreementDocument = await toBase64(agreementFile);
+            }
+            if (idFile) {
+                payload.idProofDocument = await toBase64(idFile);
+            }
+            if (addressFile) {
+                payload.addressProofDocument = await toBase64(addressFile);
+            }
             // Only keep allowed keys as per schema
             payload = Object.fromEntries(
                 Object.entries(payload).filter(([key]) => schemaKeys.includes(key))
@@ -294,9 +294,6 @@ export default function Partnercreate() {
             ...partner,
             portalUrl: partner.portalUrl || 0,
             allowedProducts: partner.allowedProducts ? partner.allowedProducts.split(",") : [],
-            agreementDocumentReversed: reverseBase64String(partner.agreementDocumentBase64),
-            idProofDocumentReversed: reverseBase64String(partner.idProofDocumentBase64),
-            addressProofDocumentReversed: reverseBase64String(partner.addressProofDocumentBase64),
         });
         setAgreementFile(null);
         setIdFile(null);
@@ -312,6 +309,44 @@ export default function Partnercreate() {
     const getConstraintOptions = (constraints, title) => {
         return constraints.find(c => c.title === title)?.options || [];
     };
+    const [modalImage, setModalImage] = useState(null);
+
+    const handleFileChange = (file, type) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const base64 = reader.result.split(",")[1];
+            setForm((prev) => ({ ...prev, [type]: base64 }));
+        };
+        reader.readAsDataURL(file);
+    };
+    const handleUndoImage = (type) => {
+        setForm((prev) => ({
+            ...prev,
+            [type]: removedImages[type]   // Restore the image from removedImages
+        }));
+
+        setRemovedImages((prev) => ({
+            ...prev,
+            [type]: null   // Clear the removed image after restoring
+        }));
+    };
+    const handleRemoveImage = (type) => {
+        setRemovedImages((prev) => ({
+            ...prev,
+            [type]: form[type]   // Save the current image before removing
+        }));
+
+        setForm((prev) => ({
+            ...prev,
+            [type]: null   // Remove the image from form state
+        }));
+
+        if (type === "agreementDocument") setAgreementFile(null);
+        if (type === "idProofDocument") setIdFile(null);
+        if (type === "addressProofDocument") setAddressFile(null);
+    };
+
+    // console.log(form)
     return (
         <div className="config-forms">
             {/* Header */}
@@ -578,66 +613,177 @@ export default function Partnercreate() {
                     <div className="documents-section mt-8">
                         <h3 className="section-title">Documents</h3>
                         <div className="grid grid-cols-3 gap-6 mt-4">
-                            {/* Agreement */}
-                            <div>
+
+                            {/* Agreement Document */}
+                            <div className="relative">
                                 <label className="text-[#00d4aa] text-[15px]">Agreement Document</label>
                                 <p className="text-[10px] text-gray-400">(PDF/JPG/PNG, Max 5MB)</p>
-                                <div className="file-upload mt-2">
-                                    <label className="choose-btn cursor-pointer">
-                                        Choose File
-                                        <input
-                                            type="file"
-                                            accept=".pdf,.jpg,.jpeg,.png"
-                                            className="hidden"
-                                            onChange={(e) => setAgreementFile(e.target.files[0])}
+
+                                {/* If image exists */}
+                                {form.agreementDocument ? (
+                                    <div className="mt-2 relative group">
+                                        <img
+                                            src={`data:image/png;base64,${form.agreementDocument}`}
+                                            alt="Agreement Document Preview"
+                                            style={{ maxWidth: "200px", cursor: "pointer", border: "1px solid #ccc" }}
+                                            onClick={() => setModalImage(`data:image/png;base64,${form.agreementDocument}`)}
                                         />
-                                    </label>
-                                    <span className="file-name">
-                                        {agreementFile ? agreementFile.name : "No file chosen"}
-                                    </span>
-                                </div>
+                                        <button
+                                            onClick={() => handleRemoveImage("agreementDocument")}
+                                            className="absolute top-1 right-1 bg-red-600 text-white rounded px-2 py-0.5 text-xs opacity-0 group-hover:opacity-100 transition"
+                                        >
+                                            Remove
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="mt-2 space-y-2">
+                                        {removedImages.agreementDocument && (
+                                            <button
+                                                onClick={() => handleUndoImage("agreementDocument")}
+                                                className="bg-yellow-500 text-white rounded px-3 py-1 text-xs"
+                                            >
+                                                Undo
+                                            </button>
+                                        )}
+                                        <div className="file-upload">
+                                            <label className="choose-btn cursor-pointer bg-gray-800 text-white px-3 py-1 rounded">
+                                                Choose File
+                                                <input
+                                                    type="file"
+                                                    accept=".pdf,.jpg,.jpeg,.png"
+                                                    className="hidden"
+                                                    onChange={(e) => {
+                                                        const file = e.target.files[0];
+                                                        setAgreementFile(file);
+                                                        handleFileChange(file, "agreementDocument");
+                                                    }}
+                                                />
+                                            </label>
+                                            <span className="file-name ml-2 text-sm text-gray-300">
+                                                {agreementFile ? agreementFile.name : "No file chosen"}
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
-                            {/* ID Proof */}
-                            <div>
+
+                            {/* ID Proof Document */}
+                            <div className="relative">
                                 <label className="text-[#00d4aa] text-[15px]">ID Proof Document</label>
                                 <p className="text-[10px] text-gray-400">(PDF/JPG/PNG, Max 2MB)</p>
-                                <div className="file-upload mt-2">
-                                    <label className="choose-btn cursor-pointer">
-                                        Choose File
-                                        <input
-                                            type="file"
-                                            accept=".pdf,.jpg,.jpeg,.png"
-                                            className="hidden"
-                                            onChange={(e) => setIdFile(e.target.files[0])}
+
+                                {form.idProofDocument ? (
+                                    <div className="mt-2 relative group">
+                                        <img
+                                            src={`data:image/png;base64,${form.idProofDocument}`}
+                                            alt="ID Proof Document Preview"
+                                            style={{ maxWidth: "200px", cursor: "pointer", border: "1px solid #ccc" }}
+                                            onClick={() => setModalImage(`data:image/png;base64,${form.idProofDocument}`)}
                                         />
-                                    </label>
-                                    <span className="file-name">
-                                        {idFile ? idFile.name : "No file chosen"}
-                                    </span>
-                                </div>
+                                        <button
+                                            onClick={() => handleRemoveImage("idProofDocument")}
+                                            className="absolute top-1 right-1 bg-red-600 text-white rounded px-2 py-0.5 text-xs opacity-0 group-hover:opacity-100 transition"
+                                        >
+                                            Remove
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="mt-2 space-y-2">
+                                        {removedImages.idProofDocument && (
+                                            <button
+                                                onClick={() => handleUndoImage("idProofDocument")}
+                                                className="bg-yellow-500 text-white rounded px-3 py-1 text-xs"
+                                            >
+                                                Undo
+                                            </button>
+                                        )}
+                                        <div className="file-upload">
+                                            <label className="choose-btn cursor-pointer bg-gray-800 text-white px-3 py-1 rounded">
+                                                Choose File
+                                                <input
+                                                    type="file"
+                                                    accept=".pdf,.jpg,.jpeg,.png"
+                                                    className="hidden"
+                                                    onChange={(e) => {
+                                                        const file = e.target.files[0];
+                                                        setIdFile(file);
+                                                        handleFileChange(file, "idProofDocument");
+                                                    }}
+                                                />
+                                            </label>
+                                            <span className="file-name ml-2 text-sm text-gray-300">
+                                                {idFile ? idFile.name : "No file chosen"}
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
-                            {/* Address Proof */}
-                            <div>
+
+                            {/* Address Proof Document */}
+                            <div className="relative">
                                 <label className="text-[#00d4aa] text-[15px]">Address Proof Document</label>
                                 <p className="text-[10px] text-gray-400">(PDF/JPG/PNG, Max 2MB)</p>
-                                <div className="file-upload mt-2">
-                                    <label className="choose-btn cursor-pointer">
-                                        Choose File
-                                        <input
-                                            type="file"
-                                            accept=".pdf,.jpg,.jpeg,.png"
-                                            className="hidden"
-                                            onChange={(e) => setAddressFile(e.target.files[0])}
+
+                                {form.addressProofDocument ? (
+                                    <div className="mt-2 relative group">
+                                        <img
+                                            src={`data:image/png;base64,${form.addressProofDocument}`}
+                                            alt="Address Proof Document Preview"
+                                            style={{ maxWidth: "200px", cursor: "pointer", border: "1px solid #ccc" }}
+                                            onClick={() => setModalImage(`data:image/png;base64,${form.addressProofDocument}`)}
                                         />
-                                    </label>
-                                    <span className="file-name">
-                                        {addressFile ? addressFile.name : "No file chosen"}
-                                    </span>
-                                </div>
+                                        <button
+                                            onClick={() => handleRemoveImage("addressProofDocument")}
+                                            className="absolute top-1 right-1 bg-red-600 text-white rounded px-2 py-0.5 text-xs opacity-0 group-hover:opacity-100 transition"
+                                        >
+                                            Remove
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="mt-2 space-y-2">
+                                        {removedImages.addressProofDocument && (
+                                            <button
+                                                onClick={() => handleUndoImage("addressProofDocument")}
+                                                className="bg-yellow-500 text-white rounded px-3 py-1 text-xs"
+                                            >
+                                                Undo
+                                            </button>
+                                        )}
+                                        <div className="file-upload">
+                                            <label className="choose-btn cursor-pointer bg-gray-800 text-white px-3 py-1 rounded">
+                                                Choose File
+                                                <input
+                                                    type="file"
+                                                    accept=".pdf,.jpg,.jpeg,.png"
+                                                    className="hidden"
+                                                    onChange={(e) => {
+                                                        const file = e.target.files[0];
+                                                        setAddressFile(file);
+                                                        handleFileChange(file, "addressProofDocument");
+                                                    }}
+                                                />
+                                            </label>
+                                            <span className="file-name ml-2 text-sm text-gray-300">
+                                                {addressFile ? addressFile.name : "No file chosen"}
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
+
                         </div>
+
+                        {/* Modal for Zoomed Image */}
+                        {modalImage && (
+                            <div
+                                className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+                                onClick={() => setModalImage(null)}
+                            >
+                                <img src={modalImage} alt="Zoomed Document" className="max-w-full max-h-full" />
+                            </div>
+                        )}
                     </div>
                     {/* Advanced Configuration Section */}
                     <div className="advanced-config mt-10">
@@ -734,11 +880,11 @@ export default function Partnercreate() {
                                 <div className="form-group">
                                     <label>Card Issuance Commission %</label>
                                     <input type="number" name="cardIssuanceCommissionPercent" className="form-input" placeholder="0" value={form.cardIssuanceCommissionPercent || ""} min="0" max="100"
-                                        onChange={handleChange}  onInput={(e) => {
-                                        if (e.target.value > 100) {
-                                            e.target.value = 100;
-                                        }
-                                    }}  />
+                                        onChange={handleChange} onInput={(e) => {
+                                            if (e.target.value > 100) {
+                                                e.target.value = 100;
+                                            }
+                                        }} />
 
                                 </div>
                                 <div className="form-group">
@@ -799,7 +945,7 @@ export default function Partnercreate() {
                     {/* Header */}
                     <div className="table-header">
                         <h2 className="table-title flex items-center gap-2">
-                            <Building2 className="text-[#00d4aa] w-5 h-5" />
+                            <CalculatorIcon className="text-[#00d4aa] w-5 h-5" />
                             Existing Partner Configurations
                         </h2>
                         <div className="search-box">
