@@ -982,7 +982,11 @@ export default function RegulatoryConfig() {
                     cfg.kycLevelRequired.slice(1).toLowerCase();
                   return (
                     <tr key={cfg.productId || idx} className="table-row">
-                      <td className="table-content">{cfg.subCategory}</td>
+                      <td className="table-content max-w-[80px]">
+                        <p class="truncate" title={cfg.subCategory}>
+                          {cfg.subCategory}
+                        </p>
+                      </td>
                       <td className="table-content">{cfg.programType}</td>
                       <td className="table-content">{formattedKYCLevel}</td>
                       {/* <td className="table-content">

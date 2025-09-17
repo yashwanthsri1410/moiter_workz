@@ -88,7 +88,7 @@ const LoadCard = ({ data }) => {
   return (
     <div className="db-stat-card corner-box">
       <div className="db-stat-header">
-        <span className="db-stat-title">Daily Load</span>
+        <span className="db-stat-title">Today Loading</span>
         <TrendingUp
           size={12}
           className="db-stat-icon"
@@ -131,7 +131,7 @@ const SpendCard = ({ data }) => {
   return (
     <div className="db-stat-card corner-box">
       <div className="db-stat-header">
-        <span className="db-stat-title">Daily Spend</span>
+        <span className="db-stat-title">Today Unloading</span>
         <TrendingDown
           size={12}
           className="db-stat-icon"

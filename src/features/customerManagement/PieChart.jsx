@@ -214,7 +214,7 @@ const PieChart = () => {
           legend: { display: false },
           title: {
             display: true,
-            text: "Wallet Types Distribution",
+            text: "Onboarding Statistics",
             color: "#00d4aa",
             font: { size: 14, weight: "200" },
             align: "start",

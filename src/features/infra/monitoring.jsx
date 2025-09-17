@@ -32,7 +32,7 @@ const displayNames = {
   UMS: "User Management Service",
   CS: "Customer Service",
   US: "User Service",
-  FES: "File Export Service",
+  DFS: "Data Fetch Service",
 };
 
 const Monitoring = ({
