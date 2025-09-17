@@ -2730,6 +2730,7 @@ textarea.form-input {
 
 .partner-overview-section p {
   margin-bottom: 12px;
+  text-align: left;
 }
 
 .partner-overview-label {
@@ -3169,7 +3170,7 @@ textarea.form-input {
 
 .rc-tbody .rc-tr-body td {
   padding: 12px 10px;
-  border-bottom: 1px solid #1f2937;
+  /* border-bottom: 1px solid #1f2937; */
   vertical-align: middle;
   font-size: 12px;
 }
@@ -3260,4 +3261,45 @@ textarea.form-input {
   display: grid;
   grid-template-columns: 2fr;
   gap: 20px;
+}
+
+
+.partner-overview-card {
+  background-color: #0d1220;
+  padding: 20px;
+  border-radius: 10px;
+  color: #fff;
+}
+
+.partner-overview-title {
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.partner-overview-icon {
+  margin-right: 8px;
+}
+
+.partner-overview-content {
+  margin-top: 12px;
+}
+
+.partner-overview-section {
+  padding: 10px;
+}
+
+.partner-overview-label {
+  font-size: 14px;
+  color: #00d4aa;
+  margin-bottom: 6px;
+}
+
+.partner-overview-img {
+  max-width: 100px;
+  max-height: 100px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  object-fit: contain;
 }

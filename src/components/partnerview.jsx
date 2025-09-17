@@ -17,10 +17,11 @@ import {
 import axios from "axios";
 import "../styles/styles.css";
 
-export default function Partnerview({ selectedPartner, setSelectedPartner ,fetchPartners}) {
+export default function Partnerview({ selectedPartner, setSelectedPartner, fetchPartners }) {
   const [remarks, setRemarks] = useState("");
   const [currentAction, setCurrentAction] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [modalImage, setModalImage] = useState(null);
   if (!selectedPartner) return null;
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -89,6 +90,7 @@ export default function Partnerview({ selectedPartner, setSelectedPartner ,fetch
       setShowModal(false);
     }
   };
+  console.log(selectedPartner)
   return (
     <div>
       {/* Header */}
@@ -330,41 +332,76 @@ export default function Partnerview({ selectedPartner, setSelectedPartner ,fetch
         </div>
       </div>
 
-      {/* Performance Metrics */}
-      {/* <div className="partner-overview-card partner-overview-secondary">
+      <div className="partner-overview-card">
         <h2 className="partner-overview-title">
-          <Users size={18} color="#14B8A6" className="partner-overview-icon" />{" "}
-          Performance Metrics
+          <FileText size={18} color="#14B8A6" className="partner-overview-icon" />{" "}
+          Media & Documents
         </h2>
-        <div className="partner-overview-content">
-          <div className="partner-overview-section">
-            <p>
-              <span className="partner-overview-label">Total Transactions</span>{" "}
-              <br />
-              <span
-                className="partner-overview-bold"
-                style={{ color: "#14b8a6" }}
-              >
-                {selectedPartner.totalTransactionsLastMonth}
-              </span>
-            </p>
+        <div className="partner-overview-content grid grid-cols-3 gap-4">
+          {/* Agreement Document */}
+          <div className="partner-overview-section text-center">
+            <p className="partner-overview-label">Agreement Document</p>
+            {selectedPartner.agreementDocument ? (
+              <img
+                src={`data:image/png;base64,${selectedPartner.agreementDocument}`}
+                alt="Agreement Document"
+                className="partner-overview-img cursor-pointer"
+                onClick={() =>
+                  setModalImage(`data:image/png;base64,${selectedPartner.agreementDocument}`)
+                }
+              />
+            ) : (
+              <p className="text-gray-400 text-sm">No document uploaded</p>
+            )}
           </div>
 
-          <div className="partner-overview-section">
-            <p>
-              <span className="partner-overview-label">Total Sales</span> <br />
-              <span
-                className="partner-overview-bold"
-                style={{ color: "#14b8a6" }}
-              >
-                ₹{selectedPartner.totalSalesLastMonth}
-              </span>
-            </p>
+          {/* ID Proof Document */}
+          <div className="partner-overview-section text-center">
+            <p className="partner-overview-label">ID Proof Document</p>
+            {selectedPartner.idProofDocument ? (
+              <img
+                src={`data:image/png;base64,${selectedPartner.idProofDocument}`}
+                alt="ID Proof Document"
+                className="partner-overview-img cursor-pointer"
+                onClick={() =>
+                  setModalImage(`data:image/png;base64,${selectedPartner.idProofDocument}`)
+                }
+              />
+            ) : (
+              <p className="text-gray-400 text-sm">No document uploaded</p>
+            )}
+          </div>
+
+          {/* Address Proof Document */}
+          <div className="partner-overview-section text-center">
+            <p className="partner-overview-label">Address Proof Document</p>
+            {selectedPartner.addressProofDocument ? (
+              <img
+                src={`data:image/png;base64,${selectedPartner.addressProofDocument}`}
+                alt="Address Proof Document"
+                className="partner-overview-img cursor-pointer"
+                onClick={() =>
+                  setModalImage(`data:image/png;base64,${selectedPartner.addressProofDocument}`)
+                }
+              />
+            ) : (
+              <p className="text-gray-400 text-sm">No document uploaded</p>
+            )}
           </div>
         </div>
-      </div> */}
-      {/* Partner Review Actions */}
 
+        {/* Zoom Modal */}
+        {modalImage && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+            onClick={() => setModalImage(null)}
+          >
+            <img src={modalImage} alt="Zoomed Document" className="max-w-full max-h-full" />
+          </div>
+        )}
+      </div>
+
+      {/* Partner Review Actions */}
       <div className="product-actions mt-6">
         <div className="flex items-center space-x-2 mb-2">
           <Shield className="w-4 h-4 text-teal-400" />

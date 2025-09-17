@@ -229,7 +229,6 @@ export default function PartnerApproval() {
                     </div>
                 </div>
             </>)}
-
         </div>
     );
 }
