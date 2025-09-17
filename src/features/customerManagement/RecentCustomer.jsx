@@ -67,10 +67,15 @@ const RecentCustomer = () => {
 
   // ✅ Pagination logic
   const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage);
-  const paginatedCustomers = filteredCustomers.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+
+  // 🔹 If searching, show ALL filtered results (ignore pagination)
+  const paginatedCustomers =
+    searchTerm.trim() !== ""
+      ? filteredCustomers
+      : filteredCustomers.slice(
+          (currentPage - 1) * itemsPerPage,
+          currentPage * itemsPerPage
+        );
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -110,6 +115,7 @@ const RecentCustomer = () => {
 
   if (loading) return <p>Loading recent customers...</p>;
   if (customers.length === 0) return <p>No customers found.</p>;
+
   // 🔹 KYC status labels + classes
   const getKycLabel = (kyc) => {
     switch (kyc?.toLowerCase()) {
@@ -151,8 +157,6 @@ const RecentCustomer = () => {
     }
   };
 
-  console.log(customers);
-
   const getRiskClass = (risk) => {
     switch (risk?.toLowerCase()) {
       case "low":
@@ -181,7 +185,10 @@ const RecentCustomer = () => {
               className="search-input pl-8"
               placeholder="Search customers..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1); // reset to first page on new search
+              }}
             />
           </div>
 
@@ -250,55 +257,57 @@ const RecentCustomer = () => {
         </table>
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-between items-center mt-4 px-4">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
-            currentPage === 1
-              ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-              : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
-          }`}
-        >
-          <ChevronLeft className="w-4 h-4" /> Prev
-        </button>
+      {/* Pagination - only show if NOT searching */}
+      {searchTerm.trim() === "" && (
+        <div className="flex justify-between items-center mt-4 px-4">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
+              currentPage === 1
+                ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
+                : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
+            }`}
+          >
+            <ChevronLeft className="w-4 h-4" /> Prev
+          </button>
 
-        <div className="flex gap-2">
-          {Array.from({ length: totalPages }, (_, i) => i + 1)
-            .filter(
-              (page) =>
-                page === currentPage ||
-                page === currentPage - 1 ||
-                page === currentPage + 1
-            )
-            .map((page) => (
-              <button
-                key={page}
-                onClick={() => handlePageChange(page)}
-                className={`px-3 py-1 rounded-lg text-sm ${
-                  currentPage === page
-                    ? "bg-[#00d4aa] text-black font-bold"
-                    : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
-                }`}
-              >
-                {page}
-              </button>
-            ))}
+          <div className="flex gap-2">
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter(
+                (page) =>
+                  page === currentPage ||
+                  page === currentPage - 1 ||
+                  page === currentPage + 1
+              )
+              .map((page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`px-3 py-1 rounded-lg text-sm ${
+                    currentPage === page
+                      ? "bg-[#00d4aa] text-black font-bold"
+                      : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+          </div>
+
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
+              currentPage === totalPages
+                ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
+                : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
+            }`}
+          >
+            Next <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
-
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
-            currentPage === totalPages
-              ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-              : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
-          }`}
-        >
-          Next <ChevronRight className="w-4 h-4" />
-        </button>
-      </div>
+      )}
     </div>
   );
 };

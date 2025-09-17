@@ -219,7 +219,7 @@ const TransactionStream_Trans = () => {
               <th className="rc-th">Location</th>
               <th className="rc-th">Status</th>
               <th className="rc-th">Time</th>
-              <th className="rc-th">Actions</th>
+              {/* <th className="rc-th">Actions</th> */}
             </tr>
           </thead>
           <tbody className="rc-tbody">
@@ -253,14 +253,14 @@ const TransactionStream_Trans = () => {
                   </span>
                 </td>
                 <td className="text-gray-300">{txn.time}</td>
-                <td className="flex items-center gap-2">
+                {/* <td className="flex items-center gap-2">
                   <button className="header-icon-box">
                     <EyeIcon className="text-[#00d4aa] w-4 h-4" />
                   </button>
                   <button className="p-1 hover:bg-gray-700 rounded">
                     <MoreHorizontal className="w-5 h-5 text-gray-300" />
                   </button>
-                </td>
+                </td> */}
               </tr>
             ))}
             {paginatedTransactions.length === 0 && (
