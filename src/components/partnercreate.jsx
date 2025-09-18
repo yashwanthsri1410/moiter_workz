@@ -59,24 +59,24 @@ export default function Partnercreate() {
   const handleRemoveImage = (type) => {
     setRemovedImages((prev) => ({
       ...prev,
-      [type]: form[type]  // Save the image before removing
+      [type]: form[type], // Save the image before removing
     }));
 
     setForm((prev) => ({
       ...prev,
-      [type]: null  // Remove the image from form state
+      [type]: null, // Remove the image from form state
     }));
   };
 
   const handleUndoImage = (type) => {
     setForm((prev) => ({
       ...prev,
-      [type]: removedImages[type]  // Restore the removed image
+      [type]: removedImages[type], // Restore the removed image
     }));
 
     setRemovedImages((prev) => ({
       ...prev,
-      [type]: null  // Clear the removed image state
+      [type]: null, // Clear the removed image state
     }));
   };
   const handleFileChange = (file, type) => {
@@ -474,8 +474,8 @@ export default function Partnercreate() {
       backgroundColor: state.isSelected
         ? "#1452A8"
         : state.isFocused
-          ? "#1452A8"
-          : "transparent", // 🔹 transparent instead of solid
+        ? "#1452A8"
+        : "transparent", // 🔹 transparent instead of solid
       color: "#fff",
       fontSize: "12px",
       cursor: "pointer",
@@ -736,6 +736,7 @@ export default function Partnercreate() {
                 onChange={handleChanges}
                 styles={customStyles}
                 placeholder="Select Products"
+                maxMenuHeight={200}
               />
             </div>
           </div>
@@ -753,10 +754,11 @@ export default function Partnercreate() {
                 }))
               }
               className={`w-3 h-3 flex items-center justify-center border rounded-sm cursor-pointer
-      ${form.portalAccessEnabled
-                  ? "bg-teal-500 border-teal-500"
-                  : "bg-[#0d1220] border-teal-700/50"
-                }
+      ${
+        form.portalAccessEnabled
+          ? "bg-teal-500 border-teal-500"
+          : "bg-[#0d1220] border-teal-700/50"
+      }
       transition-colors duration-200`}
             >
               {form.portalAccessEnabled && (
@@ -804,16 +806,28 @@ export default function Partnercreate() {
             <div className="grid grid-cols-3 gap-6 mt-4">
               {/* Agreement */}
               <div className="relative">
-                <label className="text-[#00d4aa] text-[15px]">Agreement Document</label>
-                <p className="text-[10px] text-gray-400">(PDF/JPG/PNG, Max 5MB)</p>
+                <label className="text-[#00d4aa] text-[15px]">
+                  Agreement Document
+                </label>
+                <p className="text-[10px] text-gray-400">
+                  (PDF/JPG/PNG, Max 5MB)
+                </p>
 
                 {form.agreementDocument ? (
                   <div className="mt-2 relative group">
                     <img
                       src={`data:image/png;base64,${form.agreementDocument}`}
                       alt="Agreement Document Preview"
-                      style={{ maxWidth: "100px", cursor: "pointer", border: "1px solid #ccc" }}
-                      onClick={() => setModalImage(`data:image/png;base64,${form.agreementDocument}`)}
+                      style={{
+                        maxWidth: "100px",
+                        cursor: "pointer",
+                        border: "1px solid #ccc",
+                      }}
+                      onClick={() =>
+                        setModalImage(
+                          `data:image/png;base64,${form.agreementDocument}`
+                        )
+                      }
                     />
                     <button
                       onClick={() => handleRemoveImage("agreementDocument")}
@@ -854,19 +868,30 @@ export default function Partnercreate() {
                 )}
               </div>
 
-
               {/* ID Proof */}
               <div className="relative">
-                <label className="text-[#00d4aa] text-[15px]">ID Proof Document</label>
-                <p className="text-[10px] text-gray-400">(PDF/JPG/PNG, Max 2MB)</p>
+                <label className="text-[#00d4aa] text-[15px]">
+                  ID Proof Document
+                </label>
+                <p className="text-[10px] text-gray-400">
+                  (PDF/JPG/PNG, Max 2MB)
+                </p>
 
                 {form.idProofDocument ? (
                   <div className="mt-2 relative group">
                     <img
                       src={`data:image/png;base64,${form.idProofDocument}`}
                       alt="ID Proof Document Preview"
-                      style={{ maxWidth: "100px", cursor: "pointer", border: "1px solid #ccc" }}
-                      onClick={() => setModalImage(`data:image/png;base64,${form.idProofDocument}`)}
+                      style={{
+                        maxWidth: "100px",
+                        cursor: "pointer",
+                        border: "1px solid #ccc",
+                      }}
+                      onClick={() =>
+                        setModalImage(
+                          `data:image/png;base64,${form.idProofDocument}`
+                        )
+                      }
                     />
                     <button
                       onClick={() => handleRemoveImage("idProofDocument")}
@@ -907,19 +932,30 @@ export default function Partnercreate() {
                 )}
               </div>
 
-
               {/* Address Proof */}
               <div className="relative">
-                <label className="text-[#00d4aa] text-[15px]">Address Proof Document</label>
-                <p className="text-[10px] text-gray-400">(PDF/JPG/PNG, Max 2MB)</p>
+                <label className="text-[#00d4aa] text-[15px]">
+                  Address Proof Document
+                </label>
+                <p className="text-[10px] text-gray-400">
+                  (PDF/JPG/PNG, Max 2MB)
+                </p>
 
                 {form.addressProofDocument ? (
                   <div className="mt-2 relative group">
                     <img
                       src={`data:image/png;base64,${form.addressProofDocument}`}
                       alt="Address Proof Document Preview"
-                      style={{ maxWidth: "100px", cursor: "pointer", border: "1px solid #ccc" }}
-                      onClick={() => setModalImage(`data:image/png;base64,${form.addressProofDocument}`)}
+                      style={{
+                        maxWidth: "100px",
+                        cursor: "pointer",
+                        border: "1px solid #ccc",
+                      }}
+                      onClick={() =>
+                        setModalImage(
+                          `data:image/png;base64,${form.addressProofDocument}`
+                        )
+                      }
                     />
                     <button
                       onClick={() => handleRemoveImage("addressProofDocument")}
@@ -964,7 +1000,11 @@ export default function Partnercreate() {
                   className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
                   onClick={() => setModalImage(null)}
                 >
-                  <img src={modalImage} alt="Zoomed Document" className="max-w-full max-h-full" />
+                  <img
+                    src={modalImage}
+                    alt="Zoomed Document"
+                    className="max-w-full max-h-full"
+                  />
                 </div>
               )}
             </div>
@@ -1271,24 +1311,26 @@ export default function Partnercreate() {
                     </td>
                     <td className="p-3">
                       <span
-                        className={`px-2 py-1 rounded text-[10px] ${partner.partnerStatus === "Active"
-                          ? "checker"
-                          : partner.partnerStatus === "Onboarded"
+                        className={`px-2 py-1 rounded text-[10px] ${
+                          partner.partnerStatus === "Active"
+                            ? "checker"
+                            : partner.partnerStatus === "Onboarded"
                             ? "maker"
                             : partner.partnerStatus === "Inactive"
-                              ? "superuser"
-                              : ""
-                          }`}
+                            ? "superuser"
+                            : ""
+                        }`}
                       >
                         {partner.partnerStatus}
                       </span>
                     </td>
                     <td className="p-3">
                       <span
-                        className={`px-2 py-1 rounded text-[10px] ${partner.kycStatus === "Verified"
-                          ? "checker"
-                          : "superuser"
-                          }`}
+                        className={`px-2 py-1 rounded text-[10px] ${
+                          partner.kycStatus === "Verified"
+                            ? "checker"
+                            : "superuser"
+                        }`}
                       >
                         {partner.kycStatus}
                       </span>
@@ -1355,10 +1397,11 @@ export default function Partnercreate() {
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${currentPage === 1
-                ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
-                }`}
+              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
+                currentPage === 1
+                  ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
+                  : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
+              }`}
             >
               <ChevronLeft className="w-4 h-4" /> Prev
             </button>
@@ -1368,10 +1411,11 @@ export default function Partnercreate() {
                 <button
                   key={i}
                   onClick={() => handlePageChange(i + 1)}
-                  className={`px-3 py-1 rounded-lg text-sm ${currentPage === i + 1
-                    ? "bg-[#00d4aa] text-black font-bold"
-                    : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
-                    }`}
+                  className={`px-3 py-1 rounded-lg text-sm ${
+                    currentPage === i + 1
+                      ? "bg-[#00d4aa] text-black font-bold"
+                      : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
+                  }`}
                 >
                   {i + 1}
                 </button>
@@ -1381,10 +1425,11 @@ export default function Partnercreate() {
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${currentPage === totalPages
-                ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
-                }`}
+              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
+                currentPage === totalPages
+                  ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
+                  : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
+              }`}
             >
               Next <ChevronRight className="w-4 h-4" />
             </button>

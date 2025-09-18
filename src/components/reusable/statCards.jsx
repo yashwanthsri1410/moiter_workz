@@ -1,6 +1,6 @@
 const StatCards = ({ stats }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-5">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-5 mx-5">
       {stats.map(
         ({ title, value, subValue, desc, icon: Icon, color, subColor }, i) => (
           <div
