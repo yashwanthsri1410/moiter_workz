@@ -57,9 +57,9 @@ const RiskManagement = () => {
     // fetchData();
   }, []);
   return (
-    <div className="mx-5">
+    <div >
       <StatCards stats={stats} />
-      <div className="stat-card-dx91u corner-box p-2 shadow-md rounded-lg mt-5">
+      <div className="stat-card-dx91u corner-box p-2 shadow-md rounded-lg mt-5 mx-5">
         {/* Header */}
         <h2 className="text-[#00d4aa] text-sm">Risk Management Dashboard</h2>
         <div className="flex justify-between items-center mt-3">

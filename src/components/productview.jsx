@@ -12,6 +12,7 @@ import {
   CreditCard,
   NotebookPen,
   RefreshCw,
+  PackagePlus,
 } from "lucide-react";
 import axios from "axios";
 
@@ -96,7 +97,7 @@ export default function Productview({ selectedProduct, setSelectedProduct, fetch
             Back to Approvals
           </button>
           <div className="header-icon-box">
-            <FileText className="text-[#00d4aa] w-4 h-4" />
+            <PackagePlus className="text-[#00d4aa] w-4 h-4" />
           </div>
           <div>
             <h1 className="header-title">Product Approvals</h1>
@@ -163,7 +164,7 @@ export default function Productview({ selectedProduct, setSelectedProduct, fetch
             <p className="mt-3">
               <strong className="text-[15px]">Program:</strong>{" "}
               <span
-                className={`px-2 py-1 rounded text-[10px] ${selectedProduct.programType === "Closed"
+                className={`px-2 py-1 rounded text-[12px] ${selectedProduct.programType === "Closed"
                   ? "checker"
                   : selectedProduct.programType === "Semi-Closed"
                     ? "infra"

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FileText, Check, X, RefreshCw, ArrowLeft } from "lucide-react";
+import { FileText, Check, X, RefreshCw, ArrowLeft, UserCheck2Icon } from "lucide-react";
 import axios from "axios";
 export default function EmployeeView({
   selectedEmployee,
@@ -92,7 +92,7 @@ export default function EmployeeView({
             Back to Approvals
           </button>
           <div className="header-icon-box">
-            <FileText className="text-[#00d4aa] w-4 h-4" />
+            <UserCheck2Icon className="text-[#00d4aa] w-4 h-4" />
           </div>
           <div>
             <h1 className="header-title">Employee Approvals</h1>

@@ -158,7 +158,7 @@ export default function Partnercreate() {
       const res = await axios.get(
         `${API_BASE_URL}/fes/api/Export/partner_summary_export`
       );
-      setPartners(res.data);
+      setPartners(res.data  || []);
     } catch (err) {
       console.error("Error fetching configurations:", err);
     }

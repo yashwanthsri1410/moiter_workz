@@ -339,7 +339,7 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
         </h2>
         <div className="partner-overview-content grid grid-cols-3 gap-4">
           {/* Agreement Document */}
-          <div className="partner-overview-section text-center">
+          <div className="partner-overview-section text-center flex flex-col items-center">
             <p className="partner-overview-label">Agreement Document</p>
             {selectedPartner.agreementDocument ? (
               <img
@@ -356,7 +356,7 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
           </div>
 
           {/* ID Proof Document */}
-          <div className="partner-overview-section text-center">
+          <div className="partner-overview-section text-center flex flex-col items-center">
             <p className="partner-overview-label">ID Proof Document</p>
             {selectedPartner.idProofDocument ? (
               <img
@@ -373,7 +373,7 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
           </div>
 
           {/* Address Proof Document */}
-          <div className="partner-overview-section text-center">
+          <div className="partner-overview-section text-center flex flex-col items-center">
             <p className="partner-overview-label">Address Proof Document</p>
             {selectedPartner.addressProofDocument ? (
               <img
