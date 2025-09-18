@@ -41,6 +41,7 @@ import RiskManagement from "../features/riskManagement";
 import PartnerMangement from "../features/partnerManagement";
 import ReportsAndAnalytics from "../features/reportsAnalytics";
 import SystemSettings from "../features/systemSettings";
+import TransactionsAnalystics from "../features/TransactionsManagement/TransactionsAnalystics";
 
 export default function DashboardLayout() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -110,11 +111,10 @@ export default function DashboardLayout() {
             <CustomerManagement />
           </div>
         );
-      case "customer":
+      case "transactions":
         return (
           <div className="content">
-            {" "}
-            <CustomerManagement />
+            <TransactionsAnalystics />
           </div>
         );
       case "wallet":
@@ -291,7 +291,7 @@ export default function DashboardLayout() {
                     >
                       <Activity size={14} /> Product Performance
                     </button>
-                    {/* <button
+                    <button
                       onClick={() => setActiveTab("transactions")}
                       className={
                         activeTab === "transactions" ? "submenu-active" : ""
@@ -299,7 +299,7 @@ export default function DashboardLayout() {
                     >
                       <BarChart2 size={14} /> Transaction Analytics
                     </button>
-                    */}
+
                     <button
                       onClick={() => setActiveTab("risk")}
                       className={activeTab === "risk" ? "submenu-active" : ""}

@@ -43,13 +43,19 @@ export default function UserManagementSystem() {
     }
   };
 
-  // ✅ Pagination
+  // ✅ Reset to page 1 whenever search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
+  // ✅ Filter Employees
   const filteredEmployees = employees.filter(
     (e) =>
       e.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       e.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // ✅ Paginate filtered results
   const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
   const paginatedEmployees = filteredEmployees.slice(
     (currentPage - 1) * itemsPerPage,

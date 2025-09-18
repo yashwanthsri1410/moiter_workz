@@ -40,6 +40,7 @@ import Productperformance from "../features/productperformance/productperformanc
 import PartnerMangement from "../features/partnerManagement";
 import SystemSettings from "../features/systemSettings";
 import ReportsAndAnalytics from "../features/reportsAnalytics";
+import TransactionsAnalystics from "../features/TransactionsManagement/TransactionsAnalystics";
 
 export default function CheckersDashboardLayout() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -108,6 +109,12 @@ export default function CheckersDashboardLayout() {
         return (
           <div className="content">
             <CustomerManagement />
+          </div>
+        );
+      case "transactions":
+        return (
+          <div className="content">
+            <TransactionsAnalystics />
           </div>
         );
       case "wallet":
@@ -266,14 +273,14 @@ export default function CheckersDashboardLayout() {
                     >
                       <Wallet size={14} /> Wallet Operations
                     </button>
-                    {/* <button
+                    <button
                       onClick={() => setActiveTab("transactions")}
                       className={
                         activeTab === "transactions" ? "submenu-active" : ""
                       }
                     >
                       <BarChart2 size={14} /> Transaction Analytics
-                    </button> */}
+                    </button>
                     <button
                       onClick={() => setActiveTab("compliance")}
                       className={

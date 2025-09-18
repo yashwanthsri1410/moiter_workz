@@ -16,7 +16,11 @@ import {
 } from "lucide-react";
 import axios from "axios";
 
-export default function Productview({ selectedProduct, setSelectedProduct, fetchConfigurations }) {
+export default function Productview({
+  selectedProduct,
+  setSelectedProduct,
+  fetchConfigurations,
+}) {
   const [remarks, setRemarks] = useState("");
   const [currentAction, setCurrentAction] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -67,7 +71,7 @@ export default function Productview({ selectedProduct, setSelectedProduct, fetch
     } catch (err) {
       console.error("Error submitting action:", err);
       alert("Failed to submit action");
-      setShowModal(false)
+      setShowModal(false);
     }
   };
   const getStatusLabel = (value) => {
@@ -110,32 +114,34 @@ export default function Productview({ selectedProduct, setSelectedProduct, fetch
           <div className="portal-info flex gap-2">
             <p className="portal-link">
               <span
-                className={`px-2 py-1 rounded text-[10px] ${selectedProduct.programType === "Closed"
-                  ? "checker"
-                  : selectedProduct.programType === "Semi-Closed"
+                className={`px-2 py-1 rounded text-[10px] ${
+                  selectedProduct.programType === "Closed"
+                    ? "checker"
+                    : selectedProduct.programType === "Semi-Closed"
                     ? "infra"
                     : selectedProduct.programType === "Open"
-                      ? "superuser"
-                      : selectedProduct.programType === "Open"
-                        ? "maker"
-                        : ""
-                  }`}
+                    ? "superuser"
+                    : selectedProduct.programType === "Open"
+                    ? "maker"
+                    : ""
+                }`}
               >
                 {selectedProduct.programType}
               </span>
             </p>
             <p className="portal-link">
               <span
-                className={`px-2 py-1 rounded text-[10px] ${selectedProduct.status === 0
-                  ? "checker"
-                  : selectedProduct.status === 1
+                className={`px-2 py-1 rounded text-[10px] ${
+                  selectedProduct.status === 0
+                    ? "checker"
+                    : selectedProduct.status === 1
                     ? "infra"
                     : selectedProduct.status === 2
-                      ? "superuser"
-                      : selectedProduct.status === 3
-                        ? "maker"
-                        : ""
-                  }`}
+                    ? "superuser"
+                    : selectedProduct.status === 3
+                    ? "maker"
+                    : ""
+                }`}
               >
                 {getStatusLabel(selectedProduct.status)}
               </span>
@@ -156,10 +162,12 @@ export default function Productview({ selectedProduct, setSelectedProduct, fetch
         <div className="grid grid-cols-2 gap-6 text-sm text-gray-300">
           <div>
             <p className="mt-3">
-              <strong className="text-[15px]">ID:</strong> {selectedProduct.productId}
+              <strong className="text-[15px]">ID:</strong>{" "}
+              {selectedProduct.productId}
             </p>
             <p className="mt-3">
-              <strong className="text-[15px]">Name:</strong> {selectedProduct.productName}
+              <strong className="text-[15px]">Name:</strong>{" "}
+              {selectedProduct.productName}
             </p>
             <p className="mt-3">
               <strong className="text-[15px]">Program:</strong>{" "}
@@ -169,31 +177,36 @@ export default function Productview({ selectedProduct, setSelectedProduct, fetch
                   : selectedProduct.programType === "Semi-Closed"
                     ? "infra"
                     : selectedProduct.programType === "Open"
-                      ? "superuser"
-                      : selectedProduct.programType === "open"
-                        ? "maker"
-                        : ""
-                  }`}
+                    ? "superuser"
+                    : selectedProduct.programType === "open"
+                    ? "maker"
+                    : ""
+                }`}
               >
                 {selectedProduct.programType}
               </span>
             </p>
-            <p className="mt-3" >
-              <strong className="text-[15px]">Sub Category:</strong> {selectedProduct.subCategory}
+            <p className="mt-3">
+              <strong className="text-[15px]">Sub Category:</strong>{" "}
+              {selectedProduct.subCategory}
             </p>
             <p className="mt-3">
-              <strong className="text-[15px]">Status:</strong> {statusMap[selectedProduct.status]}
+              <strong className="text-[15px]">Status:</strong>{" "}
+              {statusMap[selectedProduct.status]}
             </p>
           </div>
           <div>
             <p className="mt-3">
-              <strong className="text-[15px]">Currency:</strong> {selectedProduct.currency}
+              <strong className="text-[15px]">Currency:</strong>{" "}
+              {selectedProduct.currency}
             </p>
             <p className="mt-3">
-              <strong className="text-[15px]">Card Type:</strong> {selectedProduct.cardType}
+              <strong className="text-[15px]">Card Type:</strong>{" "}
+              {selectedProduct.cardType}
             </p>
             <p className="mt-3">
-              <strong className="text-[15px]">Validity:</strong> {selectedProduct.minimumValidityDays} -{" "}
+              <strong className="text-[15px]">Validity:</strong>{" "}
+              {selectedProduct.minimumValidityDays} -{" "}
               {selectedProduct.maximumValidityDays} days
             </p>
             <p className="mt-3">
@@ -205,9 +218,9 @@ export default function Productview({ selectedProduct, setSelectedProduct, fetch
 
         {/* Remarks */}
         <div className="mt-4">
-
           <p className="mt-3 text-[15px]">
-            <strong className="text-[15px]">Description:</strong> {selectedProduct.productDescription || "No description available."}
+            <strong className="text-[15px]">Description:</strong>{" "}
+            {selectedProduct.productDescription || "No description available."}
           </p>
         </div>
       </div>
@@ -220,22 +233,28 @@ export default function Productview({ selectedProduct, setSelectedProduct, fetch
         </div>
         <div className="grid grid-cols-3 gap-4 text-sm text-gray-300">
           <p>
-            <strong className="text-[15px]">Max Balance:</strong> {selectedProduct.maxBalance}
+            <strong className="text-[15px]">Max Balance:</strong>{" "}
+            {selectedProduct.maxBalance}
           </p>
           <p>
-            <strong className="text-[15px]">Max Load:</strong> {selectedProduct.maxLoadAmount}
+            <strong className="text-[15px]">Max Load:</strong>{" "}
+            {selectedProduct.maxLoadAmount}
           </p>
           <p>
-            <strong className="text-[15px]">Daily Spend:</strong> {selectedProduct.dailySpendLimit}
+            <strong className="text-[15px]">Daily Spend:</strong>{" "}
+            {selectedProduct.dailySpendLimit}
           </p>
           <p>
-            <strong className="text-[15px]">Monthly Spend:</strong> {selectedProduct.monthlySpendLimit}
+            <strong className="text-[15px]">Monthly Spend:</strong>{" "}
+            {selectedProduct.monthlySpendLimit}
           </p>
           <p>
-            <strong className="text-[15px]">Refund Limit:</strong> {selectedProduct.refundLimit}
+            <strong className="text-[15px]">Refund Limit:</strong>{" "}
+            {selectedProduct.refundLimit}
           </p>
           <p>
-            <strong className="text-[15px]">Txn/Day:</strong> {selectedProduct.txnCountLimitPerDay}
+            <strong className="text-[15px]">Txn/Day:</strong>{" "}
+            {selectedProduct.txnCountLimitPerDay}
           </p>
         </div>
       </div>
@@ -252,7 +271,8 @@ export default function Productview({ selectedProduct, setSelectedProduct, fetch
             {formatValue(selectedProduct.kycRequired)}
           </p>
           <p>
-            <strong className="text-[15px]">KYC Level:</strong> {selectedProduct.kycLevelRequired}
+            <strong className="text-[15px]">KYC Level:</strong>{" "}
+            {selectedProduct.kycLevelRequired}
           </p>
           <p>
             <strong className="text-[15px]">Aadhaar Required:</strong>{" "}
@@ -267,7 +287,7 @@ export default function Productview({ selectedProduct, setSelectedProduct, fetch
             {formatValue(selectedProduct.amlCftApplicable)}
           </p>
           <p>
-            <strong  className="text-[15px]">PEP Check:</strong>{" "}
+            <strong className="text-[15px]">PEP Check:</strong>{" "}
             {formatValue(selectedProduct.pepCheckRequired)}
           </p>
         </div>
@@ -285,18 +305,19 @@ export default function Productview({ selectedProduct, setSelectedProduct, fetch
               key={idx}
               className="px-2 py-1 bg-gray-800 rounded text-xs text-[#00d4aa]"
             >
-
-              {ch.includes('_') || ch.includes('-') ? (
-                ch
-                  .replace(/[_-]/g, ' ')
-                  .split(' ')
-                  .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                  .join(' ')
-              ) : /^[A-Z]+$/.test(ch) ? (
-                ch
-              ) : (
-                ch.charAt(0).toUpperCase() + ch.slice(1).toLowerCase()
-              )}
+              {ch.includes("_") || ch.includes("-")
+                ? ch
+                    .replace(/[_-]/g, " ")
+                    .split(" ")
+                    .map(
+                      (word) =>
+                        word.charAt(0).toUpperCase() +
+                        word.slice(1).toLowerCase()
+                    )
+                    .join(" ")
+                : /^[A-Z]+$/.test(ch)
+                ? ch
+                : ch.charAt(0).toUpperCase() + ch.slice(1).toLowerCase()}
             </span>
           ))}
         </div>
@@ -330,7 +351,9 @@ export default function Productview({ selectedProduct, setSelectedProduct, fetch
             {selectedProduct.dormantPeriodDays}
           </p>
           <p>
-            <strong className="text-[15px]">Closure Allowed Post Expiry:</strong>{" "}
+            <strong className="text-[15px]">
+              Closure Allowed Post Expiry:
+            </strong>{" "}
             {formatValue(selectedProduct.closureAllowedPostExpiry)}
           </p>
         </div>
@@ -378,8 +401,8 @@ export default function Productview({ selectedProduct, setSelectedProduct, fetch
         </div>
         <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
           <p>
-            <strong className="text-[15px]">Age:</strong> {selectedProduct.customerAgeMin} -{" "}
-            {selectedProduct.customerAgeMax}
+            <strong className="text-[15px]">Age:</strong>{" "}
+            {selectedProduct.customerAgeMin} - {selectedProduct.customerAgeMax}
           </p>
           <p>
             <strong className="text-[15px]">Customer Types:</strong>{" "}
@@ -456,8 +479,8 @@ export default function Productview({ selectedProduct, setSelectedProduct, fetch
               {currentAction === 0
                 ? "approve"
                 : currentAction === 2
-                  ? "reject"
-                  : "recheck"}{" "}
+                ? "reject"
+                : "recheck"}{" "}
               <b>{selectedProduct.productName}</b>? This action cannot be
               undone.
             </p>
@@ -482,12 +505,13 @@ export default function Productview({ selectedProduct, setSelectedProduct, fetch
                 Cancel
               </button>
               <button
-                className={`btn-submit ${currentAction === 0
-                  ? "btn-approve-green"
-                  : currentAction === 2
+                className={`btn-submit ${
+                  currentAction === 0
+                    ? "btn-approve-green"
+                    : currentAction === 2
                     ? "btn-reject-red"
                     : "btn-recheck-blue"
-                  }`}
+                }`}
                 onClick={submitAction}
               >
                 {currentAction === 0 && (

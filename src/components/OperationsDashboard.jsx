@@ -121,8 +121,6 @@ const OperationsDashboard = () => {
     );
   }
 
-  console.log(error);
-
   return (
     <div className="dashboard-container">
       <div className="dashboard-title">
