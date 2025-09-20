@@ -11,6 +11,7 @@ import {
   Search,
   Settings,
 } from "lucide-react";
+import { v4 as uuidv4 } from "uuid";
 
 export default function ScreenManagement({ onBack }) {
   const [modules, setModules] = useState([]);
@@ -81,6 +82,7 @@ export default function ScreenManagement({ onBack }) {
     const payload = {
       moduleId: Number(selectedModuleId),
       screenDescription: screenName.trim(),
+      logId: uuidv4(),
       metadata: {
         ipAddress: ip,
         userAgent: navigator.userAgent,
@@ -119,39 +121,44 @@ export default function ScreenManagement({ onBack }) {
     setEditText("");
   };
 
-  const handleSaveEdit = async (screenId) => {
-    if (!editText.trim()) return alert("Screen name cannot be empty");
+  const handleSaveEdit = async (screen) => {
+  if (!editText.trim()) return alert("Screen name cannot be empty");
 
-    const now = new Date().toISOString();
-    const payload = {
-      screenId,
-      newDescription: editText.trim(),
-      metadata: {
-        ipAddress: ip,
-        userAgent: navigator.userAgent,
-        headers: "N/A",
-        channel: "web",
-        auditMetadata: {
-          createdBy: username,
-          createdDate: now,
-          modifiedBy: username,
-          modifiedDate: now,
-        },
+  const now = new Date().toISOString();
+  const payload = {
+    screenId: screen.screenId,
+    logId:
+      screen.logId && screen.logId !== "00000000-0000-0000-0000-000000000000"
+        ? screen.logId // reuse existing
+        : uuidv4(), // fallback new UUID
+    newDescription: editText.trim(),
+    metadata: {
+      ipAddress: ip,
+      userAgent: navigator.userAgent,
+      headers: "N/A",
+      channel: "web",
+      auditMetadata: {
+        createdBy: username,
+        createdDate: now,
+        modifiedBy: username,
+        modifiedDate: now,
       },
-    };
-
-    try {
-      await axios.put(
-        `${API_BASE_URL}/ums/api/UserManagement/screen_update`,
-        payload
-      );
-      handleCancelEdit();
-      fetchScreens();
-    } catch (err) {
-      console.error("Error updating screen:", err);
-      alert("Update failed");
-    }
+    },
   };
+
+  try {
+    await axios.put(
+      `${API_BASE_URL}/ums/api/UserManagement/screen_update`,
+      payload
+    );
+    handleCancelEdit();
+    fetchScreens();
+  } catch (err) {
+    console.error("Error updating screen:", err);
+    alert("Update failed");
+  }
+};
+
 
   const groupedScreens = modules.reduce((acc, mod) => {
     const filtered = screens.filter(
@@ -333,7 +340,7 @@ export default function ScreenManagement({ onBack }) {
                         {editId === screen.screenId ? (
                           <>
                             <button
-                              onClick={() => handleSaveEdit(screen.screenId)}
+                              onClick={() => handleSaveEdit(screen)}
                               className="text-teal-400 hover:underline"
                             >
                               Save

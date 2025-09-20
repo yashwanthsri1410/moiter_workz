@@ -10,6 +10,7 @@ import {
   Plus,
   Settings,
 } from "lucide-react";
+import { v4 as uuidv4 } from "uuid";
 
 export default function ModuleCreation({ onBack }) {
   const [modules, setModules] = useState([]);
@@ -72,6 +73,7 @@ export default function ModuleCreation({ onBack }) {
 
     const now = new Date().toISOString();
     const payload = {
+      logId: uuidv4(),
       moduleName: newModuleName.trim(),
       metadata: {
         ipAddress: ip,
@@ -105,57 +107,64 @@ export default function ModuleCreation({ onBack }) {
   };
 
   const handleUpdate = async (moduleId) => {
-    if (!editedModuleName.trim()) return alert("Please enter module name.");
+  if (!editedModuleName.trim()) return alert("Please enter module name.");
 
-    const original = modules.find((mod) => mod.moduleId === moduleId);
-    if (!original) return alert("Module not found.");
+  const original = modules.find((mod) => mod.moduleId === moduleId);
+  if (!original) return alert("Module not found.");
 
-    const newNameLower = editedModuleName.trim().toLowerCase();
-    if (newNameLower === original.moduleName.toLowerCase()) {
-      alert("No changes detected.");
-      setEditingModuleId(null);
-      setEditedModuleName("");
-      return;
-    }
+  const newNameLower = editedModuleName.trim().toLowerCase();
+  if (newNameLower === original.moduleName.toLowerCase()) {
+    alert("No changes detected.");
+    setEditingModuleId(null);
+    setEditedModuleName("");
+    return;
+  }
 
-    const exists = modules.some(
-      (mod) =>
-        mod.moduleId !== moduleId &&
-        mod.moduleName.trim().toLowerCase() === newNameLower
-    );
-    if (exists) return alert("A module with this name already exists.");
+  const exists = modules.some(
+    (mod) =>
+      mod.moduleId !== moduleId &&
+      mod.moduleName.trim().toLowerCase() === newNameLower
+  );
+  if (exists) return alert("A module with this name already exists.");
 
-    const now = new Date().toISOString();
-    const payload = {
-      moduleId,
-      newName: editedModuleName.trim(),
-      metadata: {
-        ipAddress: ip,
-        userAgent: navigator.userAgent,
-        headers: "N/A",
-        channel: "web",
-        auditMetadata: {
-          createdBy: username,
-          createdDate: now,
-          modifiedBy: username,
-          modifiedDate: now,
-        },
+  const now = new Date().toISOString();
+  const payload = {
+    moduleId,
+    logId:
+      original.logId && original.logId !== "00000000-0000-0000-0000-000000000000"
+        ? original.logId // reuse existing logId
+        : uuidv4(),      // generate new one if missing
+    newName: editedModuleName.trim(),
+    metadata: {
+      ipAddress: ip,
+      userAgent: navigator.userAgent,
+      headers:
+        headersError ||
+        JSON.stringify({ "content-type": "application/json" }),
+      channel: "web",
+      auditMetadata: {
+        createdBy: username,
+        createdDate: now,
+        modifiedBy: username,
+        modifiedDate: now,
       },
-    };
-
-    try {
-      await axios.put(
-        `${API_BASE_URL}/ums/api/UserManagement/module_update`,
-        payload
-      );
-      setEditingModuleId(null);
-      setEditedModuleName("");
-      fetchModules();
-    } catch (error) {
-      console.error("Update error:", error);
-      alert("Failed to update module.");
-    }
+    },
   };
+
+  try {
+    await axios.put(
+      `${API_BASE_URL}/ums/api/UserManagement/module_update`,
+      payload
+    );
+    setEditingModuleId(null);
+    setEditedModuleName("");
+    fetchModules();
+  } catch (error) {
+    console.error("Update error:", error);
+    alert("Failed to update module.");
+  }
+};
+
 
   const filteredModules = modules.filter((mod) =>
     mod.moduleName.toLowerCase().includes(searchTerm.toLowerCase())

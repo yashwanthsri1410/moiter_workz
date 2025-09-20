@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { ArrowLeft, Building2, Pencil, Trash2, Search, Plus } from "lucide-react";
+import { ArrowLeft, Building2, Pencil, Search, Plus } from "lucide-react";
+import { v4 as uuidv4 } from "uuid";
 
 export default function DepartmentCreation({ onBack }) {
   const [departmentName, setDepartmentName] = useState("");
@@ -51,46 +52,89 @@ export default function DepartmentCreation({ onBack }) {
   };
 
   // Create department
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!departmentName.trim()) return alert("Please enter a department name.");
+  // Create department
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!departmentName.trim()) return alert("Please enter a department name.");
 
-    const exists = departments.some(
-      (d) => d.deptName.toLowerCase() === departmentName.trim().toLowerCase()
+  const exists = departments.some(
+    (d) => d.deptName.toLowerCase() === departmentName.trim().toLowerCase()
+  );
+  if (exists) return alert("Department already exists.");
+
+  try {
+    const payload = {
+      logId: uuidv4(), // ✅ auto-generate unique UUID
+      deptName: departmentName.trim(),
+      metadata: {
+        ipAddress: window.location.hostname || "unknown",
+        userAgent: navigator.userAgent,
+        channel: "WEB",
+        headers: "N/A",
+        auditMetadata: {
+          createdBy: "admin", // replace with actual logged-in user if available
+          createdDate: new Date().toISOString(),
+          modifiedBy: "admin",
+          modifiedDate: new Date().toISOString(),
+        },
+      },
+    };
+
+    await axios.post(
+      `${API_BASE_URL}/ums/api/UserManagement/department_create`,
+      payload
     );
-    if (exists) return alert("Department already exists.");
 
-    try {
-      await axios.post(
-        `${API_BASE_URL}/ums/api/UserManagement/department_create`,
-        { deptName: departmentName }
-      );
-      setDepartmentName("");
-      setShowForm(false);
-      fetchDepartments();
-    } catch (err) {
-      console.error("Failed to create department:", err);
-      alert("Error occurred while creating department.");
-    }
-  };
+    setDepartmentName("");
+    setShowForm(false);
+    fetchDepartments();
+  } catch (err) {
+    console.error("Failed to create department:", err);
+    alert("Error occurred while creating department.");
+  }
+};
 
-  // Update department
-  const handleUpdate = async (deptId) => {
-    if (!newDeptName.trim()) return alert("Enter new name");
 
-    try {
-      await axios.put(
-        `${API_BASE_URL}/ums/api/UserManagement/department_update`,
-        { deptId, newName: newDeptName }
-      );
-      setEditingDeptId(null);
-      setNewDeptName("");
-      fetchDepartments();
-    } catch (err) {
-      console.error("Update failed:", err);
-      alert("Error updating department.");
-    }
-  };
+// Update department
+const handleUpdate = async (deptId) => {
+  if (!newDeptName.trim()) return alert("Enter new name");
+
+  try {
+    // Find the department being updated
+    const dept = departments.find((d) => d.deptId === deptId);
+
+    const payload = {
+      deptId,
+      newName: newDeptName.trim(),
+      logId: dept?.logId && dept.logId !== "00000000-0000-0000-0000-000000000000"
+        ? dept.logId
+        : uuidv4(), // ✅ reuse existing logId or generate new one if null/empty
+      metadata: {
+        ipAddress: window.location.hostname || "unknown",
+        userAgent: navigator.userAgent,
+        channel: "WEB",
+        headers: "N/A",
+        auditMetadata: {
+          modifiedBy: "admin",
+          modifiedDate: new Date().toISOString(),
+        },
+      },
+    };
+
+    await axios.put(
+      `${API_BASE_URL}/ums/api/UserManagement/department_update`,
+      payload
+    );
+
+    setEditingDeptId(null);
+    setNewDeptName("");
+    fetchDepartments();
+  } catch (err) {
+    console.error("Update failed:", err);
+    alert("Error updating department.");
+  }
+};
+
 
   // Filtered list
   const filteredDepartments = departments.filter((d) =>

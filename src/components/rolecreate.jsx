@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import usePublicIp from "../hooks/usePublicIp";
 import { Pencil, Search, Plus, Users, UserCog, ArrowLeft } from "lucide-react";
+import { v4 as uuidv4 } from "uuid";
 
 const RoleAccessForm = ({ onBack }) => {
   const [modulesData, setModulesData] = useState([]);
@@ -106,88 +107,96 @@ const RoleAccessForm = ({ onBack }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const screenModuleList = [];
+  e.preventDefault();
+  const screenModuleList = [];
 
-    selectedModules.forEach((module) => {
-      const screens = selectedScreensPerModule[module] || [];
-      screens.forEach((screen) => {
-        screenModuleList.push({ module, screen });
+  selectedModules.forEach((module) => {
+    const screens = selectedScreensPerModule[module] || [];
+    screens.forEach((screen) => {
+      screenModuleList.push({
+        logId: uuidv4(),  // generate logId for each screen
+        module,
+        screen,
       });
     });
+  });
 
-    if (screenModuleList.length === 0) {
-      alert("Please select at least one screen.");
-      return;
-    }
+  if (screenModuleList.length === 0) {
+    alert("Please select at least one screen.");
+    return;
+  }
 
-    const bulkPayload = {
-      roleDescription,
-      screenModuleList,
-      metadata: {
-        ipAddress: ip,
-        userAgent: navigator.userAgent,
-        channel: "web",
-        auditMetadata: {
-          createdBy: username,
-          createdDate: new Date().toISOString(),
-          modifiedBy: username,
-          modifiedDate: new Date().toISOString(),
-        },
+  const bulkPayload = {
+    logId: uuidv4(), // main logId for role
+    roleDescription,
+    screenModuleList,
+    metadata: {
+      ipAddress: ip,
+      userAgent: navigator.userAgent,
+      channel: "web",
+      auditMetadata: {
+        createdBy: username,
+        createdDate: new Date().toISOString(),
+        modifiedBy: username,
+        modifiedDate: new Date().toISOString(),
       },
-    };
-
-    try {
-      await axios.post(
-        `${API_BASE_URL}/ums/api/UserManagement/role-access/bulk`,
-        bulkPayload
-      );
-      alert("Role access submitted successfully!");
-      fetchRoles();
-      setSelectedModules([]);
-      setScreensPerModule({});
-      setSelectedScreensPerModule({});
-      setRoleDescription("");
-      setShowForm(false);
-    } catch (error) {
-      console.error("Error submitting role access:", error);
-      alert("Submission failed!");
-    }
+    },
   };
+
+  try {
+    await axios.post(
+      `${API_BASE_URL}/ums/api/UserManagement/role-access/bulk`,
+      bulkPayload
+    );
+    alert("Role access submitted successfully!");
+    fetchRoles();
+    setSelectedModules([]);
+    setScreensPerModule({});
+    setSelectedScreensPerModule({});
+    setRoleDescription("");
+    setShowForm(false);
+  } catch (error) {
+    console.error("Error submitting role access:", error);
+    alert("Submission failed!");
+  }
+};
+
 
   const handleUpdateRole = async () => {
-    if (!editRole) return;
+  if (!editRole) return;
 
-    const payload = {
-      roleAccessId: editRole.roleAccessId,
-      newRoleDescription: editedRoleName,
-      metadata: {
-        ipAddress: ip,
-        userAgent: navigator.userAgent,
-        channel: "web",
-        auditMetadata: {
-          createdBy: username,
-          createdDate: new Date().toISOString(),
-          modifiedBy: username,
-          modifiedDate: new Date().toISOString(),
-        },
+  const payload = {
+    logId: editRole.logId, // use from API (fetched role)
+    roleAccessId: editRole.roleAccessId,
+    newRoleDescription: editedRoleName,
+    metadata: {
+      ipAddress: ip,
+      userAgent: navigator.userAgent,
+      channel: "web",
+      auditMetadata: {
+        createdBy: username,
+        createdDate: new Date().toISOString(),
+        modifiedBy: username,
+        modifiedDate: new Date().toISOString(),
       },
-    };
-
-    try {
-      await axios.put(
-        `${API_BASE_URL}/ums/api/UserManagement/update-role-description`,
-        payload
-      );
-      alert("Role description updated!");
-      setEditRole(null);
-      setEditedRoleName("");
-      fetchRoles();
-    } catch (error) {
-      console.error("Failed to update role description:", error);
-      alert("Update failed!");
-    }
+    },
   };
+
+  try {
+    await axios.put(
+      `${API_BASE_URL}/ums/api/UserManagement/update-role-description`,
+      payload
+    );
+    alert("Role description updated!");
+    setEditRole(null);
+    setEditedRoleName("");
+    fetchRoles();
+  } catch (error) {
+    console.error("Failed to update role description:", error);
+    alert("Update failed!");
+  }
+};
+
   const filteredRoles = roleDescriptions.filter((role) =>
     role.roleDescription.toLowerCase().includes(searchTerm.toLowerCase())
   );

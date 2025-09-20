@@ -54,6 +54,7 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
     try {
       const payload = {
         partnerName: selectedPartner.partnerName,
+         logId:selectedPartner.logId,
         partnerType: selectedPartner.partnerType,
         actionStatus: Number(currentAction),
         checker: "checkerUser",
@@ -90,7 +91,6 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
       setShowModal(false);
     }
   };
-  console.log(selectedPartner)
   return (
     <div>
       {/* Header */}

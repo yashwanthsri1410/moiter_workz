@@ -10,7 +10,6 @@ export default function ProductApproval() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedProgramType, setSelectedProgramType] = useState(""); // filter state
     const [selectedPriority, setSelectedPriority] = useState("");       // filter state
-    const [id, setid] = useState(0);
     const [selectedProduct, setSelectedProduct] = useState(null); // ✅ New
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     // filter data by search + dropdowns

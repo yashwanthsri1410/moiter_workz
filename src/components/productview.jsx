@@ -54,6 +54,7 @@ export default function Productview({
     try {
       const payload = {
         productId: selectedProduct.productId,
+        logId:selectedProduct.logId,
         actionStatus: currentAction,
         checker: "checkerUser", // Replace with logged-in user if available
         remarks: remarks,

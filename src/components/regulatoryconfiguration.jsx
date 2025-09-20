@@ -21,6 +21,7 @@ import usePublicIp from "../hooks/usePublicIp";
 import "../styles/styles.css";
 import { channels, inputStyle, options, transErr } from "../constants";
 import ErrorText from "./reusable/errorText";
+import { v4 as uuidv4 } from "uuid";
 // import { PencilIcon, Plus,SquarePen  } from "lucide-react";
 
 export default function RegulatoryConfig() {
@@ -37,6 +38,7 @@ export default function RegulatoryConfig() {
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const rowsPerPage = 5;
   const getDefaultForm = (ip, editingId = null) => ({
+    logId: uuidv4(),
     programType: "",
     subCategory: "",
     programDescription: "",
@@ -165,6 +167,7 @@ export default function RegulatoryConfig() {
     // Convert arrays or objects to match API schema
     const payload = {
       ...form,
+      logId: form.logId || uuidv4(),
       productId: editingIdRef.current || form.productId,
       transactionReportableFlags:
         typeof form.transactionReportableFlags === "string"
@@ -176,8 +179,8 @@ export default function RegulatoryConfig() {
       allowedChannels: Array.isArray(form.allowedChannels)
         ? form.allowedChannels
         : form.allowedChannels
-        ? [form.allowedChannels]
-        : [],
+          ? [form.allowedChannels]
+          : [],
 
       allowedMccCodes: undefined, // Remove if not part of schema
       ...(isEditing ? { modifiedBy: username } : { createdBy: username }),
@@ -294,8 +297,8 @@ export default function RegulatoryConfig() {
       [name]: numberFields.includes(name)
         ? Number(value)
         : type === "checkbox"
-        ? checked
-        : value,
+          ? checked
+          : value,
     }));
   };
 
@@ -366,7 +369,6 @@ export default function RegulatoryConfig() {
     cashLoadCheck,
   ]);
 
-  console.log(error);
 
   return (
     <div className="config-forms">
@@ -833,11 +835,10 @@ export default function RegulatoryConfig() {
                         <div
                           onClick={() => toggleLoading(method)}
                           className={`w-3 h-3 flex items-center justify-center border 
-              ${
-                checked
-                  ? "bg-teal-500 border-teal-500"
-                  : "bg-[#0d1220] border-teal-700/50"
-              }
+              ${checked
+                              ? "bg-teal-500 border-teal-500"
+                              : "bg-[#0d1220] border-teal-700/50"
+                            }
               transition-colors duration-200`}
                         >
                           {checked && (
@@ -889,11 +890,10 @@ export default function RegulatoryConfig() {
                         <div
                           onClick={() => toggleUnloading(method)}
                           className={`w-3 h-3 flex items-center justify-center border 
-            ${
-              checked
-                ? "bg-teal-500 border-teal-500"
-                : "bg-[#0d1220] border-teal-700/50"
-            }
+            ${checked
+                              ? "bg-teal-500 border-teal-500"
+                              : "bg-[#0d1220] border-teal-700/50"
+                            }
             transition-colors duration-200`}
                         >
                           {checked && (
@@ -983,7 +983,7 @@ export default function RegulatoryConfig() {
                   return (
                     <tr key={cfg.productId || idx} className="table-row">
                       <td className="table-content max-w-[80px]">
-                        <p class="truncate" title={cfg.subCategory}>
+                        <p className="truncate" title={cfg.subCategory}>
                           {cfg.subCategory}
                         </p>
                       </td>
@@ -1026,11 +1026,10 @@ export default function RegulatoryConfig() {
           <button
             onClick={() => setCurrentPage(currentPage - 1)}
             disabled={currentPage === 1}
-            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
-              currentPage === 1
+            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${currentPage === 1
                 ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
                 : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
-            }`}
+              }`}
           >
             <ChevronLeft className="w-4 h-4" /> Prev
           </button>
@@ -1040,11 +1039,10 @@ export default function RegulatoryConfig() {
               <button
                 key={i}
                 onClick={() => setCurrentPage(i + 1)}
-                className={`px-3 py-1 rounded-lg text-sm ${
-                  currentPage === i + 1
+                className={`px-3 py-1 rounded-lg text-sm ${currentPage === i + 1
                     ? "bg-[#00d4aa] text-black font-bold"
                     : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
-                }`}
+                  }`}
               >
                 {i + 1}
               </button>
@@ -1054,11 +1052,10 @@ export default function RegulatoryConfig() {
           <button
             onClick={() => setCurrentPage(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
-              currentPage === totalPages
+            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${currentPage === totalPages
                 ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
                 : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
-            }`}
+              }`}
           >
             Next <ChevronRight className="w-4 h-4" />
           </button>

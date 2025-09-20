@@ -16,6 +16,7 @@ import axios from "axios";
 import usePublicIp from "../hooks/usePublicIp";
 import "../styles/styles.css";
 import { channels, options } from "../constants";
+import { v4 as uuidv4 } from "uuid";
 
 // 🔹 Mapper function
 const mapFormToApiSchema = (form, username, ip, isEditing = false, empId) => {
@@ -24,6 +25,7 @@ const mapFormToApiSchema = (form, username, ip, isEditing = false, empId) => {
 
   const basePayload = {
     productId: form.productId,
+    logId: uuidv4(),
     productName: form.productName || "",
     programDescription: form.programDescription || "",
     isActive: form.isActive ?? true,
@@ -69,9 +71,9 @@ const mapFormToApiSchema = (form, username, ip, isEditing = false, empId) => {
     allowedChannels: form.allowedChannels || [],
     allowedMccCodes: form.allowedMccCodes
       ? String(form.allowedMccCodes)
-          .split(",")
-          .map((c) => c.trim())
-          .filter(Boolean)
+        .split(",")
+        .map((c) => c.trim())
+        .filter(Boolean)
       : [],
     geoRestrictions: form.geoRestrictions || [],
     merchantWhitelistOnly: form.merchantWhitelistOnly ?? false,
@@ -95,7 +97,7 @@ const mapFormToApiSchema = (form, username, ip, isEditing = false, empId) => {
     cardType: form.cardType || "Both",
     expiryWarningDays: form.expiryWarningDays ?? 0,
     dormantPeriodDays: form.dormantPeriodDays ?? 0,
-    topupMethod: Array.isArray(form.topUpMethod)
+    topUpMethod: Array.isArray(form.topUpMethod)
       ? form.topUpMethod.join(",")
       : form.topUpMethod || "",
     expiryPeriod: form.expiryPeriod ?? 0,
@@ -106,21 +108,52 @@ const mapFormToApiSchema = (form, username, ip, isEditing = false, empId) => {
       headers: "",
       channel: "web",
       auditMetadata: {
-        header: {},
-      },
+        createdBy: form.modifiedBy || "ajith",
+        createdDate: new Date().toISOString(),
+        modifiedBy: form.modifiedBy || "ajith",
+        modifiedDate: new Date().toISOString(),
+        // ipAddress: form.metadata?.ipAddress || "14.142.185.194",
+        // userAgent: navigator.userAgent,
+        channel: "web",
+        header: {
+
+          additionalProp1: {
+            options: {
+              propertyNameCaseInsensitive: true
+            },
+            parent: "string",
+            root: "string"
+          },
+          additionalProp2: {
+            options: {
+              propertyNameCaseInsensitive: true
+            },
+            parent: "string",
+            root: "string"
+          },
+          additionalProp3: {
+            options: {
+              propertyNameCaseInsensitive: true
+            },
+            parent: "string",
+            root: "string"
+          }
+
+        }
+      }
     },
   };
   // console.log(basePayload);
   if (isEditing) {
     // 🔹 UPDATE → only include modifiedBy
     basePayload.modifiedBy = safeUser; // top-level
-    basePayload.metadata.auditMetadata.modifiedBy = safeUser;
-    basePayload.metadata.auditMetadata.modifiedDate = now;
+    // basePayload.metadata.auditMetadata.modifiedBy = safeUser;
+    // basePayload.metadata.auditMetadata.modifiedDate = now;
   } else {
     // 🔹 CREATE → only include createdBy
     basePayload.createdBy = safeUser; // top-level
-    basePayload.metadata.auditMetadata.createdBy = safeUser;
-    basePayload.metadata.auditMetadata.createdDate = now;
+    // basePayload.metadata.auditMetadata.createdBy = safeUser;
+    // basePayload.metadata.auditMetadata.createdDate = now;
   }
 
   return basePayload;
@@ -167,7 +200,7 @@ export default function Productcreate() {
       );
 
       // Prepare the form data
-      const rawTopup = cfg.topUpMethod || cfg.topupMethod || "";
+      const rawTopup = cfg.topUpMethod || cfg.topUpMethod || "";
 
       const formData = {
         ...getDefaultForm(ip, username),
@@ -185,8 +218,8 @@ export default function Productcreate() {
         const channels = Array.isArray(matchedRbiConfig.allowedChannels)
           ? matchedRbiConfig.allowedChannels
           : typeof matchedRbiConfig.allowedChannels === "string"
-          ? matchedRbiConfig.allowedChannels.split(",").map((c) => c.trim())
-          : [];
+            ? matchedRbiConfig.allowedChannels.split(",").map((c) => c.trim())
+            : [];
 
         formData.allowedChannels = channels;
         formData.kycLevelRequired =
@@ -409,10 +442,10 @@ export default function Productcreate() {
       const channels = Array.isArray(matched.allowedChannels)
         ? matched.allowedChannels
         : typeof matched.allowedChannels === "string"
-        ? matched.allowedChannels.split(",").map((c) => c.trim())
-        : [];
+          ? matched.allowedChannels.split(",").map((c) => c.trim())
+          : [];
 
-      const rawTopup = matched.topUpMethod || matched.topupMethod || "";
+      const rawTopup = matched.topUpMethod || matched.topUpMethod || "";
 
       setForm((prev) => ({
         ...prev,
@@ -493,6 +526,10 @@ export default function Productcreate() {
       setIsEditing(false);
       setEditingId(null);
       setformOpen(false);
+
+
+      // console.log("Error saving product configuration:", payload);
+      // console.log(JSON.stringify(payload, null, 2));
     } catch (err) {
       console.error(
         "Error saving product configuration:",
@@ -893,11 +930,10 @@ export default function Productcreate() {
                         <div
                           onClick={() => toggleLoading(method)}
                           className={`w-3 h-3 flex items-center justify-center border 
-          ${
-            checked
-              ? "bg-teal-500 border-teal-500"
-              : "bg-[#0d1220] border-teal-700/50"
-          }
+          ${checked
+                              ? "bg-teal-500 border-teal-500"
+                              : "bg-[#0d1220] border-teal-700/50"
+                            }
         `}
                         >
                           {checked && (
@@ -949,11 +985,10 @@ export default function Productcreate() {
                         <div
                           onClick={() => toggleUnloading(method)}
                           className={`w-3 h-3 flex items-center justify-center border 
-            ${
-              checked
-                ? "bg-teal-500 border-teal-500"
-                : "bg-[#0d1220] border-teal-700/50"
-            }
+            ${checked
+                              ? "bg-teal-500 border-teal-500"
+                              : "bg-[#0d1220] border-teal-700/50"
+                            }
             transition-colors duration-200`}
                         >
                           {checked && (
@@ -1070,9 +1105,8 @@ export default function Productcreate() {
                       </td>
                       <td className="table-content">
                         <span
-                          className={` px-2 py-1 rounded text-[10px] ${
-                            cfg.isActive ? "checker" : "superuser"
-                          }`}
+                          className={` px-2 py-1 rounded text-[10px] ${cfg.isActive ? "checker" : "superuser"
+                            }`}
                         >
                           {cfg.isActive ? "active" : "Inactive"}
                         </span>
@@ -1104,11 +1138,10 @@ export default function Productcreate() {
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
-              currentPage === 1
-                ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
-            }`}
+            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${currentPage === 1
+              ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
+              : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
+              }`}
           >
             <ChevronLeft className="w-4 h-4" /> Prev
           </button>
@@ -1118,11 +1151,10 @@ export default function Productcreate() {
               <button
                 key={i}
                 onClick={() => handlePageChange(i + 1)}
-                className={`px-3 py-1 rounded-lg text-sm ${
-                  currentPage === i + 1
-                    ? "bg-[#00d4aa] text-black font-bold"
-                    : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
-                }`}
+                className={`px-3 py-1 rounded-lg text-sm ${currentPage === i + 1
+                  ? "bg-[#00d4aa] text-black font-bold"
+                  : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
+                  }`}
               >
                 {i + 1}
               </button>
@@ -1132,11 +1164,10 @@ export default function Productcreate() {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
-              currentPage === totalPages
-                ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
-            }`}
+            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${currentPage === totalPages
+              ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
+              : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
+              }`}
           >
             Next <ChevronRight className="w-4 h-4" />
           </button>

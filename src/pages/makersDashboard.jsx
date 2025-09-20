@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   LogOut,
   ChevronRight,
@@ -24,8 +24,6 @@ import {
 } from "lucide-react";
 import "../styles/styles.css";
 import logo from "../assets/logo.png";
-import ModuleCreation from "../components/modulecreate";
-import CreateDesignationForm from "../components/designationcreate";
 import Regulatoryconfiguration from "../components/regulatoryconfiguration";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -44,12 +42,26 @@ import SystemSettings from "../features/systemSettings";
 import TransactionsAnalystics from "../features/TransactionsManagement/TransactionsAnalystics";
 
 export default function DashboardLayout() {
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, setActiveTab] = useState("0");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [modules, setModules] = useState([]);
   const navigate = useNavigate();
 
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  useEffect(() => {
+    const stored = localStorage.getItem("userData");
+
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        setModules(parsed?.moduleAccess || []);
+      } catch (err) {
+        console.error("Invalid localStorage data", err);
+      }
+    }
+  }, []);
   const handleLogout = async () => {
     setIsLoading(true);
     try {
@@ -92,101 +104,101 @@ export default function DashboardLayout() {
     }
   };
 
-  const toggleDropdown = (menu) => {
+  const toggleDropdown = (menu, modIdx) => {
     setOpenDropdown(openDropdown === menu ? null : menu);
+    setActiveTab(modIdx)
   };
 
   const renderContent = () => {
     switch (activeTab) {
-      case "dashboard":
+      case "0":
+      case "1":
         return (
           <div className="content">
             {" "}
             <Maincheckerdashboard />
           </div>
         );
-      case "customer":
+      case "0-0":
         return (
           <div className="content">
             <CustomerManagement />
           </div>
         );
-      case "transactions":
-        return (
-          <div className="content">
-            <TransactionsAnalystics />
-          </div>
-        );
-      case "wallet":
+      case "0-1":
         return (
           <div className="content">
             {" "}
             <Walletranscation />
           </div>
         );
-      case "transactions":
-        return <div className="content">📈 Transaction Analytics</div>;
-      case "compliance":
+      case "0-2":
+        return (
+          <div className="content">
+            <TransactionsAnalystics />
+          </div>
+        );
+      case "0-3":
         return (
           <div className="content">
             {" "}
             <ComplianceKYC />
           </div>
         );
-      case "productperformance":
+      case "0-4":
+        return (
+          <div className="content">
+            <RiskManagement />
+          </div>
+        );
+      case "0-5":
         return (
           <div className="content">
             {" "}
             <Productperformance />
           </div>
         );
-      case "infra":
+      case "0-6":
+        return (
+          <div className="content">
+            <PartnerMangement />
+          </div>
+        );
+      case "0-7":
+        return (
+          <div className="content">
+            <ReportsAndAnalytics />
+          </div>
+        );
+      case "0-8":
+        return (
+          <div className="content">
+            <SystemSettings />
+          </div>
+        );
+      case "0-9":
         return (
           <div className="content">
             <Infra />
           </div>
         );
 
-      case "Regulatory":
+      case "1-0":
         return (
           <div className="content">
             <Regulatoryconfiguration />
           </div>
         );
-      case "Product":
+      case "1-1":
         return (
           <div className="content">
             <Productcreate />
           </div>
         );
-      case "partnercreation":
+      case "1-2":
         return (
           <div className="content">
             <Partnercreate />
-          </div>
-        );
-      case "partner":
-        return (
-          <div className="content">
-            <PartnerMangement />
-          </div>
-        );
-      case "reports":
-        return (
-          <div className="content">
-            <ReportsAndAnalytics />
-          </div>
-        );
-      case "system":
-        return (
-          <div className="content">
-            <SystemSettings />
-          </div>
-        );
-      case "risk":
-        return (
-          <div className="content">
-            <RiskManagement />
           </div>
         );
       default:
@@ -227,168 +239,50 @@ export default function DashboardLayout() {
 
         <div className="menu-bar">
           <nav className="menu">
-            {/* Dashboard Dropdown */}
-            <div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setActiveTab("dashboard");
-                  toggleDropdown("dashboard");
-                }}
-                className={`menu-header ${
-                  activeTab === "dashboard" ? "active" : ""
-                }`}
-              >
-                <LayoutGrid size={16} className="menu-icon" />
-                {!isCollapsed && (
-                  <>
-                    <span>Dashboard</span>
-                    <span className="arrow-icon">
-                      {openDropdown === "dashboard" ||
-                      dashboardTabs.includes(activeTab) ? (
-                        <ChevronUp size={14} />
-                      ) : (
-                        <ChevronDown size={14} />
-                      )}
-                    </span>
-                  </>
-                )}
-              </button>
-
-              {(openDropdown === "dashboard" ||
-                dashboardTabs.includes(activeTab)) &&
-                !isCollapsed && (
-                  <div className="submenu submenu-open">
-                    <button
-                      onClick={() => setActiveTab("customer")}
-                      className={
-                        activeTab === "customer" ? "submenu-active" : ""
-                      }
-                    >
-                      <User size={14} /> Customer Management
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("wallet")}
-                      className={activeTab === "wallet" ? "submenu-active" : ""}
-                    >
-                      <Wallet size={14} /> Wallet Operations
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("compliance")}
-                      className={
-                        activeTab === "compliance" ? "submenu-active" : ""
-                      }
-                    >
-                      <FileCheck size={14} /> Compliance & KYC
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("productperformance")}
-                      className={
-                        activeTab === "productperformance"
-                          ? "submenu-active"
-                          : ""
-                      }
-                    >
-                      <Activity size={14} /> Product Performance
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("transactions")}
-                      className={
-                        activeTab === "transactions" ? "submenu-active" : ""
-                      }
-                    >
-                      <BarChart2 size={14} /> Transaction Analytics
-                    </button>
-
-                    <button
-                      onClick={() => setActiveTab("risk")}
-                      className={activeTab === "risk" ? "submenu-active" : ""}
-                    >
-                      <Shield size={14} /> Risk Management
-                    </button>
-
-                    <button
-                      onClick={() => setActiveTab("partner")}
-                      className={
-                        activeTab === "partner" ? "submenu-active" : ""
-                      }
-                    >
-                      <Users size={14} /> Partner Management
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("reports")}
-                      className={
-                        activeTab === "reports" ? "submenu-active" : ""
-                      }
-                    >
-                      <FileText size={14} /> Reports & Analytics
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("system")}
-                      className={activeTab === "system" ? "submenu-active" : ""}
-                    >
-                      <Settings size={14} /> System Settings
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("infra")}
-                      className={activeTab === "infra" ? "submenu-active" : ""}
-                    >
-                      <Database size={14} /> Infra
-                    </button>
-                  </div>
-                )}
-            </div>
-
-            {/* Maker Console Dropdown */}
-            <div>
-              <button
-                onClick={() => toggleDropdown("makerconsole")}
-                className={`menu-header ${
-                  openDropdown === "makerconsole" ? "active" : ""
-                }`}
-              >
-                <ShieldCheck size={16} className="menu-icon" />
-                {!isCollapsed && (
-                  <>
-                    <span>Maker Console</span>
-                    <span className="arrow-icon">
-                      {openDropdown === "makerconsole" ? (
-                        <ChevronUp size={14} />
-                      ) : (
-                        <ChevronDown size={14} />
-                      )}
-                    </span>
-                  </>
-                )}
-              </button>
-
-              {openDropdown === "makerconsole" && !isCollapsed && (
-                <div className="submenu submenu-open">
+            {modules.map((mod, modIdx) => {
+              const tabKey = `${modIdx}`;
+              return (
+                <div key={modIdx}>
                   <button
-                    onClick={() => setActiveTab("Regulatory")}
-                    className={
-                      activeTab === "Regulatory" ? "submenu-active" : ""
-                    }
+                    onClick={() => toggleDropdown(mod.module.trim(), tabKey)}
+                    className={`menu-header ${openDropdown === mod.module.trim() ? "active" : ""
+                      }`}
                   >
-                    <FileTextIcon size={14} /> Regulatory
+                    <LayoutGrid size={16} className="menu-icon" />
+                    {!isCollapsed && (
+                      <>
+                        <span>{mod.module.trim()}</span>
+                        <span className="arrow-icon">
+                          {openDropdown === mod.module.trim() ? (
+                            <ChevronUp size={14} />
+                          ) : (
+                            <ChevronDown size={14} />
+                          )}
+                        </span>
+                      </>
+                    )}
                   </button>
-                  <button
-                    onClick={() => setActiveTab("Product")}
-                    className={activeTab === "Product" ? "submenu-active" : ""}
-                  >
-                    <PackagePlus size={14} /> Product
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("partnercreation")}
-                    className={
-                      activeTab === "partnercreation" ? "submenu-active" : ""
-                    }
-                  >
-                    <CalculatorIcon size={14} /> Partner Creation
-                  </button>
+
+                  {openDropdown === mod.module.trim() && !isCollapsed && (
+                    <div className="submenu submenu-open">
+                      {mod.screens.map((screen, screenIdx) => {
+                        // unique id combining module index + screen index
+                        const tabKey = `${modIdx}-${screenIdx}`;
+                        return (
+                          <button
+                            key={tabKey}
+                            onClick={() => setActiveTab(tabKey)}
+                            className={activeTab === tabKey ? "submenu-active" : ""}
+                          >
+                            <ChevronRight size={14} /> {screen}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              )
+            })}
           </nav>
         </div>
 

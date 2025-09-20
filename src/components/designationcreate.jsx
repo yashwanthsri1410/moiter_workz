@@ -9,6 +9,7 @@ import {
   Plus,
   Badge,
 } from "lucide-react";
+import { v4 as uuidv4 } from "uuid";
 
 export default function CreateDesignationForm({ onBack }) {
   const [departments, setDepartments] = useState([]);
@@ -82,6 +83,7 @@ export default function CreateDesignationForm({ onBack }) {
 
     const now = new Date().toISOString();
     const payload = {
+      logId: uuidv4(),
       deptName: selectedDeptId,
       designationName: designationDesc.trim(),
       metadata: {
@@ -124,42 +126,47 @@ export default function CreateDesignationForm({ onBack }) {
     setEditText("");
   };
 
-  const handleSaveEdit = async (designationId) => {
-    if (!editText.trim()) return alert("Designation cannot be empty");
+ const handleSaveEdit = async (desig) => {
+  if (!editText.trim()) return alert("Designation cannot be empty");
 
-    const now = new Date().toISOString();
-    const payload = {
-      designationId,
-      newDescription: editText.trim(),
-      metadata: {
-        ipAddress: ip,
-        userAgent: navigator.userAgent,
-        headers:
-          headersError ||
-          JSON.stringify({ "content-type": "application/json" }),
-        channel: "web",
-        auditMetadata: {
-          createdBy: username,
-          createdDate: now,
-          modifiedBy: username,
-          modifiedDate: now,
-        },
+  const now = new Date().toISOString();
+  const payload = {
+    designationId: desig.designationId,
+    newDescription: editText.trim(),
+    logId:
+      desig.logId && desig.logId !== "00000000-0000-0000-0000-000000000000"
+        ? desig.logId
+        : uuidv4(),
+    metadata: {
+      ipAddress: ip,
+      userAgent: navigator.userAgent,
+      headers:
+        headersError ||
+        JSON.stringify({ "content-type": "application/json" }),
+      channel: "web",
+      auditMetadata: {
+        createdBy: username,
+        createdDate: now,
+        modifiedBy: username,
+        modifiedDate: now,
       },
-    };
-
-    try {
-      await axios.put(
-        `${API_BASE_URL}/ums/api/UserManagement/designation_update`,
-        payload
-      );
-      handleCancelEdit();
-      fetchDesignations();
-    } catch (err) {
-      console.error("Error updating designation:", err);
-      setHeadersError("Error updating designation:" + err);
-      alert("Update failed");
-    }
+    },
   };
+
+  try {
+    await axios.put(
+      `${API_BASE_URL}/ums/api/UserManagement/designation_update`,
+      payload
+    );
+    handleCancelEdit();
+    fetchDesignations();
+  } catch (err) {
+    console.error("Error updating designation:", err);
+    setHeadersError("Error updating designation:" + err);
+    alert("Update failed");
+  }
+};
+
 
   // Grouped with filtering
   const groupedDesignations = departments.reduce((acc, dept) => {
@@ -342,7 +349,7 @@ export default function CreateDesignationForm({ onBack }) {
                           <>
                             <button
                               onClick={() =>
-                                handleSaveEdit(desig.designationId)
+                                handleSaveEdit(desig)
                               }
                               className="text-teal-400 hover:underline"
                             >

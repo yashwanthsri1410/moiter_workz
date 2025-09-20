@@ -1,25 +1,17 @@
 import {
-  Building2,
   Eye,
-  File,
-  FileText,
   Search,
   SquarePen,
   Save,
-  SaveAll,
-  EyeClosed,
   EyeOff,
   ArrowLeft,
   RotateCcw,
   Check,
   CalculatorIcon,
-  X,
-  Lock,
-  SaveIcon,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Select from "react-select";
 import usePublicIp from "../hooks/usePublicIp";
@@ -31,6 +23,7 @@ import {
   buildRequestInfo,
   prepareDocuments,
 } from "../utils/constraintParser";
+import { v4 as uuidv4 } from "uuid";
 // import { PencilIcon, Plus,SquarePen  } from "lucide-react";
 
 export default function Partnercreate() {
@@ -158,7 +151,7 @@ export default function Partnercreate() {
       const res = await axios.get(
         `${API_BASE_URL}/fes/api/Export/partner_summary_export`
       );
-      setPartners(res.data  || []);
+      setPartners(res.data || []);
     } catch (err) {
       console.error("Error fetching configurations:", err);
     }
@@ -204,6 +197,7 @@ export default function Partnercreate() {
 
   // Default form values with all required keys
   const defaultFormValues = {
+    logId: uuidv4(),
     partnerName: "",
     productName: 0,
     contactName: "",
@@ -245,6 +239,7 @@ export default function Partnercreate() {
   const [form, setForm] = useState({ ...defaultFormValues });
   // ✅ Keys allowed in backend schema
   const schemaKeys = [
+    "logId",
     "partnerName",
     "partnerType",
     "contactName",
@@ -283,6 +278,7 @@ export default function Partnercreate() {
     try {
       let payload = {
         ...form,
+        logId: form.logId || uuidv4(),
         pincode: Number(form.pincode) || 0,
         cardIssuanceCommissionPercent:
           Number(form.cardIssuanceCommissionPercent) || 0,
@@ -371,6 +367,7 @@ export default function Partnercreate() {
 
     setForm({
       ...partner,
+      logId: partner.logId || uuidv4(),
       portalUrl: partner.portalUrl || 0,
       allowedProducts: partner.allowedProducts
         ? partner.allowedProducts.split(",")
@@ -474,8 +471,8 @@ export default function Partnercreate() {
       backgroundColor: state.isSelected
         ? "#1452A8"
         : state.isFocused
-        ? "#1452A8"
-        : "transparent", // 🔹 transparent instead of solid
+          ? "#1452A8"
+          : "transparent", // 🔹 transparent instead of solid
       color: "#fff",
       fontSize: "12px",
       cursor: "pointer",
@@ -754,11 +751,10 @@ export default function Partnercreate() {
                 }))
               }
               className={`w-3 h-3 flex items-center justify-center border rounded-sm cursor-pointer
-      ${
-        form.portalAccessEnabled
-          ? "bg-teal-500 border-teal-500"
-          : "bg-[#0d1220] border-teal-700/50"
-      }
+      ${form.portalAccessEnabled
+                  ? "bg-teal-500 border-teal-500"
+                  : "bg-[#0d1220] border-teal-700/50"
+                }
       transition-colors duration-200`}
             >
               {form.portalAccessEnabled && (
@@ -1258,7 +1254,7 @@ export default function Partnercreate() {
           {/* Header */}
           <div className="table-header">
             <h2 className="table-title flex items-center gap-2">
-              <Building2 className="text-[#00d4aa] w-5 h-5" />
+              <CalculatorIcon className="text-[#00d4aa] w-5 h-5" />
               Existing Partner Configurations
             </h2>
             <div className="search-box">
@@ -1311,26 +1307,24 @@ export default function Partnercreate() {
                     </td>
                     <td className="p-3">
                       <span
-                        className={`px-2 py-1 rounded text-[10px] ${
-                          partner.partnerStatus === "Active"
+                        className={`px-2 py-1 rounded text-[10px] ${partner.partnerStatus === "Active"
                             ? "checker"
                             : partner.partnerStatus === "Onboarded"
-                            ? "maker"
-                            : partner.partnerStatus === "Inactive"
-                            ? "superuser"
-                            : ""
-                        }`}
+                              ? "maker"
+                              : partner.partnerStatus === "Inactive"
+                                ? "superuser"
+                                : ""
+                          }`}
                       >
                         {partner.partnerStatus}
                       </span>
                     </td>
                     <td className="p-3">
                       <span
-                        className={`px-2 py-1 rounded text-[10px] ${
-                          partner.kycStatus === "Verified"
+                        className={`px-2 py-1 rounded text-[10px] ${partner.kycStatus === "Verified"
                             ? "checker"
                             : "superuser"
-                        }`}
+                          }`}
                       >
                         {partner.kycStatus}
                       </span>
@@ -1397,11 +1391,10 @@ export default function Partnercreate() {
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
-                currentPage === 1
+              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${currentPage === 1
                   ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
                   : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
-              }`}
+                }`}
             >
               <ChevronLeft className="w-4 h-4" /> Prev
             </button>
@@ -1411,11 +1404,10 @@ export default function Partnercreate() {
                 <button
                   key={i}
                   onClick={() => handlePageChange(i + 1)}
-                  className={`px-3 py-1 rounded-lg text-sm ${
-                    currentPage === i + 1
+                  className={`px-3 py-1 rounded-lg text-sm ${currentPage === i + 1
                       ? "bg-[#00d4aa] text-black font-bold"
                       : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
-                  }`}
+                    }`}
                 >
                   {i + 1}
                 </button>
@@ -1425,11 +1417,10 @@ export default function Partnercreate() {
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
-                currentPage === totalPages
+              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${currentPage === totalPages
                   ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
                   : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
-              }`}
+                }`}
             >
               Next <ChevronRight className="w-4 h-4" />
             </button>

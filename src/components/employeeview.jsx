@@ -47,6 +47,7 @@ export default function EmployeeView({
 
       const payload = {
         name: selectedEmployee.userName,
+         logId:selectedEmployee.logId,
         checker: storedUsername,
         actionStatus: currentAction,
         remarks: remarks,

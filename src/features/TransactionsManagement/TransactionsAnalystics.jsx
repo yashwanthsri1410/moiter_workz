@@ -63,10 +63,10 @@ const TranscationsAnalystics = () => {
           <p className="stat-value-dx91u">{data.customersAddedToday}</p>
 
           <div style={{ marginTop: "-20px" }}>
-            <div class="" style={{ fontSize: "10px", color: "#94a3b8" }}>
+            <div className="" style={{ fontSize: "10px", color: "#94a3b8" }}>
               Avg Transaction
             </div>
-            <div class="" style={{ fontSize: "14px", color: "#e2e8f0" }}>
+            <div className="" style={{ fontSize: "14px", color: "#e2e8f0" }}>
               ₹808
             </div>
           </div>

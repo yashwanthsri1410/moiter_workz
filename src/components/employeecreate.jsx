@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import "../styles/styles.css";
 import ErrorText from "./reusable/errorText";
+import { v4 as uuidv4 } from "uuid";
 
 const EmployeeCreationForm = ({ onBack }) => {
   const username = localStorage.getItem("username");
@@ -68,12 +69,12 @@ const EmployeeCreationForm = ({ onBack }) => {
         status === 1
           ? "Super User"
           : status === 2
-          ? "Normal User"
-          : status === 3
-          ? "Checker"
-          : status === 4
-          ? "Maker"
-          : "Infra Manager"
+            ? "Normal User"
+            : status === 3
+              ? "Checker"
+              : status === 4
+                ? "Maker"
+                : "Infra Manager"
       );
       setPassword("");
       if (selectedEmployee.roleAccessId) {
@@ -207,79 +208,91 @@ const EmployeeCreationForm = ({ onBack }) => {
     "Infra Manager": 5,
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validate(selectedEmployee)) return;
-    if (selectedEmployee && !designationId) return;
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!validate(selectedEmployee)) return;
+  if (selectedEmployee && !designationId) return;
 
-    const timestamp = new Date().toISOString();
+  const timestamp = new Date().toISOString();
 
-    const payload = {
-      deptId,
-      designationId,
-      name,
-      email,
-      password,
-      statusId,
-      roleAccessId: parseInt(roleAccessId),
-      userType,
-      ...(selectedEmployee
-        ? {
-            modifiedBy: createdBy,
-            userId: selectedEmployee?.userId,
-            empId: selectedEmployee?.empId,
-          }
-        : { createdBy: createdBy, empId: `Emp${empId}` }),
-      metadata: {
-        ipAddress: ip || "0.0.0.0",
-        userAgent,
-        headers: "custom-header",
-        channel: "web",
-        auditMetadata: {
-          createdBy: username,
-          createdDate: timestamp,
-          modifiedBy: username,
-          modifiedDate: timestamp,
-        },
+  // 🔹 get original employee object (for logId)
+  const original = employees.find(
+    (emp) => emp.userId === selectedEmployee?.userId
+  );
+
+  const payload = {
+    deptId,
+    designationId,
+    name,
+    email,
+    password,
+    statusId,
+    roleAccessId: parseInt(roleAccessId),
+    userType,
+    // 🔹 logId handling
+    logId:
+      selectedEmployee && original?.logId
+        ? original.logId
+        : uuidv4(), // new only on create or missing
+    ...(selectedEmployee
+      ? {
+          modifiedBy: createdBy,
+          userId: selectedEmployee?.userId,
+          empId: selectedEmployee?.empId,
+        }
+      : { createdBy: createdBy, empId: `Emp${empId}` }),
+    metadata: {
+      ipAddress: ip || "0.0.0.0",
+      userAgent,
+      headers: "custom-header",
+      channel: "web",
+      auditMetadata: {
+        createdBy: username,
+        createdDate: timestamp,
+        modifiedBy: username,
+        modifiedDate: timestamp,
       },
-    };
-
-    const deptObj = designation.find((d) => d.deptName === payload.deptId);
-    if (deptObj) payload.deptId = deptObj.deptId;
-
-    const desigObj = designation.find(
-      (d) => d.designationDesc === payload.designationId
-    );
-    if (desigObj) payload.designationId = desigObj.designationId;
-
-    if (usersId[payload.userType]) payload.userType = usersId[payload.userType];
-
-    try {
-      if (selectedEmployee) {
-        await axios.put(
-          `${API_BASE_URL}/ums/api/UserManagement/updateEmployee`,
-          payload,
-          { headers: { "Content-Type": "application/json" } }
-        );
-        alert("✅ Employee updated successfully");
-      } else {
-        await axios.post(
-          `${API_BASE_URL}/ums/api/UserManagement/createEmployee`,
-          payload,
-          { headers: { "Content-Type": "application/json" } }
-        );
-        alert("✅ Employee created successfully");
-      }
-    } catch (err) {
-      console.error("❌ API error:", err.response?.data || err.message);
-      alert("❌ Failed. See console.");
-    } finally {
-      fetchData();
-      clearState();
-      setSelectedEmployee("");
-      setIsApiCalled(true);
-    }
+    },
   };
+
+  // map department + designation
+  const deptObj = designation.find((d) => d.deptName === payload.deptId);
+  if (deptObj) payload.deptId = deptObj.deptId;
+
+  const desigObj = designation.find(
+    (d) => d.designationDesc === payload.designationId
+  );
+  if (desigObj) payload.designationId = desigObj.designationId;
+
+  if (usersId[payload.userType]) payload.userType = usersId[payload.userType];
+
+  try {
+    if (selectedEmployee) {
+      await axios.put(
+        `${API_BASE_URL}/ums/api/UserManagement/updateEmployee`,
+        payload,
+        { headers: { "Content-Type": "application/json" } }
+      );
+      alert("✅ Employee updated successfully");
+    } else {
+      await axios.post(
+        `${API_BASE_URL}/ums/api/UserManagement/createEmployee`,
+        payload,
+        { headers: { "Content-Type": "application/json" } }
+      );
+      alert("✅ Employee created successfully");
+    }
+  } catch (err) {
+    console.error("❌ API error:", err.response?.data || err.message);
+    alert("❌ Failed. See console.");
+  } finally {
+    fetchData();
+    clearState();
+    setSelectedEmployee("");
+    setIsApiCalled(true);
+  }
+};
+
 
   const handleRoleChange = (e) => {
     const roleId = e.target.value;
@@ -537,11 +550,10 @@ const EmployeeCreationForm = ({ onBack }) => {
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
-                currentPage === 1
+              className={`w-6 h-6 flex items-center justify-center rounded-md transition ${currentPage === 1
                   ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
                   : "bg-[#0f131d] text-white hover:border hover:border-[#00d4aa]"
-              }`}
+                }`}
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -553,11 +565,10 @@ const EmployeeCreationForm = ({ onBack }) => {
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
-                currentPage === totalPages
+              className={`w-6 h-6 flex items-center justify-center rounded-md transition ${currentPage === totalPages
                   ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
                   : "bg-[#0f131d] text-white hover:border hover:border-[#00d4aa]"
-              }`}
+                }`}
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -599,25 +610,24 @@ const EmployeeCreationForm = ({ onBack }) => {
                       <td className="table-content">{emp.roleDescription}</td>
                       <td className="table-content">
                         <span
-                          className={`px-2 py-1 text-[9px] rounded ${
-                            emp.status === 0
+                          className={`px-2 py-1 text-[9px] rounded ${emp.status === 0
                               ? "checker"
                               : emp.status === 1
-                              ? "infra"
-                              : emp.status === 2
-                              ? "inactive"
-                              : "maker"
-                          }`}
+                                ? "infra"
+                                : emp.status === 2
+                                  ? "inactive"
+                                  : "maker"
+                            }`}
                         >
                           {emp.status === 0
                             ? "Approved"
                             : emp.status === 1
-                            ? "Pending"
-                            : emp.status === 2
-                            ? "Rejected"
-                            : emp.status === 3
-                            ? "Recheck"
-                            : ""}
+                              ? "Pending"
+                              : emp.status === 2
+                                ? "Rejected"
+                                : emp.status === 3
+                                  ? "Recheck"
+                                  : ""}
                         </span>
                       </td>
                       <td className="table-content flex gap-2">

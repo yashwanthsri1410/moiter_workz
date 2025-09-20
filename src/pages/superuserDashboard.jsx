@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Shield,
   Building2,
@@ -8,11 +8,10 @@ import {
   UserCog,
   Users,
   LogOut,
-  ChevronRight,
   ChevronLeft,
   ChevronDown,
   ChevronUp,
-  User,
+  ChevronRight,
   Wallet,
   BarChart2,
   FileCheck,
@@ -38,7 +37,6 @@ import CustomerManagement from "../features/customerManagement/CustomerManagemen
 import ComplianceKYC from "../features/Compliance&KYC/Compliance&KYC";
 import Productperformance from "../features/productperformance/productperformance";
 import Walletranscation from "../features/Walletoperation/Walletranscation";
-import Partner from "../features/partnerManagement";
 import PartnerMangement from "../features/partnerManagement";
 import ReportsAndAnalytics from "../features/reportsAnalytics";
 import SystemSettings from "../features/systemSettings";
@@ -46,14 +44,31 @@ import RiskManagement from "../features/riskManagement";
 import TransactionsAnalystics from "../features/TransactionsManagement/TransactionsAnalystics";
 
 export default function DashboardLayout() {
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [activeTab, setActiveTab] = useState("0");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [modules, setModules] = useState([]);
+
   const navigate = useNavigate();
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-  const toggleDropdown = (menu) => {
+
+  useEffect(() => {
+    const stored = localStorage.getItem("userData");
+
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        setModules(parsed?.moduleAccess || []);
+      } catch (err) {
+        console.error("Invalid localStorage data", err);
+      }
+    }
+  }, []);
+
+  const toggleDropdown = (menu, modIdx) => {
     setOpenDropdown(openDropdown === menu ? null : menu);
+    setActiveTab(modIdx)
   };
 
   const handleLogout = async () => {
@@ -83,8 +98,7 @@ export default function DashboardLayout() {
           },
         },
       };
-      // console.log(JSON.stringify(payload, null, 2));
-      // console.log(payload);
+
       await axios.post(
         `${API_BASE_URL}/ums/api/UserManagement/user_logout`,
         payload
@@ -101,124 +115,118 @@ export default function DashboardLayout() {
 
   const renderContent = () => {
     switch (activeTab) {
-      case "dashboard":
+      case "0":
+      case "1":
         return (
           <div className="content">
             <Superuserdasboardcontent />
           </div>
         );
-      case "transactions":
-        return (
-          <div className="content">
-            <TransactionsAnalystics />
-          </div>
-        );
-      case "compliance":
-        return (
-          <div className="content">
-            <ComplianceKYC />
-          </div>
-        );
-      case "productperformance":
-        return (
-          <div className="content">
-            <Productperformance />
-          </div>
-        );
-      case "customer":
+      case "0-0":
         return (
           <div className="content">
             <CustomerManagement />
           </div>
         );
-      case "wallet":
+      case "0-1":
         return (
           <div className="content">
             <Walletranscation />
           </div>
         );
-      case "departments":
+      case "0-2":
         return (
           <div className="content">
-            <DepartmentCreation onBack={() => setActiveTab("dashboard")} />
+            <TransactionsAnalystics />
           </div>
         );
-      case "designations":
+
+      case "0-3":
         return (
           <div className="content">
-            <CreateDesignationForm onBack={() => setActiveTab("dashboard")} />
+            <ComplianceKYC />
           </div>
         );
-      case "modules":
-        return (
-          <div className="content">
-            <ModuleCreation onBack={() => setActiveTab("dashboard")} />
-          </div>
-        );
-      case "screens":
-        return (
-          <div className="content">
-            <ScreenManagement onBack={() => setActiveTab("dashboard")} />
-          </div>
-        );
-      case "roles":
-        return (
-          <div className="content">
-            <RoleAccessForm onBack={() => setActiveTab("dashboard")} />
-          </div>
-        );
-      case "Users":
-        return (
-          <div className="content">
-            <EmployeeCreationForm onBack={() => setActiveTab("dashboard")} />
-          </div>
-        );
-      case "reports":
-        return (
-          <div className="content">
-            <ReportsAndAnalytics />
-          </div>
-        );
-      case "infra":
-        return (
-          <div className="content">
-            <Infra />
-          </div>
-        );
-      case "partner":
-        return (
-          <div className="content">
-            <PartnerMangement />
-          </div>
-        );
-      case "system":
-        return (
-          <div className="content">
-            <SystemSettings />
-          </div>
-        );
-      case "risk":
+      case "0-4":
         return (
           <div className="content">
             <RiskManagement />
           </div>
         );
+      case "0-5":
+        return (
+          <div className="content">
+            <Productperformance />
+          </div>
+        );
+      case "0-6":
+        return (
+          <div className="content">
+            <PartnerMangement />
+          </div>
+        );
+      case "0-7":
+        return (
+          <div className="content">
+            <ReportsAndAnalytics />
+          </div>
+        );
+      case "0-8":
+        return (
+          <div className="content">
+            <SystemSettings />
+          </div>
+        );
+      case "0-9":
+        return (
+          <div className="content">
+            <Infra />
+          </div>
+        );
+      case "1-0":
+        return (
+          <div className="content">
+            <DepartmentCreation onBack={() => setActiveTab("0")} />
+          </div>
+        );
+      case "1-1":
+        return (
+          <div className="content">
+            <CreateDesignationForm onBack={() => setActiveTab("0")} />
+          </div>
+        );
+      case "1-2":
+        return (
+          <div className="content">
+            <ModuleCreation onBack={() => setActiveTab("0")} />
+          </div>
+        );
+      case "1-3":
+        return (
+          <div className="content">
+            <ScreenManagement onBack={() => setActiveTab("0")} />
+          </div>
+        );
+      case "1-4":
+        return (
+          <div className="content">
+            <RoleAccessForm onBack={() => setActiveTab("0")} />
+          </div>
+        );
+      case "1-5":
+        return (
+          <div className="content">
+            <EmployeeCreationForm onBack={() => setActiveTab("0")} />
+          </div>
+        );
+
+
+
       default:
         return <div className="content">Select an option</div>;
     }
   };
-  // Define dashboard children tabs
-  const dashboardTabs = [
-    "customer",
-    "wallet",
-    "transactions",
-    "compliance",
-    "risk",
-    "productperformance",
-    "partner",
-    "reports",
-    "system",
-  ];
+
   return (
     <div className="layout">
       {/* Sidebar */}
@@ -241,187 +249,51 @@ export default function DashboardLayout() {
 
         <div className="menu-bar">
           <nav className="menu">
-            {/* Dashboard Dropdown */}
-            <div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setActiveTab("dashboard");
-                  toggleDropdown("dashboard");
-                }}
-                className={`menu-header ${
-                  activeTab === "dashboard" ? "active" : ""
-                }`}
-              >
-                <LayoutGrid size={16} className="menu-icon" />
-                {!isCollapsed && (
-                  <>
-                    <span>Dashboard</span>
-                    <span className="arrow-icon">
-                      {openDropdown === "dashboard" ||
-                      dashboardTabs.includes(activeTab) ? (
-                        <ChevronUp size={14} />
-                      ) : (
-                        <ChevronDown size={14} />
-                      )}
-                    </span>
-                  </>
-                )}
-              </button>
+            {modules.map((mod, modIdx) => {
+              const tabKey = `${modIdx}`;
+              return (
+                <div key={modIdx}>
+                  <button
+                    onClick={() => toggleDropdown(mod.module.trim(), tabKey)}
+                    className={`menu-header ${openDropdown === mod.module.trim() ? "active" : ""
+                      }`}
+                  >
+                    <LayoutGrid size={16} className="menu-icon" />
+                    {!isCollapsed && (
+                      <>
+                        <span>{mod.module.trim()}</span>
+                        <span className="arrow-icon">
+                          {openDropdown === mod.module.trim() ? (
+                            <ChevronUp size={14} />
+                          ) : (
+                            <ChevronDown size={14} />
+                          )}
+                        </span>
+                      </>
+                    )}
+                  </button>
 
-              {(openDropdown === "dashboard" ||
-                dashboardTabs.includes(activeTab)) &&
-                !isCollapsed && (
-                  <div className="submenu submenu-open">
-                    <button
-                      onClick={() => setActiveTab("customer")}
-                      className={
-                        activeTab === "customer" ? "submenu-active" : ""
-                      }
-                    >
-                      <User size={14} /> Customer Management
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("wallet")}
-                      className={activeTab === "wallet" ? "submenu-active" : ""}
-                    >
-                      <Wallet size={14} /> Wallet Operations
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("transactions")}
-                      className={
-                        activeTab === "transactions" ? "submenu-active" : ""
-                      }
-                    >
-                      <BarChart2 size={14} /> Transaction Analytics
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("compliance")}
-                      className={
-                        activeTab === "compliance" ? "submenu-active" : ""
-                      }
-                    >
-                      <FileCheck size={14} /> Compliance & KYC
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("risk")}
-                      className={activeTab === "risk" ? "submenu-active" : ""}
-                    >
-                      <Shield size={14} /> Risk Management
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("productperformance")}
-                      className={
-                        activeTab === "productperformance"
-                          ? "submenu-active"
-                          : ""
-                      }
-                    >
-                      <Activity size={14} /> Product Performance
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("partner")}
-                      className={
-                        activeTab === "partner" ? "submenu-active" : ""
-                      }
-                    >
-                      <Users size={14} /> Partner Management
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("reports")}
-                      className={
-                        activeTab === "reports" ? "submenu-active" : ""
-                      }
-                    >
-                      <FileText size={14} /> Reports & Analytics
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("system")}
-                      className={activeTab === "system" ? "submenu-active" : ""}
-                    >
-                      <Settings size={14} /> System Settings
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("infra")}
-                      className={activeTab === "infra" ? "submenu-active" : ""}
-                    >
-                      <Database size={14} /> Infra
-                    </button>
-                  </div>
-                )}
-            </div>
-            {/* superuser console Dropdown */}
-            <div>
-              <button
-                onClick={() => toggleDropdown("superuserconsole")}
-                className={`menu-header ${
-                  openDropdown === "superuserconsole" ? "active" : ""
-                }`}
-              >
-                <Shield size={16} className="menu-icon" />
-                {!isCollapsed && (
-                  <>
-                    <span>Super Console</span>
-                    <span className="arrow-icon">
-                      {openDropdown === "superuserconsole" ? (
-                        <ChevronUp size={14} />
-                      ) : (
-                        <ChevronDown size={14} />
-                      )}
-                    </span>
-                  </>
-                )}
-              </button>
-
-              {openDropdown === "superuserconsole" && !isCollapsed && (
-                <div
-                  className={`submenu ${
-                    openDropdown === "superuserconsole" ? "submenu-open" : ""
-                  }`}
-                >
-                  <button
-                    onClick={() => setActiveTab("departments")}
-                    className={
-                      activeTab === "departments" ? "submenu-active" : ""
-                    }
-                  >
-                    <Building2 size={14} /> Departments
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("designations")}
-                    className={
-                      activeTab === "designations" ? "submenu-active" : ""
-                    }
-                  >
-                    <Badge size={14} /> Designations
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("modules")}
-                    className={activeTab === "modules" ? "submenu-active" : ""}
-                  >
-                    <Settings size={14} /> Modules
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("screens")}
-                    className={activeTab === "screens" ? "submenu-active" : ""}
-                  >
-                    <Monitor size={14} /> Screens
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("roles")}
-                    className={activeTab === "roles" ? "submenu-active" : ""}
-                  >
-                    <UserCog size={14} /> Roles
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("Users")}
-                    className={activeTab === "Users" ? "submenu-active" : ""}
-                  >
-                    <User size={14} /> Users
-                  </button>
+                  {openDropdown === mod.module.trim() && !isCollapsed && (
+                    <div className="submenu submenu-open">
+                      {mod.screens.map((screen, screenIdx) => {
+                        // unique id combining module index + screen index
+                        const tabKey = `${modIdx}-${screenIdx}`;
+                        return (
+                          <button
+                            key={tabKey}
+                            onClick={() => setActiveTab(tabKey)}
+                            className={activeTab === tabKey ? "submenu-active" : ""}
+                          >
+                            <ChevronRight size={14} /> {screen}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              )
+            })}
+
           </nav>
         </div>
 
