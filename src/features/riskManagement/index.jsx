@@ -61,7 +61,7 @@ const RiskManagement = () => {
       <StatCards stats={stats} />
       <div className="stat-card-dx91u corner-box p-2 shadow-md rounded-lg mt-5 mx-5">
         {/* Header */}
-        <h2 className="text-[#00d4aa] text-sm">Risk Management Dashboard</h2>
+        <h2 className="primary-color text-sm">Risk Management Dashboard</h2>
         <div className="flex justify-between items-center mt-3">
           <p className="text-gray-400 text-sm mt-2">Overall Risk Level</p>
 
@@ -75,7 +75,7 @@ const RiskManagement = () => {
         <div>
           <div className="w-full bg-teal-900/40 rounded-full h-3">
             <div
-              className="bg-teal-400 h-3 rounded-full"
+              className="primary-bg h-3 rounded-full"
               style={{ width: `${progress}%` }}
             ></div>
           </div>

@@ -4,6 +4,7 @@ import { ChartColumn, BookText, Download, Calendar } from "lucide-react";
 import "../../styles/styles.css";
 import axios from "axios";
 import StatCards from "../../components/reusable/statCards";
+import { primaryColor } from "../../constants";
 
 const ReportsAndAnalytics = () => {
   const [reportData, setReportData] = useState({});
@@ -19,14 +20,14 @@ const ReportsAndAnalytics = () => {
       value: 47,
       desc: "Generated today",
       icon: ChartColumn,
-      color: "#00d4aa",
+      color: primaryColor,
     },
     {
       title: "Compliance Reports",
       value: 12,
       desc: "Quarterly pending",
       icon: BookText,
-      color: "#00d4aa",
+      color: primaryColor,
     },
     {
       title: "Downloads",

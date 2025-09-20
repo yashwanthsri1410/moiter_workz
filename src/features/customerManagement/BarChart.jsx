@@ -11,6 +11,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import axios from "axios";
+import { primaryColor } from "../../constants/index";
 
 ChartJS.register(
   CategoryScale,
@@ -167,7 +168,7 @@ const BarChart = () => {
       title: {
         display: true,
         text: "Customer Onboarding (Last 6 Months)",
-        color: "#00d4aa",
+        color: primaryColor,
         font: { size: 14, weight: "200" },
         align: "start",
         padding: { top: 10, bottom: 20 },
@@ -214,7 +215,7 @@ const BarChart = () => {
             const value = tooltip.dataPoints?.[0]?.raw ?? "";
             tooltipEl.innerHTML = `
         <div style="margin-bottom:6px; font-weight:600; color:#aeb6bd">${title}</div>
-        <div style="color:#00d4aa; font-weight:700">${value} New Customers</div>
+        <div style="color:var(--primary-color); font-weight:700">${value} New Customers</div>
       `;
           }
 

@@ -4,6 +4,7 @@ import { Settings, Shield, Globe, Bell } from "lucide-react";
 import "../../styles/styles.css";
 import axios from "axios";
 import StatCards from "../../components/reusable/statCards";
+import { primaryColor } from "../../constants";
 
 const SystemSettings = () => {
   const [settingsData, setSettingsData] = useState({});
@@ -33,7 +34,7 @@ const SystemSettings = () => {
       value: "99.9%",
       desc: "Uptime this month",
       icon: Globe,
-      color: "#00d4aa",
+      color: primaryColor,
     },
     {
       title: "Notifications",

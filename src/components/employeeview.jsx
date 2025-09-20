@@ -4,7 +4,7 @@ import axios from "axios";
 export default function EmployeeView({
   selectedEmployee,
   setSelectedEmployee,
-  fetchConfigurations
+  fetchConfigurations,
 }) {
   const [remarks, setRemarks] = useState("");
   const [currentAction, setCurrentAction] = useState(null);
@@ -40,7 +40,10 @@ export default function EmployeeView({
       }
 
       // Require remarks for Reject or Recheck
-      if ((currentAction === 2 || currentAction === 3) && remarks.trim() === "") {
+      if (
+        (currentAction === 2 || currentAction === 3) &&
+        remarks.trim() === ""
+      ) {
         alert("Remarks are required for this action.");
         return;
       }
@@ -73,12 +76,12 @@ export default function EmployeeView({
       fetchConfigurations();
     } catch (err) {
       console.error("Error submitting employee action:", err.response || err);
-      alert("Approval not permitted for users in Recheck status. Please ensure Maker review is completed first.");
+      alert(
+        "Approval not permitted for users in Recheck status. Please ensure Maker review is completed first."
+      );
       setShowModal(false);
     }
   };
-
-
 
   return (
     <>
@@ -92,7 +95,7 @@ export default function EmployeeView({
             Back to Approvals
           </button>
           <div className="header-icon-box">
-            <FileText className="text-[#00d4aa] w-4 h-4" />
+            <FileText className="primary-color w-4 h-4" />
           </div>
           <div>
             <h1 className="header-title">Employee Approvals</h1>
@@ -105,16 +108,17 @@ export default function EmployeeView({
           <div className="portal-info flex gap-2">
             <p className="portal-link">
               <span
-                className={`px-2 py-1 rounded text-[10px] ${selectedEmployee.status === 0
-                  ? "checker"
-                  : selectedEmployee.status === 1
+                className={`px-2 py-1 rounded text-[10px] ${
+                  selectedEmployee.status === 0
+                    ? "checker"
+                    : selectedEmployee.status === 1
                     ? "infra"
                     : selectedEmployee.status === 2
-                      ? "superuser"
-                      : selectedEmployee.status === 3
-                        ? "maker"
-                        : ""
-                  }`}
+                    ? "superuser"
+                    : selectedEmployee.status === 3
+                    ? "maker"
+                    : ""
+                }`}
               >
                 {getStatusLabel(selectedEmployee.status)}
               </span>
@@ -165,7 +169,7 @@ export default function EmployeeView({
           {/* Actions */}
           <div className="card">
             <h4 className="up-section-title">
-              <RefreshCw size={18} color="#00e6c3" className="refresh-icon" />
+              <RefreshCw size={18} className="refresh-icon primary-color" />
               User Review Actions
             </h4>
 
@@ -187,7 +191,11 @@ export default function EmployeeView({
                 </button>
 
                 <button
-                  className={`btn approval-btn-red ${selectedEmployee.status === 3 ? "opacity-20 cursor-not-allowed" : ""}`}
+                  className={`btn approval-btn-red ${
+                    selectedEmployee.status === 3
+                      ? "opacity-20 cursor-not-allowed"
+                      : ""
+                  }`}
                   onClick={() => handleActionClick(2)}
                   disabled={selectedEmployee.status === 3} // ✅ Disable if status is 3
                 >
@@ -198,7 +206,6 @@ export default function EmployeeView({
                       : "Reject user"}
                   </span>
                 </button>
-
               </div>
             </div>
 
@@ -224,14 +231,16 @@ export default function EmployeeView({
                 {currentAction === 0
                   ? "approve"
                   : currentAction === 2
-                    ? "reject"
-                    : "recheck"}{" "}
-                <b>{selectedEmployee.EmployeeName}</b>? This action cannot be undone.
+                  ? "reject"
+                  : "recheck"}{" "}
+                <b>{selectedEmployee.EmployeeName}</b>? This action cannot be
+                undone.
               </p>
 
               {currentAction !== 0 && Number(selectedEmployee.status) !== 1 && (
                 <p className="text-red-500 text-[12px] mb-1">
-                  Recheck and Reject actions are only allowed for pending employees.
+                  Recheck and Reject actions are only allowed for pending
+                  employees.
                 </p>
               )}
 
@@ -245,7 +254,9 @@ export default function EmployeeView({
                 onChange={(e) => setRemarks(e.target.value)}
                 className="modal-textarea"
                 placeholder="Enter remarks..."
-                disabled={currentAction !== 0 && Number(selectedEmployee.status) !== 1}
+                disabled={
+                  currentAction !== 0 && Number(selectedEmployee.status) !== 1
+                }
               />
 
               <div className="modal-footer">
@@ -256,15 +267,20 @@ export default function EmployeeView({
                   Cancel
                 </button>
                 <button
-                  className={`btn-submit ${currentAction === 0
-                    ? "btn-approve-green"
-                    : currentAction === 2
+                  className={`btn-submit ${
+                    currentAction === 0
+                      ? "btn-approve-green"
+                      : currentAction === 2
                       ? "btn-reject-red"
                       : "btn-recheck-blue"
-                    }`}
+                  }`}
                   onClick={submitAction}
-                  disabled={currentAction === 3 && Number(selectedEmployee.status) !== 1}
-                  aria-disabled={currentAction === 3 && Number(selectedEmployee.status) !== 1}
+                  disabled={
+                    currentAction === 3 && Number(selectedEmployee.status) !== 1
+                  }
+                  aria-disabled={
+                    currentAction === 3 && Number(selectedEmployee.status) !== 1
+                  }
                 >
                   {currentAction === 0 && (
                     <>
@@ -282,13 +298,11 @@ export default function EmployeeView({
                     </>
                   )}
                 </button>
-
               </div>
             </div>
           </div>
         )}
-
-      </div >
+      </div>
     </>
   );
 }

@@ -127,7 +127,7 @@ export default function UserManagementSystem() {
         <div className="back-title flex justify-between items-center">
           <div className="header-left flex items-center gap-[10px]">
             <div className="header-icon-box">
-              <Shield className="text-[#00d4aa] w-4 h-4 " />
+              <Shield className="primary-color w-4 h-4 " />
             </div>
             <div>
               <h1 className="header-title">User Management System</h1>
@@ -150,10 +150,10 @@ export default function UserManagementSystem() {
         <div className="table-card hover-card">
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-sm text-gray-400">Total Users</h2>
-            <Users className="w-4 h-4 text-[#00d4aa]" />
+            <Users className="w-4 h-4 primary-color" />
           </div>
           <p className="text-2xl font-bold">{totalUsers}</p>
-          <span className="text-xs text-[#00d4aa]"> ↑ Active</span>
+          <span className="text-xs primary-color"> ↑ Active</span>
         </div>
         <div className="table-card hover-card">
           <div className="flex items-center justify-between mb-2">
@@ -264,7 +264,7 @@ export default function UserManagementSystem() {
             className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
               currentPage === 1
                 ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
+                : "bg-[#0a1625] text-white hover:primary-color"
             }`}
           >
             <ChevronLeft className="w-4 h-4" /> Prev
@@ -284,8 +284,8 @@ export default function UserManagementSystem() {
                   onClick={() => handlePageChange(page)}
                   className={`px-3 py-1 rounded-lg text-sm ${
                     currentPage === page
-                      ? "bg-[#00d4aa] text-black font-bold"
-                      : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
+                      ? "primary-bg text-black font-bold"
+                      : "bg-[#1c2b45] text-white hover:primary-color"
                   }`}
                 >
                   {page}
@@ -299,7 +299,7 @@ export default function UserManagementSystem() {
             className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
               currentPage === totalPages
                 ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
+                : "bg-[#0a1625] text-white hover:primary-color"
             }`}
           >
             Next <ChevronRight className="w-4 h-4" />

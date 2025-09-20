@@ -16,9 +16,9 @@ export default function KYCCompliance() {
     {
       label: "KYC Verified",
       value: kycStatusData?.[0]?.kycVerifiedCount.toLocaleString("en-IN") ?? 0,
-      color: "text-[#00D4AA] ",
+      color: "text-green-400",
       iconBg: "bg-green-900/40",
-      icon: <CheckCircle2 className="text-[#00D4AA] " size={20} />,
+      icon: <CheckCircle2 className="text-green-500" size={20} />,
     },
   ];
 
@@ -29,7 +29,7 @@ export default function KYCCompliance() {
   return (
     <div className="text-white my-6">
       {/* Header */}
-      <h2 className="flex items-center gap-2 text-[18px] text-[#00D4AA] mb-6">
+      <h2 className="flex items-center gap-2 text-[18px] primary-color mb-6">
         <Shield size={18} />
         KYC & Compliance
       </h2>

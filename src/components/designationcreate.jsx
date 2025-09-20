@@ -8,6 +8,7 @@ import {
   Search,
   Plus,
   Badge,
+  X,
 } from "lucide-react";
 
 export default function CreateDesignationForm({ onBack }) {
@@ -186,11 +187,11 @@ export default function CreateDesignationForm({ onBack }) {
           <div className="header-left">
             <div className="flex items-center gap-[10px]">
               <button className="header-icon-btn" onClick={onBack}>
-                <ArrowLeft className="text-[#00d4aa] w-4 h-4" />
+                <ArrowLeft className="primary-color w-4 h-4" />
               </button>
 
               <div className="header-icon-box">
-                <Badge className="text-[#00d4aa] w-4 h-4" />
+                <Badge className="primary-color w-4 h-4" />
               </div>
             </div>
             <div>
@@ -224,8 +225,15 @@ export default function CreateDesignationForm({ onBack }) {
           </div>
           {/* Toggle form */}
           <button onClick={() => setShowForm(!showForm)} className="btn-toggle">
-            <Plus className="w-3 h-3" />
-            {showForm ? "Close Form" : "Create Designations"}
+            {showForm ? (
+              <>
+                <X className="w-3 h-3" /> Close Form
+              </>
+            ) : (
+              <>
+                <Plus className="w-3 h-3" /> Create Department
+              </>
+            )}
           </button>
         </div>
       </div>
@@ -261,7 +269,9 @@ export default function CreateDesignationForm({ onBack }) {
                 maxLength={50}
                 className="form-input"
               />
-              <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Only letters, spaces, and hyphens are allowed
+              </p>
             </div>
           </div>
 
@@ -269,7 +279,7 @@ export default function CreateDesignationForm({ onBack }) {
             <button
               type="button"
               onClick={() => setShowForm(false)}
-              className="text-sm font-medium text-gray-300 hover:text-white"
+              className="btn-cancel"
             >
               Cancel
             </button>
@@ -281,9 +291,9 @@ export default function CreateDesignationForm({ onBack }) {
       )}
 
       {/* Table */}
-      <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 shadow-lg">
+      <div className="table-card-bg rounded-xl border  p-4 shadow-lg">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="flex items-center gap-2 text-teal-400 font-semibold text-lg">
+          <h2 className="flex items-center gap-2 primary-color font-semibold text-lg">
             <Badge className="w-5 h-5" /> Existing Designations
           </h2>
           <span className="text-sm text-gray-400">
@@ -297,9 +307,7 @@ export default function CreateDesignationForm({ onBack }) {
               <tr>
                 <th className="table-cell">Department</th>
                 <th className="table-cell">Designation</th>
-                <th className="table-cell-icon color-[#00d4aa]  flex gap-4">
-                  Actions
-                </th>
+                <th className="table-cell-icon flex gap-4">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800 text-sm">
@@ -310,7 +318,7 @@ export default function CreateDesignationForm({ onBack }) {
                       <td className="table-cell-name">
                         <div className="flex items-center gap-1 ">
                           {id === 0 ? (
-                            <Building2 className="w-4 h-4 text-teal-400 " />
+                            <Building2 className="w-4 h-4 primary-color " />
                           ) : (
                             ""
                           )}{" "}
@@ -327,12 +335,14 @@ export default function CreateDesignationForm({ onBack }) {
                               className="form-input"
                               placeholder="Enter new name (letters only)..."
                             />
-                            <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              Only letters, spaces, and hyphens are allowed
+                            </p>
                           </div>
                         ) : (
                           <div className="flex items-center gap-1 ">
                             {" "}
-                            <Badge className="w-4 h-4 text-teal-400 " />
+                            <Badge className="w-4 h-4 primary-color " />
                             {desig.designationDesc}
                           </div>
                         )}
@@ -344,7 +354,7 @@ export default function CreateDesignationForm({ onBack }) {
                               onClick={() =>
                                 handleSaveEdit(desig.designationId)
                               }
-                              className="text-teal-400 hover:underline"
+                              className="primary-color hover:underline"
                             >
                               Save
                             </button>
@@ -358,7 +368,7 @@ export default function CreateDesignationForm({ onBack }) {
                         ) : (
                           <button
                             onClick={() => handleEditInline(desig)}
-                            className="flex items-center gap-1 text-teal-400 hover:underline"
+                            className="flex items-center gap-1 primary-color hover:underline"
                           >
                             <Pencil className="w-4 h-4" /> Edit
                           </button>
@@ -383,8 +393,8 @@ export default function CreateDesignationForm({ onBack }) {
       </div>
 
       {/* Guidelines */}
-      <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 mt-6 shadow-lg">
-        <h3 className="text-teal-400 font-semibold mb-3">
+      <div className="table-card-bg rounded-xl p-4 mt-6 shadow-lg">
+        <h3 className="primary-color font-semibold mb-3">
           Designation Management Guidelines
         </h3>
         <div className="grid md:grid-cols-2 gap-3 text-sm text-gray-300">
@@ -401,7 +411,8 @@ export default function CreateDesignationForm({ onBack }) {
             inline
           </p>
           <p>
-            ⚠️ <span className="text-white">Validation:</span> Only letters, spaces, and hyphens allowed
+            ⚠️ <span className="text-white">Validation:</span> Only letters,
+            spaces, and hyphens allowed
           </p>
         </div>
       </div>

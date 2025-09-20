@@ -418,17 +418,19 @@ export default function Partnercreate() {
       ...provided,
       backgroundColor: "#11161a", // 🔹 transparent bg
       border: state.isFocused
-        ? "2px solid rgba(0, 245, 160, 0.7)" // ✅ apply full border when focused
-        : "1px solid rgb(153 255 217 / 40%)",
+        ? "2px solid var(--borderBg-color)" // ✅ apply full border when focused
+        : "1px solid var(--borderBg-color)",
       borderRadius: "8px",
       minHeight: "32px",
-      boxShadow: "0 0 10px #00f5a022", // 🔹 default shadow
+      outline: state.isFocused && "2px solid var(--primary-color)", // 🔹 remove browser blue outline
+      boxShadow: "none", //
+      // boxShadow: "0 0 10px #00f5a022", // 🔹 default shadow
       "&:hover": {
         // borderColor: "#14b8a6",
         // boxShadow: "0 0 8px rgba(20, 184, 166, 0.8)", // stronger shadow on hover
       },
       ...(state.isFocused && {
-        borderColor: "rgba(0, 245, 160, 0.7)",
+        borderColor: "var(--borderBg-color)",
       }),
     }),
     valueContainer: (provided) => ({
@@ -440,7 +442,7 @@ export default function Partnercreate() {
     multiValue: (provided) => ({
       ...provided,
       borderRadius: "6px",
-      backgroundColor: "rgba(20, 184, 166, 0.15)", // keep tags visible
+      backgroundColor: "var(--menu-hover-bg)", // keep tags visible
     }),
     multiValueLabel: (provided) => ({
       ...provided,
@@ -449,16 +451,17 @@ export default function Partnercreate() {
     }),
     multiValueRemove: (provided) => ({
       ...provided,
-      color: "#14b8a6",
-      // ":hover": {
-      //   backgroundColor: "#14b8a6",
-      //   color: "white",
-      // },
+      color: "var(--borderBg-color)", // icon color
+      backgroundColor: "transparent", // no background
+      ":hover": {
+        backgroundColor: "transparent", // custom hover bg
+        color: "var(--primary-color)",
+      },
     }),
     menu: (provided) => ({
       ...provided,
       backgroundColor: "#0f1114",
-      border: "1px solid rgba(20, 184, 166, 0.5)",
+      border: "1px solid var(--borderBg-color)",
       borderRadius: "10px",
       zIndex: 10,
       maxHeight: "240px", // like max-h-60
@@ -483,7 +486,7 @@ export default function Partnercreate() {
         backgroundColor: "#1452A8",
       },
       ":active": {
-        backgroundColor: "#14b8a6",
+        backgroundColor: "var(--primary-color)",
         color: "white",
       },
     }),
@@ -506,7 +509,7 @@ export default function Partnercreate() {
         <div className="card-header-left">
           <div className="flex items-center gap-[10px]">
             <div className="header-icon-box">
-              <CalculatorIcon className="text-[#00d4aa] w-4 h-4" />
+              <CalculatorIcon className="primary-color w-4 h-4" />
             </div>
           </div>
           <div>
@@ -550,7 +553,7 @@ export default function Partnercreate() {
         <form className="department-form mt-[18px]" onSubmit={handleSubmit}>
           <div className="page-header">
             <h2 className="form-title flex ">
-              <CalculatorIcon className="text-[#00d4aa] w-5 h-5 mr-[10px]" />
+              <CalculatorIcon className=" w-5 h-5 mr-[10px]" />
               Create Partner Configuration
             </h2>
           </div>
@@ -756,8 +759,8 @@ export default function Partnercreate() {
               className={`w-3 h-3 flex items-center justify-center border rounded-sm cursor-pointer
       ${
         form.portalAccessEnabled
-          ? "bg-teal-500 border-teal-500"
-          : "bg-[#0d1220] border-teal-700/50"
+          ? "check-box-clr-after"
+          : "check-box-clr-before"
       }
       transition-colors duration-200`}
             >
@@ -806,9 +809,7 @@ export default function Partnercreate() {
             <div className="grid grid-cols-3 gap-6 mt-4">
               {/* Agreement */}
               <div className="relative">
-                <label className="text-[#00d4aa] text-[15px]">
-                  Agreement Document
-                </label>
+                <label className=" text-[15px]">Agreement Document</label>
                 <p className="text-[10px] text-gray-400">
                   (PDF/JPG/PNG, Max 5MB)
                 </p>
@@ -870,9 +871,7 @@ export default function Partnercreate() {
 
               {/* ID Proof */}
               <div className="relative">
-                <label className="text-[#00d4aa] text-[15px]">
-                  ID Proof Document
-                </label>
+                <label className=" text-[15px]">ID Proof Document</label>
                 <p className="text-[10px] text-gray-400">
                   (PDF/JPG/PNG, Max 2MB)
                 </p>
@@ -934,7 +933,7 @@ export default function Partnercreate() {
 
               {/* Address Proof */}
               <div className="relative">
-                <label className="text-[#00d4aa] text-[15px]">
+                <label className="primary-color text-[15px]">
                   Address Proof Document
                 </label>
                 <p className="text-[10px] text-gray-400">
@@ -1011,13 +1010,13 @@ export default function Partnercreate() {
           </div>
           {/* Advanced Configuration Section */}
           <div className="advanced-config mt-10">
-            <h3 className="section-title text-[#00d4aa]">
+            <h3 className="section-title primary-color">
               Advanced Configuration
             </h3>
 
             {/* Compliance & KYC */}
             <div className="mt-6">
-              <h4 className="text-sm font-semibold text-[#00d4aa] mb-4">
+              <h4 className="text-sm font-semibold primary-color mb-4">
                 Compliance & KYC
               </h4>
               <div className="grid grid-cols-2 gap-4">
@@ -1142,7 +1141,7 @@ export default function Partnercreate() {
 
             {/* Financial Configuration */}
             <div className="mt-8">
-              <h4 className="text-sm font-semibold text-[#00d4aa] mb-4">
+              <h4 className="text-sm font-semibold primary-color mb-4">
                 Financial Configuration
               </h4>
               <div className="grid grid-cols-2 gap-4">
@@ -1258,7 +1257,7 @@ export default function Partnercreate() {
           {/* Header */}
           <div className="table-header">
             <h2 className="table-title flex items-center gap-2">
-              <Building2 className="text-[#00d4aa] w-5 h-5" />
+              <Building2 className="primary-color w-5 h-5" />
               Existing Partner Configurations
             </h2>
             <div className="search-box">
@@ -1375,7 +1374,7 @@ export default function Partnercreate() {
                           handleEdit(partner.partnerName, partner.partnerType)
                         }
                       >
-                        <SquarePen className="text-[#00d4aa] w-3 h-3" />
+                        <SquarePen className="primary-color w-3 h-3" />
                       </button>
                     </td>
                   </tr>
@@ -1400,7 +1399,7 @@ export default function Partnercreate() {
               className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
                 currentPage === 1
                   ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                  : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
+                  : "bg-[#0a1625] text-white hover:primary-color"
               }`}
             >
               <ChevronLeft className="w-4 h-4" /> Prev
@@ -1413,8 +1412,8 @@ export default function Partnercreate() {
                   onClick={() => handlePageChange(i + 1)}
                   className={`px-3 py-1 rounded-lg text-sm ${
                     currentPage === i + 1
-                      ? "bg-[#00d4aa] text-black font-bold"
-                      : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
+                      ? "primary-bg text-black font-bold"
+                      : "bg-[#1c2b45] text-white hover:primary-color"
                   }`}
                 >
                   {i + 1}
@@ -1428,7 +1427,7 @@ export default function Partnercreate() {
               className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
                 currentPage === totalPages
                   ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                  : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
+                  : "bg-[#0a1625] text-white hover:primary-color"
               }`}
             >
               Next <ChevronRight className="w-4 h-4" />

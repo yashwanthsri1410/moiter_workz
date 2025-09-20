@@ -9,6 +9,7 @@ import {
   Search,
   Plus,
   Settings,
+  X,
 } from "lucide-react";
 
 export default function ModuleCreation({ onBack }) {
@@ -36,9 +37,7 @@ export default function ModuleCreation({ onBack }) {
 
   const fetchModules = async () => {
     try {
-      const res = await axios.get(
-       `${API_BASE_URL}/fes/api/Export/modules`
-      );
+      const res = await axios.get(`${API_BASE_URL}/fes/api/Export/modules`);
       setModules(res.data || []);
     } catch (error) {
       console.error("Error fetching modules:", error);
@@ -66,7 +65,8 @@ export default function ModuleCreation({ onBack }) {
     if (!newModuleName.trim()) return alert("Please enter module name.");
 
     const exists = modules.some(
-      (mod) => mod.moduleName.toLowerCase() === newModuleName.trim().toLowerCase()
+      (mod) =>
+        mod.moduleName.toLowerCase() === newModuleName.trim().toLowerCase()
     );
     if (exists) return alert("Module already exists.");
 
@@ -169,16 +169,18 @@ export default function ModuleCreation({ onBack }) {
           <div className="header-left">
             <div className="flex items-center gap-[10px]">
               <button className="header-icon-btn" onClick={onBack}>
-                <ArrowLeft className="text-[#00f5a0] w-5 h-5" />
+                <ArrowLeft className="primary-color w-4 h-4" />
               </button>
 
               <div className="header-icon-box">
-                <Settings className="text-[#00f5a0] w-5 h-5" />
+                <Settings className="primary-color w-4 h-4" />
               </div>
             </div>
             <div>
               <h1 className="header-title">Module Management</h1>
-              <p className="header-subtext">Create and manage application modules</p>
+              <p className="header-subtext">
+                Create and manage application modules
+              </p>
             </div>
           </div>
 
@@ -206,8 +208,15 @@ export default function ModuleCreation({ onBack }) {
 
           {/* Toggle form */}
           <button onClick={() => setShowForm(!showForm)} className="btn-toggle">
-            <Plus className="w-4 h-4" />
-            {showForm ? "Close Form" : "Create Module"}
+            {showForm ? (
+              <>
+                <X className="w-3 h-3" /> Close Form
+              </>
+            ) : (
+              <>
+                <Plus className="w-3 h-3" /> Create Department
+              </>
+            )}
           </button>
         </div>
       </div>
@@ -226,14 +235,22 @@ export default function ModuleCreation({ onBack }) {
               placeholder="Enter module name (letters only)..."
               className="form-input"
             />
-            <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
+            <p className="text-xs text-gray-500 mt-1">
+              Only letters, spaces, and hyphens are allowed
+            </p>
           </div>
 
           <div className="form-actions">
-            <button type="button" onClick={() => setShowForm(false)} className="btn-cancel">
+            <button
+              type="button"
+              onClick={() => setShowForm(false)}
+              className="btn-cancel"
+            >
               Cancel
             </button>
-            <button type="submit" className="btn-toggle">Create Module</button>
+            <button type="submit" className="btn-toggle">
+              Create Module
+            </button>
           </div>
         </form>
       )}
@@ -241,7 +258,9 @@ export default function ModuleCreation({ onBack }) {
       {/* Table */}
       <div className="table-card">
         <div className="table-header">
-          <p className="table-title"><Settings className="w-5 h-5" /> Existing Modules</p>
+          <p className="table-title">
+            <Settings className="w-5 h-5" /> Existing Modules
+          </p>
           <span className="table-subtext">
             Total: {filteredModules.length} modules
           </span>
@@ -252,7 +271,7 @@ export default function ModuleCreation({ onBack }) {
             <thead className="table-head">
               <tr>
                 <th className="table-cell">Module Name</th>
-                <th className="table-cell-icon color-[#00d4aa]  flex gap-4">Actions</th>
+                <th className="table-cell-icon flex gap-4">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -269,27 +288,45 @@ export default function ModuleCreation({ onBack }) {
                             className="form-input"
                             placeholder="Enter new name (letters only)..."
                           />
-                          <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Only letters, spaces, and hyphens are allowed
+                          </p>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-1 "> <Settings className="w-4 h-4 text-teal-400 " />{mod.moduleName}</div>
+                        <div className="flex items-center gap-1 ">
+                          {" "}
+                          <Settings className="w-4 h-4 primary-color " />
+                          {mod.moduleName}
+                        </div>
                       )}
                     </td>
                     <td className="table-cell-icon flex gap-4">
                       {editingModuleId === mod.moduleId ? (
                         <>
-                          <button onClick={() => handleUpdate(mod.moduleId)} className="text-teal-400 hover:underline">
+                          <button
+                            onClick={() => handleUpdate(mod.moduleId)}
+                            className="primary-color hover:underline"
+                          >
                             Save
                           </button>
-                          <button onClick={() => { setEditingModuleId(null); setEditedModuleName(""); }} className="text-gray-400 hover:underline">
+                          <button
+                            onClick={() => {
+                              setEditingModuleId(null);
+                              setEditedModuleName("");
+                            }}
+                            className="text-gray-400 hover:underline"
+                          >
                             Cancel
                           </button>
                         </>
                       ) : (
                         <>
                           <button
-                            onClick={() => { setEditingModuleId(mod.moduleId); setEditedModuleName(mod.moduleName); }}
-                            className="text-[#00f5a0] hover:underline flex items-center gap-1"
+                            onClick={() => {
+                              setEditingModuleId(mod.moduleId);
+                              setEditedModuleName(mod.moduleName);
+                            }}
+                            className="primary-color hover:underline flex items-center gap-1"
                           >
                             <Pencil className="w-4 h-4" /> Edit
                           </button>
@@ -303,7 +340,10 @@ export default function ModuleCreation({ onBack }) {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={2} className="table-cell table-cell-muted text-center">
+                  <td
+                    colSpan={2}
+                    className="table-cell table-cell-muted text-center"
+                  >
                     No modules found.
                   </td>
                 </tr>
@@ -317,12 +357,21 @@ export default function ModuleCreation({ onBack }) {
       <div className="guidelines-card">
         <h3 className="guidelines-title">Module Management Guidelines</h3>
         <div className="guidelines-grid">
-          <p>📘 <span>Create:</span> Add new modules</p>
-          <p>🔍 <span>Search:</span> Find modules quickly</p>
+          <p>
+            📘 <span>Create:</span> Add new modules
+          </p>
+          <p>
+            🔍 <span>Search:</span> Find modules quickly
+          </p>
         </div>
         <div className="guidelines-grid">
-          <p>✏️ <span>Edit:</span> Modify module names inline</p>
-          <p>⚠️ <span>Validation:</span> Only letters, spaces, and hyphens allowed</p>
+          <p>
+            ✏️ <span>Edit:</span> Modify module names inline
+          </p>
+          <p>
+            ⚠️ <span>Validation:</span> Only letters, spaces, and hyphens
+            allowed
+          </p>
         </div>
       </div>
     </div>

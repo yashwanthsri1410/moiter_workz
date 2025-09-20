@@ -35,9 +35,9 @@ const OperationsDashboard = () => {
   const icons = [
     {
       id: "refresh",
-      icon: <RefreshCcw size={18} color="#00d4aa" />,
+      icon: <RefreshCcw size={18} />,
     },
-    { id: "download", icon: <Download size={18} color="#00d4aa" /> },
+    { id: "download", icon: <Download size={18} /> },
   ];
 
   const loadedDashboard = async (url) => {

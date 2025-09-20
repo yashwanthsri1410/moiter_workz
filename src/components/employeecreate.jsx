@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import "../styles/styles.css";
 import ErrorText from "./reusable/errorText";
+import { paginationStyle } from "../constants";
 
 const EmployeeCreationForm = ({ onBack }) => {
   const username = localStorage.getItem("username");
@@ -308,10 +309,10 @@ const EmployeeCreationForm = ({ onBack }) => {
       <div className="top-bar">
         <div className="flex items-center space-x-3">
           <button className="icon-btn" onClick={onBack}>
-            <ArrowLeft className="text-teal-400" size={18} />
+            <ArrowLeft className="primary-color" size={18} />
           </button>
           <button className="icon-btn">
-            <User className="text-teal-400" size={18} />
+            <User className="primary-color" size={18} />
           </button>
           <div>
             <h1 className="top-title">User Management</h1>
@@ -485,7 +486,7 @@ const EmployeeCreationForm = ({ onBack }) => {
           <div className="card-header-left">
             <div className="flex items-center gap-[10px]">
               <div className="header-icon-box">
-                <FileText className="text-[#00d4aa] w-4 h-4" />
+                <FileText className="primary-color w-4 h-4" />
               </div>
             </div>
             <div>
@@ -502,7 +503,7 @@ const EmployeeCreationForm = ({ onBack }) => {
         </div>
 
         {/* Filters & Pagination */}
-        <div className="bg-[#0c0f16] border border-[#1a1f2e] rounded-xl p-3 flex flex-col gap-3 mt-6">
+        <div className="tables-search-card rounded-xl p-3 flex flex-col gap-3 mt-6">
           <div className="flex items-center gap-2">
             {/* Search */}
             <div className="search-box relative">
@@ -540,15 +541,13 @@ const EmployeeCreationForm = ({ onBack }) => {
               className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
                 currentPage === 1
                   ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
-                  : "bg-[#0f131d] text-white hover:border hover:border-[#00d4aa]"
+                  : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
               }`}
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
 
-            <span className="w-6 h-6 flex items-center justify-center rounded-md bg-[#00d4aa] text-black text-[12px]">
-              {currentPage}
-            </span>
+            <span className={paginationStyle}>{currentPage}</span>
 
             <button
               onClick={() => handlePageChange(currentPage + 1)}
@@ -556,7 +555,7 @@ const EmployeeCreationForm = ({ onBack }) => {
               className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
                 currentPage === totalPages
                   ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
-                  : "bg-[#0f131d] text-white hover:border hover:border-[#00d4aa]"
+                  : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
               }`}
             >
               <ChevronRight className="w-4 h-4" />
@@ -629,7 +628,7 @@ const EmployeeCreationForm = ({ onBack }) => {
                             handleScroll();
                           }}
                         >
-                          <EyeIcon className="text-[#00d4aa] w-4 h-4" />
+                          <EyeIcon className="primary-color w-4 h-4" />
                         </button>
                       </td>
                     </tr>

@@ -90,12 +90,10 @@ const Monitoring = ({
       {/* Live Time */}
       <div className="live-time">
         <span className="ping-wrapper">
-          <span className="ping-circle bg-[#05df72]"></span>
-          <span className="ping-dot"></span>
+          <span className="ping-circle primary-bg"></span>
+          <span className="ping-dot" />
         </span>
-        <span>
-          Live: <span className="live-time-value">{formatTime(time)}</span>
-        </span>
+        <span className="primary-color">Live: {formatTime(time)}</span>
       </div>
 
       {/* Stats */}

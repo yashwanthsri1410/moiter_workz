@@ -115,7 +115,7 @@ export default function PerformanceOverview() {
         <div className="pt-4 flex justify-around text-center">
           {footerStats.map((stat, index) => (
             <div key={index}>
-              <div className="text-[#00D4AA] font-bold text-lg">
+              <div className="primary-color font-bold text-lg">
                 {stat.value}
               </div>
               <div className="text-xs text-gray-400">{stat.label}</div>

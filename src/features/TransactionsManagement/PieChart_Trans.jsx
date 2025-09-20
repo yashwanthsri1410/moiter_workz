@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../../styles/styles.css";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { primaryColor } from "../../constants";
 
 // register required controllers
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -123,7 +124,7 @@ const PieChart_Trans = () => {
 
         tooltipEl.innerHTML = `
           <div style="margin-bottom:5px;">${label}</div>
-          <div style="color:#00d4aa;">${value} %</div>
+          <div style="color:var(--primary-color);">${value} %</div>
         `;
       }
 
@@ -160,7 +161,7 @@ const PieChart_Trans = () => {
           title: {
             display: true,
             text: "Transaction Channel Distribution",
-            color: "#00d4aa",
+            color: primaryColor,
             font: { size: 14, weight: "200" },
             align: "start",
             padding: { top: 10, bottom: 10 },

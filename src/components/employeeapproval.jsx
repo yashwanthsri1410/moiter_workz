@@ -12,6 +12,7 @@ import {
   UserCheck2Icon,
 } from "lucide-react";
 import EmployeeView from "./employeeview";
+import { paginationStyle } from "../constants";
 
 export default function EmployeeApproval() {
   const [configurations, setConfigurations] = useState([]);
@@ -28,21 +29,21 @@ export default function EmployeeApproval() {
     fetchConfigurations();
   }, []);
 
-    const fetchConfigurations = async () => {
-        try {
-            const res = await axios.get(
-                `${API_BASE_URL}/fes/api/Export/pending-employees`
-            );
-            setConfigurations(res.data);
-        } catch (err) {
-            console.error("Error fetching configurations:", err);
-        }
-    };
+  const fetchConfigurations = async () => {
+    try {
+      const res = await axios.get(
+        `${API_BASE_URL}/fes/api/Export/pending-employees`
+      );
+      setConfigurations(res.data);
+    } catch (err) {
+      console.error("Error fetching configurations:", err);
+    }
+  };
 
   // ✅ Filter + Search logic
   const filteredConfigurations = configurations.filter((cfg) => {
     if (cfg.status !== 1) return false; // Only include pending employees
-    
+
     const query = searchQuery.toLowerCase();
     const matchesSearch = Object.values(cfg).some(
       (value) => value && value.toString().toLowerCase().includes(query)
@@ -57,8 +58,7 @@ export default function EmployeeApproval() {
       cfg.priority?.toLowerCase() === selectedPriority.toLowerCase();
 
     return matchesSearch && matchesProgramType && matchesPriority;
-});
-
+  });
 
   const totalPages = Math.ceil(filteredConfigurations.length / itemsPerPage);
 
@@ -95,7 +95,7 @@ export default function EmployeeApproval() {
           <EmployeeView
             selectedEmployee={selectedEmployee}
             setSelectedEmployee={setSelectedEmployee}
-             fetchConfigurations={fetchConfigurations} 
+            fetchConfigurations={fetchConfigurations}
           />
         </>
       ) : (
@@ -105,7 +105,7 @@ export default function EmployeeApproval() {
             <div className="card-header-left">
               <div className="flex items-center gap-[10px]">
                 <div className="header-icon-box">
-                  <UserCheck2Icon className="text-[#00d4aa] w-4 h-4" />
+                  <UserCheck2Icon className="primary-color w-4 h-4" />
                 </div>
               </div>
               <div>
@@ -124,7 +124,7 @@ export default function EmployeeApproval() {
           </div>
 
           {/* Filters & Pagination */}
-          <div className="bg-[#0c0f16] border border-[#1a1f2e] rounded-xl p-3 flex flex-col gap-3 mt-6">
+          <div className="tables-search-card rounded-xl p-3 flex flex-col gap-3 mt-6">
             <div className="flex items-center gap-2">
               {/* Search */}
               <div className="search-box relative">
@@ -139,7 +139,7 @@ export default function EmployeeApproval() {
                   className="search-input-approval"
                   placeholder="Search employees..."
                 />
-              </div>            
+              </div>
 
               {/* Reset Filters */}
               <button
@@ -164,15 +164,13 @@ export default function EmployeeApproval() {
                 className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
                   currentPage === 1
                     ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
-                    : "bg-[#0f131d] text-white hover:border hover:border-[#00d4aa]"
+                    : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
                 }`}
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
 
-              <span className="w-6 h-6 flex items-center justify-center rounded-md bg-[#00d4aa] text-black text-[12px]">
-                {currentPage}
-              </span>
+              <span className={paginationStyle}>{currentPage}</span>
 
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
@@ -180,7 +178,7 @@ export default function EmployeeApproval() {
                 className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
                   currentPage === totalPages
                     ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
-                    : "bg-[#0f131d] text-white hover:border hover:border-[#00d4aa]"
+                    : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
                 }`}
               >
                 <ChevronRight className="w-4 h-4" />
@@ -243,7 +241,7 @@ export default function EmployeeApproval() {
                             className="header-icon-box"
                             onClick={() => setSelectedEmployee(cfg)}
                           >
-                            <EyeIcon className="text-[#00d4aa] w-4 h-4" />
+                            <EyeIcon className="primary-color w-4 h-4" />
                           </button>
                         </td>
                       </tr>

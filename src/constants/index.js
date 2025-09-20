@@ -59,3 +59,10 @@ export const transErr = {
 
 export const inputStyle =
   "form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none";
+
+export const paginationStyle =
+  "w-6 h-6 flex items-center justify-center rounded-md primary-bg text-black text-[12px]";
+
+export const primaryColor = getComputedStyle(document.documentElement)
+  .getPropertyValue("--primary-color")
+  .trim();
