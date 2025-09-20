@@ -7,7 +7,6 @@
 }
 
 .monitoring-container {
-  color: #2dd4bf; /* Tailwind text-teal-400 */
   padding: 2rem 0; /* p-8 */
 }
 
@@ -15,7 +14,6 @@
 
 .monitoring-root {
   text-align: center;
-  color: #2dd4bf; /* teal-400 */
   padding: 2rem 0; /* p-8 */
 }
 
@@ -31,7 +29,7 @@
 .monitoring-title {
   font-size: 1.875rem; /* text-3xl */
   font-weight: 700; /* font-bold */
-  color: #2dd4bf;
+  color: var(--primary-color);
 }
 
 .sweeper-text {
@@ -45,12 +43,7 @@
 .sweeper-line {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(45, 212, 191, 0.4),
-    transparent
-  );
+  background: var(--sweeper-line-bg);
 }
 
 .live-time {
@@ -85,7 +78,7 @@
   height: 0.75rem;
   width: 0.75rem;
   border-radius: 9999px;
-  background-color: #05df72; /* teal-400 */
+  background-color: var(--primary-color);
 }
 
 @keyframes ping {
@@ -94,10 +87,6 @@
     transform: scale(2);
     opacity: 0;
   }
-}
-
-.live-time-value {
-  color: #2dd4bf; /* teal-400 */
 }
 
 .stats-container {
@@ -115,7 +104,7 @@
 .stat-value {
   font-size: 1.25rem; /* text-xl */
   font-weight: 700;
-  color: #2dd4bf; /* teal-400 */
+  color: #22c55e; /* teal-400 */
 }
 
 .stat-label {
@@ -124,7 +113,7 @@
 }
 
 .loader-icon {
-  color: #05df72; /* teal-400 */
+  color: var(--primary-color);
   animation: spin 1s linear infinite;
 }
 
@@ -172,8 +161,20 @@
 .db-up {
   border: 2px solid #05df72;
   box-shadow: 0 0 10px rgba(45, 212, 191, 0.6), 0 0 20px rgba(45, 212, 191, 0.4);
+  animation: dbGlow 1.5s infinite ease-in-out;
 }
 
+@keyframes dbGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 6px rgba(45, 212, 191, 0.4),
+      0 0 12px rgba(45, 212, 191, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(45, 212, 191, 0.7),
+      0 0 24px rgba(45, 212, 191, 0.5);
+  }
+}
 .db-down {
   border: 2px solid #ef4444; /* red-500 */
   box-shadow: 0 0 25px rgba(239, 68, 68, 0.6);
@@ -355,7 +356,7 @@
 }
 
 table thead tr th {
-  color: #2dd4bf;
+  color: var(--primary-color);
   font-weight: 400;
 }
 

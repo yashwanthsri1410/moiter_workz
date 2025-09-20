@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { ArrowLeft, Building2, Pencil, Search, Plus } from "lucide-react";
+import { ArrowLeft, Building2, Pencil, Search, Plus, X } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 
 export default function DepartmentCreation({ onBack }) {
@@ -11,7 +11,7 @@ export default function DepartmentCreation({ onBack }) {
   const [newDeptName, setNewDeptName] = useState("");
   const [showForm, setShowForm] = useState(false);
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-  
+
   // Function to validate input - allows only letters, spaces, and hyphens
   const validateInput = (input) => {
     // Regular expression to allow only letters, spaces, and hyphens
@@ -53,88 +53,87 @@ export default function DepartmentCreation({ onBack }) {
 
   // Create department
   // Create department
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (!departmentName.trim()) return alert("Please enter a department name.");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!departmentName.trim()) return alert("Please enter a department name.");
 
-  const exists = departments.some(
-    (d) => d.deptName.toLowerCase() === departmentName.trim().toLowerCase()
-  );
-  if (exists) return alert("Department already exists.");
-
-  try {
-    const payload = {
-      logId: uuidv4(), // ✅ auto-generate unique UUID
-      deptName: departmentName.trim(),
-      metadata: {
-        ipAddress: window.location.hostname || "unknown",
-        userAgent: navigator.userAgent,
-        channel: "WEB",
-        headers: "N/A",
-        auditMetadata: {
-          createdBy: "admin", // replace with actual logged-in user if available
-          createdDate: new Date().toISOString(),
-          modifiedBy: "admin",
-          modifiedDate: new Date().toISOString(),
-        },
-      },
-    };
-
-    await axios.post(
-      `${API_BASE_URL}/ums/api/UserManagement/department_create`,
-      payload
+    const exists = departments.some(
+      (d) => d.deptName.toLowerCase() === departmentName.trim().toLowerCase()
     );
+    if (exists) return alert("Department already exists.");
 
-    setDepartmentName("");
-    setShowForm(false);
-    fetchDepartments();
-  } catch (err) {
-    console.error("Failed to create department:", err);
-    alert("Error occurred while creating department.");
-  }
-};
-
-
-// Update department
-const handleUpdate = async (deptId) => {
-  if (!newDeptName.trim()) return alert("Enter new name");
-
-  try {
-    // Find the department being updated
-    const dept = departments.find((d) => d.deptId === deptId);
-
-    const payload = {
-      deptId,
-      newName: newDeptName.trim(),
-      logId: dept?.logId && dept.logId !== "00000000-0000-0000-0000-000000000000"
-        ? dept.logId
-        : uuidv4(), // ✅ reuse existing logId or generate new one if null/empty
-      metadata: {
-        ipAddress: window.location.hostname || "unknown",
-        userAgent: navigator.userAgent,
-        channel: "WEB",
-        headers: "N/A",
-        auditMetadata: {
-          modifiedBy: "admin",
-          modifiedDate: new Date().toISOString(),
+    try {
+      const payload = {
+        logId: uuidv4(), // ✅ auto-generate unique UUID
+        deptName: departmentName.trim(),
+        metadata: {
+          ipAddress: window.location.hostname || "unknown",
+          userAgent: navigator.userAgent,
+          channel: "WEB",
+          headers: "N/A",
+          auditMetadata: {
+            createdBy: "admin", // replace with actual logged-in user if available
+            createdDate: new Date().toISOString(),
+            modifiedBy: "admin",
+            modifiedDate: new Date().toISOString(),
+          },
         },
-      },
-    };
+      };
 
-    await axios.put(
-      `${API_BASE_URL}/ums/api/UserManagement/department_update`,
-      payload
-    );
+      await axios.post(
+        `${API_BASE_URL}/ums/api/UserManagement/department_create`,
+        payload
+      );
 
-    setEditingDeptId(null);
-    setNewDeptName("");
-    fetchDepartments();
-  } catch (err) {
-    console.error("Update failed:", err);
-    alert("Error updating department.");
-  }
-};
+      setDepartmentName("");
+      setShowForm(false);
+      fetchDepartments();
+    } catch (err) {
+      console.error("Failed to create department:", err);
+      alert("Error occurred while creating department.");
+    }
+  };
 
+  // Update department
+  const handleUpdate = async (deptId) => {
+    if (!newDeptName.trim()) return alert("Enter new name");
+
+    try {
+      // Find the department being updated
+      const dept = departments.find((d) => d.deptId === deptId);
+
+      const payload = {
+        deptId,
+        newName: newDeptName.trim(),
+        logId:
+          dept?.logId && dept.logId !== "00000000-0000-0000-0000-000000000000"
+            ? dept.logId
+            : uuidv4(), // ✅ reuse existing logId or generate new one if null/empty
+        metadata: {
+          ipAddress: window.location.hostname || "unknown",
+          userAgent: navigator.userAgent,
+          channel: "WEB",
+          headers: "N/A",
+          auditMetadata: {
+            modifiedBy: "admin",
+            modifiedDate: new Date().toISOString(),
+          },
+        },
+      };
+
+      await axios.put(
+        `${API_BASE_URL}/ums/api/UserManagement/department_update`,
+        payload
+      );
+
+      setEditingDeptId(null);
+      setNewDeptName("");
+      fetchDepartments();
+    } catch (err) {
+      console.error("Update failed:", err);
+      alert("Error updating department.");
+    }
+  };
 
   // Filtered list
   const filteredDepartments = departments.filter((d) =>
@@ -149,30 +148,27 @@ const handleUpdate = async (deptId) => {
           <div className="header-left">
             <div className="flex items-center gap-[10px]">
               <button className="header-icon-btn" onClick={onBack}>
-                <ArrowLeft className="text-[#00d4aa] w-4 h-4" />
+                <ArrowLeft className="primary-color w-4 h-4" />
               </button>
 
               <div className="header-icon-box">
-                <Building2 className="text-[#00d4aa] w-4 h-4" />
+                <Building2 className="primary-color w-4 h-4" />
               </div>
             </div>
             <div>
               <h1 className="header-title">Department Management</h1>
-              <p className="header-subtext">Create and manage organizational departments</p>
+              <p className="header-subtext">
+                Create and manage organizational departments
+              </p>
             </div>
-
           </div>
 
           <div className="flex items-center gap-4">
-
-
             {/* Active count */}
             <button className="btn-count">
               <span className="w-2 h-2 rounded-full bg-[#04CF6A]  plus"></span>
               {departments.length} Active Departments
             </button>
-
-
           </div>
         </div>
         <div className="search-toggle">
@@ -189,8 +185,15 @@ const handleUpdate = async (deptId) => {
           </div>
           {/* Toggle form */}
           <button onClick={() => setShowForm(!showForm)} className="btn-toggle">
-            <Plus className="w-3 h-3" />
-            {showForm ? "Close Form" : "Create Department"}
+            {showForm ? (
+              <>
+                <X className="w-3 h-3" /> Close Form
+              </>
+            ) : (
+              <>
+                <Plus className="w-3 h-3" /> Create Department
+              </>
+            )}
           </button>
         </div>
       </div>
@@ -209,14 +212,22 @@ const handleUpdate = async (deptId) => {
               placeholder="Enter department name (letters only)..."
               className="form-input"
             />
-            <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
+            <p className="text-xs text-gray-500 mt-1">
+              Only letters, spaces, and hyphens are allowed
+            </p>
           </div>
 
           <div className="form-actions">
-            <button type="button" onClick={() => setShowForm(false)} className="btn-cancel">
+            <button
+              type="button"
+              onClick={() => setShowForm(false)}
+              className="btn-cancel"
+            >
               Cancel
             </button>
-            <button type="submit" className="btn-toggle">Create Department</button>
+            <button type="submit" className="btn-toggle">
+              Create Department
+            </button>
           </div>
         </form>
       )}
@@ -224,7 +235,9 @@ const handleUpdate = async (deptId) => {
       {/* Table */}
       <div className="table-card">
         <div className="table-header">
-          <p className="table-title"><Building2 className="w-5 h-5" /> Existing Departments</p>
+          <p className="table-title">
+            <Building2 className="w-5 h-5" /> Existing Departments
+          </p>
           <span className="table-subtext">
             Total: {filteredDepartments.length} departments
           </span>
@@ -235,7 +248,7 @@ const handleUpdate = async (deptId) => {
             <thead className="table-head">
               <tr>
                 <th className="table-cell">Department Name</th>
-                <th className="table-cell-icon color-[#00d4aa]  flex gap-4">Actions</th>
+                <th className="table-cell-icon flex gap-4">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -252,26 +265,46 @@ const handleUpdate = async (deptId) => {
                             className="form-input"
                             placeholder="Enter new name (letters only)..."
                           />
-                          <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Only letters, spaces, and hyphens are allowed
+                          </p>
                         </div>
                       ) : (
-
-                        <div className="flex items-center gap-1 "> <Building2 className="w-4 h-4 text-teal-400 " />{dept.deptName}</div>
+                        <div className="flex items-center gap-1 ">
+                          {" "}
+                          <Building2 className="w-4 h-4 primary-color " />
+                          {dept.deptName}
+                        </div>
                       )}
                     </td>
                     <td className="table-cell-icon flex gap-4 ">
                       {editingDeptId === dept.deptId ? (
                         <>
-                          <button onClick={() => handleUpdate(dept.deptId)} className="text-teal-400 hover:underline">
+                          <button
+                            onClick={() => handleUpdate(dept.deptId)}
+                            className="primary-color hover:underline"
+                          >
                             Save
                           </button>
-                          <button onClick={() => { setEditingDeptId(null); setNewDeptName(""); }} className="text-gray-400 hover:underline">
+                          <button
+                            onClick={() => {
+                              setEditingDeptId(null);
+                              setNewDeptName("");
+                            }}
+                            className="text-gray-400 hover:underline"
+                          >
                             Cancel
                           </button>
                         </>
                       ) : (
                         <>
-                          <button onClick={() => { setEditingDeptId(dept.deptId); setNewDeptName(dept.deptName); }} className="text-[#00d4aa] hover:underline flex items-center gap-1">
+                          <button
+                            onClick={() => {
+                              setEditingDeptId(dept.deptId);
+                              setNewDeptName(dept.deptName);
+                            }}
+                            className="primary-color hover:underline flex items-center gap-1"
+                          >
                             <Pencil className="w-4 h-4" /> Edit
                           </button>
                           {/* <button className="text-red-500 hover:underline flex items-center gap-1">
@@ -284,7 +317,10 @@ const handleUpdate = async (deptId) => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={3} className="table-cell table-cell-muted text-center">
+                  <td
+                    colSpan={3}
+                    className="table-cell table-cell-muted text-center"
+                  >
                     No departments found.
                   </td>
                 </tr>
@@ -298,12 +334,21 @@ const handleUpdate = async (deptId) => {
       <div className="guidelines-card">
         <h3 className="guidelines-title">Department Management Guidelines</h3>
         <div className="guidelines-grid">
-          <p>📘 <span>Create:</span> Add new departments</p>
-          <p>🔍 <span>Search:</span> Find departments quickly</p>
+          <p>
+            📘 <span>Create:</span> Add new departments
+          </p>
+          <p>
+            🔍 <span>Search:</span> Find departments quickly
+          </p>
         </div>
         <div className="guidelines-grid">
-          <p>✏️ <span >Edit:</span> Modify department names inline</p>
-          <p>⚠️ <span>Validation:</span> Only letters, spaces, and hyphens allowed</p>
+          <p>
+            ✏️ <span>Edit:</span> Modify department names inline
+          </p>
+          <p>
+            ⚠️ <span>Validation:</span> Only letters, spaces, and hyphens
+            allowed
+          </p>
         </div>
       </div>
     </div>

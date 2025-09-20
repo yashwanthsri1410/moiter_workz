@@ -266,7 +266,7 @@ const RecentCustomer = () => {
             className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
               currentPage === 1
                 ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
+                : "bg-[#0a1625] text-white hover:primary-color"
             }`}
           >
             <ChevronLeft className="w-4 h-4" /> Prev
@@ -286,8 +286,8 @@ const RecentCustomer = () => {
                   onClick={() => handlePageChange(page)}
                   className={`px-3 py-1 rounded-lg text-sm ${
                     currentPage === page
-                      ? "bg-[#00d4aa] text-black font-bold"
-                      : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
+                      ? "primary-bg text-black font-bold"
+                      : "bg-[#1c2b45] text-white hover:primary-color"
                   }`}
                 >
                   {page}
@@ -301,7 +301,7 @@ const RecentCustomer = () => {
             className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
               currentPage === totalPages
                 ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
+                : "bg-[#0a1625] text-white hover:primary-color"
             }`}
           >
             Next <ChevronRight className="w-4 h-4" />

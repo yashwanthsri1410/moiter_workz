@@ -225,9 +225,7 @@ const TransactionStream_Trans = () => {
           <tbody className="rc-tbody">
             {paginatedTransactions.map((txn, i) => (
               <tr className="rc-tr-body" key={i}>
-                <td className="cursor-pointer" style={{ color: "#00d4aa" }}>
-                  {txn.id}
-                </td>
+                <td className="cursor-pointer primary-color">{txn.id}</td>
                 <td className="text-white">{txn.customer}</td>
                 <td className="text-white">₹{txn.amount.toLocaleString()}</td>
                 <td>
@@ -255,7 +253,7 @@ const TransactionStream_Trans = () => {
                 <td className="text-gray-300">{txn.time}</td>
                 {/* <td className="flex items-center gap-2">
                   <button className="header-icon-box">
-                    <EyeIcon className="text-[#00d4aa] w-4 h-4" />
+                    <EyeIcon className="primary-color w-4 h-4" />
                   </button>
                   <button className="p-1 hover:bg-gray-700 rounded">
                     <MoreHorizontal className="w-5 h-5 text-gray-300" />
@@ -282,7 +280,7 @@ const TransactionStream_Trans = () => {
           className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
             currentPage === 1
               ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-              : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
+              : "bg-[#0a1625] text-white hover:primary-color"
           }`}
         >
           <ChevronLeft className="w-4 h-4" /> Prev
@@ -302,8 +300,8 @@ const TransactionStream_Trans = () => {
                 onClick={() => handlePageChange(page)}
                 className={`px-3 py-1 rounded-lg text-sm ${
                   currentPage === page
-                    ? "bg-[#00d4aa] text-black font-bold"
-                    : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
+                    ? "primary-bg text-black font-bold"
+                    : "bg-[#1c2b45] text-white hover:primary-color"
                 }`}
               >
                 {page}
@@ -317,7 +315,7 @@ const TransactionStream_Trans = () => {
           className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
             currentPage === totalPages
               ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-              : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
+              : "bg-[#0a1625] text-white hover:primary-color"
           }`}
         >
           Next <ChevronRight className="w-4 h-4" />

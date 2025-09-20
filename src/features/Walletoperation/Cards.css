@@ -34,15 +34,11 @@
   color: #9ca3af;
 }
 
-.db-stat-icon {
-  color: #9ca3af;
-}
-
 .db-stat-value {
   font-size: 22px;
   font-weight: bold;
   line-height: 1.2;
-  color: #10b981;
+  color: var(--primary-color);
   margin: 0;
 }
 

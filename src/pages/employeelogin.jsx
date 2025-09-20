@@ -128,9 +128,6 @@ const Employeelogin = () => {
     }
   };
 
-
-
-
   return (
     <div className="login-page">
       {/* Particles */}
@@ -145,7 +142,7 @@ const Employeelogin = () => {
               width: `${p.size * 1}px`,
               height: `${p.size * 1}px`,
               borderRadius: "50%",
-              backgroundColor: "#10B981",
+              backgroundColor: "var(--primary-color)",
               opacity: p.opacity + 5,
             }}
           />

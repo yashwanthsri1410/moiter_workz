@@ -10,6 +10,7 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { primaryColor } from "../../constants";
 
 ChartJS.register(
   CategoryScale,
@@ -135,7 +136,7 @@ const BarChart = () => {
       title: {
         display: true,
         text: "Daily Load vs Unload (7 Days)",
-        color: "#00d4aa",
+        color: primaryColor,
         font: { size: 14, weight: "200" },
         align: "start",
         padding: { top: 10, bottom: 40 },
@@ -182,7 +183,7 @@ const BarChart = () => {
 
             tooltipEl.innerHTML = `
         <div style="margin-bottom:6px; font-weight:600; color:#aeb6bd">${title}</div>
-        <div style="color:#00d4aa; font-weight:700">Loaded: ₹${load}M</div>
+        <div style="color:var(--primary-color); font-weight:700">Loaded: ₹${load}M</div>
         <div style="color:#ff5252; font-weight:700">Unloaded: ₹${unload}M</div>
       `;
           }
@@ -317,7 +318,7 @@ const BarChart = () => {
         padding: "20px",
         width: "100",
         // width: "615px",
-        backgroundColor: "#0d1017",
+        backgroundColor: "var(--cards-bg)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",

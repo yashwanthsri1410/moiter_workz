@@ -10,6 +10,7 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { primaryColor } from "../../constants";
 
 ChartJS.register(
   CategoryScale,
@@ -87,7 +88,7 @@ const BarChart_Trans = () => {
       title: {
         display: true,
         text: "Customer Onboarding (Last 6 Months)",
-        color: "#00d4aa",
+        color: primaryColor,
         font: { size: 14, weight: "200" },
         align: "start",
         padding: { top: 10, bottom: 20 },

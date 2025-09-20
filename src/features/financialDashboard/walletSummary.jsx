@@ -106,7 +106,7 @@ export default function WalletSummary() {
         <span className="text-[18px]">Wallet Performance Summary</span>
       </h2>
       <div className="glass-card h-[500px] flex flex-col corner-box">
-        <span />
+        <span></span>
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
           <div className="text-primary flex items-center gap-2">

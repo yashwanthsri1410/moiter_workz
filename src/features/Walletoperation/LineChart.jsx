@@ -11,6 +11,7 @@ import {
   Tooltip,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import { primaryColor } from "../../constants";
 
 ChartJS.register(
   CategoryScale,
@@ -156,7 +157,7 @@ const LineChart = () => {
       title: {
         display: true,
         text: "Wallet Balance Trend (7 Days)",
-        color: "#00d4aa",
+        color: primaryColor,
         font: { size: 14, weight: "200" },
         align: "start",
         padding: { top: 10, bottom: 20 },

@@ -13,10 +13,10 @@ const WalletCard = ({ data }) => {
   const { totalWallets, activeWallets, activePct } = data;
 
   return (
-    <div className="db-stat-card corner-box">
+    <div className="stat-card-dx91u high-risk-dx91u corner-box">
       <div className="db-stat-header">
         <span className="db-stat-title">Total Wallets</span>
-        <Wallet size={12} className="db-stat-icon" color="#00d4aa" />
+        <Wallet size={12} className="primary-color" />
       </div>
 
       <div className="db-stat-body">
@@ -54,10 +54,10 @@ const BalanceCard = ({ data }) => {
   const { totalBalance, avgBalance } = data;
 
   return (
-    <div className="db-stat-card corner-box">
+    <div className="stat-card-dx91u high-risk-dx91u corner-box">
       <div className="db-stat-header">
         <span className="db-stat-title">Total Balance</span>
-        <DollarSign size={12} className="db-stat-icon" color="#00d4aa" />
+        <DollarSign size={12} className="primary-color" />
       </div>
 
       <div className="db-stat-body">
@@ -86,18 +86,16 @@ const LoadCard = ({ data }) => {
   const { dailyLoad, dailyLoadTxns, dailyAvgLoad } = data;
 
   return (
-    <div className="db-stat-card corner-box">
+    <div className="stat-card-dx91u high-risk-dx91u corner-box">
       <div className="db-stat-header">
         <span className="db-stat-title">Today Loading</span>
-        <TrendingUp
-          size={12}
-          className="db-stat-icon"
-          color="oklch(.792 .209 151.711)"
-        />
+        <TrendingUp size={12} className="text-green-500" />
       </div>
       <div className="db-stat-body">
         <div className="db-stat-value-box">
-          <div className="db-stat-value">{formatNumber(dailyLoad)}M</div>
+          <div style={{ color: "#22c55e" }} className="db-stat-value">
+            {formatNumber(dailyLoad)}M
+          </div>
           <div className="db-stat-change db-positive">
             {/* <span className="db-change-value db-positive">+15.7%</span>{" "} */}
             {/* <span className="db-change-desc">vs yesterday</span> */}
@@ -129,14 +127,10 @@ const SpendCard = ({ data }) => {
   const { dailySpend, dailySpendTxns, dailyAvgSpend } = data;
 
   return (
-    <div className="db-stat-card corner-box">
+    <div className="stat-card-dx91u high-risk-dx91u corner-box">
       <div className="db-stat-header">
         <span className="db-stat-title">Today Unloading</span>
-        <TrendingDown
-          size={12}
-          className="db-stat-icon"
-          color="oklch(0.704 0.191 22.216)"
-        />
+        <TrendingDown size={12} color="oklch(0.704 0.191 22.216)" />
       </div>
 
       <div className="db-stat-body">

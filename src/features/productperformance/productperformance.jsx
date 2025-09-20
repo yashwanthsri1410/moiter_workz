@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../../styles/styles.css";
 import { Box, CreditCard, TrendingUp, DollarSign } from "lucide-react";
+import { primaryColor } from "../../constants";
 // import KYCReviewQueue from "./KYCReviewQueue";
 
 // import "./All.css";
@@ -26,8 +27,8 @@ const Productperformance = () => {
   // console.log(data)
 
   const walletConfig = [
-    { index: 3, icon: Box, color: "#00d4aa" },
-    { index: 1, icon: CreditCard, color: "#00d4aa" },
+    { index: 3, icon: Box, color: primaryColor },
+    { index: 1, icon: CreditCard, color: primaryColor },
     { index: 4, icon: TrendingUp, color: "#05df72" },
     { index: 2, icon: DollarSign, color: "#ffeb00" },
   ];

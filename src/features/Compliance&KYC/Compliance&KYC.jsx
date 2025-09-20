@@ -80,17 +80,17 @@ const ComplianceKYC = () => {
         <div className="stat-card-dx91u customer-today-dx91u corner-box">
           <div className="card-header-dx91u">
             <h3>KYC Verified</h3>
-            <UserCheck className="w-4 h-4 text-[#05df72]" />
+            <UserCheck className="w-4 h-4 primary-color" />
           </div>
           <p className="stat-value-dx91u highlight-green-dx91u">
             {data?.kycVerifiedCount?.toLocaleString("en-IN")}
             <p className="stat-sub-dx91u">
-              <span className="text-[#05df72] ">+12.8% </span>this month
+              <span className="primary-color ">+12.8% </span>this month
             </p>
           </p>
           <div>
             <p className="stat-sub-dx91u">Verification Rate</p>
-            <p className="text-[#05df72] text-[15px]">
+            <p className="primary-color text-[15px]">
               {data?.kycCompletionRate}
             </p>
           </div>
@@ -106,7 +106,7 @@ const ComplianceKYC = () => {
             {/* {data.kycPendingCount.toLocaleString()} */}
             45
             <p className="stat-sub-dx91u">
-              <span className="text-[#05df72] ">-8.2% </span> from last week
+              <span className="primary-color ">-8.2% </span> from last week
             </p>
           </p>
           <div>
@@ -119,12 +119,12 @@ const ComplianceKYC = () => {
         <div className="stat-card-dx91u high-risk-dx91u corner-box">
           <div className="card-header-dx91u">
             <h3>Compliance Score</h3>
-            <Shield className="w-4 h-4   text-[#00d4aa]" />
+            <Shield className="w-4 h-4   primary-color" />
           </div>
           <p className="stat-value-dx91u ">
             {data?.kycCompletionRate}
             <p className="stat-sub-dx91u">
-              <span className="text-[#05df72] ">+0.8% </span>improvement
+              <span className="primary-color ">+0.8% </span>improvement
             </p>
           </p>
 
@@ -148,7 +148,7 @@ const ComplianceKYC = () => {
           className="stat-card-dx91u high-risk-dx91u corner-box "
           style={{ paddingBottom: "45px" }}
         >
-          <h2 className="text-[#00d4aa] text-[15px] flex  items-center gap-2">
+          <h2 className="primary-color text-[15px] flex  items-center gap-2">
             {" "}
             <AlertTriangle className="w-4 h-4" />
             Priority Alerts
@@ -176,20 +176,20 @@ const ComplianceKYC = () => {
             className="stat-card-dx91u high-risk-dx91u corner-box "
             style={{ paddingBottom: "30px" }}
           >
-            <h2 className="text-[#00d4aa] text-[15px] flex  items-center gap-2">
+            <h2 className="primary-color text-[15px] flex  items-center gap-2">
               Compliance Metrics
             </h2>
             {metrics.map((metric, index) => (
               <div key={index} className="space-y-2">
                 <div className="flex justify-between text-sm text-gray-300">
                   <span className="text-[12px]">{metric.label}</span>
-                  <span className="text-[#05df72] text-[12px]">
+                  <span className="primary-color text-[12px]">
                     {metric.percent}%
                   </span>
                 </div>
                 <div className="w-full bg-gray-800 rounded-full h-2">
                   <div
-                    className="bg-[#00d4aa] h-2 rounded-full transition-all duration-500"
+                    className="primary-bg h-2 rounded-full transition-all duration-500"
                     style={{ width: `${metric.percent}%` }}
                   ></div>
                 </div>

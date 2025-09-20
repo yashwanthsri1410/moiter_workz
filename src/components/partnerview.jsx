@@ -17,7 +17,11 @@ import {
 import axios from "axios";
 import "../styles/styles.css";
 
-export default function Partnerview({ selectedPartner, setSelectedPartner, fetchPartners }) {
+export default function Partnerview({
+  selectedPartner,
+  setSelectedPartner,
+  fetchPartners,
+}) {
   const [remarks, setRemarks] = useState("");
   const [currentAction, setCurrentAction] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -42,7 +46,7 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
   const actionMap = {
     0: "Approve",
     2: "Reject",
-    3: "Recheck"
+    3: "Recheck",
   };
 
   const handleActionClick = (actionStatus) => {
@@ -54,7 +58,7 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
     try {
       const payload = {
         partnerName: selectedPartner.partnerName,
-         logId:selectedPartner.logId,
+        logId: selectedPartner.logId,
         partnerType: selectedPartner.partnerType,
         actionStatus: Number(currentAction),
         checker: "checkerUser",
@@ -80,7 +84,10 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
         },
       };
 
-      await axios.post(`${API_BASE_URL}/ps/approveDistributionPartner`, payload);
+      await axios.post(
+        `${API_BASE_URL}/ps/approveDistributionPartner`,
+        payload
+      );
       alert("Action submitted successfully!");
       setShowModal(false);
       setRemarks("");
@@ -104,7 +111,7 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
             Back to Approvals
           </button>
           <div className="header-icon-box">
-            <Calculator className="text-[#00d4aa] w-4 h-4" />
+            <Calculator className="primary-color w-4 h-4" />
           </div>
           <div>
             <h1 className="header-title">Partner Approvals</h1>
@@ -117,26 +124,28 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
           <div className="portal-info flex gap-2">
             <p className="portal-link">
               <span
-                className={`px-2 py-1 rounded text-[10px] ${selectedPartner.partnerType === "Aggregator"
-                  ? "checker"
-                  : selectedPartner.partnerType === "Retailer"
+                className={`px-2 py-1 rounded text-[10px] ${
+                  selectedPartner.partnerType === "Aggregator"
+                    ? "checker"
+                    : selectedPartner.partnerType === "Retailer"
                     ? "infra"
                     : "superuser"
-                  }`}
+                }`}
               >
                 {selectedPartner.partnerType}
               </span>
             </p>
             <p className="portal-link">
               <span
-                className={`px-2 py-1 rounded text-[10px] ${selectedPartner.status === 0
-                  ? "checker"
-                  : selectedPartner.status === 1
+                className={`px-2 py-1 rounded text-[10px] ${
+                  selectedPartner.status === 0
+                    ? "checker"
+                    : selectedPartner.status === 1
                     ? "infra"
                     : selectedPartner.status === 2
-                      ? "superuser"
-                      : "maker"
-                  }`}
+                    ? "superuser"
+                    : "maker"
+                }`}
               >
                 {getStatusLabel(selectedPartner.status)}
               </span>
@@ -148,8 +157,7 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
       {/* Partner Overview */}
       <div className="partner-overview-card">
         <h2 className="partner-overview-title">
-          <Info size={18} color="#14B8A6" className="partner-overview-icon" />{" "}
-          Partner Overview
+          <Info size={18} className="primary-color" /> Partner Overview
         </h2>
         <div className="partner-overview-content">
           <div className="partner-overview-section">
@@ -238,8 +246,7 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
       {/* Address Info */}
       <div className="partner-overview-card partner-overview-secondary">
         <h2 className="partner-overview-title">
-          <MapPin size={18} color="#14B8A6" className="partner-overview-icon" />{" "}
-          Address Information
+          <MapPin size={18} className="primary-color" /> Address Information
         </h2>
         <div className="partner-overview-content">
           <div className="partner-overview-section">
@@ -282,8 +289,7 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
       {/* Compliance & KYC */}
       <div className="partner-overview-card">
         <h2 className="partner-overview-title">
-          <Shield size={18} color="#14B8A6" className="partner-overview-icon" />{" "}
-          Compliance & KYC
+          <Shield size={18} className="primary-color" /> Compliance & KYC
         </h2>
         <div className="partner-overview-content">
           <div className="partner-overview-section">
@@ -303,8 +309,11 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
 
           <div className="partner-overview-section">
             <p>
-              <span className="partner-overview-label">Risk Profile</span> <br />
-              <span className="partner-overview-bold">{selectedPartner.riskProfile}</span>
+              <span className="partner-overview-label">Risk Profile</span>{" "}
+              <br />
+              <span className="partner-overview-bold">
+                {selectedPartner.riskProfile}
+              </span>
             </p>
 
             <p>
@@ -334,8 +343,7 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
 
       <div className="partner-overview-card">
         <h2 className="partner-overview-title">
-          <FileText size={18} color="#14B8A6" className="partner-overview-icon" />{" "}
-          Media & Documents
+          <FileText size={18} className="primary-color" /> Media & Documents
         </h2>
         <div className="partner-overview-content grid grid-cols-3 gap-4">
           {/* Agreement Document */}
@@ -347,7 +355,9 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
                 alt="Agreement Document"
                 className="partner-overview-img cursor-pointer"
                 onClick={() =>
-                  setModalImage(`data:image/png;base64,${selectedPartner.agreementDocument}`)
+                  setModalImage(
+                    `data:image/png;base64,${selectedPartner.agreementDocument}`
+                  )
                 }
               />
             ) : (
@@ -364,7 +374,9 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
                 alt="ID Proof Document"
                 className="partner-overview-img cursor-pointer"
                 onClick={() =>
-                  setModalImage(`data:image/png;base64,${selectedPartner.idProofDocument}`)
+                  setModalImage(
+                    `data:image/png;base64,${selectedPartner.idProofDocument}`
+                  )
                 }
               />
             ) : (
@@ -381,7 +393,9 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
                 alt="Address Proof Document"
                 className="partner-overview-img cursor-pointer"
                 onClick={() =>
-                  setModalImage(`data:image/png;base64,${selectedPartner.addressProofDocument}`)
+                  setModalImage(
+                    `data:image/png;base64,${selectedPartner.addressProofDocument}`
+                  )
                 }
               />
             ) : (
@@ -396,7 +410,11 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
             className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
             onClick={() => setModalImage(null)}
           >
-            <img src={modalImage} alt="Zoomed Document" className="max-w-full max-h-full" />
+            <img
+              src={modalImage}
+              alt="Zoomed Document"
+              className="max-w-full max-h-full"
+            />
           </div>
         )}
       </div>
@@ -404,8 +422,8 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
       {/* Partner Review Actions */}
       <div className="product-actions mt-6">
         <div className="flex items-center space-x-2 mb-2">
-          <Shield className="w-4 h-4 text-teal-400" />
-          <h3 className="text-teal-400 text-[15px]">Partner Review Actions</h3>
+          <Shield className="w-4 h-4 primary-color" />
+          <h3 className="primary-color text-[15px]">Partner Review Actions</h3>
         </div>
         <div className="button-group">
           <button
@@ -452,8 +470,8 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
               {currentAction === 0
                 ? "approve"
                 : currentAction === 2
-                  ? "reject"
-                  : "recheck"}{" "}
+                ? "reject"
+                : "recheck"}{" "}
               <b>{selectedPartner.partnerName}</b>? This action cannot be
               undone.
             </p>
@@ -478,10 +496,15 @@ export default function Partnerview({ selectedPartner, setSelectedPartner, fetch
                 Cancel
               </button>
               <button
-                className={`btn-submit ${currentAction === 0 ? "btn-approve-green" : currentAction === 2 ? "btn-reject-red" : "btn-recheck-blue"}`}
+                className={`btn-submit ${
+                  currentAction === 0
+                    ? "btn-approve-green"
+                    : currentAction === 2
+                    ? "btn-reject-red"
+                    : "btn-recheck-blue"
+                }`}
                 onClick={submitAction}
               >
-
                 {currentAction === 0 && (
                   <>
                     <Check className="w-4 h-4" /> Approve Partner

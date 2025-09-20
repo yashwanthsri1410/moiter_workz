@@ -10,7 +10,7 @@ import {
   Filler,
   Legend,
 } from "chart.js";
-import { weekOrder } from "../../constants/index";
+import { primaryColor, weekOrder } from "../../constants/index";
 import { TrendingUp } from "lucide-react";
 import { useOperationStore } from "../../store/operationStore";
 ChartJS.register(
@@ -33,11 +33,11 @@ const WeeklyTrends = () => {
       {
         label: "Loading Amount (Million)",
         data: transactionData?.map((d) => d.totalLoadAmountMillion),
-        borderColor: "#00D4AA",
+        borderColor: primaryColor,
         backgroundColor: "rgba(16, 185, 129, 0.2)",
         tension: 0.4,
         fill: false,
-        pointBackgroundColor: "#00D4AA",
+        pointBackgroundColor: primaryColor,
       },
       {
         label: "Unloading Amount (Million)",
@@ -123,7 +123,7 @@ const WeeklyTrends = () => {
   const legends = [
     {
       label: "Loading",
-      color: "#00d4aa",
+      color: primaryColor,
       textColor: "text-primary",
       value: transactionData?.[0]?.["cumulativeLoadAmountMillion"],
     },

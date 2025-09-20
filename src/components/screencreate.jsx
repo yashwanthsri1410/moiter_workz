@@ -10,6 +10,7 @@ import {
   ScreenShareIcon,
   Search,
   Settings,
+  X,
 } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 
@@ -122,43 +123,42 @@ export default function ScreenManagement({ onBack }) {
   };
 
   const handleSaveEdit = async (screen) => {
-  if (!editText.trim()) return alert("Screen name cannot be empty");
+    if (!editText.trim()) return alert("Screen name cannot be empty");
 
-  const now = new Date().toISOString();
-  const payload = {
-    screenId: screen.screenId,
-    logId:
-      screen.logId && screen.logId !== "00000000-0000-0000-0000-000000000000"
-        ? screen.logId // reuse existing
-        : uuidv4(), // fallback new UUID
-    newDescription: editText.trim(),
-    metadata: {
-      ipAddress: ip,
-      userAgent: navigator.userAgent,
-      headers: "N/A",
-      channel: "web",
-      auditMetadata: {
-        createdBy: username,
-        createdDate: now,
-        modifiedBy: username,
-        modifiedDate: now,
+    const now = new Date().toISOString();
+    const payload = {
+      screenId: screen.screenId,
+      logId:
+        screen.logId && screen.logId !== "00000000-0000-0000-0000-000000000000"
+          ? screen.logId // reuse existing
+          : uuidv4(), // fallback new UUID
+      newDescription: editText.trim(),
+      metadata: {
+        ipAddress: ip,
+        userAgent: navigator.userAgent,
+        headers: "N/A",
+        channel: "web",
+        auditMetadata: {
+          createdBy: username,
+          createdDate: now,
+          modifiedBy: username,
+          modifiedDate: now,
+        },
       },
-    },
+    };
+
+    try {
+      await axios.put(
+        `${API_BASE_URL}/ums/api/UserManagement/screen_update`,
+        payload
+      );
+      handleCancelEdit();
+      fetchScreens();
+    } catch (err) {
+      console.error("Error updating screen:", err);
+      alert("Update failed");
+    }
   };
-
-  try {
-    await axios.put(
-      `${API_BASE_URL}/ums/api/UserManagement/screen_update`,
-      payload
-    );
-    handleCancelEdit();
-    fetchScreens();
-  } catch (err) {
-    console.error("Error updating screen:", err);
-    alert("Update failed");
-  }
-};
-
 
   const groupedScreens = modules.reduce((acc, mod) => {
     const filtered = screens.filter(
@@ -181,11 +181,11 @@ export default function ScreenManagement({ onBack }) {
           <div className="header-left">
             <div className="flex items-center gap-[10px]">
               <button className="header-icon-btn" onClick={onBack}>
-                <ArrowLeft className="text-[#00d4aa] w-4 h-4" />
+                <ArrowLeft className="primary-color w-4 h-4" />
               </button>
 
               <div className="header-icon-box">
-                <Monitor className="text-[#00d4aa] w-4 h-4" />
+                <Monitor className="primary-color w-4 h-4" />
               </div>
             </div>
 
@@ -221,8 +221,16 @@ export default function ScreenManagement({ onBack }) {
 
           {/* Toggle form */}
           <button onClick={() => setShowForm(!showForm)} className="btn-toggle">
-            <Plus className="w-3 h-3" />
-            {showForm ? "Close Form" : "Create Screen"}
+            {showForm ? (
+              <>
+                <X className="w-3 h-3" />
+                Close Form
+              </>
+            ) : (
+              <>
+                <Plus className="w-3 h-3" /> Create Department
+              </>
+            )}
           </button>
         </div>
       </div>
@@ -259,7 +267,9 @@ export default function ScreenManagement({ onBack }) {
                 maxLength={50}
                 className="form-input"
               />
-              <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Only letters, spaces, and hyphens are allowed
+              </p>
             </div>
           </div>
 
@@ -267,7 +277,7 @@ export default function ScreenManagement({ onBack }) {
             <button
               type="button"
               onClick={() => setShowForm(false)}
-              className="text-sm font-medium text-gray-300 hover:text-white"
+              className="btn-cancel"
             >
               Cancel
             </button>
@@ -279,9 +289,9 @@ export default function ScreenManagement({ onBack }) {
       )}
 
       {/* Table */}
-      <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 shadow-lg">
+      <div className="table-card-bg rounded-xl border  p-4 shadow-lg">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="flex items-center gap-2 text-teal-400 font-semibold text-lg">
+          <h2 className="flex items-center gap-2 primary-color font-semibold text-lg">
             <Monitor className="w-5 h-5" /> Existing Screens
           </h2>
           <span className="text-sm text-gray-400">
@@ -295,9 +305,7 @@ export default function ScreenManagement({ onBack }) {
               <tr>
                 <th className="table-cell">Module</th>
                 <th className="table-cell">Screen</th>
-                <th className="table-cell-icon color-[#00d4aa] flex gap-4">
-                  Actions
-                </th>
+                <th className="table-cell-icon flex gap-4">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800 text-sm">
@@ -309,7 +317,7 @@ export default function ScreenManagement({ onBack }) {
                         <div className="flex items-center gap-1 ">
                           {" "}
                           {idx === 0 ? (
-                            <Settings className="w-4 h-4 text-teal-400 " />
+                            <Settings className="w-4 h-4 primary-color " />
                           ) : (
                             ""
                           )}
@@ -326,12 +334,14 @@ export default function ScreenManagement({ onBack }) {
                               className="form-input"
                               placeholder="Enter new name (letters only)..."
                             />
-                            <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              Only letters, spaces, and hyphens are allowed
+                            </p>
                           </div>
                         ) : (
                           <div className="flex items-center gap-1 ">
                             {" "}
-                            <Monitor className="w-4 h-4 text-teal-400 " />
+                            <Monitor className="w-4 h-4 primary-color " />
                             {screen.screenDesc}
                           </div>
                         )}
@@ -340,8 +350,8 @@ export default function ScreenManagement({ onBack }) {
                         {editId === screen.screenId ? (
                           <>
                             <button
-                              onClick={() => handleSaveEdit(screen)}
-                              className="text-teal-400 hover:underline"
+                              onClick={() => handleSaveEdit(screen.screenId)}
+                              className="primary-color hover:underline"
                             >
                               Save
                             </button>
@@ -355,7 +365,7 @@ export default function ScreenManagement({ onBack }) {
                         ) : (
                           <button
                             onClick={() => handleEditInline(screen)}
-                            className="flex items-center gap-1 text-teal-400 hover:underline"
+                            className="flex items-center gap-1 primary-color hover:underline"
                           >
                             <Pencil className="w-4 h-4" /> Edit
                           </button>
@@ -380,8 +390,8 @@ export default function ScreenManagement({ onBack }) {
       </div>
 
       {/* Guidelines */}
-      <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 mt-6 shadow-lg">
-        <h3 className="text-teal-400 font-semibold mb-3">
+      <div className="table-card-bg rounded-xl p-4 mt-6 shadow-lg">
+        <h3 className="primary-color font-semibold mb-3">
           Screen Management Guidelines
         </h3>
         <div className="grid md:grid-cols-2 gap-3 text-sm text-gray-300">
@@ -396,7 +406,8 @@ export default function ScreenManagement({ onBack }) {
             ✏️ <span className="text-white">Edit:</span> Update screen inline
           </p>
           <p>
-            ⚠️ <span className="text-white">Validation:</span> Only letters, spaces, and hyphens allowed
+            ⚠️ <span className="text-white">Validation:</span> Only letters,
+            spaces, and hyphens allowed
           </p>
         </div>
       </div>

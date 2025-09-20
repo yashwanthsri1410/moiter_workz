@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import "../../styles/styles.css";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import axios from "axios";
+import { primaryColor } from "../../constants";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -147,7 +148,7 @@ const PieChart1 = () => {
 
         tooltipEl.innerHTML = `
           <div style="margin-bottom:5px;">${label}</div>
-          <div style="color:#00d4aa;">${value} wallets</div>
+          <div style="color:var(--primary-color);">${value} wallets</div>
         `;
       }
 
@@ -184,7 +185,7 @@ const PieChart1 = () => {
           title: {
             display: true,
             text: "Active Wallets Distribution",
-            color: "#00d4aa",
+            color: primaryColor,
             font: { size: 14, weight: "200" },
             align: "start",
             padding: { top: 10, bottom: 10 },

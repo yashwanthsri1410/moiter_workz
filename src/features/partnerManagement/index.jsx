@@ -4,6 +4,7 @@ import { BookText, TrendingUp, CheckCircle, Users } from "lucide-react";
 import "../../styles/styles.css";
 import axios from "axios";
 import StatCards from "../../components/reusable/statCards";
+import { primaryColor } from "../../constants";
 const PartnerMangement = () => {
   const [partnerData, setPartnerData] = useState({});
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -21,7 +22,7 @@ const PartnerMangement = () => {
       value: partnerData?.activePartners,
       desc: "Distribution network",
       icon: BookText,
-      color: "#00d4aa",
+      color: primaryColor,
     },
     {
       title: "Safe Performers",
@@ -35,7 +36,7 @@ const PartnerMangement = () => {
       value: partnerData?.verifiedPartners,
       desc: "96.1% compliance rate",
       icon: CheckCircle,
-      color: "#00d4aa",
+      color: primaryColor,
     },
     {
       title: "New Partners",

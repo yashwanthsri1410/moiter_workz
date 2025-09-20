@@ -71,7 +71,7 @@ const ServiceDetails = () => {
           </h1>
 
           {/* Search Box */}
-          <div className="my-6 flex items-center w-full max-w-md rounded-full bg-[#0f172a] px-4 py-2 border border-transparent focus-within:border-[#2dd4bf] transition">
+          <div className="my-6 flex items-center w-full max-w-md rounded-full bg-[#0f172a] px-4 py-2 border border-transparent focus-within:border-[var(--primary-color)] transition">
             <Search className="text-gray-400 w-4 h-4 mr-2" />
             <input
               type="text"
@@ -85,7 +85,7 @@ const ServiceDetails = () => {
           {/* Table */}
           <div className="overflow-x-auto">
             <span className="span" />
-            <table className="w-full text-left text-sm text-gray-300 border border-gray-900 rounded-xl border-separate border-spacing-0">
+            <table className="w-full table-card text-left text-sm text-gray-300 rounded-xl ">
               <thead className="text-gray-400 text-xs">
                 <tr>
                   <th className="px-6 py-3">API Service</th>
@@ -172,7 +172,7 @@ const ServiceDetails = () => {
                 key={index}
                 className="flex flex-col items-center justify-center w-64 h-24 rounded-2xl border border-gray-700"
               >
-                <div className="text-xl font-bold text-green-400">
+                <div className="text-xl font-bold text-green-500">
                   {item.value}
                 </div>
                 <div className="text-xs text-gray-400">{item.label}</div>

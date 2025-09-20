@@ -54,7 +54,7 @@ export default function Productview({
     try {
       const payload = {
         productId: selectedProduct.productId,
-        logId:selectedProduct.logId,
+        logId: selectedProduct.logId,
         actionStatus: currentAction,
         checker: "checkerUser", // Replace with logged-in user if available
         remarks: remarks,
@@ -102,7 +102,7 @@ export default function Productview({
             Back to Approvals
           </button>
           <div className="header-icon-box">
-            <PackagePlus className="text-[#00d4aa] w-4 h-4" />
+            <PackagePlus className="primary-color w-4 h-4" />
           </div>
           <div>
             <h1 className="header-title">Product Approvals</h1>
@@ -152,11 +152,11 @@ export default function Productview({
       </div>
 
       {/* Product Overview */}
-      <div className="bg-[#0c0f16] border border-[#1a1f2e] rounded-xl p-6 mt-6">
+      <div className="table-card-bg rounded-xl p-6 mt-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2 mb-2">
-            <Notebook className="w-4 h-4 text-teal-400" />
-            <h3 className="text-teal-400 text-[15px]">Product Overview</h3>
+            <Notebook className="w-4 h-4 primary-color" />
+            <h3 className="primary-color text-[15px]">Product Overview</h3>
           </div>
         </div>
 
@@ -173,9 +173,10 @@ export default function Productview({
             <p className="mt-3">
               <strong className="text-[15px]">Program:</strong>{" "}
               <span
-                className={`px-2 py-1 rounded text-[12px] ${selectedProduct.programType === "Closed"
-                  ? "checker"
-                  : selectedProduct.programType === "Semi-Closed"
+                className={`px-2 py-1 rounded text-[12px] ${
+                  selectedProduct.programType === "Closed"
+                    ? "checker"
+                    : selectedProduct.programType === "Semi-Closed"
                     ? "infra"
                     : selectedProduct.programType === "Open"
                     ? "superuser"
@@ -227,10 +228,10 @@ export default function Productview({
       </div>
 
       {/* Transaction Limits */}
-      <div className="bg-[#0c0f16] border border-[#1a1f2e] rounded-xl p-6 mt-6">
+      <div className="table-card-bg rounded-xl p-6 mt-6">
         <div className="flex items-center space-x-2 mb-2">
-          <CardSimIcon className="w-4 h-4 text-teal-400" />
-          <h3 className="text-teal-400 text-[15px]"> Transaction Limits</h3>
+          <CardSimIcon className="w-4 h-4 primary-color" />
+          <h3 className="primary-color text-[15px]"> Transaction Limits</h3>
         </div>
         <div className="grid grid-cols-3 gap-4 text-sm text-gray-300">
           <p>
@@ -261,10 +262,10 @@ export default function Productview({
       </div>
 
       {/* Compliance */}
-      <div className="bg-[#0c0f16] border border-[#1a1f2e] rounded-xl p-6 mt-6">
+      <div className="table-card-bg rounded-xl p-6 mt-6">
         <div className="flex items-center space-x-2 mb-2">
-          <Shield className="w-4 h-4 text-teal-400" />
-          <h3 className="text-teal-400 text-[15px]">Compliance</h3>
+          <Shield className="w-4 h-4 primary-color" />
+          <h3 className="primary-color text-[15px]">Compliance</h3>
         </div>
         <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
           <p>
@@ -295,16 +296,16 @@ export default function Productview({
       </div>
 
       {/* Channels & MCCs */}
-      <div className="bg-[#0c0f16] border border-[#1a1f2e] rounded-xl p-6 mt-6">
+      <div className="table-card-bg rounded-xl p-6 mt-6">
         <div className="flex items-center space-x-2 mb-2">
-          <CreditCard className="w-4 h-4 text-teal-400" />
-          <h3 className="text-teal-400 text-[15px]">Allowed Channels & MCCs</h3>
+          <CreditCard className="w-4 h-4 primary-color" />
+          <h3 className="primary-color text-[15px]">Allowed Channels & MCCs</h3>
         </div>
         <div className="flex gap-2 flex-wrap mb-2">
           {selectedProduct.allowedChannels?.map((ch, idx) => (
             <span
               key={idx}
-              className="px-2 py-1 bg-gray-800 rounded text-xs text-[#00d4aa]"
+              className="px-2 py-1 bg-gray-800 rounded text-xs primary-color"
             >
               {ch.includes("_") || ch.includes("-")
                 ? ch
@@ -329,10 +330,10 @@ export default function Productview({
       </div>
 
       {/* Validity Settings */}
-      <div className="bg-[#0c0f16] border border-[#1a1f2e] rounded-xl p-6 mt-6">
+      <div className="table-card-bg rounded-xl p-6 mt-6">
         <div className="flex items-center space-x-2 mb-2">
-          <VaultIcon className="w-4 h-4 text-teal-400" />
-          <h3 className="text-teal-400 text-[15px]">Validity Settings</h3>
+          <VaultIcon className="w-4 h-4 primary-color" />
+          <h3 className="primary-color text-[15px]">Validity Settings</h3>
         </div>
         <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
           <p>
@@ -361,10 +362,10 @@ export default function Productview({
       </div>
 
       {/* Other Settings */}
-      <div className="bg-[#0c0f16] border border-[#1a1f2e] rounded-xl p-6 mt-6">
+      <div className="table-card-bg rounded-xl p-6 mt-6">
         <div className="flex items-center space-x-2 mb-2">
-          <FileText className="w-4 h-4 text-teal-400" />
-          <h3 className="text-teal-400 text-[15px]">Other Settings</h3>
+          <FileText className="w-4 h-4 primary-color" />
+          <h3 className="primary-color text-[15px]">Other Settings</h3>
         </div>
         <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
           <p>
@@ -395,10 +396,10 @@ export default function Productview({
       </div>
 
       {/* Eligibility */}
-      <div className="bg-[#0c0f16] border border-[#1a1f2e] rounded-xl p-6 mt-6">
+      <div className="table-card-bg rounded-xl p-6 mt-6">
         <div className="flex items-center space-x-2 mb-2">
-          <ReceiptPoundSterlingIcon className="w-4 h-4 text-teal-400" />
-          <h3 className="text-teal-400 text-[15px]">Eligibility</h3>
+          <ReceiptPoundSterlingIcon className="w-4 h-4 primary-color" />
+          <h3 className="primary-color text-[15px]">Eligibility</h3>
         </div>
         <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
           <p>
@@ -417,10 +418,10 @@ export default function Productview({
       </div>
 
       {/* Remarks */}
-      <div className="bg-[#0d0f13] p-4 rounded-md border border-gray-800 mt-5">
+      <div className="table-card p-4 rounded-md mt-5">
         <div className="flex items-center space-x-2 mb-2">
-          <NotebookPen className="w-4 h-4 text-teal-400" />
-          <h3 className="text-teal-400 text-[15px]">Remarks</h3>
+          <NotebookPen className="w-4 h-4 primary-color" />
+          <h3 className="primary-color text-[15px]">Remarks</h3>
         </div>
         <p className="text-gray-300 text-[16px]">
           {selectedProduct.remarks || "No remarks available"}
@@ -431,8 +432,8 @@ export default function Productview({
 
       <div className="product-actions mt-6">
         <div className="flex items-center space-x-2 mb-2">
-          <Shield className="w-4 h-4 text-teal-400" />
-          <h3 className="text-teal-400 text-[15px]">Product Review Actions</h3>
+          <Shield className="w-4 h-4 primary-color" />
+          <h3 className="primary-color text-[15px]">Product Review Actions</h3>
         </div>
         <div className="button-group">
           <button

@@ -179,8 +179,8 @@ export default function RegulatoryConfig() {
       allowedChannels: Array.isArray(form.allowedChannels)
         ? form.allowedChannels
         : form.allowedChannels
-          ? [form.allowedChannels]
-          : [],
+        ? [form.allowedChannels]
+        : [],
 
       allowedMccCodes: undefined, // Remove if not part of schema
       ...(isEditing ? { modifiedBy: username } : { createdBy: username }),
@@ -297,8 +297,8 @@ export default function RegulatoryConfig() {
       [name]: numberFields.includes(name)
         ? Number(value)
         : type === "checkbox"
-          ? checked
-          : value,
+        ? checked
+        : value,
     }));
   };
 
@@ -369,7 +369,6 @@ export default function RegulatoryConfig() {
     cashLoadCheck,
   ]);
 
-
   return (
     <div className="config-forms">
       {/* Header */}
@@ -377,7 +376,7 @@ export default function RegulatoryConfig() {
         <div className="card-header-left">
           <div className="flex items-center gap-[10px]">
             <div className="header-icon-box">
-              <FileText className="text-[#00d4aa] w-4 h-4" />
+              <FileText className="primary-color w-4 h-4" />
             </div>
           </div>
           <div>
@@ -423,7 +422,7 @@ export default function RegulatoryConfig() {
         <form onSubmit={handleSubmit} className="department-form mt-[18px]">
           <div className="page-header">
             <h2 className="form-title flex ">
-              <FileText className="text-[#00d4aa] w-5 h-5 mr-[10px]" />
+              <FileText className="primary-color w-5 h-5 mr-[10px]" />
               {editingId
                 ? "Update Regulatory Configuration"
                 : "Create Regulatory Configuration"}
@@ -588,8 +587,8 @@ export default function RegulatoryConfig() {
           </div>
 
           {/* Transaction Limits */}
-          <div className="form-section bg-[#0d0f13] p-4 rounded-md border border-gray-800">
-            <h3 className="section-title text-teal-400 mb-4">
+          <div className="form-section">
+            <h3 className="section-title primary-color mb-4">
               Transaction Limits
             </h3>
 
@@ -686,15 +685,15 @@ export default function RegulatoryConfig() {
           </div>
 
           {/* Features & Validity Settings */}
-          <div className="form-section bg-[#0d0f13] p-4 rounded-md border border-gray-800">
-            <h3 className="section-title text-teal-400 mb-4">
+          <div className="form-section">
+            <h3 className="section-title primary-color mb-4">
               Features & Validity Settings
             </h3>
 
             <div className="grid grid-cols-2 gap-8">
               {/* Left Section - Validity & Age Settings */}
               <div>
-                <h4 className="text-teal-400 text-[15px] mb-[5px]">
+                <h4 className="compliance-title text-[15px] mb-[5px]">
                   Validity & Age Settings
                 </h4>
 
@@ -811,8 +810,8 @@ export default function RegulatoryConfig() {
           </div>
 
           {/* Payment Methods & Channels */}
-          <div className="form-section bg-[#0d0f13] p-4 rounded-md border border-gray-800">
-            <h3 className="section-title text-teal-400 mb-4">
+          <div className="form-section">
+            <h3 className="section-title primary-color mb-4">
               Payment Methods & Channels
             </h3>
 
@@ -835,10 +834,7 @@ export default function RegulatoryConfig() {
                         <div
                           onClick={() => toggleLoading(method)}
                           className={`w-3 h-3 flex items-center justify-center border 
-              ${checked
-                              ? "bg-teal-500 border-teal-500"
-                              : "bg-[#0d1220] border-teal-700/50"
-                            }
+              ${checked ? "check-box-clr-after" : "check-box-clr-before"}
               transition-colors duration-200`}
                         >
                           {checked && (
@@ -890,10 +886,7 @@ export default function RegulatoryConfig() {
                         <div
                           onClick={() => toggleUnloading(method)}
                           className={`w-3 h-3 flex items-center justify-center border 
-            ${checked
-                              ? "bg-teal-500 border-teal-500"
-                              : "bg-[#0d1220] border-teal-700/50"
-                            }
+            ${checked ? "check-box-clr-after" : "check-box-clr-before"}
             transition-colors duration-200`}
                         >
                           {checked && (
@@ -1004,7 +997,7 @@ export default function RegulatoryConfig() {
                             setformOpen(true);
                           }}
                         >
-                          <SquarePen className="text-[#00d4aa] w-3 h-3" />
+                          <SquarePen className="primary-color w-3 h-3" />
                         </button>
                       </td>
                     </tr>
@@ -1026,10 +1019,11 @@ export default function RegulatoryConfig() {
           <button
             onClick={() => setCurrentPage(currentPage - 1)}
             disabled={currentPage === 1}
-            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${currentPage === 1
+            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
+              currentPage === 1
                 ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
-              }`}
+                : "bg-[#0a1625] text-white hover:primary-color"
+            }`}
           >
             <ChevronLeft className="w-4 h-4" /> Prev
           </button>
@@ -1039,10 +1033,11 @@ export default function RegulatoryConfig() {
               <button
                 key={i}
                 onClick={() => setCurrentPage(i + 1)}
-                className={`px-3 py-1 rounded-lg text-sm ${currentPage === i + 1
-                    ? "bg-[#00d4aa] text-black font-bold"
-                    : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
-                  }`}
+                className={`px-3 py-1 rounded-lg text-sm ${
+                  currentPage === i + 1
+                    ? "primary-bg text-black font-bold"
+                    : "bg-[#1c2b45] text-white hover:primary-color"
+                }`}
               >
                 {i + 1}
               </button>
@@ -1052,10 +1047,11 @@ export default function RegulatoryConfig() {
           <button
             onClick={() => setCurrentPage(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${currentPage === totalPages
+            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
+              currentPage === totalPages
                 ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
-              }`}
+                : "bg-[#0a1625] text-white hover:primary-color"
+            }`}
           >
             Next <ChevronRight className="w-4 h-4" />
           </button>

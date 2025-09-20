@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import usePublicIp from "../hooks/usePublicIp";
-import { Pencil, Search, Plus, Users, UserCog, ArrowLeft } from "lucide-react";
+import {
+  Pencil,
+  Search,
+  Plus,
+  Users,
+  UserCog,
+  ArrowLeft,
+  X,
+} from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 
 const RoleAccessForm = ({ onBack }) => {
@@ -53,7 +61,9 @@ const RoleAccessForm = ({ onBack }) => {
       .catch((err) => console.error("Error fetching roles:", err));
   };
 
-  const uniqueModules = [...new Set(modulesData.map((item) => item.moduleName))];
+  const uniqueModules = [
+    ...new Set(modulesData.map((item) => item.moduleName)),
+  ];
 
   // Handle role description input change with validation
   const handleRoleDescriptionChange = (e) => {
@@ -107,95 +117,94 @@ const RoleAccessForm = ({ onBack }) => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  const screenModuleList = [];
+    e.preventDefault();
+    const screenModuleList = [];
 
-  selectedModules.forEach((module) => {
-    const screens = selectedScreensPerModule[module] || [];
-    screens.forEach((screen) => {
-      screenModuleList.push({
-        logId: uuidv4(),  // generate logId for each screen
-        module,
-        screen,
+    selectedModules.forEach((module) => {
+      const screens = selectedScreensPerModule[module] || [];
+      screens.forEach((screen) => {
+        screenModuleList.push({
+          logId: uuidv4(), // generate logId for each screen
+          module,
+          screen,
+        });
       });
     });
-  });
 
-  if (screenModuleList.length === 0) {
-    alert("Please select at least one screen.");
-    return;
-  }
+    if (screenModuleList.length === 0) {
+      alert("Please select at least one screen.");
+      return;
+    }
 
-  const bulkPayload = {
-    logId: uuidv4(), // main logId for role
-    roleDescription,
-    screenModuleList,
-    metadata: {
-      ipAddress: ip,
-      userAgent: navigator.userAgent,
-      channel: "web",
-      auditMetadata: {
-        createdBy: username,
-        createdDate: new Date().toISOString(),
-        modifiedBy: username,
-        modifiedDate: new Date().toISOString(),
+    const bulkPayload = {
+      logId: uuidv4(), // main logId for role
+      roleDescription,
+      screenModuleList,
+      metadata: {
+        ipAddress: ip,
+        userAgent: navigator.userAgent,
+        channel: "web",
+        auditMetadata: {
+          createdBy: username,
+          createdDate: new Date().toISOString(),
+          modifiedBy: username,
+          modifiedDate: new Date().toISOString(),
+        },
       },
-    },
+    };
+
+    try {
+      await axios.post(
+        `${API_BASE_URL}/ums/api/UserManagement/role-access/bulk`,
+        bulkPayload
+      );
+      alert("Role access submitted successfully!");
+      fetchRoles();
+      setSelectedModules([]);
+      setScreensPerModule({});
+      setSelectedScreensPerModule({});
+      setRoleDescription("");
+      setShowForm(false);
+    } catch (error) {
+      console.error("Error submitting role access:", error);
+      alert("Submission failed!");
+    }
   };
-
-  try {
-    await axios.post(
-      `${API_BASE_URL}/ums/api/UserManagement/role-access/bulk`,
-      bulkPayload
-    );
-    alert("Role access submitted successfully!");
-    fetchRoles();
-    setSelectedModules([]);
-    setScreensPerModule({});
-    setSelectedScreensPerModule({});
-    setRoleDescription("");
-    setShowForm(false);
-  } catch (error) {
-    console.error("Error submitting role access:", error);
-    alert("Submission failed!");
-  }
-};
-
 
   const handleUpdateRole = async () => {
-  if (!editRole) return;
+    if (!editRole) return;
 
-  const payload = {
-    logId: editRole.logId, // use from API (fetched role)
-    roleAccessId: editRole.roleAccessId,
-    newRoleDescription: editedRoleName,
-    metadata: {
-      ipAddress: ip,
-      userAgent: navigator.userAgent,
-      channel: "web",
-      auditMetadata: {
-        createdBy: username,
-        createdDate: new Date().toISOString(),
-        modifiedBy: username,
-        modifiedDate: new Date().toISOString(),
+    const payload = {
+      logId: editRole.logId, // use from API (fetched role)
+      roleAccessId: editRole.roleAccessId,
+      newRoleDescription: editedRoleName,
+      metadata: {
+        ipAddress: ip,
+        userAgent: navigator.userAgent,
+        channel: "web",
+        auditMetadata: {
+          createdBy: username,
+          createdDate: new Date().toISOString(),
+          modifiedBy: username,
+          modifiedDate: new Date().toISOString(),
+        },
       },
-    },
-  };
+    };
 
-  try {
-    await axios.put(
-      `${API_BASE_URL}/ums/api/UserManagement/update-role-description`,
-      payload
-    );
-    alert("Role description updated!");
-    setEditRole(null);
-    setEditedRoleName("");
-    fetchRoles();
-  } catch (error) {
-    console.error("Failed to update role description:", error);
-    alert("Update failed!");
-  }
-};
+    try {
+      await axios.put(
+        `${API_BASE_URL}/ums/api/UserManagement/update-role-description`,
+        payload
+      );
+      alert("Role description updated!");
+      setEditRole(null);
+      setEditedRoleName("");
+      fetchRoles();
+    } catch (error) {
+      console.error("Failed to update role description:", error);
+      alert("Update failed!");
+    }
+  };
 
   const filteredRoles = roleDescriptions.filter((role) =>
     role.roleDescription.toLowerCase().includes(searchTerm.toLowerCase())
@@ -208,30 +217,27 @@ const RoleAccessForm = ({ onBack }) => {
           <div className="header-left">
             <div className="flex items-center gap-[10px]">
               <button className="header-icon-btn" onClick={onBack}>
-                <ArrowLeft className="text-[#00d4aa] w-4 h-4" />
+                <ArrowLeft className="primary-color w-4 h-4" />
               </button>
 
               <div className="header-icon-box">
-                <UserCog className="text-[#00d4aa] w-4 h-4" />
+                <UserCog className="primary-color w-4 h-4" />
               </div>
             </div>
             <div>
               <h1 className="header-title">Role Access Management</h1>
-              <p className="header-subtext">Assign modules and screens to roles</p>
+              <p className="header-subtext">
+                Assign modules and screens to roles
+              </p>
             </div>
-
           </div>
 
           <div className="flex items-center gap-4">
-
-
             {/* Active count */}
             <button className="btn-count">
               <span className="w-2 h-2 rounded-full bg-[#04CF6A]  plus"></span>
               {roleDescriptions.length} Active roles
             </button>
-
-
           </div>
         </div>
         <div className="search-toggle">
@@ -248,8 +254,15 @@ const RoleAccessForm = ({ onBack }) => {
           </div>
           {/* Toggle form */}
           <button onClick={() => setShowForm(!showForm)} className="btn-toggle">
-            <Plus className="w-3 h-3" />
-            {showForm ? "Close Form" : "Create Role"}
+            {showForm ? (
+              <>
+                <X className="w-3 h-3" /> Close Form
+              </>
+            ) : (
+              <>
+                <Plus className="w-3 h-3" /> Create Department
+              </>
+            )}
           </button>
         </div>
       </div>
@@ -269,7 +282,9 @@ const RoleAccessForm = ({ onBack }) => {
               className="form-input"
               required
             />
-            <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
+            <p className="text-xs text-gray-500 mt-1">
+              Only letters, spaces, and hyphens are allowed
+            </p>
           </div>
 
           {/* Modules */}
@@ -285,7 +300,7 @@ const RoleAccessForm = ({ onBack }) => {
                     type="checkbox"
                     checked={selectedModules.includes(module)}
                     onChange={() => handleModuleCheckboxChange(module)}
-                    className="accent-[#00d4aa]"
+                    className="accent-[var(--primary-color)]"
                   />
                   {module}
                 </label>
@@ -306,10 +321,13 @@ const RoleAccessForm = ({ onBack }) => {
                     <input
                       type="checkbox"
                       checked={
-                        selectedScreensPerModule[module]?.includes(screen) || false
+                        selectedScreensPerModule[module]?.includes(screen) ||
+                        false
                       }
-                      onChange={() => handleScreenCheckboxChange(module, screen)}
-                      className="accent-[#00d4aa]"
+                      onChange={() =>
+                        handleScreenCheckboxChange(module, screen)
+                      }
+                      className="accent-[var(--primary-color)]"
                     />
                     {screen}
                   </label>
@@ -322,7 +340,7 @@ const RoleAccessForm = ({ onBack }) => {
             <button
               type="button"
               onClick={() => setShowForm(false)}
-              className="text-sm font-medium text-gray-300 hover:text-white"
+              className="btn-cancel"
             >
               Cancel
             </button>
@@ -334,9 +352,9 @@ const RoleAccessForm = ({ onBack }) => {
       )}
 
       {/* Role List */}
-      <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 shadow-lg">
+      <div className="table-card-bg rounded-xl border  p-4 shadow-lg">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="flex items-center gap-2 text-teal-400 font-semibold text-lg">
+          <h2 className="flex items-center gap-2 primary-color font-semibold text-lg">
             <UserCog className="w-5 h-5" /> Existing Roles
           </h2>
           <span className="text-sm text-gray-400">
@@ -349,7 +367,7 @@ const RoleAccessForm = ({ onBack }) => {
             <thead className="table-head">
               <tr>
                 <th className="table-cell">Role Description</th>
-                <th className="table-cell-icon color-[#00d4aa] flex gap-4">Actions</th>
+                <th className="table-cell-icon flex gap-4">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800 text-sm">
@@ -372,10 +390,16 @@ const RoleAccessForm = ({ onBack }) => {
                               className="form-input"
                               placeholder="Enter new name (letters only)..."
                             />
-                            <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
+                            <p className="text-xs text-gray-500 mt-1">
+                              Only letters, spaces, and hyphens are allowed
+                            </p>
                           </div>
                         ) : (
-                          <div className="flex items-center gap-1 "> <UserCog className="w-4 h-4 text-teal-400 " />{role.roleDescription}</div>
+                          <div className="flex items-center gap-1 ">
+                            {" "}
+                            <UserCog className="w-4 h-4 primary-color " />
+                            {role.roleDescription}
+                          </div>
                         )}
                       </td>
                       <td className="table-cell-icon flex gap-4">
@@ -383,7 +407,7 @@ const RoleAccessForm = ({ onBack }) => {
                           <>
                             <button
                               onClick={handleUpdateRole}
-                              className="text-teal-400 hover:underline"
+                              className="primary-color hover:underline"
                             >
                               Save
                             </button>
@@ -400,7 +424,7 @@ const RoleAccessForm = ({ onBack }) => {
                               setEditRole(role);
                               setEditedRoleName(role.roleDescription);
                             }}
-                            className="flex items-center gap-1 text-teal-400 hover:underline"
+                            className="flex items-center gap-1 primary-color hover:underline"
                           >
                             <Pencil className="w-4 h-4" /> Edit
                           </button>
@@ -410,7 +434,10 @@ const RoleAccessForm = ({ onBack }) => {
                   ))
               ) : (
                 <tr>
-                  <td colSpan={2} className="table-cell table-cell-muted text-center">
+                  <td
+                    colSpan={2}
+                    className="table-cell table-cell-muted text-center"
+                  >
                     No roles found.
                   </td>
                 </tr>
@@ -420,30 +447,29 @@ const RoleAccessForm = ({ onBack }) => {
         </div>
       </div>
       {/* Guidelines */}
-      <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 mt-6 shadow-lg">
-        <h3 className="text-teal-400 font-semibold mb-3">
+      <div className="table-card-bg rounded-xl p-4 mt-6 shadow-lg">
+        <h3 className="primary-color font-semibold mb-3">
           Role Management Guidelines
         </h3>
         <div className="grid md:grid-cols-2 gap-3 text-sm text-gray-300">
           <p>
-            📘 <span className="text-white">Create:</span> Add new role
-            under departments
+            📘 <span className="text-white">Create:</span> Add new role under
+            departments
           </p>
           <p>
-            🔍 <span className="text-white">Search:</span> Quickly find
-            role
+            🔍 <span className="text-white">Search:</span> Quickly find role
           </p>
           <p>
             ✏️ <span className="text-white">Edit:</span> Update designation
             inline
           </p>
           <p>
-            ⚠️ <span className="text-white">Validation:</span> Only letters, spaces, and hyphens allowed
+            ⚠️ <span className="text-white">Validation:</span> Only letters,
+            spaces, and hyphens allowed
           </p>
         </div>
       </div>
     </div>
-
   );
 };
 
