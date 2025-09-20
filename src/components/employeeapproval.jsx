@@ -28,21 +28,21 @@ export default function EmployeeApproval() {
     fetchConfigurations();
   }, []);
 
-    const fetchConfigurations = async () => {
-        try {
-            const res = await axios.get(
-                `${API_BASE_URL}/fes/api/Export/pending-employees`
-            );
-            setConfigurations(res.data);
-        } catch (err) {
-            console.error("Error fetching configurations:", err);
-        }
-    };
+  const fetchConfigurations = async () => {
+    try {
+      const res = await axios.get(
+        `${API_BASE_URL}/fes/api/Export/pending-employees`
+      );
+      setConfigurations(res.data);
+    } catch (err) {
+      console.error("Error fetching configurations:", err);
+    }
+  };
 
   // ✅ Filter + Search logic
   const filteredConfigurations = configurations.filter((cfg) => {
     if (cfg.status !== 1) return false; // Only include pending employees
-    
+
     const query = searchQuery.toLowerCase();
     const matchesSearch = Object.values(cfg).some(
       (value) => value && value.toString().toLowerCase().includes(query)
@@ -57,8 +57,7 @@ export default function EmployeeApproval() {
       cfg.priority?.toLowerCase() === selectedPriority.toLowerCase();
 
     return matchesSearch && matchesProgramType && matchesPriority;
-});
-
+  });
 
   const totalPages = Math.ceil(filteredConfigurations.length / itemsPerPage);
 
@@ -95,39 +94,46 @@ export default function EmployeeApproval() {
           <EmployeeView
             selectedEmployee={selectedEmployee}
             setSelectedEmployee={setSelectedEmployee}
-             fetchConfigurations={fetchConfigurations} 
+            fetchConfigurations={fetchConfigurations}
           />
         </>
       ) : (
         <>
           {/* Header */}
-          <div className="card-header">
-            <div className="card-header-left">
-              <div className="flex items-center gap-[10px]">
-                <div className="header-icon-box">
-                  <UserCheck2Icon className="text-[#00d4aa] w-4 h-4" />
-                </div>
+          <div className="card-header flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+            {/* Left section */}
+            <div className="card-header-left flex items-center gap-3 justify-center sm:justify-start">
+              <div className="header-icon-box">
+                <UserCheck2Icon className="text-[#00d4aa] w-4 h-4" />
               </div>
-              <div>
+              <div className="text-center sm:text-left">
                 <h1 className="header-title">Employee Approvals</h1>
                 <p className="header-subtext">
                   Review and approve employee configurations
                 </p>
               </div>
             </div>
-            <div className="card-header-right">
-              <div className="portal-info">
-                <p className="portal-label">{configurations.length} total</p>
+
+            {/* Right section */}
+            <div className="card-header-right flex justify-center sm:justify-end w-full">
+              <div className="portal-info text-center sm:text-right">
+                <p className="portal-label text-center sm:text-right">
+                  {configurations.length} total
+                </p>
                 <p className="portal-link">Checker Portal</p>
               </div>
             </div>
           </div>
 
           {/* Filters & Pagination */}
-          <div className="bg-[#0c0f16] border border-[#1a1f2e] rounded-xl p-3 flex flex-col gap-3 mt-6">
-            <div className="flex items-center gap-2">
+          <div className="bg-[#0c0f16] border border-[#1a1f2e] rounded-xl p-3 flex flex-col gap-3 items-center md:items-start mt-2.5">
+            {/* Search + Reset */}
+            <div
+              className="flex flex-col items-center md:items-start md:flex-row gap-2 w-full"
+              style={{ alignItems: "center" }}
+            >
               {/* Search */}
-              <div className="search-box relative">
+              <div className="search-box relative flex-1">
                 <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
                 <input
                   type="text"
@@ -136,28 +142,26 @@ export default function EmployeeApproval() {
                     setSearchQuery(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="search-input-approval"
+                  className="search-input-approval !w-full md:w-auto"
                   placeholder="Search employees..."
                 />
-              </div>            
+              </div>
 
               {/* Reset Filters */}
               <button
                 onClick={() => {
-                  setSelectedProgramType("");
-                  setSelectedPriority("");
                   setSearchQuery("");
                   setCurrentPage(1);
                 }}
-                className="filter-btn"
+                className="filter-btn flex items-center gap-1 px-3 py-1 shrink-0 max-w-[100px] md:max-w-none"
               >
-                <Filter className="filter-icon" />
+                <Filter className="filter-icon w-3 h-3" />
                 Reset
               </button>
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center md:justify-start gap-2 w-full">
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
@@ -187,7 +191,6 @@ export default function EmployeeApproval() {
               </button>
             </div>
           </div>
-
           {/* Table */}
           <div className="table-card mt-[18px]">
             <div className="table-header">
@@ -197,8 +200,8 @@ export default function EmployeeApproval() {
               </p>
             </div>
 
-            <div className="table-wrapper mt-5">
-              <table className="w-full text-left">
+            <div className="table-wrapper mt-5 overflow-x-auto table-scrollbar">
+              <table className="w-full text-left min-w-[800px]">
                 <thead className="table-head">
                   <tr>
                     <th className="table-cell">ID</th>
@@ -222,7 +225,7 @@ export default function EmployeeApproval() {
                         <td className="table-content">{cfg.deptName}</td>
                         <td className="table-content">{cfg.designationDesc}</td>
                         <td className="table-content">{cfg.roleDescription}</td>
-                        <td>
+                        <td className="table-content">
                           <span
                             className={`px-2 py-1 rounded text-[10px] ${
                               cfg.status === 0

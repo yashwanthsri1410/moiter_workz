@@ -502,49 +502,50 @@ export default function Partnercreate() {
   return (
     <div className="config-forms">
       {/* Header */}
-      <div className="card-header">
-        <div className="card-header-left">
-          <div className="flex items-center gap-[10px]">
-            <div className="header-icon-box">
-              <CalculatorIcon className="text-[#00d4aa] w-4 h-4" />
-            </div>
-          </div>
-          <div>
-            <h1 className="header-title">Distribution Partner Management</h1>
-            <p className="header-subtext">
-              Onboard and manage distribution partners
-            </p>
-          </div>
-        </div>
-
-        <div className="card-header-right">
-          <button
-            className="btn-outline"
-            onClick={() => setformOpen((prev) => !prev)}
-          >
-            {formOpen ? (
-              <>
-                <span className="btn-icon">
-                  <EyeOff className="w-4 h-4" />
-                </span>
-                Hide Form
-              </>
-            ) : (
-              <>
-                {" "}
-                <span className="btn-icon">
-                  <Eye className="w-4 h-4" />
-                </span>{" "}
-                Show Form
-              </>
-            )}
-          </button>
-          <div className="portal-info">
-            <p className="portal-label">Content Creation</p>
-            <p className="portal-link">Maker Portal</p>
-          </div>
-        </div>
+      <div className="card-header flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0 p-2 sm:p-4">
+  {/* Left Section */}
+  <div className="card-header-left flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-2">
+    <div className="flex items-center gap-2">
+      <div className="header-icon-box bg-gray-800 p-2 rounded">
+        <CalculatorIcon className="text-[#00d4aa] w-4 h-4" />
       </div>
+    </div>
+    <div>
+      <h1 className="header-title text-sm sm:text-lg font-semibold text-center sm:text-left">
+        Distribution Partner Management
+      </h1>
+      <p className="header-subtext text-xs sm:text-sm text-gray-400 text-center sm:text-left">
+        Onboard and manage distribution partners
+      </p>
+    </div>
+  </div>
+
+  {/* Right Section */}
+  <div className="card-header-right flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+    <button
+      className="btn-outline flex items-center gap-1 w-full sm:w-auto justify-center text-xs sm:text-sm"
+      onClick={() => setformOpen((prev) => !prev)}
+    >
+      {formOpen ? (
+        <>
+          <EyeOff className="w-4 h-4" />
+          Hide Form
+        </>
+      ) : (
+        <>
+          <Eye className="w-4 h-4" />
+          Show Form
+        </>
+      )}
+    </button>
+
+    <div className="portal-info text-center sm:text-left">
+      <p className="portal-label text-gray-400 text-xs sm:text-sm">Content Creation</p>
+      <p className="portal-link text-teal-500 text-xs sm:text-sm font-medium text-center sm:text-right">Maker Portal</p>
+    </div>
+  </div>
+</div>
+
 
       {formOpen && (
         <form className="department-form mt-[18px]" onSubmit={handleSubmit}>
@@ -555,911 +556,898 @@ export default function Partnercreate() {
             </h2>
           </div>
           {/* Grid Layout */}
-          <div className="grid grid-cols-2 gap-2 mt-6">
-            <div className="form-group">
-              <label>Partner Name</label>
-              <input
-                type="text"
-                name="partnerName"
-                className="form-input"
-                placeholder="Enter partner name"
-                value={form.partnerName}
-                onChange={handleChange}
-              />
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+  {/* Partner Name */}
+  <div className="form-group flex flex-col">
+    <label className="text-sm sm:text-base mb-1">Partner Name</label>
+    <input
+      type="text"
+      name="partnerName"
+      className="form-input p-2 border border-gray-700 rounded text-sm sm:text-base"
+      placeholder="Enter partner name"
+      value={form.partnerName}
+      onChange={handleChange}
+    />
+  </div>
 
-            <div className="form-group">
-              <label>Contact Name</label>
-              <input
-                type="text"
-                name="contactName"
-                className="form-input"
-                placeholder="Enter contact name"
-                value={form.contactName}
-                onChange={handleChange}
-              />
-            </div>
+  {/* Contact Name */}
+  <div className="form-group flex flex-col">
+    <label className="text-sm sm:text-base mb-1">Contact Name</label>
+    <input
+      type="text"
+      name="contactName"
+      className="form-input p-2 border border-gray-700 rounded text-sm sm:text-base"
+      placeholder="Enter contact name"
+      value={form.contactName}
+      onChange={handleChange}
+    />
+  </div>
 
-            <div className="form-group">
-              <label>Contact Email</label>
-              <input
-                type="email"
-                name="contactEmail"
-                className="form-input"
-                placeholder="Enter contact email"
-                value={form.contactEmail}
-                onChange={handleChange}
-              />
-            </div>
+  {/* Contact Email */}
+  <div className="form-group flex flex-col">
+    <label className="text-sm sm:text-base mb-1">Contact Email</label>
+    <input
+      type="email"
+      name="contactEmail"
+      className="form-input p-2 border border-gray-700 rounded text-sm sm:text-base"
+      placeholder="Enter contact email"
+      value={form.contactEmail}
+      onChange={handleChange}
+    />
+  </div>
 
-            <div className="form-group">
-              <label>Contact Phone</label>
-              <input
-                type="text"
-                name="contactPhone"
-                className="form-input"
-                placeholder="Enter contact phone"
-                value={form.contactPhone}
-                onChange={handleChange}
-              />
-            </div>
+  {/* Contact Phone */}
+  <div className="form-group flex flex-col">
+    <label className="text-sm sm:text-base mb-1">Contact Phone</label>
+    <input
+      type="text"
+      name="contactPhone"
+      className="form-input p-2 border border-gray-700 rounded text-sm sm:text-base"
+      placeholder="Enter contact phone"
+      value={form.contactPhone}
+      onChange={handleChange}
+    />
+  </div>
 
-            <div className="form-group">
-              <label>Address</label>
-              <input
-                type="text"
-                name="address"
-                className="form-input"
-                placeholder="Enter address"
-                value={form.address}
-                onChange={handleChange}
-              />
-            </div>
+  {/* Address */}
+  <div className="form-group flex flex-col">
+    <label className="text-sm sm:text-base mb-1">Address</label>
+    <input
+      type="text"
+      name="address"
+      className="form-input p-2 border border-gray-700 rounded text-sm sm:text-base"
+      placeholder="Enter address"
+      value={form.address}
+      onChange={handleChange}
+    />
+  </div>
 
-            <div className="form-group">
-              <label>City</label>
-              <input
-                type="text"
-                name="city"
-                className="form-input"
-                placeholder="Enter city"
-                value={form.city}
-                onChange={handleChange}
-              />
-            </div>
+  {/* City */}
+  <div className="form-group flex flex-col">
+    <label className="text-sm sm:text-base mb-1">City</label>
+    <input
+      type="text"
+      name="city"
+      className="form-input p-2 border border-gray-700 rounded text-sm sm:text-base"
+      placeholder="Enter city"
+      value={form.city}
+      onChange={handleChange}
+    />
+  </div>
 
-            <div className="form-group">
-              <label>State</label>
-              <input
-                type="text"
-                name="state"
-                className="form-input"
-                placeholder="Enter state"
-                value={form.state}
-                onChange={handleChange}
-              />
-            </div>
+  {/* State */}
+  <div className="form-group flex flex-col">
+    <label className="text-sm sm:text-base mb-1">State</label>
+    <input
+      type="text"
+      name="state"
+      className="form-input p-2 border border-gray-700 rounded text-sm sm:text-base"
+      placeholder="Enter state"
+      value={form.state}
+      onChange={handleChange}
+    />
+  </div>
 
-            <div className="form-group">
-              <label>Pincode</label>
-              <input
-                type="text"
-                name="pincode"
-                className="form-input"
-                placeholder="Enter pincode"
-                value={form.pincode}
-                onChange={handleChange}
-                maxLength={6}
-              />
-            </div>
+  {/* Pincode */}
+  <div className="form-group flex flex-col">
+    <label className="text-sm sm:text-base mb-1">Pincode</label>
+    <input
+      type="text"
+      name="pincode"
+      maxLength={6}
+      className="form-input p-2 border border-gray-700 rounded text-sm sm:text-base"
+      placeholder="Enter pincode"
+      value={form.pincode}
+      onChange={handleChange}
+    />
+  </div>
 
-            <div className="form-group">
-              <label>Partner Type</label>
-              <select
-                name="partnerType"
-                value={form.partnerType}
-                onChange={handleChange}
-                className="form-input"
-              >
-                <option value="">Select partner type</option>
-                <option value="Retailer">Retailer</option>
-                <option value="Aggregator">Aggregator</option>
-                <option value="Bank">Bank</option>
-                <option value="Fintech">Fintech</option>
-                <option value="Distributor">Distributor</option>
-                <option value="SuperDistributor">Super Distributor</option>
-                <option value="Corporate">Corporate</option>
-                <option value="Agent">Agent</option>
-                <option value="Franchise">Franchise</option>
-              </select>
-            </div>
+  {/* Partner Type */}
+  <div className="form-group flex flex-col">
+    <label className="text-sm sm:text-base mb-1">Partner Type</label>
+    <select
+      name="partnerType"
+      value={form.partnerType}
+      onChange={handleChange}
+      className="form-input p-2 border border-gray-700 rounded text-sm sm:text-base"
+    >
+      <option value="">Select partner type</option>
+      <option value="Retailer">Retailer</option>
+      <option value="Aggregator">Aggregator</option>
+      <option value="Bank">Bank</option>
+      <option value="Fintech">Fintech</option>
+      <option value="Distributor">Distributor</option>
+      <option value="SuperDistributor">Super Distributor</option>
+      <option value="Corporate">Corporate</option>
+      <option value="Agent">Agent</option>
+      <option value="Franchise">Franchise</option>
+    </select>
+  </div>
 
-            <div className="form-group">
-              <label>Partner Status</label>
-              <select
-                name="partnerStatus"
-                value={form.partnerStatus}
-                onChange={handleChange}
-                className="form-input"
-              >
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </div>
-          </div>
-          <div className="mt-8 relative">
-            <h3 className="section-title">Allowed Products</h3>
+  {/* Partner Status */}
+  <div className="form-group flex flex-col">
+    <label className="text-sm sm:text-base mb-1">Partner Status</label>
+    <select
+      name="partnerStatus"
+      value={form.partnerStatus}
+      onChange={handleChange}
+      className="form-input p-2 border border-gray-700 rounded text-sm sm:text-base"
+    >
+      <option value="active">Active</option>
+      <option value="inactive">Inactive</option>
+    </select>
+  </div>
+</div>
 
-            {/* Dropdown Toggle */}
-            {/* <button
-              type="button"
-              onClick={() => setShowProductDropdown(!showProductDropdown)}
-              className="w-1/2 mt-2 px-3 py-1 bg-[#0d1220] border border-teal-700/50 rounded-[8px] text-left text-gray-300 text-[13px]"
-            >
-              {form.allowedProducts.length > 0
-                ? form.allowedProducts.join(", ")
-                : "Select Products"}
-            </button> */}
+          <div className="mt-8 relative w-full sm:w-1/2">
+  <h3 className="section-title text-sm sm:text-base mb-2">Allowed Products</h3>
 
-            {/* Dropdown Menu */}
-            {/* {showProductDropdown && (
-              <div className="absolute mt-0 w-1/2 bg-[#0d1220] border border-teal-700/50 rounded-[10px] shadow-lg z-10 max-h-60 overflow-y-auto">
-                {products.map((product) => {
-                  const checked = form.allowedProducts?.includes(
-                    product.productName
-                  );
-                  return (
-                    <label
-                      key={product.productId}
-                      className="flex items-center gap-2 px-3 py-2 hover:bg-[#1c2b45] cursor-pointer text-gray-300"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={checked}
-                        onChange={() => toggleAllowed(product.productName)}
-                        className="accent-teal-500"
-                      />
-                      <span className="text-sm">{product.productName}</span>
-                    </label>
-                  );
-                })}
-              </div>
-            )} */}
-            <div className="w-1/2 mt-2">
-              <Select
-                isMulti
-                closeMenuOnSelect={false}
-                options={options}
-                value={options.filter((opt) =>
-                  form.allowedProducts.includes(opt.value)
-                )}
-                onChange={handleChanges}
-                styles={customStyles}
-                placeholder="Select Products"
-                maxMenuHeight={200}
-              />
-            </div>
-          </div>
+  {/* Dropdown Toggle */}
+  {/* <button
+    type="button"
+    onClick={() => setShowProductDropdown(!showProductDropdown)}
+    className="w-full mt-2 px-3 py-1 bg-[#0d1220] border border-teal-700/50 rounded-[8px] text-left text-gray-300 text-[13px]"
+  >
+    {form.allowedProducts.length > 0
+      ? form.allowedProducts.join(", ")
+      : "Select Products"}
+  </button> */}
 
-          <div className="portal-access flex items-center gap-2 text-gray-300">
-            {/* Status Dot */}
-            <div className="status-dot"></div>
+  {/* Dropdown Menu */}
+  {/* {showProductDropdown && (
+    <div className="absolute mt-0 w-full bg-[#0d1220] border border-teal-700/50 rounded-[10px] shadow-lg z-10 max-h-60 overflow-y-auto">
+      {products.map((product) => {
+        const checked = form.allowedProducts?.includes(
+          product.productName
+        );
+        return (
+          <label
+            key={product.productId}
+            className="flex items-center gap-2 px-3 py-2 hover:bg-[#1c2b45] cursor-pointer text-gray-300"
+          >
+            <input
+              type="checkbox"
+              checked={checked}
+              onChange={() => toggleAllowed(product.productName)}
+              className="accent-teal-500"
+            />
+            <span className="text-sm">{product.productName}</span>
+          </label>
+        );
+      })}
+    </div>
+  )} */}
 
-            {/* Custom Checkbox */}
-            <div
-              onClick={() =>
-                setForm((prev) => ({
-                  ...prev,
-                  portalAccessEnabled: !prev.portalAccessEnabled,
-                }))
-              }
-              className={`w-3 h-3 flex items-center justify-center border rounded-sm cursor-pointer
+  {/* Multi Select */}
+  <div className="mt-2">
+    <Select
+      isMulti
+      closeMenuOnSelect={false}
+      options={options}
+      value={options.filter((opt) =>
+        form.allowedProducts.includes(opt.value)
+      )}
+      onChange={handleChanges}
+      styles={customStyles}
+      placeholder="Select Products"
+      maxMenuHeight={200}
+      className="w-full"
+    />
+  </div>
+</div>
+
+
+         <div className="portal-access flex flex-col sm:flex-row sm:items-center gap-2 text-gray-300 w-full">
+  {/* Status Dot */}
+  <div className="status-dot"></div>
+
+  {/* Custom Checkbox */}
+  <div
+    onClick={() =>
+      setForm((prev) => ({
+        ...prev,
+        portalAccessEnabled: !prev.portalAccessEnabled,
+      }))
+    }
+    className={`w-4 h-4 flex items-center justify-center border rounded-sm cursor-pointer
       ${
         form.portalAccessEnabled
           ? "bg-teal-500 border-teal-500"
           : "bg-[#0d1220] border-teal-700/50"
       }
       transition-colors duration-200`}
-            >
-              {form.portalAccessEnabled && (
-                <Check size={14} className="text-[#0d1220]" />
-              )}
-            </div>
+  >
+    {form.portalAccessEnabled && (
+      <Check size={14} className="text-[#0d1220]" />
+    )}
+  </div>
 
-            {/* Label */}
-            <span className="text-[13px]">Portal Access Enabled</span>
+  {/* Label */}
+  <span className="text-[12px] sm:text-[13px] w-full sm:w-auto">
+    Portal Access Enabled
+  </span>
 
-            {/* ✅ Input appears only if checked */}
-            {form.portalAccessEnabled && (
-              <div className="label-input">
-                {/* <input
-                                    name="portalUrl"
-                                    value={form.portalUrl}
-                                    onChange={handleChange}
-                                    className="form-input"
-                                    type="text"
-                                    placeholder="Enter portal details"
-                                /> */}
+  {/* ✅ Input appears only if checked */}
+  {form.portalAccessEnabled && (
+    <div className="label-input w-full sm:w-1/2 mt-2 sm:mt-0">
+      {/* <input
+          name="portalUrl"
+          value={form.portalUrl}
+          onChange={handleChange}
+          className="form-input"
+          type="text"
+          placeholder="Enter portal details"
+      /> */}
 
-                <select
-                  name="portalUrl"
-                  value={form.portalUrl}
-                  onChange={(e) =>
-                    setForm({ ...form, portalUrl: Number(e.target.value) })
-                  }
-                  disabled={!form.portalAccessEnabled}
-                  className="form-select w-1/2"
-                >
-                  <option value="">-- Select Portal URL --</option>
-                  {portalOptions.map((p) => (
-                    <option key={p.portalId} value={p.portalId}>
-                      {p.portalUrl}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-          </div>
+      <select
+        name="portalUrl"
+        value={form.portalUrl}
+        onChange={(e) =>
+          setForm({ ...form, portalUrl: Number(e.target.value) })
+        }
+        disabled={!form.portalAccessEnabled}
+        className="form-select w-full sm:w-full"
+      >
+        <option value="">-- Select Portal URL --</option>
+        {portalOptions.map((p) => (
+          <option key={p.portalId} value={p.portalId}>
+            {p.portalUrl}
+          </option>
+        ))}
+      </select>
+    </div>
+  )}
+</div>
 
-          <div className="documents-section mt-8">
-            <h3 className="section-title">Documents</h3>
-            <div className="grid grid-cols-3 gap-6 mt-4">
-              {/* Agreement */}
-              <div className="relative">
-                <label className="text-[#00d4aa] text-[15px]">
-                  Agreement Document
-                </label>
-                <p className="text-[10px] text-gray-400">
-                  (PDF/JPG/PNG, Max 5MB)
-                </p>
 
-                {form.agreementDocument ? (
-                  <div className="mt-2 relative group">
-                    <img
-                      src={`data:image/png;base64,${form.agreementDocument}`}
-                      alt="Agreement Document Preview"
-                      style={{
-                        maxWidth: "100px",
-                        cursor: "pointer",
-                        border: "1px solid #ccc",
-                      }}
-                      onClick={() =>
-                        setModalImage(
-                          `data:image/png;base64,${form.agreementDocument}`
-                        )
-                      }
-                    />
-                    <button
-                      onClick={() => handleRemoveImage("agreementDocument")}
-                      className="absolute top-1 right-1 bg-red-600 text-white rounded px-2 py-0.5 text-xs opacity-0 group-hover:opacity-100 transition"
-                    >
-                      Edit
-                    </button>
-                  </div>
-                ) : (
-                  <div className="mt-2 space-y-2">
-                    {removedImages.agreementDocument && (
-                      <button
-                        onClick={() => handleUndoImage("agreementDocument")}
-                        className="bg-yellow-500 text-white rounded px-3 py-1 text-xs"
-                      >
-                        Undo
-                      </button>
-                    )}
-                    <div className="file-upload">
-                      <label className="choose-btn cursor-pointer bg-gray-800 text-white px-3 py-1 rounded">
-                        Choose File
-                        <input
-                          type="file"
-                          accept=".pdf,.jpg,.jpeg,.png"
-                          className="hidden"
-                          onChange={(e) => {
-                            const file = e.target.files[0];
-                            setAgreementFile(file);
-                            handleFileChange(file, "agreementDocument");
-                          }}
-                        />
-                      </label>
-                      <span className="file-name ml-2 text-sm text-gray-300">
-                        {agreementFile ? agreementFile.name : "No file chosen"}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
+     <div className="documents-section mt-8 w-full">
+  <h3 className="section-title text-teal-400 text-lg sm:text-xl mb-4 text-left">
+    Documents
+  </h3>
 
-              {/* ID Proof */}
-              <div className="relative">
-                <label className="text-[#00d4aa] text-[15px]">
-                  ID Proof Document
-                </label>
-                <p className="text-[10px] text-gray-400">
-                  (PDF/JPG/PNG, Max 2MB)
-                </p>
+  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4 w-full">
+    {/* Agreement Document */}
+    <div className="relative w-full flex flex-col items-center sm:items-start text-center sm:text-left">
+      <label className="text-[#00d4aa] text-[14px] sm:text-[15px]">
+        Agreement Document
+      </label>
+      <p className="text-[10px] text-gray-400">(PDF/JPG/PNG, Max 5MB)</p>
 
-                {form.idProofDocument ? (
-                  <div className="mt-2 relative group">
-                    <img
-                      src={`data:image/png;base64,${form.idProofDocument}`}
-                      alt="ID Proof Document Preview"
-                      style={{
-                        maxWidth: "100px",
-                        cursor: "pointer",
-                        border: "1px solid #ccc",
-                      }}
-                      onClick={() =>
-                        setModalImage(
-                          `data:image/png;base64,${form.idProofDocument}`
-                        )
-                      }
-                    />
-                    <button
-                      onClick={() => handleRemoveImage("idProofDocument")}
-                      className="absolute top-1 right-1 bg-red-600 text-white rounded px-2 py-0.5 text-xs opacity-0 group-hover:opacity-100 transition"
-                    >
-                      Edit
-                    </button>
-                  </div>
-                ) : (
-                  <div className="mt-2 space-y-2">
-                    {removedImages.idProofDocument && (
-                      <button
-                        onClick={() => handleUndoImage("idProofDocument")}
-                        className="bg-yellow-500 text-white rounded px-3 py-1 text-xs"
-                      >
-                        Undo
-                      </button>
-                    )}
-                    <div className="file-upload">
-                      <label className="choose-btn cursor-pointer bg-gray-800 text-white px-3 py-1 rounded">
-                        Choose File
-                        <input
-                          type="file"
-                          accept=".pdf,.jpg,.jpeg,.png"
-                          className="hidden"
-                          onChange={(e) => {
-                            const file = e.target.files[0];
-                            setIdFile(file);
-                            handleFileChange(file, "idProofDocument");
-                          }}
-                        />
-                      </label>
-                      <span className="file-name ml-2 text-sm text-gray-300">
-                        {idFile ? idFile.name : "No file chosen"}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Address Proof */}
-              <div className="relative">
-                <label className="text-[#00d4aa] text-[15px]">
-                  Address Proof Document
-                </label>
-                <p className="text-[10px] text-gray-400">
-                  (PDF/JPG/PNG, Max 2MB)
-                </p>
-
-                {form.addressProofDocument ? (
-                  <div className="mt-2 relative group">
-                    <img
-                      src={`data:image/png;base64,${form.addressProofDocument}`}
-                      alt="Address Proof Document Preview"
-                      style={{
-                        maxWidth: "100px",
-                        cursor: "pointer",
-                        border: "1px solid #ccc",
-                      }}
-                      onClick={() =>
-                        setModalImage(
-                          `data:image/png;base64,${form.addressProofDocument}`
-                        )
-                      }
-                    />
-                    <button
-                      onClick={() => handleRemoveImage("addressProofDocument")}
-                      className="absolute top-1 right-1 bg-red-600 text-white rounded px-2 py-0.5 text-xs opacity-0 group-hover:opacity-100 transition"
-                    >
-                      Edit
-                    </button>
-                  </div>
-                ) : (
-                  <div className="mt-2 space-y-2">
-                    {removedImages.addressProofDocument && (
-                      <button
-                        onClick={() => handleUndoImage("addressProofDocument")}
-                        className="bg-yellow-500 text-white rounded px-3 py-1 text-xs"
-                      >
-                        Undo
-                      </button>
-                    )}
-                    <div className="file-upload">
-                      <label className="choose-btn cursor-pointer bg-gray-800 text-white px-3 py-1 rounded">
-                        Choose File
-                        <input
-                          type="file"
-                          accept=".pdf,.jpg,.jpeg,.png"
-                          className="hidden"
-                          onChange={(e) => {
-                            const file = e.target.files[0];
-                            setAddressFile(file);
-                            handleFileChange(file, "addressProofDocument");
-                          }}
-                        />
-                      </label>
-                      <span className="file-name ml-2 text-sm text-gray-300">
-                        {addressFile ? addressFile.name : "No file chosen"}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-              {modalImage && (
-                <div
-                  className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
-                  onClick={() => setModalImage(null)}
-                >
-                  <img
-                    src={modalImage}
-                    alt="Zoomed Document"
-                    className="max-w-full max-h-full"
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-          {/* Advanced Configuration Section */}
-          <div className="advanced-config mt-10">
-            <h3 className="section-title text-[#00d4aa]">
-              Advanced Configuration
-            </h3>
-
-            {/* Compliance & KYC */}
-            <div className="mt-6">
-              <h4 className="text-sm font-semibold text-[#00d4aa] mb-4">
-                Compliance & KYC
-              </h4>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="form-group">
-                  <label>KYC Level</label>
-                  <select
-                    name="kycLevel"
-                    value={form.kycLevel || ""}
-                    onChange={handleChange}
-                    className="form-input"
-                  >
-                    <option value="">-- Select Status --</option>
-                    {getConstraintOptions(
-                      constraints,
-                      "distribution_partner_kyc_level_check"
-                    )?.map((opt, i) => (
-                      <option key={i} value={opt}>
-                        {opt}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label>KYC Status</label>
-                  <select
-                    name="kycStatus"
-                    value={form.kycStatus || ""}
-                    onChange={handleChange}
-                    className="form-input"
-                  >
-                    <option value="">-- Select Status --</option>
-                    {getConstraintOptions(
-                      constraints,
-                      "distribution_partner_kyc_status_check"
-                    )?.map((opt, i) => (
-                      <option key={i} value={opt}>
-                        {opt}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label>Partner Status</label>
-                  <select
-                    name="partnerStatus"
-                    value={form.partnerStatus || ""}
-                    onChange={handleChange}
-                    className="form-input"
-                  >
-                    <option value="">-- Select Status --</option>
-                    {getConstraintOptions(
-                      constraints,
-                      "distribution_partner_status_check"
-                    )?.map((opt, i) => (
-                      <option key={i} value={opt}>
-                        {opt}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label>Risk Profile</label>
-                  <select
-                    name="riskProfile"
-                    value={form.riskProfile || ""}
-                    onChange={handleChange}
-                    className="form-input"
-                  >
-                    <option value="">-- Select Status --</option>
-                    {getConstraintOptions(
-                      constraints,
-                      "distribution_partner_risk_profile_check"
-                    )?.map((opt, i) => (
-                      <option key={i} value={opt}>
-                        {opt}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label>PAN Number</label>
-                  <input
-                    type="text"
-                    name="panNumber"
-                    className="form-input"
-                    placeholder="Enter PAN number"
-                    value={form.panNumber || ""}
-                    onChange={handleChange}
-                    maxLength={10}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>TAN Number</label>
-                  <input
-                    type="text"
-                    name="tanNumber"
-                    className="form-input"
-                    placeholder="Enter TAN number"
-                    value={form.tanNumber || ""}
-                    onChange={handleChange}
-                    maxLength={10}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>GSTIN</label>
-                  <input
-                    type="text"
-                    name="gstin"
-                    className="form-input"
-                    placeholder="Enter GSTIN"
-                    value={form.gstin || ""}
-                    onChange={handleChange}
-                    maxLength={15}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Financial Configuration */}
-            <div className="mt-8">
-              <h4 className="text-sm font-semibold text-[#00d4aa] mb-4">
-                Financial Configuration
-              </h4>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="form-group">
-                  <label>Card Issuance Commission %</label>
-                  <input
-                    type="number"
-                    name="cardIssuanceCommissionPercent"
-                    className="form-input"
-                    placeholder="0"
-                    value={form.cardIssuanceCommissionPercent || ""}
-                    min="0"
-                    max="100"
-                    onChange={handleChange}
-                    onInput={(e) => {
-                      if (e.target.value > 100) {
-                        e.target.value = 100;
-                      }
-                    }}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Transaction Commission %</label>
-                  <input
-                    type="number"
-                    name="transactionCommissionPercent"
-                    className="form-input"
-                    placeholder="0"
-                    value={form.transactionCommissionPercent || ""}
-                    min="0"
-                    max="100"
-                    onChange={handleChange}
-                    onInput={(e) => {
-                      if (e.target.value > 100) {
-                        e.target.value = 100;
-                      }
-                    }}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Monthly Fixed Fee</label>
-                  <input
-                    type="number"
-                    name="monthlyFixedFee"
-                    className="form-input"
-                    placeholder="0"
-                    value={form.monthlyFixedFee || ""}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Commission Currency</label>
-                  <select
-                    name="commissionCurrency"
-                    className="form-input"
-                    value={form.commissionCurrency || "INR"}
-                    onChange={handleChange}
-                  >
-                    <option value="INR">INR</option>
-                    <option value="USD">USD</option>
-                    <option value="EUR">EUR</option>
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label>Settlement Frequency</label>
-                  <select
-                    name="settlementFrequency"
-                    className="form-input"
-                    value={form.settlementFrequency || "monthly"}
-                    onChange={handleChange}
-                  >
-                    <option value="monthly">Monthly</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="daily">Daily</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="form-footer">
+      {form.agreementDocument ? (
+        <div className="mt-2 relative group">
+          <img
+            src={`data:image/png;base64,${form.agreementDocument}`}
+            alt="Agreement Document Preview"
+            className="max-w-full sm:max-w-[100px] cursor-pointer border border-gray-300 mx-auto sm:mx-0"
+            onClick={() =>
+              setModalImage(`data:image/png;base64,${form.agreementDocument}`)
+            }
+          />
+          <button
+            onClick={() => handleRemoveImage("agreementDocument")}
+            className="absolute top-1 right-1 bg-red-600 text-white rounded px-2 py-0.5 text-xs opacity-0 group-hover:opacity-100 transition"
+          >
+            Edit
+          </button>
+        </div>
+      ) : (
+        <div className="mt-2 space-y-2 w-full flex flex-col items-center sm:items-start text-center sm:text-left">
+          {removedImages.agreementDocument && (
             <button
-              type="button"
-              className="btn-outline-back"
-              onClick={() => setformOpen(false)}
+              onClick={() => handleUndoImage("agreementDocument")}
+              className="bg-yellow-500 text-white rounded px-3 py-1 text-xs"
             >
-              <ArrowLeft className="icon" /> Back
+              Undo
             </button>
-            <div className="footer-right">
-              <button
-                type="button"
-                className="btn-outline-reset"
-                onClick={() => {
-                  setEditingId(null);
-                  setIsEditing(false);
-                  setForm({ ...defaultFormValues });
+          )}
+          <div className="file-upload flex flex-col items-center sm:items-start gap-2">
+            <label className="choose-btn cursor-pointer bg-gray-800 text-white px-3 py-1 rounded">
+              Choose File
+              <input
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  setAgreementFile(file);
+                  handleFileChange(file, "agreementDocument");
                 }}
-              >
-                <RotateCcw className="icon" /> Reset
-              </button>
-              <button type="submit" className="btn-outline-reset">
-                <Save className="icon" />
-                {editingId ? "Update partner" : "Create partner"}
-              </button>
-            </div>
+              />
+            </label>
+            <span className="file-name text-sm text-gray-300 truncate max-w-[150px] sm:max-w-full">
+              {agreementFile ? agreementFile.name : "No file chosen"}
+            </span>
           </div>
+        </div>
+      )}
+    </div>
+
+    {/* ID Proof Document */}
+    <div className="relative w-full flex flex-col items-center sm:items-start text-center sm:text-left">
+      <label className="text-[#00d4aa] text-[14px] sm:text-[15px]">
+        ID Proof Document
+      </label>
+      <p className="text-[10px] text-gray-400">(PDF/JPG/PNG, Max 2MB)</p>
+
+      {form.idProofDocument ? (
+        <div className="mt-2 relative group">
+          <img
+            src={`data:image/png;base64,${form.idProofDocument}`}
+            alt="ID Proof Document Preview"
+            className="max-w-full sm:max-w-[100px] cursor-pointer border border-gray-300 mx-auto sm:mx-0"
+            onClick={() =>
+              setModalImage(`data:image/png;base64,${form.idProofDocument}`)
+            }
+          />
+          <button
+            onClick={() => handleRemoveImage("idProofDocument")}
+            className="absolute top-1 right-1 bg-red-600 text-white rounded px-2 py-0.5 text-xs opacity-0 group-hover:opacity-100 transition"
+          >
+            Edit
+          </button>
+        </div>
+      ) : (
+        <div className="mt-2 space-y-2 w-full flex flex-col items-center sm:items-start text-center sm:text-left">
+          {removedImages.idProofDocument && (
+            <button
+              onClick={() => handleUndoImage("idProofDocument")}
+              className="bg-yellow-500 text-white rounded px-3 py-1 text-xs"
+            >
+              Undo
+            </button>
+          )}
+          <div className="file-upload flex flex-col items-center sm:items-start gap-2">
+            <label className="choose-btn cursor-pointer bg-gray-800 text-white px-3 py-1 rounded">
+              Choose File
+              <input
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  setIdFile(file);
+                  handleFileChange(file, "idProofDocument");
+                }}
+              />
+            </label>
+            <span className="file-name text-sm text-gray-300 truncate max-w-[150px] sm:max-w-full">
+              {idFile ? idFile.name : "No file chosen"}
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+
+    {/* Address Proof Document */}
+    <div className="relative w-full flex flex-col items-center sm:items-start text-center sm:text-left">
+      <label className="text-[#00d4aa] text-[14px] sm:text-[15px]">
+        Address Proof Document
+      </label>
+      <p className="text-[10px] text-gray-400">(PDF/JPG/PNG, Max 2MB)</p>
+
+      {form.addressProofDocument ? (
+        <div className="mt-2 relative group">
+          <img
+            src={`data:image/png;base64,${form.addressProofDocument}`}
+            alt="Address Proof Document Preview"
+            className="max-w-full sm:max-w-[100px] cursor-pointer border border-gray-300 mx-auto sm:mx-0"
+            onClick={() =>
+              setModalImage(`data:image/png;base64,${form.addressProofDocument}`)
+            }
+          />
+          <button
+            onClick={() => handleRemoveImage("addressProofDocument")}
+            className="absolute top-1 right-1 bg-red-600 text-white rounded px-2 py-0.5 text-xs opacity-0 group-hover:opacity-100 transition"
+          >
+            Edit
+          </button>
+        </div>
+      ) : (
+        <div className="mt-2 space-y-2 w-full flex flex-col items-center sm:items-start text-center sm:text-left">
+          {removedImages.addressProofDocument && (
+            <button
+              onClick={() => handleUndoImage("addressProofDocument")}
+              className="bg-yellow-500 text-white rounded px-3 py-1 text-xs"
+            >
+              Undo
+            </button>
+          )}
+          <div className="file-upload flex flex-col items-center sm:items-start gap-2">
+            <label className="choose-btn cursor-pointer bg-gray-800 text-white px-3 py-1 rounded">
+              Choose File
+              <input
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  setAddressFile(file);
+                  handleFileChange(file, "addressProofDocument");
+                }}
+              />
+            </label>
+            <span className="file-name text-sm text-gray-300 truncate max-w-[150px] sm:max-w-full">
+              {addressFile ? addressFile.name : "No file chosen"}
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+
+    {/* Modal Preview */}
+    {modalImage && (
+      <div
+        className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+        onClick={() => setModalImage(null)}
+      >
+        <img src={modalImage} alt="Zoomed Document" className="max-w-full max-h-full" />
+      </div>
+    )}
+  </div>
+</div>
+
+
+          {/* Advanced Configuration Section */}
+          <div className="advanced-config mt-10 w-full">
+  <h3 className="section-title text-[#00d4aa] text-lg sm:text-xl mb-4">
+    Advanced Configuration
+  </h3>
+
+  {/* Compliance & KYC */}
+  <div className="mt-6">
+    <h4 className="text-sm sm:text-base font-semibold text-[#00d4aa] mb-4">
+      Compliance & KYC
+    </h4>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="form-group w-full">
+        <label className="text-sm sm:text-base">KYC Level</label>
+        <select
+          name="kycLevel"
+          value={form.kycLevel || ""}
+          onChange={handleChange}
+          className="form-input w-full"
+        >
+          <option value="">-- Select Status --</option>
+          {getConstraintOptions(constraints, "distribution_partner_kyc_level_check")?.map(
+            (opt, i) => (
+              <option key={i} value={opt}>
+                {opt}
+              </option>
+            )
+          )}
+        </select>
+      </div>
+
+      <div className="form-group w-full">
+        <label className="text-sm sm:text-base">KYC Status</label>
+        <select
+          name="kycStatus"
+          value={form.kycStatus || ""}
+          onChange={handleChange}
+          className="form-input w-full"
+        >
+          <option value="">-- Select Status --</option>
+          {getConstraintOptions(constraints, "distribution_partner_kyc_status_check")?.map(
+            (opt, i) => (
+              <option key={i} value={opt}>
+                {opt}
+              </option>
+            )
+          )}
+        </select>
+      </div>
+
+      <div className="form-group w-full">
+        <label className="text-sm sm:text-base">Partner Status</label>
+        <select
+          name="partnerStatus"
+          value={form.partnerStatus || ""}
+          onChange={handleChange}
+          className="form-input w-full"
+        >
+          <option value="">-- Select Status --</option>
+          {getConstraintOptions(constraints, "distribution_partner_status_check")?.map(
+            (opt, i) => (
+              <option key={i} value={opt}>
+                {opt}
+              </option>
+            )
+          )}
+        </select>
+      </div>
+
+      <div className="form-group w-full">
+        <label className="text-sm sm:text-base">Risk Profile</label>
+        <select
+          name="riskProfile"
+          value={form.riskProfile || ""}
+          onChange={handleChange}
+          className="form-input w-full"
+        >
+          <option value="">-- Select Status --</option>
+          {getConstraintOptions(constraints, "distribution_partner_risk_profile_check")?.map(
+            (opt, i) => (
+              <option key={i} value={opt}>
+                {opt}
+              </option>
+            )
+          )}
+        </select>
+      </div>
+
+      <div className="form-group w-full">
+        <label className="text-sm sm:text-base">PAN Number</label>
+        <input
+          type="text"
+          name="panNumber"
+          className="form-input w-full"
+          placeholder="Enter PAN number"
+          value={form.panNumber || ""}
+          onChange={handleChange}
+          maxLength={10}
+        />
+      </div>
+
+      <div className="form-group w-full">
+        <label className="text-sm sm:text-base">TAN Number</label>
+        <input
+          type="text"
+          name="tanNumber"
+          className="form-input w-full"
+          placeholder="Enter TAN number"
+          value={form.tanNumber || ""}
+          onChange={handleChange}
+          maxLength={10}
+        />
+      </div>
+
+      <div className="form-group w-full">
+        <label className="text-sm sm:text-base">GSTIN</label>
+        <input
+          type="text"
+          name="gstin"
+          className="form-input w-full"
+          placeholder="Enter GSTIN"
+          value={form.gstin || ""}
+          onChange={handleChange}
+          maxLength={15}
+        />
+      </div>
+    </div>
+  </div>
+
+  {/* Financial Configuration */}
+  <div className="mt-8">
+    <h4 className="text-sm sm:text-base font-semibold text-[#00d4aa] mb-4">
+      Financial Configuration
+    </h4>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="form-group w-full">
+        <label className="text-sm sm:text-base">Card Issuance Commission %</label>
+        <input
+          type="number"
+          name="cardIssuanceCommissionPercent"
+          className="form-input w-full"
+          placeholder="0"
+          value={form.cardIssuanceCommissionPercent || ""}
+          min="0"
+          max="100"
+          onChange={handleChange}
+          onInput={(e) => {
+            if (e.target.value > 100) e.target.value = 100;
+          }}
+        />
+      </div>
+
+      <div className="form-group w-full">
+        <label className="text-sm sm:text-base">Transaction Commission %</label>
+        <input
+          type="number"
+          name="transactionCommissionPercent"
+          className="form-input w-full"
+          placeholder="0"
+          value={form.transactionCommissionPercent || ""}
+          min="0"
+          max="100"
+          onChange={handleChange}
+          onInput={(e) => {
+            if (e.target.value > 100) e.target.value = 100;
+          }}
+        />
+      </div>
+
+      <div className="form-group w-full">
+        <label className="text-sm sm:text-base">Monthly Fixed Fee</label>
+        <input
+          type="number"
+          name="monthlyFixedFee"
+          className="form-input w-full"
+          placeholder="0"
+          value={form.monthlyFixedFee || ""}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div className="form-group w-full">
+        <label className="text-sm sm:text-base">Commission Currency</label>
+        <select
+          name="commissionCurrency"
+          className="form-input w-full"
+          value={form.commissionCurrency || "INR"}
+          onChange={handleChange}
+        >
+          <option value="INR">INR</option>
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+        </select>
+      </div>
+
+      <div className="form-group w-full">
+        <label className="text-sm sm:text-base">Settlement Frequency</label>
+        <select
+          name="settlementFrequency"
+          className="form-input w-full"
+          value={form.settlementFrequency || "monthly"}
+          onChange={handleChange}
+        >
+          <option value="monthly">Monthly</option>
+          <option value="weekly">Weekly</option>
+          <option value="daily">Daily</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+       <div className="form-footer flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mt-6 w-full">
+  {/* Back Button */}
+  <button
+    type="button"
+    className="btn-outline-back w-full sm:w-auto flex items-center justify-center sm:justify-start gap-2 px-4 py-2 text-sm sm:text-base"
+    onClick={() => setformOpen(false)}
+  >
+    <ArrowLeft className="icon w-4 h-4 sm:w-5 sm:h-5" /> Back
+  </button>
+
+  {/* Right Buttons */}
+  <div className="footer-right flex flex-col sm:flex-row gap-3 sm:gap-2 w-full sm:w-auto">
+    <button
+      type="button"
+      className="btn-outline-reset w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 text-sm sm:text-base"
+      onClick={() => {
+        setEditingId(null);
+        setIsEditing(false);
+        setForm({ ...defaultFormValues });
+      }}
+    >
+      <RotateCcw className="icon w-4 h-4 sm:w-5 sm:h-5" /> Reset
+    </button>
+    <button
+      type="submit"
+      className="btn-outline-reset w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 text-sm sm:text-base"
+    >
+      <Save className="icon w-4 h-4 sm:w-5 sm:h-5" />
+      {editingId ? "Update partner" : "Create partner"}
+    </button>
+  </div>
+</div>
+
         </form>
       )}
       <div className="partner-network">
         <div className="table-card">
           {/* Header */}
-          <div className="table-header">
-            <h2 className="table-title flex items-center gap-2">
-              <Building2 className="text-[#00d4aa] w-5 h-5" />
-              Existing Partner Configurations
-            </h2>
-            <div className="search-box">
-              <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
-              <input
-                type="text"
-                className="search-input"
-                placeholder="Search partners..."
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setCurrentPage(1);
-                }}
-              />
-            </div>
-          </div>
+          <div className="table-header flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-4 px-2 sm:px-0">
+  {/* Title */}
+  <p className="table-title flex items-center gap-2 text-sm sm:text-base font-semibold text-gray-200">
+    <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-[#00d4aa]" />
+    Existing Partner Configurations
+  </p>
+
+  {/* Search bar */}
+  <div className="search-box relative w-full sm:w-64">
+    <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3 sm:w-4 sm:h-4" />
+    <input
+      type="text"
+      className="search-input !w-full pl-8 pr-2 py-1 sm:py-2 text-xs sm:text-sm rounded border border-gray-700 bg-[#0d0f13] text-gray-200 focus:outline-none focus:border-teal-400"
+      placeholder="Search partners..."
+      value={search}
+      onChange={(e) => {
+        setSearch(e.target.value);
+        setCurrentPage(1);
+      }}
+    />
+  </div>
+</div>
+
 
           {/* Table */}
-          <div className="table-wrapper">
-            <table className="w-full text-sm text-left">
-              <thead className="table-head">
-                <tr>
-                  <th className="table-cell">Partner Name</th>
-                  <th className="table-cell">Type</th>
-                  <th className="table-cell">Contact</th>
-                  <th className="table-cell">Status</th>
-                  <th className="table-cell">KYC Status</th>
-                  <th className="table-cell">Agreement</th>
-                  <th className="table-cell">ID Proof</th>
-                  <th className="table-cell">Address Proof</th>
-                  <th className="table-cell">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentPartners.map((partner, index) => (
-                  <tr key={index} className="table-row">
-                    <td className="table-cell-name max-w-[100px]">
-                      <p className="truncate" title={partner.partnerName}>
-                        {partner.partnerName}
-                      </p>
-                    </td>
-                    <td className="p-3">{partner.partnerType}</td>
-                    <td className="p-3 max-w-[100px]">
-                      <p
-                        className="truncate"
-                        title={`${partner.contactName} ${partner.contactPhone}`}
-                      >
-                        {partner.contactName} {partner.contactPhone}
-                      </p>
-                    </td>
-                    <td className="p-3">
-                      <span
-                        className={`px-2 py-1 rounded text-[10px] ${
-                          partner.partnerStatus === "Active"
-                            ? "checker"
-                            : partner.partnerStatus === "Onboarded"
-                            ? "maker"
-                            : partner.partnerStatus === "Inactive"
-                            ? "superuser"
-                            : ""
-                        }`}
-                      >
-                        {partner.partnerStatus}
-                      </span>
-                    </td>
-                    <td className="p-3">
-                      <span
-                        className={`px-2 py-1 rounded text-[10px] ${
-                          partner.kycStatus === "Verified"
-                            ? "checker"
-                            : "superuser"
-                        }`}
-                      >
-                        {partner.kycStatus}
-                      </span>
-                    </td>
-                    <td className="p-3">
-                      {partner.agreementDocumentBase64 ? (
-                        <span className="px-2 py-1 rounded text-[10px] checker">
-                          Completed
-                        </span>
-                      ) : (
-                        <span className="px-2 py-1 rounded text-[10px] infra">
-                          Pending
-                        </span>
-                      )}
-                    </td>
-                    <td className="p-3">
-                      {partner.idProofDocumentBase64 ? (
-                        <span className="px-2 py-1 rounded text-[10px] checker">
-                          Verified
-                        </span>
-                      ) : (
-                        <span className="px-2 py-1 rounded text-[10px] infra">
-                          Pending
-                        </span>
-                      )}
-                    </td>
-                    <td className="p-3">
-                      {partner.addressProofDocumentBase64 ? (
-                        <span className="px-2 py-1 rounded text-[10px] checker">
-                          Verified
-                        </span>
-                      ) : (
-                        <span className="px-2 py-1 rounded text-[10px] infra">
-                          Pending
-                        </span>
-                      )}
-                    </td>
-                    <td className="table-content">
-                      <button
-                        className="header-icon-box"
-                        onClick={() =>
-                          handleEdit(partner.partnerName, partner.partnerType)
-                        }
-                      >
-                        <SquarePen className="text-[#00d4aa] w-3 h-3" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+          <div className="table-wrapper overflow-x-auto table-scrollbar">
+  <table className="w-full text-sm text-left min-w-[800px]">
+    <thead className="table-head bg-gray-800 text-gray-200">
+      <tr>
+        <th className="table-cell px-3 py-2">Partner Name</th>
+        <th className="table-cell px-3 py-2">Type</th>
+        <th className="table-cell px-3 py-2">Contact</th>
+        <th className="table-cell px-3 py-2">Status</th>
+        <th className="table-cell px-3 py-2">KYC Status</th>
+        <th className="table-cell px-3 py-2">Agreement</th>
+        <th className="table-cell px-3 py-2">ID Proof</th>
+        <th className="table-cell px-3 py-2">Address Proof</th>
+        <th className="table-cell px-3 py-2">Action</th>
+      </tr>
+    </thead>
+    <tbody className="divide-y divide-gray-700">
+      {currentPartners.map((partner, index) => (
+        <tr key={index} className="table-row hover:bg-gray-900">
+          <td className="table-cell px-3 py-2 max-w-[120px] truncate" title={partner.partnerName}>
+            {partner.partnerName}
+          </td>
+          <td className="px-3 py-2">{partner.partnerType}</td>
+          <td className="px-3 py-2 max-w-[120px] truncate" title={`${partner.contactName} ${partner.contactPhone}`}>
+            {partner.contactName} {partner.contactPhone}
+          </td>
+          <td className="px-3 py-2">
+            <span
+              className={`px-2 py-1 rounded text-[10px] ${
+                partner.partnerStatus === "Active"
+                  ? "checker"
+                  : partner.partnerStatus === "Onboarded"
+                  ? "maker"
+                  : partner.partnerStatus === "Inactive"
+                  ? "superuser"
+                  : ""
+              }`}
+            >
+              {partner.partnerStatus}
+            </span>
+          </td>
+          <td className="px-3 py-2">
+            <span className={`px-2 py-1 rounded text-[10px] ${partner.kycStatus === "Verified" ? "checker" : "superuser"}`}>
+              {partner.kycStatus}
+            </span>
+          </td>
+          <td className="px-3 py-2">
+            {partner.agreementDocumentBase64 ? (
+              <span className="px-2 py-1 rounded text-[10px] checker">Completed</span>
+            ) : (
+              <span className="px-2 py-1 rounded text-[10px] infra">Pending</span>
+            )}
+          </td>
+          <td className="px-3 py-2">
+            {partner.idProofDocumentBase64 ? (
+              <span className="px-2 py-1 rounded text-[10px] checker">Verified</span>
+            ) : (
+              <span className="px-2 py-1 rounded text-[10px] infra">Pending</span>
+            )}
+          </td>
+          <td className="px-3 py-2">
+            {partner.addressProofDocumentBase64 ? (
+              <span className="px-2 py-1 rounded text-[10px] checker">Verified</span>
+            ) : (
+              <span className="px-2 py-1 rounded text-[10px] infra">Pending</span>
+            )}
+          </td>
+          <td className="px-3 py-2">
+            <button
+              className="header-icon-box"
+              onClick={() => handleEdit(partner.partnerName, partner.partnerType)}
+            >
+              <SquarePen className="text-[#00d4aa] w-4 h-4" />
+            </button>
+          </td>
+        </tr>
+      ))}
 
-                {currentPartners.length === 0 && (
-                  <tr>
-                    <td colSpan="9" className="text-center py-4 text-gray-500">
-                      No partners found.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+      {currentPartners.length === 0 && (
+        <tr>
+          <td colSpan="9" className="text-center py-4 text-gray-500">
+            No partners found.
+          </td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</div>
+
 
           {/* Pagination */}
-          <div className="flex justify-between items-center mt-4 px-4">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
-                currentPage === 1
-                  ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                  : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
-              }`}
-            >
-              <ChevronLeft className="w-4 h-4" /> Prev
-            </button>
+          <div className="flex flex-col sm:flex-row justify-between items-center mt-4 px-2 sm:px-4 gap-2 sm:gap-0">
+  {/* Previous Button */}
+  <button
+    onClick={() => handlePageChange(currentPage - 1)}
+    disabled={currentPage === 1}
+    className={`flex items-center gap-1 px-3 py-1 rounded-lg text-xs sm:text-sm ${
+      currentPage === 1
+        ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
+        : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
+    }`}
+  >
+    <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" /> Prev
+  </button>
 
-            <div className="flex gap-2">
-              {Array.from({ length: totalPages }, (_, i) => (
-                <button
-                  key={i}
-                  onClick={() => handlePageChange(i + 1)}
-                  className={`px-3 py-1 rounded-lg text-sm ${
-                    currentPage === i + 1
-                      ? "bg-[#00d4aa] text-black font-bold"
-                      : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
-                  }`}
-                >
-                  {i + 1}
-                </button>
-              ))}
-            </div>
+  {/* Page Numbers */}
+  <div className="flex flex-wrap justify-center gap-1 sm:gap-2">
+    {Array.from({ length: totalPages }, (_, i) => (
+      <button
+        key={i}
+        onClick={() => handlePageChange(i + 1)}
+        className={`px-2 sm:px-3 py-1 rounded-lg text-xs sm:text-sm ${
+          currentPage === i + 1
+            ? "bg-[#00d4aa] text-black font-bold"
+            : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
+        }`}
+      >
+        {i + 1}
+      </button>
+    ))}
+  </div>
 
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
-                currentPage === totalPages
-                  ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                  : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
-              }`}
-            >
-              Next <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
+  {/* Next Button */}
+  <button
+    onClick={() => handlePageChange(currentPage + 1)}
+    disabled={currentPage === totalPages}
+    className={`flex items-center gap-1 px-3 py-1 rounded-lg text-xs sm:text-sm ${
+      currentPage === totalPages
+        ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
+        : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
+    }`}
+  >
+    Next <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
+  </button>
+</div>
+
         </div>
       </div>
       {/* Guidelines */}
-      <div className="guidelines-card">
-        <h3 className="guidelines-title">Partner Management Guidelines</h3>
-        <div className="guidelines-grid">
-          <p>
-            🏢 <span>Partner Onboarding:</span>Collect complete business and
-            contact information
-          </p>
-          <p>
-            📋 <span> Document Verification:</span> Ensure all required
-            documents are uploaded and verified
-          </p>
-        </div>
-        <div className="guidelines-grid">
-          <p>
-            🤝 <span>Product Access:</span> Configure allowed products and
-            services for each partner
-          </p>
-          <p>
-            ✅ <span> Portal Access:</span> Enable partner portal access for
-            self-service capabilities
-          </p>
-        </div>
-      </div>
+     <div className="guidelines-card bg-[#0d0f13] p-4 rounded-md border border-gray-800">
+  {/* Title */}
+  <h3 className="guidelines-title text-lg sm:text-xl font-semibold text-teal-400 mb-4">
+    Partner Management Guidelines
+  </h3>
+
+  {/* First row */}
+  <div className="guidelines-grid grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm sm:text-base text-gray-300">
+    <p className="text-xs sm:text-sm text-gray-300">
+      🏢 <span className="font-medium text-gray-200">Partner Onboarding:</span> Collect complete business and contact information
+    </p>
+    <p className="text-xs sm:text-sm text-gray-300">
+      📋 <span className="font-medium text-gray-200">Document Verification:</span> Ensure all required documents are uploaded and verified
+    </p>
+  </div>
+
+  {/* Second row */}
+  <div className="guidelines-grid grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 text-sm sm:text-base text-gray-300">
+    <p className="text-xs sm:text-sm text-gray-300">
+      🤝 <span className="font-medium text-gray-200">Product Access:</span> Configure allowed products and services for each partner
+    </p>
+    <p className="text-xs sm:text-sm text-gray-300">
+      ✅ <span className="font-medium text-gray-200">Portal Access:</span> Enable partner portal access for self-service capabilities
+    </p>
+  </div>
+</div>
+
     </div>
   );
 }

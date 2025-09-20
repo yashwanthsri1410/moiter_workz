@@ -180,7 +180,7 @@ const PieChart_Trans = () => {
   }, [chartData]);
 
   return (
-    <div className="corner-box chart-box-a91z">
+    <div className="corner-box ">
       <span></span>
       <canvas ref={canvasRef}></canvas>
     </div>

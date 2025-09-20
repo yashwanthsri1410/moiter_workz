@@ -504,47 +504,51 @@ export default function Productcreate() {
 
   return (
     <div className="config-forms">
-      <div className="card-header">
-        <div className="card-header-left">
-          <div className="flex items-center gap-[10px]">
-            <div className="header-icon-box">
-              <PackagePlus className="text-[#00d4aa] w-4 h-4" />
-            </div>
-          </div>
-          <div>
-            <h1 className="header-title">Product Configuration Management</h1>
-            <p className="header-subtext">
-              Create and manage financial products and services
-            </p>
-          </div>
-        </div>
-        <div className="card-header-right">
-          <button
-            className="btn-outline"
-            onClick={() => setformOpen((prev) => !prev)}
-          >
-            {formOpen ? (
-              <>
-                <span className="btn-icon">
-                  <EyeOff className="w-4 h-4" />
-                </span>
-                Hide Form
-              </>
-            ) : (
-              <>
-                <span className="btn-icon">
-                  <Eye className="w-4 h-4" />
-                </span>
-                Show Form
-              </>
-            )}
-          </button>
-          <div className="portal-info">
-            <p className="portal-label">Content Creation</p>
-            <p className="portal-link">Maker Portal</p>
-          </div>
-        </div>
+    <div className="card-header flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0">
+  {/* Left Section */}
+  <div className="card-header-left flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-2">
+    <div className="flex items-center gap-2">
+      <div className="header-icon-box">
+        <PackagePlus className="text-[#00d4aa] w-4 h-4" />
       </div>
+    </div>
+    <div>
+      <h1 className="header-title text-base sm:text-lg font-semibold text-center sm:text-left">
+        Product Configuration Management
+      </h1>
+      <p className="header-subtext text-sm sm:text-base text-gray-400 text-center sm:text-left">
+        Create and manage financial products and services
+      </p>
+    </div>
+  </div>
+
+  {/* Right Section */}
+  <div className="card-header-right flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+    <button
+      className="btn-outline flex items-center gap-1 w-full sm:w-auto justify-center"
+      onClick={() => setformOpen((prev) => !prev)}
+    >
+      {formOpen ? (
+        <>
+          <EyeOff className="w-4 h-4" />
+          Hide Form
+        </>
+      ) : (
+        <>
+          <Eye className="w-4 h-4" />
+          Show Form
+        </>
+      )}
+    </button>
+
+    <div className="portal-info text-center sm:text-left">
+      <p className="portal-label text-gray-400 text-sm">Content Creation</p>
+      <p className="portal-link text-teal-500 text-sm font-medium text-center sm:text-right">
+        Maker Portal
+      </p>
+    </div>
+  </div>
+</div>
 
       {formOpen && (
         <form onSubmit={handleSubmit} className="department-form mt-[18px]">
@@ -558,88 +562,97 @@ export default function Productcreate() {
           </div>
 
           {/* ================= Basic Program Details ================= */}
-          <div className="form-section">
-            <h3 className="section-title">Basic Program Details</h3>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Program Type</label>
-                <select
-                  name="programType"
-                  value={form.programType}
-                  onChange={(e) => handleProgramTypeChange(e.target.value)}
-                  className="form-input"
-                >
-                  <option value="">Select</option>
-                  {programTypes.map((pt) => (
-                    <option key={pt} value={pt}>
-                      {pt}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-group">
-                <label>Sub Category</label>
-                <select
-                  name="subCategory"
-                  value={form.subCategory}
-                  onChange={(e) => handleSubCategoryChange(e.target.value)}
-                  className="form-input"
-                >
-                  <option value="">Select</option>
-                  {filteredSubCategories.map((sc) => (
-                    <option key={sc.subCategory} value={sc.subCategory}>
-                      {sc.subCategory}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
+          <div className="form-section p-4 bg-white rounded-lg shadow-sm">
+  <h3 className="section-title text-sm sm:text-lg font-semibold mb-4">
+    Basic Program Details
+  </h3>
 
-            <div className="form-row">
-              <div className="form-group full-width">
-                <label>Program Description</label>
-                <textarea
-                  name="programDescription"
-                  value={form.programDescription || ""}
-                  onChange={handleChange}
-                  className="form-input"
-                  placeholder="Program description auto-filled"
-                  readOnly={!!form.subCategory} // Make it read-only when a subcategory is selected
-                />
-              </div>
-            </div>
+  {/* First Row */}
+  <div className="form-row flex flex-col sm:flex-row gap-4">
+    <div className="form-group flex-1 flex flex-col">
+      <label className="mb-1 text-xs sm:text-sm font-medium">Program Type</label>
+      <select
+        name="programType"
+        value={form.programType}
+        onChange={(e) => handleProgramTypeChange(e.target.value)}
+        className="form-input p-2 border border-gray-300 rounded text-xs sm:text-sm"
+      >
+        <option value="">Select</option>
+        {programTypes.map((pt) => (
+          <option key={pt} value={pt}>
+            {pt}
+          </option>
+        ))}
+      </select>
+    </div>
 
-            {form.subCategory && (
-              <>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Product Name</label>
-                    <input
-                      type="text"
-                      name="productName"
-                      value={form.productName}
-                      onChange={handleChange}
-                      className="form-input"
-                      placeholder="Enter product name"
-                    />
-                  </div>
-                </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Description</label>
-                    <textarea
-                      type="text"
-                      name="productDescription"
-                      value={form.productDescription}
-                      onChange={handleChange}
-                      className="form-input"
-                      placeholder="Enter description"
-                    />
-                  </div>
-                </div>
-              </>
-            )}
-          </div>
+    <div className="form-group flex-1 flex flex-col">
+      <label className="mb-1 text-xs sm:text-sm font-medium">Sub Category</label>
+      <select
+        name="subCategory"
+        value={form.subCategory}
+        onChange={(e) => handleSubCategoryChange(e.target.value)}
+        className="form-input p-2 border border-gray-300 rounded text-xs sm:text-sm"
+      >
+        <option value="">Select</option>
+        {filteredSubCategories.map((sc) => (
+          <option key={sc.subCategory} value={sc.subCategory}>
+            {sc.subCategory}
+          </option>
+        ))}
+      </select>
+    </div>
+  </div>
+
+  {/* Second Row */}
+  <div className="form-row mt-4">
+    <div className="form-group flex flex-col w-full">
+      <label className="mb-1 text-xs sm:text-sm font-medium">Program Description</label>
+      <textarea
+        name="programDescription"
+        value={form.programDescription || ""}
+        onChange={handleChange}
+        placeholder="Program description auto-filled"
+        readOnly={!!form.subCategory}
+        className="form-input p-2 border border-gray-300 rounded text-xs sm:text-sm w-full table-scrollbar"
+      />
+    </div>
+  </div>
+
+  {/* Conditional Product Details */}
+  {form.subCategory && (
+    <>
+      <div className="form-row mt-4 flex flex-col sm:flex-row gap-4">
+        <div className="form-group flex-1 flex flex-col">
+          <label className="mb-1 text-xs sm:text-sm font-medium">Product Name</label>
+          <input
+            type="text"
+            name="productName"
+            value={form.productName}
+            onChange={handleChange}
+            placeholder="Enter product name"
+            className="form-input p-2 border border-gray-300 rounded text-xs sm:text-sm"
+          />
+        </div>
+      </div>
+
+      <div className="form-row mt-4">
+        <div className="form-group flex flex-col w-full">
+          <label className="mb-1 text-xs sm:text-sm font-medium">Description</label>
+          <textarea
+            type="text"
+            name="productDescription"
+            value={form.productDescription}
+            onChange={handleChange}
+            placeholder="Enter description"
+            className="form-input p-2 border border-gray-300 rounded text-xs sm:text-sm w-full table-scrollbar"
+          />
+        </div>
+      </div>
+    </>
+  )}
+</div>
+
 
           {/* ================= KYC & Compliance ================= */}
           <div className="form-section">
@@ -730,443 +743,433 @@ export default function Productcreate() {
           </div>
 
           {/* ================= Transaction Limits ================= */}
-          <div className="form-section bg-[#0d0f13] p-4 rounded-md border border-gray-800">
-            <h3 className="section-title text-teal-400 mb-4">
-              Transaction Limits
-            </h3>
-            <div className="grid grid-cols-3 gap-4">
-              {[
-                { label: "Cash Loading Limit", field: "cashLoadingLimit" },
-                { label: "Daily Spend Limit", field: "dailySpendLimit" },
-                { label: "Monthly Spend Limit", field: "monthlySpendLimit" },
-                { label: "Min Balance", field: "minBalance" },
-                { label: "Max Balance", field: "maxBalance" },
-                { label: "Max Load Amount", field: "maxLoadAmount" },
-              ].map(({ label, field }) => {
-                const maxValue = form[field] || ""; // fetched value
+         <div className="form-section bg-[#0d0f13] p-4 rounded-md border border-gray-800">
+  <h3 className="section-title text-teal-400 text-sm sm:text-base mb-4">
+    Transaction Limits
+  </h3>
 
-                return (
-                  <div key={field} className="form-group flex flex-col">
-                    <label className="text-sm text-gray-300 mb-1">
-                      {label}
-                    </label>
-                    <input
-                      type="number"
-                      name={field}
-                      value={form[field] || 0}
-                      max={maxValue} // 🔥 restrict max
-                      onChange={(e) => {
-                        const newValue = Number(e.target.value);
-                        if (newValue <= maxValue) {
-                          handleChange(e);
-                        }
-                      }}
-                      className="form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none"
-                      placeholder="Enter amount"
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {[
+      { label: "Cash Loading Limit", field: "cashLoadingLimit" },
+      { label: "Daily Spend Limit", field: "dailySpendLimit" },
+      { label: "Monthly Spend Limit", field: "monthlySpendLimit" },
+      { label: "Min Balance", field: "minBalance" },
+      { label: "Max Balance", field: "maxBalance" },
+      { label: "Max Load Amount", field: "maxLoadAmount" },
+    ].map(({ label, field }) => (
+      <div key={field} className="form-group flex flex-col">
+        <label className="text-xs sm:text-sm text-gray-300 mb-1">{label}</label>
+        <input
+          type="number"
+          name={field}
+          value={form[field] || 0}
+          max={form[field] || 0}
+          onChange={(e) => {
+            const newValue = Number(e.target.value);
+            if (newValue <= (form[field] || 0)) {
+              handleChange(e);
+            }
+          }}
+          className="form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 text-xs sm:text-sm focus:border-teal-400 focus:outline-none"
+          placeholder="Enter amount"
+        />
+      </div>
+    ))}
+  </div>
+</div>
+
 
           {/* ================= Features & Validity ================= */}
-          <div className="form-section bg-[#0d0f13] p-4 rounded-md border border-gray-800">
-            <h3 className="section-title text-teal-400 mb-4">
-              Features & Validity Settings
-            </h3>
-            <div className="grid grid-cols-2 gap-8">
-              {/* Left - Validity */}
-              <div>
-                <h4 className="text-teal-400 text-[15px] mb-[5px]">
-                  Validity & Age Settings
-                </h4>
-                {/* <div className="form-group">
-                                    <label>Validity Period (Months)</label>
-                                    <input type="number" name="validityPeriodMonths" value={form.validityPeriodMonths || ""} onChange={handleChange} className="form-input" />
-                                </div> */}
-                <div className="form-group">
-                  <label>Grace Period (Days)</label>
-                  <input
-                    type="number"
-                    name="gracePeriodDays"
-                    value={form.gracePeriodDays || 0}
-                    onChange={handleChange}
-                    className="form-input"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="form-group">
-                    <label>Min Age</label>
-                    <input
-                      type="number"
-                      name="customerAgeMin"
-                      value={form.customerAgeMin || ""}
-                      onChange={handleChange}
-                      className="form-input"
-                    />
-                  </div>
-                </div>
-              </div>
+         <div className="form-section bg-[#0d0f13] p-4 rounded-md border border-gray-800">
+  <h3 className="section-title text-teal-400 text-sm sm:text-base mb-4">
+    Features & Validity Settings
+  </h3>
 
-              {/* Right - Features */}
-              <div>
-                <h4 className="compliance-title">Key Features</h4>
-                <div className="compliance-table">
-                  {[
-                    {
-                      label: "Authorization Required",
-                      field: "authorizationRequired",
-                    },
-                    { label: "Reloadable", field: "reloadable" },
-                    { label: "Transferable", field: "transferable" },
-                    {
-                      label: "ATM Withdrawal Enabled",
-                      field: "atmWithdrawalEnabled",
-                    },
-                    {
-                      label: "Domestic Transfer Allowed",
-                      field: "domesticTransferAllowed",
-                    },
-                    {
-                      label: "Cross Border Allowed",
-                      field: "crossBorderAllowed",
-                    },
-                  ].map(({ label, field }) => (
-                    <div key={field} className="compliance-row">
-                      <span className="compliance-label">{label}</span>
-                      <div className="radio-group">
-                        <label>
-                          <input
-                            type="radio"
-                            name={field}
-                            value="yes"
-                            checked={form[field] === true}
-                            onChange={(e) =>
-                              handleBooleanSelect(field, e.target.value)
-                            }
-                          />{" "}
-                          Yes
-                        </label>
-                        <label>
-                          <input
-                            type="radio"
-                            name={field}
-                            value="no"
-                            checked={form[field] === false}
-                            onChange={(e) =>
-                              handleBooleanSelect(field, e.target.value)
-                            }
-                          />{" "}
-                          No
-                        </label>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {/* Left - Validity */}
+    <div>
+      <h4 className="text-teal-400 text-xs sm:text-sm mb-2">
+        Validity & Age Settings
+      </h4>
+
+      {/* Grace Period */}
+      <div className="form-group mb-4">
+        <label className="text-xs sm:text-sm text-gray-300 mb-1">Grace Period (Days)</label>
+        <input
+          type="number"
+          name="gracePeriodDays"
+          value={form.gracePeriodDays || 0}
+          onChange={handleChange}
+          className="form-input p-2 text-xs sm:text-sm border border-gray-700 rounded-md bg-transparent focus:outline-none focus:border-teal-400 w-full"
+          placeholder="Enter days"
+        />
+      </div>
+
+      {/* Min Age */}
+      <div className="form-group mb-4">
+        <label className="text-xs sm:text-sm text-gray-300 mb-1">Min Age</label>
+        <input
+          type="number"
+          name="customerAgeMin"
+          value={form.customerAgeMin || ""}
+          onChange={handleChange}
+          className="form-input p-2 text-xs sm:text-sm border border-gray-700 rounded-md bg-transparent focus:outline-none focus:border-teal-400 w-full"
+          placeholder="Enter min age"
+        />
+      </div>
+    </div>
+
+    {/* Right - Features */}
+    <div>
+      <h4 className="text-teal-400 text-xs sm:text-sm mb-2">Key Features</h4>
+      <div className="compliance-table flex flex-col gap-3">
+        {[
+          { label: "Authorization Required", field: "authorizationRequired" },
+          { label: "Reloadable", field: "reloadable" },
+          { label: "Transferable", field: "transferable" },
+          { label: "ATM Withdrawal Enabled", field: "atmWithdrawalEnabled" },
+          { label: "Domestic Transfer Allowed", field: "domesticTransferAllowed" },
+          { label: "Cross Border Allowed", field: "crossBorderAllowed" },
+        ].map(({ label, field }) => (
+          <div key={field} className="compliance-row flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+            <span className="compliance-label text-xs sm:text-sm text-gray-300">{label}</span>
+            <div className="radio-group flex gap-4">
+              <label className="flex items-center gap-1 text-xs sm:text-sm">
+                <input
+                  type="radio"
+                  name={field}
+                  value="yes"
+                  checked={form[field] === true}
+                  onChange={(e) => handleBooleanSelect(field, e.target.value)}
+                  className="accent-teal-400"
+                />
+                Yes
+              </label>
+              <label className="flex items-center gap-1 text-xs sm:text-sm">
+                <input
+                  type="radio"
+                  name={field}
+                  value="no"
+                  checked={form[field] === false}
+                  onChange={(e) => handleBooleanSelect(field, e.target.value)}
+                  className="accent-teal-400"
+                />
+                No
+              </label>
             </div>
           </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
 
           {/* ================= Payment Methods ================= */}
           <div className="form-section bg-[#0d0f13] p-4 rounded-md border border-gray-800">
-            <h3 className="section-title text-teal-400 mb-4">
-              Payment Methods & Channels
-            </h3>
-            <div className="grid grid-cols-2 gap-8">
-              {/* Topup Channels */}
-              <div>
-                <h4 className="compliance-title text-gray-200 mb-2">
-                  Loading Channels
-                </h4>
-                <div className="flex flex-col gap-3">
-                  {options.map((method) => {
-                    const checked = Array.isArray(form.topUpMethod)
-                      ? form.topUpMethod.includes(method)
-                      : (form.topUpMethod || "").split(",").includes(method);
+  <h3 className="section-title text-teal-400 text-sm sm:text-base mb-4">
+    Payment Methods & Channels
+  </h3>
 
-                    return (
-                      <label
-                        key={method}
-                        className="flex items-center gap-3 cursor-pointer text-gray-300"
-                      >
-                        <div
-                          onClick={() => toggleLoading(method)}
-                          className={`w-3 h-3 flex items-center justify-center border 
-          ${
-            checked
-              ? "bg-teal-500 border-teal-500"
-              : "bg-[#0d1220] border-teal-700/50"
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {/* Topup Channels */}
+    <div>
+      <h4 className="compliance-title text-gray-200 text-xs sm:text-sm mb-2">
+        Loading Channels
+      </h4>
+      <div className="flex flex-col gap-2 sm:gap-3">
+        {options.map((method) => {
+          const checked = Array.isArray(form.topUpMethod)
+            ? form.topUpMethod.includes(method)
+            : (form.topUpMethod || "").split(",").includes(method);
+
+          return (
+            <label
+              key={method}
+              className="flex items-center gap-2 sm:gap-3 cursor-pointer text-gray-300 text-xs sm:text-sm"
+            >
+              <div
+                onClick={() => toggleLoading(method)}
+                className={`w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center border rounded-sm 
+                  ${checked ? "bg-teal-500 border-teal-500" : "bg-[#0d1220] border-teal-700/50"}
+                `}
+              >
+                {checked && <Check size={14} className="text-black" />}
+              </div>
+              <span className="truncate">{method}</span>
+            </label>
+          );
+        })}
+      </div>
+    </div>
+
+    {/* Unloading Channels */}
+    <div>
+      <h4 className="compliance-title text-gray-200 text-xs sm:text-sm mb-2">
+        Unloading Channels
+      </h4>
+      <div className="flex flex-col gap-2 sm:gap-3">
+        {channels.map((method) => {
+          const checked = form.allowedChannels?.includes(method);
+
+          const normalized = method.toLowerCase();
+          let formattedMethod = "";
+          if (normalized === "qr_code") {
+            formattedMethod = "QR Code";
+          } else if (["upi", "pos", "atm", "ecom"].includes(normalized)) {
+            formattedMethod = method.toUpperCase();
+          } else {
+            formattedMethod = method
+              .replace(/_/g, " ")
+              .split(" ")
+              .map(
+                (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+              )
+              .join(" ");
           }
-        `}
-                        >
-                          {checked && (
-                            <Check size={14} className="text-black" />
-                          )}
-                        </div>
-                        <span className="text-[12px]">{method}</span>
-                      </label>
-                    );
-                  })}
-                </div>
+
+          return (
+            <label
+              key={method}
+              className="flex items-center gap-2 sm:gap-3 cursor-pointer text-gray-300 text-xs sm:text-sm"
+            >
+              <div
+                onClick={() => toggleUnloading(method)}
+                className={`w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center border rounded-sm 
+                  ${checked ? "bg-teal-500 border-teal-500" : "bg-[#0d1220] border-teal-700/50"}
+                  transition-colors duration-200
+                `}
+              >
+                {checked && <Check size={14} className="text-black" />}
               </div>
+              <span className="truncate">{formattedMethod}</span>
+            </label>
+          );
+        })}
+      </div>
+    </div>
+  </div>
 
-              {/* Unloading Channels */}
-              <div>
-                <h4 className="compliance-title text-gray-200 mb-2">
-                  Unloading Channels
-                </h4>
-                <div className="flex flex-col gap-3">
-                  {channels.map((method) => {
-                    const checked = form.allowedChannels?.includes(method);
+  {/* MCC Code */}
+  <div className="form-group mt-4 flex flex-col">
+    <label className="text-xs sm:text-sm text-gray-300 mb-1">MCC Code</label>
+    <input
+      type="text"
+      name="allowedMccCodes"
+      value={
+        Array.isArray(form.allowedMccCodes)
+          ? form.allowedMccCodes.join(",")
+          : form.allowedMccCodes || ""
+      }
+      onChange={(e) =>
+        setForm((prev) => ({
+          ...prev,
+          allowedMccCodes: e.target.value,
+        }))
+      }
+      className="form-input p-2 text-xs sm:text-sm border border-gray-700 rounded-md bg-transparent focus:outline-none focus:border-teal-400 w-full"
+      placeholder="Enter MCC codes separated by commas"
+    />
+  </div>
+</div>
 
-                    const normalized = method.toLowerCase();
-
-                    let formattedMethod = "";
-                    if (normalized === "qr_code") {
-                      formattedMethod = "QR Code"; // special case
-                    } else if (
-                      ["upi", "pos", "atm", "ecom"].includes(normalized)
-                    ) {
-                      formattedMethod = method.toUpperCase();
-                    } else {
-                      formattedMethod = method
-                        .replace(/_/g, " ")
-                        .split(" ")
-                        .map(
-                          (word) =>
-                            word.charAt(0).toUpperCase() +
-                            word.slice(1).toLowerCase()
-                        )
-                        .join(" ");
-                    }
-
-                    return (
-                      <label
-                        key={method}
-                        className="flex items-center gap-3 cursor-pointer text-gray-300"
-                      >
-                        <div
-                          onClick={() => toggleUnloading(method)}
-                          className={`w-3 h-3 flex items-center justify-center border 
-            ${
-              checked
-                ? "bg-teal-500 border-teal-500"
-                : "bg-[#0d1220] border-teal-700/50"
-            }
-            transition-colors duration-200`}
-                        >
-                          {checked && (
-                            <Check size={14} className="text-black" />
-                          )}
-                        </div>
-                        <span className="text-[12px]">{formattedMethod}</span>
-                      </label>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-
-            {/* MCC Code */}
-            <div className="form-group mt-4">
-              <label>MCC Code</label>
-              <input
-                type="text"
-                name="allowedMccCodes"
-                value={
-                  Array.isArray(form.allowedMccCodes)
-                    ? form.allowedMccCodes.join(",")
-                    : form.allowedMccCodes || ""
-                }
-                onChange={(e) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    allowedMccCodes: e.target.value, // keep as string while typing
-                  }))
-                }
-                className="form-input"
-                placeholder="Enter MCC codes separated by commas"
-              />
-            </div>
-          </div>
 
           {/* ================= Footer ================= */}
-          <div className="form-footer">
-            <button
-              type="button"
-              className="btn-outline-back"
-              onClick={() => setformOpen(false)}
-            >
-              <ArrowLeft className="icon" /> Back
-            </button>
-            <div className="footer-right">
-              <button
-                type="button"
-                className="btn-outline-reset"
-                onClick={() => {
-                  setEditingId(null);
-                  setIsEditing(false);
-                  setForm(getDefaultForm(ip, username));
-                }}
-              >
-                <RotateCcw className="icon" /> Reset
-              </button>
-              <button type="submit" className="btn-outline-reset">
-                <Save className="icon" />
-                {editingId ? "Update Configuration" : "Create Configuration"}
-              </button>
-            </div>
-          </div>
+          <div className="form-footer flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mt-4 px-2 sm:px-0">
+  {/* Left - Back */}
+  <button
+    type="button"
+    className="btn-outline-back flex items-center justify-center w-full sm:w-auto px-3 py-2 text-sm sm:text-base gap-2"
+    onClick={() => setformOpen(false)}
+  >
+    <ArrowLeft className="icon w-4 h-4" /> Back
+  </button>
+
+  {/* Right - Reset + Submit */}
+  <div className="footer-right flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
+    <button
+      type="button"
+      className="btn-outline-reset flex items-center justify-center w-full sm:w-auto px-3 py-2 text-sm sm:text-base gap-2"
+      onClick={() => {
+        setEditingId(null);
+        setIsEditing(false);
+        setForm(getDefaultForm(ip, username));
+      }}
+    >
+      <RotateCcw className="icon w-4 h-4" /> Reset
+    </button>
+
+    <button
+      type="submit"
+      className="btn-outline-reset flex items-center justify-center w-full sm:w-auto px-3 py-2 text-sm sm:text-base gap-2"
+    >
+      <Save className="icon w-4 h-4" />
+      {editingId ? "Update Configuration" : "Create Configuration"}
+    </button>
+  </div>
+</div>
+
         </form>
       )}
 
       {/* Existing Configurations */}
       <div className="table-card mt-[18px]">
-        <div className="table-header">
-          <p className="table-title">
-            <PackagePlus className="w-5 h-5" />
-            Existing product Configurations
-          </p>
-          {/* Search bar */}
-          <div className="search-box">
-            <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Search configurations..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </div>
+        <div className="table-header flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-4 px-2 sm:px-0">
+  {/* Title */}
+  <p className="table-title flex items-center gap-2 text-sm sm:text-base font-semibold text-gray-200">
+    <PackagePlus className="w-4 h-4 sm:w-5 sm:h-5" />
+    Existing Product Configurations
+  </p>
 
-        <div className="table-wrapper">
-          {/* Table */}
-          <table className="w-full text-left">
-            <thead className="table-head">
-              <tr>
-                {/* <th className="table-cell">#</th> */}
-                <th className="table-cell">Configuration NAME</th>
-                <th className="table-cell">Program Type</th>
-                <th className="table-cell">KYC Level</th>
-                <th className="table-cell">Status</th>
-                <th className="table-cell">Remarks</th>
-                <th className="table-cell">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedConfigurations &&
-                paginatedConfigurations.map((cfg, idx) => {
-                  const formattedKYCLevel =
-                    cfg.kycLevelRequired.charAt(0).toUpperCase() +
-                    cfg.kycLevelRequired.slice(1).toLowerCase();
-                  return (
-                    <tr key={cfg.productId || idx} className="table-row">
-                      <td className="table-content">{cfg.productName}</td>
-                      <td className="table-content">{cfg.programType}</td>
-                      <td className="table-content">
-                        {formattedKYCLevel || "-"}
-                      </td>
-                      <td className="table-content">
-                        <span
-                          className={` px-2 py-1 rounded text-[10px] ${
-                            cfg.isActive ? "checker" : "superuser"
-                          }`}
-                        >
-                          {cfg.isActive ? "active" : "Inactive"}
-                        </span>
-                      </td>
-                      <td className="table-content">{cfg.remarks || "-"}</td>
-                      <td className="table-content">
-                        <button
-                          className="header-icon-box"
-                          onClick={() => handleEdit(cfg)}
-                        >
-                          <SquarePen className="text-[#00d4aa] w-3 h-3" />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              {paginatedConfigurations.length === 0 && (
-                <tr>
-                  <td colSpan="9" className="text-center py-4 text-gray-500">
-                    No products found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+  {/* Search bar */}
+  <div className="search-box relative w-full sm:w-64">
+    <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3 sm:w-4 sm:h-4" />
+    <input
+      type="text"
+      className="search-input !w-full pl-8 pr-2 py-1 sm:py-2 text-xs sm:text-sm rounded border border-gray-700 bg-[#0d0f13] text-gray-200 focus:outline-none focus:border-teal-400"
+      placeholder="Search configurations..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+    />
+  </div>
+</div>
+
+
+       <div className="table-wrapper overflow-x-auto w-full table-scrollbar">
+  <table className="min-w-full text-left border-collapse">
+    <thead className="table-head bg-gray-900 text-gray-300 text-xs sm:text-sm">
+      <tr>
+        <th className="table-cell px-2 py-2">Configuration NAME</th>
+        <th className="table-cell px-2 py-2">Program Type</th>
+        <th className="table-cell px-2 py-2">KYC Level</th>
+        <th className="table-cell px-2 py-2">Status</th>
+        <th className="table-cell px-2 py-2">Remarks</th>
+        <th className="table-cell px-2 py-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody className="text-gray-200 text-xs sm:text-sm">
+      {paginatedConfigurations &&
+        paginatedConfigurations.map((cfg, idx) => {
+          const formattedKYCLevel =
+            cfg.kycLevelRequired.charAt(0).toUpperCase() +
+            cfg.kycLevelRequired.slice(1).toLowerCase();
+          return (
+            <tr
+              key={cfg.productId || idx}
+              className="table-row border-b border-gray-700"
+            >
+              <td className="table-content px-2 py-1">{cfg.productName}</td>
+              <td className="table-content px-2 py-1">{cfg.programType}</td>
+              <td className="table-content px-2 py-1">
+                {formattedKYCLevel || "-"}
+              </td>
+              <td className="table-content px-2 py-1">
+                <span
+                  className={`px-2 py-1 rounded text-[10px] ${
+                    cfg.isActive ? "checker" : "superuser"
+                  }`}
+                >
+                  {cfg.isActive ? "Active" : "Inactive"}
+                </span>
+              </td>
+              <td className="table-content px-2 py-1">{cfg.remarks || "-"}</td>
+              <td className="table-content px-2 py-1">
+                <button
+                  className="header-icon-box p-1 sm:p-2"
+                  onClick={() => handleEdit(cfg)}
+                >
+                  <SquarePen className="text-[#00d4aa] w-3 h-3 sm:w-4 sm:h-4" />
+                </button>
+              </td>
+            </tr>
+          );
+        })}
+      {paginatedConfigurations.length === 0 && (
+        <tr>
+          <td colSpan="6" className="text-center py-4 text-gray-500">
+            No products found.
+          </td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</div>
+
         {/* Pagination */}
-        <div className="flex justify-between items-center mt-4 px-4">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
-              currentPage === 1
-                ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
-            }`}
-          >
-            <ChevronLeft className="w-4 h-4" /> Prev
-          </button>
+        <div className="flex flex-col sm:flex-row flex-wrap justify-center sm:justify-between items-center mt-4 px-4 gap-2">
+  {/* Prev Button */}
+  <button
+    onClick={() => handlePageChange(currentPage - 1)}
+    disabled={currentPage === 1}
+    className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${
+      currentPage === 1
+        ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
+        : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
+    }`}
+  >
+    <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" /> Prev
+  </button>
 
-          <div className="flex gap-2">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => handlePageChange(i + 1)}
-                className={`px-3 py-1 rounded-lg text-sm ${
-                  currentPage === i + 1
-                    ? "bg-[#00d4aa] text-black font-bold"
-                    : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
+  {/* Page Numbers */}
+  <div className="flex flex-wrap justify-center gap-2 w-full sm:w-auto">
+    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+      <button
+        key={page}
+        onClick={() => handlePageChange(page)}
+        className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${
+          currentPage === page
+            ? "bg-[#00d4aa] text-black font-bold"
+            : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
+        }`}
+      >
+        {page}
+      </button>
+    ))}
+  </div>
 
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
-              currentPage === totalPages
-                ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
-            }`}
-          >
-            Next <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
+  {/* Next Button */}
+  <button
+    onClick={() => handlePageChange(currentPage + 1)}
+    disabled={currentPage === totalPages}
+    className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${
+      currentPage === totalPages
+        ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
+        : "bg-[#0a1625] text-white hover:text-[#00d4aa]"
+    }`}
+  >
+    Next <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
+  </button>
+</div>
+
       </div>
       {/* Guidelines */}
-      <div className="guidelines-card">
-        <h3 className="guidelines-title">Product Creation Guidelines</h3>
-        <div className="guidelines-grid">
-          <p>
-            📦 <span>Basic Details:</span> Provide product name, description,
-            and category
-          </p>
-          <p>
-            💲 <span> Pricing Setup:</span> Define price, currency, and
-            applicable taxes
-          </p>
-        </div>
+      <div className="guidelines-card p-2 sm:p-4 bg-[#0d0f13] rounded-md border border-gray-800 w-full overflow-hidden">
+  <h3 className="guidelines-title text-teal-400 text-xs sm:text-base font-semibold mb-4">
+    Product Creation Guidelines
+  </h3>
 
-        <div className="guidelines-grid">
-          <p>
-            ⚙️ <span> Configuration:</span> Set product attributes, features,
-            and usage limits
-          </p>
-          <p>
-            📜 <span> Compliance:</span> Ensure product meets regulatory and
-            policy requirements
-          </p>
-        </div>
-      </div>
+  {/* First Grid */}
+  <div className="guidelines-grid grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
+    <p className="text-xs sm:text-sm text-gray-300 break-words">
+      📦 <span className="font-medium">Basic Details:</span> Provide product name, description, and category
+    </p>
+    <p className="text-xs sm:text-sm text-gray-300 break-words">
+      💲 <span className="font-medium">Pricing Setup:</span> Define price, currency, and applicable taxes
+    </p>
+  </div>
+
+  {/* Second Grid */}
+  <div className="guidelines-grid grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+    <p className="text-xs sm:text-sm text-gray-300 break-words">
+      ⚙️ <span className="font-medium">Configuration:</span> Set product attributes, features, and usage limits
+    </p>
+    <p className="text-xs sm:text-sm text-gray-300 break-words">
+      📜 <span className="font-medium">Compliance:</span> Ensure product meets regulatory and policy requirements
+    </p>
+  </div>
+</div>
+
+
     </div>
   );
 }

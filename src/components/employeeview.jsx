@@ -4,7 +4,7 @@ import axios from "axios";
 export default function EmployeeView({
   selectedEmployee,
   setSelectedEmployee,
-  fetchConfigurations
+  fetchConfigurations,
 }) {
   const [remarks, setRemarks] = useState("");
   const [currentAction, setCurrentAction] = useState(null);
@@ -40,7 +40,10 @@ export default function EmployeeView({
       }
 
       // Require remarks for Reject or Recheck
-      if ((currentAction === 2 || currentAction === 3) && remarks.trim() === "") {
+      if (
+        (currentAction === 2 || currentAction === 3) &&
+        remarks.trim() === ""
+      ) {
         alert("Remarks are required for this action.");
         return;
       }
@@ -73,27 +76,30 @@ export default function EmployeeView({
       fetchConfigurations();
     } catch (err) {
       console.error("Error submitting employee action:", err.response || err);
-      alert("Approval not permitted for users in Recheck status. Please ensure Maker review is completed first.");
+      alert(
+        "Approval not permitted for users in Recheck status. Please ensure Maker review is completed first."
+      );
       setShowModal(false);
     }
   };
 
-
-
   return (
     <>
-      <div className="card-header mb-6">
-        <div className="card-header-left flex items-center gap-3">
+      <div className="card-header mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        {/* Left Section */}
+        <div className="card-header-left flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto text-center sm:text-left">
           <button
-            className="approval-back-button"
+            className="approval-back-button flex items-center justify-center sm:justify-start gap-1"
             onClick={() => setSelectedEmployee(null)}
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Approvals
           </button>
-          <div className="header-icon-box">
+
+          <div className="header-icon-box mx-auto sm:mx-0">
             <FileText className="text-[#00d4aa] w-4 h-4" />
           </div>
+
           <div>
             <h1 className="header-title">Employee Approvals</h1>
             <p className="header-subtext">
@@ -101,20 +107,23 @@ export default function EmployeeView({
             </p>
           </div>
         </div>
-        <div className="card-header-right">
-          <div className="portal-info flex gap-2">
+
+        {/* Right Section */}
+        <div className="card-header-right w-full sm:w-auto flex justify-center sm:justify-end">
+          <div className="portal-info text-center sm:text-right">
             <p className="portal-link">
               <span
-                className={`px-2 py-1 rounded text-[10px] ${selectedEmployee.status === 0
-                  ? "checker"
-                  : selectedEmployee.status === 1
+                className={`px-2 py-1 rounded text-[10px] ${
+                  selectedEmployee.status === 0
+                    ? "checker"
+                    : selectedEmployee.status === 1
                     ? "infra"
                     : selectedEmployee.status === 2
-                      ? "superuser"
-                      : selectedEmployee.status === 3
-                        ? "maker"
-                        : ""
-                  }`}
+                    ? "superuser"
+                    : selectedEmployee.status === 3
+                    ? "maker"
+                    : ""
+                }`}
               >
                 {getStatusLabel(selectedEmployee.status)}
               </span>
@@ -164,46 +173,51 @@ export default function EmployeeView({
         <div className="right">
           {/* Actions */}
           <div className="card">
-            <h4 className="up-section-title">
+            <h4 className="up-section-title flex items-center gap-2">
               <RefreshCw size={18} color="#00e6c3" className="refresh-icon" />
               User Review Actions
             </h4>
 
-            <div className="button-group">
+            <div className="button-group flex gap-2 flex-wrap-nowrap mt-2">
+              {/* Recheck User Button */}
               <button
-                className="btn approval-btn-blue"
+                className="btn approval-btn-blue whitespace-nowrap"
                 onClick={() => handleActionClick(3)}
               >
                 <RefreshCw className="w-4 h-4" />
                 <span>Recheck User</span>
               </button>
-              <div className="button-group-row flex gap-2 mt-2">
-                <button
-                  className="btn approval-btn-green"
-                  onClick={() => handleActionClick(0)}
-                >
-                  <Check className="w-4 h-4" />
-                  <span>Approve user</span>
-                </button>
 
-                <button
-                  className={`btn approval-btn-red ${selectedEmployee.status === 3 ? "opacity-20 cursor-not-allowed" : ""}`}
-                  onClick={() => handleActionClick(2)}
-                  disabled={selectedEmployee.status === 3} // ✅ Disable if status is 3
-                >
-                  <X className="w-4 h-4" />
-                  <span>
-                    {selectedEmployee.status === 3
-                      ? "Reject action disabled – pending maker review"
-                      : "Reject user"}
-                  </span>
-                </button>
+              {/* Approve Button */}
+              <button
+                className="btn approval-btn-green whitespace-nowrap"
+                onClick={() => handleActionClick(0)}
+              >
+                <Check className="w-4 h-4" />
+                <span>Approve user</span>
+              </button>
 
-              </div>
+              {/* Reject Button */}
+              <button
+                className={`btn approval-btn-red whitespace-nowrap ${
+                  selectedEmployee.status === 3
+                    ? "opacity-20 cursor-not-allowed"
+                    : ""
+                }`}
+                onClick={() => handleActionClick(2)}
+                disabled={selectedEmployee.status === 3}
+              >
+                <X className="w-4 h-4" />
+                <span>
+                  {selectedEmployee.status === 3
+                    ? "Reject action disabled – pending maker review"
+                    : "Reject user"}
+                </span>
+              </button>
             </div>
 
-            <div className="note-box">
-              <p className="up-note">
+            <div className="note-box mt-2">
+              <p className="up-note text-center md:text-left">
                 Review all user details carefully before making a decision
               </p>
             </div>
@@ -224,14 +238,16 @@ export default function EmployeeView({
                 {currentAction === 0
                   ? "approve"
                   : currentAction === 2
-                    ? "reject"
-                    : "recheck"}{" "}
-                <b>{selectedEmployee.EmployeeName}</b>? This action cannot be undone.
+                  ? "reject"
+                  : "recheck"}{" "}
+                <b>{selectedEmployee.EmployeeName}</b>? This action cannot be
+                undone.
               </p>
 
               {currentAction !== 0 && Number(selectedEmployee.status) !== 1 && (
                 <p className="text-red-500 text-[12px] mb-1">
-                  Recheck and Reject actions are only allowed for pending employees.
+                  Recheck and Reject actions are only allowed for pending
+                  employees.
                 </p>
               )}
 
@@ -245,26 +261,34 @@ export default function EmployeeView({
                 onChange={(e) => setRemarks(e.target.value)}
                 className="modal-textarea"
                 placeholder="Enter remarks..."
-                disabled={currentAction !== 0 && Number(selectedEmployee.status) !== 1}
+                disabled={
+                  currentAction !== 0 && Number(selectedEmployee.status) !== 1
+                }
               />
 
-              <div className="modal-footer">
+              <div className="modal-footer flex flex-col gap-2 md:flex-row md:justify-end">
                 <button
-                  className="btn-cancel"
+                  className="btn-cancel w-full md:w-auto"
                   onClick={() => setShowModal(false)}
                 >
                   Cancel
                 </button>
+
                 <button
-                  className={`btn-submit ${currentAction === 0
-                    ? "btn-approve-green"
-                    : currentAction === 2
+                  className={`btn-submit w-full md:w-auto ${
+                    currentAction === 0
+                      ? "btn-approve-green"
+                      : currentAction === 2
                       ? "btn-reject-red"
                       : "btn-recheck-blue"
-                    }`}
+                  }`}
                   onClick={submitAction}
-                  disabled={currentAction === 3 && Number(selectedEmployee.status) !== 1}
-                  aria-disabled={currentAction === 3 && Number(selectedEmployee.status) !== 1}
+                  disabled={
+                    currentAction === 3 && Number(selectedEmployee.status) !== 1
+                  }
+                  aria-disabled={
+                    currentAction === 3 && Number(selectedEmployee.status) !== 1
+                  }
                 >
                   {currentAction === 0 && (
                     <>
@@ -282,13 +306,11 @@ export default function EmployeeView({
                     </>
                   )}
                 </button>
-
               </div>
             </div>
           </div>
         )}
-
-      </div >
+      </div>
     </>
   );
 }

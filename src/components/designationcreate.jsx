@@ -182,53 +182,88 @@ export default function CreateDesignationForm({ onBack }) {
     <div className="department-page">
       {/* Header */}
       <div className="form-header">
-        <div className="back-title">
-          <div className="header-left">
-            <div className="flex items-center gap-[10px]">
-              <button className="header-icon-btn" onClick={onBack}>
-                <ArrowLeft className="text-[#00d4aa] w-4 h-4" />
-              </button>
+       <div className="back-title flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+  {/* Top row for mobile: Arrow + Title + Badge Icon */}
+  <div className="flex items-center justify-between w-full sm:hidden">
+    {/* Arrow */}
+    <button className="header-icon-btn" onClick={onBack}>
+      <ArrowLeft className="text-[#00d4aa] w-4 h-4" />
+    </button>
 
-              <div className="header-icon-box">
-                <Badge className="text-[#00d4aa] w-4 h-4" />
-              </div>
-            </div>
-            <div>
-              <h1 className="header-title"> Designation Management</h1>
-              <p className="header-subtext">
-                {" "}
-                Create and manage designations under departments
-              </p>
-            </div>
-          </div>
+    {/* Title & Subtitle centered */}
+    <div className="flex flex-col items-center text-center">
+      <h1 className="header-title text-base">Designation Management</h1>
+      <p className="header-subtext text-xs">
+        Create and manage designations under departments
+      </p>
+    </div>
 
-          <div className="flex items-center gap-4">
-            {/* Active count */}
-            <button className="btn-count">
-              <span className="w-2 h-2 rounded-full bg-[#04CF6A]  plus"></span>
-              {designations.length} Active Designations
-            </button>
-          </div>
-        </div>
-        <div className="search-toggle">
-          {/* Search */}
-          <div className="search-box">
-            <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search designations..."
-              className="search-input"
-            />
-          </div>
-          {/* Toggle form */}
-          <button onClick={() => setShowForm(!showForm)} className="btn-toggle">
-            <Plus className="w-3 h-3" />
-            {showForm ? "Close Form" : "Create Designations"}
-          </button>
-        </div>
+    {/* Badge Icon */}
+    <div className="header-icon-box">
+      <Badge className="text-[#00d4aa] w-4 h-4" />
+    </div>
+  </div>
+
+  {/* Active Designations below for mobile */}
+  <div className="flex justify-center w-full sm:hidden mt-2">
+    <button className="btn-count text-xs">
+      <span className="w-2 h-2 rounded-full bg-[#04CF6A] plus"></span>
+      {designations.length} Active Designations
+    </button>
+  </div>
+
+  {/* Desktop layout (sm and above) */}
+  <div className="hidden sm:flex sm:justify-between sm:items-center w-full gap-[10px]">
+    {/* Left: Arrow + Badge Icon + Title */}
+    <div className="header-left flex items-center gap-[10px]">
+      <button className="header-icon-btn" onClick={onBack}>
+        <ArrowLeft className="text-[#00d4aa] w-4 h-4" />
+      </button>
+      <div className="header-icon-box">
+        <Badge className="text-[#00d4aa] w-4 h-4" />
       </div>
+      <div className="flex flex-col">
+        <h1 className="header-title text-lg">Designation Management</h1>
+        <p className="header-subtext text-sm">
+          Create and manage designations under departments
+        </p>
+      </div>
+    </div>
+
+    {/* Right: Active Designations */}
+    <div className="flex items-center gap-4">
+      <button className="btn-count text-sm">
+        <span className="w-2 h-2 rounded-full bg-[#04CF6A] plus"></span>
+        {designations.length} Active Designations
+      </button>
+    </div>
+  </div>
+</div>
+
+{/* Search & Toggle */}
+<div className="search-toggle flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 items-center">
+  {/* Search */}
+  <div className="search-box relative">
+    <Search className="absolute left-3 top-2 text-gray-400 !w-3 h-3" />
+    <input
+      type="text"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
+      placeholder="Search designations..."
+      className="search-input !w-[250px]" // fixed width
+    />
+  </div>
+
+  {/* Toggle form */}
+  <button
+    onClick={() => setShowForm(!showForm)}
+    className="btn-toggle flex items-center justify-center gap-1"
+  >
+    <Plus className="w-3 h-3" />
+    {showForm ? "Close Form" : "Create Designations"}
+  </button>
+</div>
+</div>
       {/* Create Form */}
       {showForm && (
         <form onSubmit={handleSubmit} className="department-form">
@@ -281,109 +316,108 @@ export default function CreateDesignationForm({ onBack }) {
       )}
 
       {/* Table */}
-      <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 shadow-lg">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="flex items-center gap-2 text-teal-400 font-semibold text-lg">
-            <Badge className="w-5 h-5" /> Existing Designations
-          </h2>
-          <span className="text-sm text-gray-400">
-            Total: {designations.length} designations
-          </span>
-        </div>
+      <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 shadow-lg overflow-x-auto">
+  {/* Header */}
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+    <h2 className="flex items-center gap-2 text-teal-400 font-semibold text-lg">
+      <Badge className="w-5 h-5" /> Existing Designations
+    </h2>
+    <span className="text-sm text-gray-400">
+      Total: {designations.length} designations
+    </span>
+  </div>
 
-        <div className="table-wrapper">
-          <table className="w-full text-left">
-            <thead className="table-head">
-              <tr>
-                <th className="table-cell">Department</th>
-                <th className="table-cell">Designation</th>
-                <th className="table-cell-icon color-[#00d4aa]  flex gap-4">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-800 text-sm">
-              {groupedDesignations.length > 0 ? (
-                groupedDesignations.map((group) =>
-                  group.designations.map((desig, id) => (
-                    <tr key={desig.designationId} className="table-row">
-                      <td className="table-cell-name">
-                        <div className="flex items-center gap-1 ">
-                          {id === 0 ? (
-                            <Building2 className="w-4 h-4 text-teal-400 " />
-                          ) : (
-                            ""
-                          )}{" "}
-                          {id === 0 ? group.deptName : ""}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-gray-300">
-                        {editId === desig.designationId ? (
-                          <div>
-                            <input
-                              type="text"
-                              value={editText}
-                              onChange={handleEditTextChange}
-                              className="form-input"
-                              placeholder="Enter new name (letters only)..."
-                            />
-                            <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-1 ">
-                            {" "}
-                            <Badge className="w-4 h-4 text-teal-400 " />
-                            {desig.designationDesc}
-                          </div>
-                        )}
-                      </td>
-                      <td className="table-cell-icon flex gap-4">
-                        {editId === desig.designationId ? (
-                          <>
-                            <button
-                              onClick={() =>
-                                handleSaveEdit(desig.designationId)
-                              }
-                              className="text-teal-400 hover:underline"
-                            >
-                              Save
-                            </button>
-                            <button
-                              onClick={handleCancelEdit}
-                              className="text-gray-400 hover:underline"
-                            >
-                              Cancel
-                            </button>
-                          </>
-                        ) : (
-                          <button
-                            onClick={() => handleEditInline(desig)}
-                            className="flex items-center gap-1 text-teal-400 hover:underline"
-                          >
-                            <Pencil className="w-4 h-4" /> Edit
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                )
-              ) : (
-                <tr>
-                  <td
-                    colSpan={3}
-                    className="table-cell table-cell-muted text-center"
+  {/* Table */}
+ <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200 rounded-lg table-scrollbar">
+  <table className="w-full text-left table-auto min-w-[600px] border-collapse">
+    <thead className="table-head">
+      <tr>
+        <th className="table-cell px-4 py-2">Department</th>
+        <th className="table-cell px-4 py-2">Designation</th>
+        <th className="table-cell px-4 py-2 text-right">Actions</th>
+      </tr>
+    </thead>
+    <tbody className="divide-y divide-gray-800 text-sm">
+      {groupedDesignations.length > 0 ? (
+        groupedDesignations.map((group) =>
+          group.designations.map((desig, id) => (
+            <tr key={desig.designationId} className="table-row">
+              <td className="table-cell-name px-4 py-2">
+                <div className="flex items-center gap-1">
+                  {id === 0 ? (
+                    <Building2 className="w-4 h-4 text-teal-400" />
+                  ) : null}{" "}
+                  {id === 0 ? group.deptName : ""}
+                </div>
+              </td>
+              <td className="px-4 py-2 text-gray-300">
+                {editId === desig.designationId ? (
+                  <div>
+                    <input
+                      type="text"
+                      value={editText}
+                      onChange={handleEditTextChange}
+                      className="form-input w-full"
+                      placeholder="Enter new name (letters only)..."
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Only letters, spaces, and hyphens are allowed
+                    </p>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1">
+                    <Badge className="w-4 h-4 text-teal-400" />
+                    {desig.designationDesc}
+                  </div>
+                )}
+              </td>
+              <td className="table-cell-icon px-4 py-2 flex justify-end gap-4">
+                {editId === desig.designationId ? (
+                  <>
+                    <button
+                      onClick={() => handleSaveEdit(desig.designationId)}
+                      className="text-teal-400 hover:underline"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={handleCancelEdit}
+                      className="text-gray-400 hover:underline"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => handleEditInline(desig)}
+                    className="flex items-center gap-1 text-teal-400 hover:underline"
                   >
-                    No designations found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                    <Pencil className="w-4 h-4" /> Edit
+                  </button>
+                )}
+              </td>
+            </tr>
+          ))
+        )
+      ) : (
+        <tr>
+          <td
+            colSpan={3}
+            className="table-cell table-cell-muted text-center px-4 py-2"
+          >
+            No designations found.
+          </td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</div>
+
+</div>
+
 
       {/* Guidelines */}
-      <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 mt-6 shadow-lg">
+      {/* <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 mt-6 shadow-lg">
         <h3 className="text-teal-400 font-semibold mb-3">
           Designation Management Guidelines
         </h3>
@@ -404,7 +438,20 @@ export default function CreateDesignationForm({ onBack }) {
             ⚠️ <span className="text-white">Validation:</span> Only letters, spaces, and hyphens allowed
           </p>
         </div>
-      </div>
+      </div> */}
+       <div className="guidelines-card">
+  <h3 className="guidelines-title text-base sm:text-lg">Department Management Guidelines</h3>
+  <div className="guidelines-grid text-sm sm:text-base">
+    <p>📘 <span className="font-semibold">Create:</span> Add new designations
+            under departments</p>
+    <p>🔍 <span className="font-semibold">Search:</span> Quickly find
+            designations</p>
+  </div>
+  <div className="guidelines-grid text-sm sm:text-base">
+    <p>✏️ <span className="font-semibold">Edit:</span>Update designation</p>
+    <p>⚠️ <span className="font-semibold">Validation:</span> Only letters, spaces, and hyphens allowed</p>
+  </div>
+</div>
     </div>
   );
 }

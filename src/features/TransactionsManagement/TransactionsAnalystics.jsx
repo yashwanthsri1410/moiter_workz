@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import "../../styles/styles.css";
 import { TrendingUp, Wallet, XCircle } from "lucide-react";
 import BarChart_Trans from "./BarChart_Trans";
 import PieChart_Trans from "./PieChart_Trans";
 import TransactionStream_Trans from "./TransactionStream_Trans";
 
 const TranscationsAnalystics = () => {
-  // ✅ Hardcoded data instead of API
   const [data] = useState({
     customerSummary: {
       total_customers: 124890,
@@ -18,13 +16,12 @@ const TranscationsAnalystics = () => {
     highRiskCount: 45,
   });
 
-  const { total_customers, active_customers, active_percentage } =
-    data.customerSummary;
+  const { total_customers } = data.customerSummary;
 
   return (
-    <div className="dashboard-container-dx91u">
-      {/* Row 1 */}
-      <div className="dashboard-row1-dx91u">
+    <div className="p-4 flex flex-col gap-6">
+      {/* Row 1 - Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Transactions */}
         <div className="stat-card-dx91u total-customers-dx91u corner-box">
           <div className="card-top-dx91u">
@@ -38,18 +35,6 @@ const TranscationsAnalystics = () => {
             <p className="stat-value-dx91u">
               {total_customers.toLocaleString()}
             </p>
-            {/* <div className="active-row-dx91u">
-              <p className="stat-sub-dx91u">
-                Active: {active_customers.toLocaleString()}
-              </p>
-              <p className="stat-percentage-dx91u">{active_percentage}%</p>
-            </div>
-            <div className="progress-bar-dx91u">
-              <div
-                className="progress-fill-dx91u"
-                style={{ width: `${active_percentage}%` }}
-              ></div>
-            </div> */}
           </div>
         </div>
 
@@ -62,13 +47,9 @@ const TranscationsAnalystics = () => {
           <span></span>
           <p className="stat-value-dx91u">{data.customersAddedToday}</p>
 
-          <div style={{ marginTop: "-20px" }}>
-            <div class="" style={{ fontSize: "10px", color: "#94a3b8" }}>
-              Avg Transaction
-            </div>
-            <div class="" style={{ fontSize: "14px", color: "#e2e8f0" }}>
-              ₹808
-            </div>
+          <div className="mt-1 text-gray-400 text-xs">
+            <div>Avg Transaction</div>
+            <div className="text-white text-sm">₹808</div>
           </div>
         </div>
 
@@ -97,8 +78,8 @@ const TranscationsAnalystics = () => {
         </div>
       </div>
 
-      {/* Row 2 */}
-      <div className="dashboard-row2-dx91u">
+      {/* Row 2 - Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="piechart-box-dx91u">
           <BarChart_Trans />
         </div>
@@ -107,8 +88,8 @@ const TranscationsAnalystics = () => {
         </div>
       </div>
 
-      {/* Row 3 */}
-      <div className="dashboard-row3-dx91u">
+      {/* Row 3 - Transaction Stream */}
+      <div className="w-full">
         <TransactionStream_Trans />
       </div>
     </div>

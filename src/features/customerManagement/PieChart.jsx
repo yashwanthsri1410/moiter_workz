@@ -237,7 +237,7 @@ const PieChart = () => {
   }, [chartData]);
 
   return (
-    <div className="corner-box chart-box-a91z">
+    <div className="corner-box chart-box-a91z w-full h-[300px] md:h-[400px]">
       <span></span>
       <canvas ref={canvasRef}></canvas>
     </div>

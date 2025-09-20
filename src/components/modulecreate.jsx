@@ -165,166 +165,194 @@ export default function ModuleCreation({ onBack }) {
     <div className="department-page">
       {/* Header */}
       <div className="form-header">
-        <div className="back-title">
-          <div className="header-left">
-            <div className="flex items-center gap-[10px]">
-              <button className="header-icon-btn" onClick={onBack}>
-                <ArrowLeft className="text-[#00f5a0] w-5 h-5" />
-              </button>
+        <div className="back-title flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+      {/* Mobile Header */}
+      <div className="flex items-center justify-between w-full sm:hidden">
+        <button className="header-icon-btn" onClick={onBack}>
+          <ArrowLeft className="text-[#00f5a0] w-4 h-4" />
+        </button>
+        <div className="flex flex-col items-center text-center">
+          <h1 className="header-title text-base">Module Management</h1>
+          <p className="header-subtext text-xs">Create and manage application modules</p>
+        </div>
+        <div className="header-icon-box">
+          <Settings className="text-[#00f5a0] w-4 h-4" />
+        </div>
+      </div>
 
-              <div className="header-icon-box">
-                <Settings className="text-[#00f5a0] w-5 h-5" />
-              </div>
-            </div>
-            <div>
-              <h1 className="header-title">Module Management</h1>
-              <p className="header-subtext">Create and manage application modules</p>
-            </div>
+      {/* Active Modules below for mobile */}
+      <div className="flex justify-center w-full sm:hidden mt-2">
+        <button className="btn-count text-xs">
+          <span className="w-2 h-2 rounded-full bg-[#00f5a0]"></span>
+          {modules.length} Active Modules
+        </button>
+      </div>
+
+      {/* Desktop Header */}
+      <div className="hidden sm:flex sm:justify-between sm:items-center w-full gap-[10px]">
+        <div className="header-left flex items-center gap-[10px]">
+          <button className="header-icon-btn" onClick={onBack}>
+            <ArrowLeft className="text-[#00f5a0] w-5 h-5" />
+          </button>
+          <div className="header-icon-box">
+            <Settings className="text-[#00f5a0] w-5 h-5" />
           </div>
-
-          <div className="flex items-center gap-4">
-            {/* Active count */}
-            <button className="btn-count">
-              <span className="w-2 h-2 rounded-full bg-[#00f5a0]"></span>
-              {modules.length} Active Modules
-            </button>
+          <div className="flex flex-col">
+            <h1 className="header-title text-lg">Module Management</h1>
+            <p className="header-subtext text-sm">Create and manage application modules</p>
           </div>
         </div>
-
-        <div className="search-toggle">
-          {/* Search */}
-          <div className="search-box">
-            <Search className="absolute left-3 top-2 text-gray-400 w-4 h-4" />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search modules..."
-              className="search-input"
-            />
-          </div>
-
-          {/* Toggle form */}
-          <button onClick={() => setShowForm(!showForm)} className="btn-toggle">
-            <Plus className="w-4 h-4" />
-            {showForm ? "Close Form" : "Create Module"}
+        <div className="flex items-center gap-4">
+          <button className="btn-count text-sm">
+            <span className="w-2 h-2 rounded-full bg-[#00f5a0]"></span>
+            {modules.length} Active Modules
           </button>
         </div>
       </div>
+    </div>
 
-      {/* Create Form */}
-      {showForm && (
-        <form onSubmit={handleCreate} className="department-form">
-          <h2 className="form-title">Create New Module</h2>
+    {/* Search & Toggle */}
+    <div className="search-toggle flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 items-center mt-2">
+      <div className="search-box relative">
+        <Search className="absolute left-3 top-2 text-gray-400 w-4 h-4" />
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search modules..."
+          className="search-input !w-[250px]"
+        />
+      </div>
+      <button
+        onClick={() => setShowForm(!showForm)}
+        className="btn-toggle flex items-center justify-center gap-1"
+      >
+        <Plus className="w-4 h-4" />
+        {showForm ? "Close Form" : "Create Module"}
+      </button>
+    </div>
+  </div>
 
-          <div>
-            <label className="form-label">Module Name</label>
-            <input
-              type="text"
-              value={newModuleName}
-              onChange={handleNewModuleNameChange}
-              placeholder="Enter module name (letters only)..."
-              className="form-input"
-            />
-            <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
-          </div>
-
-          <div className="form-actions">
-            <button type="button" onClick={() => setShowForm(false)} className="btn-cancel">
-              Cancel
-            </button>
-            <button type="submit" className="btn-toggle">Create Module</button>
-          </div>
-        </form>
-      )}
-
+  {/* Create Form */}
+  {showForm && (
+    <form onSubmit={handleCreate} className="department-form mt-4">
+      <h2 className="form-title">Create New Module</h2>
+      <div className="grid md:grid-cols-2 gap-4">
+        <div>
+          <label className="form-label">Module Name</label>
+          <input
+            type="text"
+            value={newModuleName}
+            onChange={handleNewModuleNameChange}
+            placeholder="Enter module name (letters only)..."
+            className="form-input"
+          />
+          <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
+        </div>
+      </div>
+      <div className="flex justify-end gap-4 pt-2">
+        <button type="button" onClick={() => setShowForm(false)} className="btn-cancel">Cancel</button>
+        <button type="submit" className="btn-toggle">Create Module</button>
+      </div>
+    </form>
+  )}
       {/* Table */}
       <div className="table-card">
-        <div className="table-header">
-          <p className="table-title"><Settings className="w-5 h-5" /> Existing Modules</p>
-          <span className="table-subtext">
-            Total: {filteredModules.length} modules
-          </span>
-        </div>
+  <div className="table-header flex justify-between items-center mb-4">
+    <p className="table-title flex items-center gap-2">
+      <Settings className="w-5 h-5" /> Existing Modules
+    </p>
+    <span className="table-subtext">
+      Total: {filteredModules.length} modules
+    </span>
+  </div>
 
-        <div className="table-wrapper">
-          <table className="w-full text-left">
-            <thead className="table-head">
-              <tr>
-                <th className="table-cell">Module Name</th>
-                <th className="table-cell-icon color-[#00d4aa]  flex gap-4">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredModules.length > 0 ? (
-                filteredModules.map((mod) => (
-                  <tr key={mod.moduleId} className="table-row">
-                    <td className="table-cell-name">
-                      {editingModuleId === mod.moduleId ? (
-                        <div>
-                          <input
-                            type="text"
-                            value={editedModuleName}
-                            onChange={handleEditedModuleNameChange}
-                            className="form-input"
-                            placeholder="Enter new name (letters only)..."
-                          />
-                          <p className="text-xs text-gray-500 mt-1">Only letters, spaces, and hyphens are allowed</p>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1 "> <Settings className="w-4 h-4 text-teal-400 " />{mod.moduleName}</div>
-                      )}
-                    </td>
-                    <td className="table-cell-icon flex gap-4">
-                      {editingModuleId === mod.moduleId ? (
-                        <>
-                          <button onClick={() => handleUpdate(mod.moduleId)} className="text-teal-400 hover:underline">
-                            Save
-                          </button>
-                          <button onClick={() => { setEditingModuleId(null); setEditedModuleName(""); }} className="text-gray-400 hover:underline">
-                            Cancel
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <button
-                            onClick={() => { setEditingModuleId(mod.moduleId); setEditedModuleName(mod.moduleName); }}
-                            className="text-[#00f5a0] hover:underline flex items-center gap-1"
-                          >
-                            <Pencil className="w-4 h-4" /> Edit
-                          </button>
-                          {/* <button className="text-red-500 hover:underline flex items-center gap-1">
-                        <Trash2 className="w-4 h-4" /> Delete
-                      </button> */}
-                        </>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={2} className="table-cell table-cell-muted text-center">
-                    No modules found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+  {/* Responsive Table Wrapper */}
+  <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200 rounded-lg table-scrollbar">
+    <table className="w-full min-w-[600px] text-left table-auto border-collapse">
+      <thead className="table-head">
+        <tr>
+          <th className="table-cell px-4 py-2">Module Name</th>
+          <th className="table-cell px-4 py-2 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-gray-800 text-sm">
+        {filteredModules.length > 0 ? (
+          filteredModules.map((mod) => (
+            <tr key={mod.moduleId} className="table-row">
+              <td className="px-4 py-2">
+                {editingModuleId === mod.moduleId ? (
+                  <div>
+                    <input
+                      type="text"
+                      value={editedModuleName}
+                      onChange={handleEditedModuleNameChange}
+                      className="form-input w-full"
+                      placeholder="Enter new name (letters only)..."
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Only letters, spaces, and hyphens are allowed
+                    </p>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1">
+                    <Settings className="w-4 h-4 text-teal-400" />
+                    {mod.moduleName}
+                  </div>
+                )}
+              </td>
+              <td className="px-4 py-2 flex justify-end gap-4">
+                {editingModuleId === mod.moduleId ? (
+                  <>
+                    <button
+                      onClick={() => handleUpdate(mod.moduleId)}
+                      className="text-teal-400 hover:underline"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => { setEditingModuleId(null); setEditedModuleName(""); }}
+                      className="text-gray-400 hover:underline"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => { setEditingModuleId(mod.moduleId); setEditedModuleName(mod.moduleName); }}
+                    className="text-[#00f5a0] hover:underline flex items-center gap-1"
+                  >
+                    <Pencil className="w-4 h-4" /> Edit
+                  </button>
+                )}
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan={2} className="text-center text-gray-500 px-4 py-2">
+              No modules found.
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+</div>
+
 
       {/* Guidelines */}
-      <div className="guidelines-card">
-        <h3 className="guidelines-title">Module Management Guidelines</h3>
-        <div className="guidelines-grid">
-          <p>📘 <span>Create:</span> Add new modules</p>
-          <p>🔍 <span>Search:</span> Find modules quickly</p>
-        </div>
-        <div className="guidelines-grid">
-          <p>✏️ <span>Edit:</span> Modify module names inline</p>
-          <p>⚠️ <span>Validation:</span> Only letters, spaces, and hyphens allowed</p>
-        </div>
-      </div>
+    <div className="guidelines-card mt-4">
+    <h3 className="guidelines-title text-base sm:text-lg">Module Management Guidelines</h3>
+    <div className="guidelines-grid text-sm sm:text-base">
+      <p>📘 <span className="font-semibold">Create:</span> Add new modules</p>
+      <p>🔍 <span className="font-semibold">Search:</span> Find modules quickly</p>
+    </div>
+    <div className="guidelines-grid text-sm sm:text-base">
+      <p>✏️ <span className="font-semibold">Edit:</span> Modify module names inline</p>
+      <p>⚠️ <span className="font-semibold">Validation:</span> Only letters, spaces, and hyphens allowed</p>
+    </div>
+  </div>
     </div>
   );
 }

@@ -306,44 +306,71 @@ const EmployeeCreationForm = ({ onBack }) => {
     <>
       {/* Top Bar */}
       <div className="top-bar">
-        <div className="flex items-center space-x-3">
-          <button className="icon-btn" onClick={onBack}>
-            <ArrowLeft className="text-teal-400" size={18} />
-          </button>
-          <button className="icon-btn">
-            <User className="text-teal-400" size={18} />
-          </button>
-          <div>
-            <h1 className="top-title">User Management</h1>
-            <p className="top-subtitle">Create new team members</p>
+        <div className="back-title flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+          {/* Mobile Header */}
+          <div className="flex items-center justify-between w-full sm:hidden">
+            <button className="header-icon-btn" onClick={onBack}>
+              <ArrowLeft className="text-[#00d4aa] w-4 h-4" />
+            </button>
+            <div className="flex flex-col items-center text-center">
+              <h1 className="header-title text-base">User Management</h1>
+              <p className="header-subtext text-xs">Create new team members</p>
+            </div>
+            <div className="header-icon-box">
+              <User className="text-[#00d4aa] w-4 h-4" />
+            </div>
+          </div>
+
+          {/* Desktop Header */}
+          <div className="hidden sm:flex sm:justify-between sm:items-center w-full gap-[10px]">
+            <div className="header-left flex items-center gap-[10px]">
+              <button className="header-icon-btn" onClick={onBack}>
+                <ArrowLeft className="text-[#00d4aa] w-5 h-5" />
+              </button>
+              <div className="header-icon-box">
+                <User className="text-[#00d4aa] w-5 h-5" />
+              </div>
+              <div className="flex flex-col">
+                <h1 className="header-title text-lg">User Management</h1>
+                <p className="header-subtext text-sm">
+                  Create new team members
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Form */}
-      <form ref={targetRef} onSubmit={handleSubmit} className="form-container">
+      <form
+        ref={targetRef}
+        onSubmit={handleSubmit}
+        className="form-container text-sm sm:text-base"
+      >
         {/* Full Name */}
         <div className="label-input">
-          <label className="form-label">Full Name *</label>
+          <label className="form-label text-sm sm:text-base">Full Name *</label>
           <input
             type="text"
             placeholder="Enter user's full name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="form-input"
+            className="form-input text-sm sm:text-base"
           />
           <ErrorText errTxt={errors.name} />
         </div>
 
         {/* Email */}
         <div className="label-input">
-          <label className="form-label">Email Address *</label>
+          <label className="form-label text-sm sm:text-base">
+            Email Address *
+          </label>
           <input
             type="email"
             placeholder="Enter user's email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="form-input"
+            className="form-input text-sm sm:text-base"
           />
           <ErrorText errTxt={errors.email} />
         </div>
@@ -351,13 +378,15 @@ const EmployeeCreationForm = ({ onBack }) => {
         {/* Password */}
         {!selectedEmployee && (
           <div className="label-input relative">
-            <label className="form-label">Password *</label>
+            <label className="form-label text-sm sm:text-base">
+              Password *
+            </label>
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Create user's password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="form-input pr-10"
+              className="form-input pr-10 text-sm sm:text-base"
             />
             <button
               type="button"
@@ -372,14 +401,16 @@ const EmployeeCreationForm = ({ onBack }) => {
 
         {/* Department */}
         <div className="label-input">
-          <label className="form-label">Department *</label>
+          <label className="form-label text-sm sm:text-base">
+            Department *
+          </label>
           <select
             value={deptId}
             onChange={(e) => {
               setDeptId(e.target.value);
               setDesignationId("");
             }}
-            className="form-select"
+            className="form-select text-sm sm:text-base"
           >
             <option value="" disabled hidden>
               Select department
@@ -395,11 +426,13 @@ const EmployeeCreationForm = ({ onBack }) => {
 
         {/* Designation */}
         <div className="label-input">
-          <label className="form-label">Designation *</label>
+          <label className="form-label text-sm sm:text-base">
+            Designation *
+          </label>
           <select
             value={designationId}
             onChange={(e) => setDesignationId(e.target.value)}
-            className="form-select"
+            className="form-select text-sm sm:text-base"
             disabled={!deptId}
           >
             <option value="" disabled hidden>
@@ -416,11 +449,11 @@ const EmployeeCreationForm = ({ onBack }) => {
 
         {/* Role */}
         <div className="label-input">
-          <label className="form-label">Role *</label>
+          <label className="form-label text-sm sm:text-base">Role *</label>
           <select
             value={roleAccessId}
             onChange={handleRoleChange}
-            className="form-select"
+            className="form-select text-sm sm:text-base"
             disabled={!designationId}
           >
             <option value="" disabled hidden>
@@ -439,14 +472,17 @@ const EmployeeCreationForm = ({ onBack }) => {
           <div className="accessible-screens">
             <div className="accessible-header">
               <Monitor className="icon" size={16} />
-              <label>Accessible Screens</label>
+              <label className="text-sm sm:text-base">Accessible Screens</label>
             </div>
             <div className="accessible-box">
               {Object.entries(selectedRoleScreens).map(
                 ([moduleName, screens]) => (
                   <div key={moduleName}>
                     {screens.map((screen, index) => (
-                      <span key={index} className="screen-pill">
+                      <span
+                        key={index}
+                        className="screen-pill text-xs sm:text-sm"
+                      >
                         {screen}
                       </span>
                     ))}
@@ -459,10 +495,10 @@ const EmployeeCreationForm = ({ onBack }) => {
 
         {/* User Type */}
         <div className="label-input">
-          <label className="form-label">User Type *</label>
+          <label className="form-label text-sm sm:text-base">User Type *</label>
           <select
             onChange={(e) => setusertype(e.target.value)}
-            className="form-select"
+            className="form-select text-sm sm:text-base"
             value={userType}
           >
             <option value="" disabled hidden>
@@ -476,25 +512,30 @@ const EmployeeCreationForm = ({ onBack }) => {
           <ErrorText errTxt={errors.userType} />
         </div>
 
-        <button type="submit" className="submit-btn">
+        <button
+          type="submit"
+          className="submit-btn text-sm sm:text-base md:text-[12px]"
+        >
           {selectedEmployee ? "Update User" : "+ Create User"}
         </button>
       </form>
+
       <div className="config-forms">
-        <div className="card-header">
-          <div className="card-header-left">
-            <div className="flex items-center gap-[10px]">
-              <div className="header-icon-box">
-                <FileText className="text-[#00d4aa] w-4 h-4" />
-              </div>
+        <div className="card-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-center sm:text-left">
+          {/* Left Side (icon + text always in one row) */}
+          <div className="flex items-center justify-center sm:justify-start gap-3">
+            <div className="header-icon-box">
+              <FileText className="text-[#00d4aa] w-4 h-4" />
             </div>
             <div>
               <h1 className="header-title">Employees</h1>
               <p className="header-subtext">View and manage employee records</p>
             </div>
           </div>
-          <div className="card-header-right">
-            <div className="portal-info">
+
+          {/* Right Side (same row on sm and above, stacks below on mobile) */}
+          <div className="card-header-right flex justify-center sm:justify-end">
+            <div className="portal-info !text-center sm:text-right">
               <p className="portal-label">{employees.length} total</p>
               <p className="portal-link">Admin Portal</p>
             </div>
@@ -502,10 +543,10 @@ const EmployeeCreationForm = ({ onBack }) => {
         </div>
 
         {/* Filters & Pagination */}
-        <div className="bg-[#0c0f16] border border-[#1a1f2e] rounded-xl p-3 flex flex-col gap-3 mt-6">
-          <div className="flex items-center gap-2">
+        <div className="bg-[#0c0f16] border border-[#1a1f2e] rounded-xl p-3 flex flex-col gap-3 items-center md:items-start mt-2.5">
+          <div className="flex flex-col items-center md:items-start md:flex-row gap-2 w-full">
             {/* Search */}
-            <div className="search-box relative">
+            <div className="search-box relative flex-1">
               <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
               <input
                 type="text"
@@ -514,7 +555,7 @@ const EmployeeCreationForm = ({ onBack }) => {
                   setSearchQuery(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="search-input-approval"
+                className="search-input-approval !w-full !sm:w-[50rem]"
                 placeholder="Search employees..."
               />
             </div>
@@ -525,9 +566,9 @@ const EmployeeCreationForm = ({ onBack }) => {
                 setSearchQuery("");
                 setCurrentPage(1);
               }}
-              className="filter-btn"
+              className="filter-btn flex items-center gap-1 px-3 py-1 shrink-0 w-auto sm:w-auto max-w-[100px]"
             >
-              <Filter className="filter-icon" />
+              <Filter className="filter-icon w-3 h-3" />
               Reset
             </button>
           </div>
@@ -573,31 +614,39 @@ const EmployeeCreationForm = ({ onBack }) => {
             </p>
           </div>
 
-          <div className="table-wrapper mt-5">
-            <table className="w-full text-left">
+          <div className="table-wrapper mt-5 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200 rounded-lg table-scrollbar">
+            <table className="w-full min-w-[768px] text-left table-auto border-collapse">
               <thead className="table-head">
                 <tr>
-                  <th className="table-cell">EMP ID</th>
-                  <th className="table-cell">NAME</th>
-                  <th className="table-cell">EMAIL</th>
-                  <th className="table-cell">DEPARTMENT</th>
-                  <th className="table-cell">DESIGNATION</th>
-                  <th className="table-cell">ROLE</th>
-                  <th className="table-cell">STATUS</th>
-                  <th className="table-cell">Actions</th>
+                  <th className="table-cell px-4 py-2">EMP ID</th>
+                  <th className="table-cell px-4 py-2">NAME</th>
+                  <th className="table-cell px-4 py-2">EMAIL</th>
+                  <th className="table-cell px-4 py-2">DEPARTMENT</th>
+                  <th className="table-cell px-4 py-2">DESIGNATION</th>
+                  <th className="table-cell px-4 py-2">ROLE</th>
+                  <th className="table-cell px-4 py-2">STATUS</th>
+                  <th className="table-cell px-4 py-2">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {paginatedConfigurations.length > 0 ? (
-                  paginatedConfigurations.map((emp, idx) => (
+                  paginatedConfigurations.map((emp) => (
                     <tr key={emp.empId} className="table-row">
-                      <td className="table-content">{emp.empId}</td>
-                      <td className="table-content">{emp.userName}</td>
-                      <td className="table-content">{emp.email}</td>
-                      <td className="table-content">{emp.deptName}</td>
-                      <td className="table-content">{emp.designationDesc}</td>
-                      <td className="table-content">{emp.roleDescription}</td>
-                      <td className="table-content">
+                      <td className="table-content px-4 py-2">{emp.empId}</td>
+                      <td className="table-content px-4 py-2">
+                        {emp.userName}
+                      </td>
+                      <td className="table-content px-4 py-2">{emp.email}</td>
+                      <td className="table-content px-4 py-2">
+                        {emp.deptName}
+                      </td>
+                      <td className="table-content px-4 py-2">
+                        {emp.designationDesc}
+                      </td>
+                      <td className="table-content px-4 py-2">
+                        {emp.roleDescription}
+                      </td>
+                      <td className="table-content px-4 py-2">
                         <span
                           className={`px-2 py-1 text-[9px] rounded ${
                             emp.status === 0
@@ -620,7 +669,7 @@ const EmployeeCreationForm = ({ onBack }) => {
                             : ""}
                         </span>
                       </td>
-                      <td className="table-content flex gap-2">
+                      <td className="table-content px-4 py-2 flex gap-2">
                         <button
                           className="header-icon-box"
                           onClick={() => {

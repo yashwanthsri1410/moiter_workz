@@ -101,54 +101,83 @@ export default function DepartmentCreation({ onBack }) {
     <div className="department-page">
       {/* Header */}
       <div className="form-header">
-        <div className="back-title">
-          <div className="header-left">
-            <div className="flex items-center gap-[10px]">
-              <button className="header-icon-btn" onClick={onBack}>
-                <ArrowLeft className="text-[#00d4aa] w-4 h-4" />
-              </button>
+       <div className="back-title flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+  {/* Top row for mobile: Arrow + Title + Building Icon */}
+  <div className="flex items-center justify-between w-full sm:hidden">
+    {/* Arrow */}
+    <button className="header-icon-btn">
+      <ArrowLeft className="text-[#00d4aa] w-4 h-4" />
+    </button>
 
-              <div className="header-icon-box">
-                <Building2 className="text-[#00d4aa] w-4 h-4" />
-              </div>
-            </div>
-            <div>
-              <h1 className="header-title">Department Management</h1>
-              <p className="header-subtext">Create and manage organizational departments</p>
-            </div>
+    {/* Title & Subtitle centered */}
+    <div className="flex flex-col items-center text-center">
+      <h1 className="header-title text-base">Department Management</h1>
+      <p className="header-subtext text-xs">Create and manage organizational departments</p>
+    </div>
 
-          </div>
+    {/* Building Icon */}
+    <div className="header-icon-box">
+      <Building2 className="text-[#00d4aa] w-4 h-4" />
+    </div>
+  </div>
 
-          <div className="flex items-center gap-4">
+  {/* Active Departments below for mobile */}
+  <div className="flex justify-center w-full sm:hidden mt-2">
+    <button className="btn-count text-xs">
+      <span className="w-2 h-2 rounded-full bg-[#04CF6A] plus"></span>
+      {departments.length} Active Departments
+    </button>
+  </div>
 
+  {/* Desktop layout (sm and above) */}
+  <div className="hidden sm:flex sm:justify-between sm:items-center w-full gap-[10px]">
+    {/* Left: Arrow + Building Icon + Title */}
+    <div className="header-left flex items-center gap-[10px]">
+      <button className="header-icon-btn">
+        <ArrowLeft className="text-[#00d4aa] w-4 h-4" />
+      </button>
+      <div className="header-icon-box">
+        <Building2 className="text-[#00d4aa] w-4 h-4" />
+      </div>
+      <div className="flex flex-col">
+        <h1 className="header-title text-lg">Department Management</h1>
+        <p className="header-subtext text-sm">Create and manage organizational departments</p>
+      </div>
+    </div>
 
-            {/* Active count */}
-            <button className="btn-count">
-              <span className="w-2 h-2 rounded-full bg-[#04CF6A]  plus"></span>
-              {departments.length} Active Departments
-            </button>
+    {/* Right: Active Departments */}
+    <div className="flex items-center gap-4">
+      <button className="btn-count text-sm">
+        <span className="w-2 h-2 rounded-full bg-[#04CF6A] plus"></span>
+        {departments.length} Active Departments
+      </button>
+    </div>
+  </div>
+</div>
 
+        <div className="search-toggle flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 items-center">
+  {/* Search */}
+  <div className="search-box relative">
+    <Search className="absolute left-3 top-2 text-gray-400 !w-3 h-3" />
+    <input
+      type="text"
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      placeholder="Search departments..."
+      className="search-input !w-[250px]" // fixed width for all screens
+    />
+  </div>
 
-          </div>
-        </div>
-        <div className="search-toggle">
-          {/* Search */}
-          <div className="search-box">
-            <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search departments..."
-              className="search-input"
-            />
-          </div>
-          {/* Toggle form */}
-          <button onClick={() => setShowForm(!showForm)} className="btn-toggle">
-            <Plus className="w-3 h-3" />
-            {showForm ? "Close Form" : "Create Department"}
-          </button>
-        </div>
+  {/* Toggle form */}
+  <button
+    onClick={() => setShowForm(!showForm)}
+    className="btn-toggle flex items-center justify-center align-center gap-1 "
+  >
+    <Plus className="w-3 h-3" />
+    {showForm ? "Close Form" : "Create Department"}
+  </button>
+</div>
+
       </div>
 
       {/* Create Form */}
@@ -252,16 +281,17 @@ export default function DepartmentCreation({ onBack }) {
 
       {/* Guidelines */}
       <div className="guidelines-card">
-        <h3 className="guidelines-title">Department Management Guidelines</h3>
-        <div className="guidelines-grid">
-          <p>📘 <span>Create:</span> Add new departments</p>
-          <p>🔍 <span>Search:</span> Find departments quickly</p>
-        </div>
-        <div className="guidelines-grid">
-          <p>✏️ <span >Edit:</span> Modify department names inline</p>
-          <p>⚠️ <span>Validation:</span> Only letters, spaces, and hyphens allowed</p>
-        </div>
-      </div>
+  <h3 className="guidelines-title text-base sm:text-lg">Department Management Guidelines</h3>
+  <div className="guidelines-grid text-sm sm:text-base">
+    <p>📘 <span className="font-semibold">Create:</span> Add new departments</p>
+    <p>🔍 <span className="font-semibold">Search:</span> Find departments quickly</p>
+  </div>
+  <div className="guidelines-grid text-sm sm:text-base">
+    <p>✏️ <span className="font-semibold">Edit:</span> Modify department names inline</p>
+    <p>⚠️ <span className="font-semibold">Validation:</span> Only letters, spaces, and hyphens allowed</p>
+  </div>
+</div>
+
     </div>
   );
 }
