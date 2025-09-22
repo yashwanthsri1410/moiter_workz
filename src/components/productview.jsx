@@ -92,10 +92,11 @@ export default function Productview({
   return (
     <div className="config-forms">
       {/* Header */}
-      <div className="card-header">
-        <div className="card-header-left flex items-center gap-3">
+      <div className="card-header flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        {/* Left section */}
+        <div className="card-header-left flex flex-wrap items-center gap-3">
           <button
-            className="approval-back-button"
+            className="approval-back-button whitespace-nowrap flex items-center gap-1"
             onClick={() => setSelectedProduct(null)}
           >
             <ArrowLeft className="w-4 h-4" />
@@ -111,8 +112,10 @@ export default function Productview({
             </p>
           </div>
         </div>
+
+        {/* Right section */}
         <div className="card-header-right">
-          <div className="portal-info flex gap-2">
+          <div className="portal-info flex flex-wrap gap-2">
             <p className="portal-link">
               <span
                 className={`px-2 py-1 rounded text-[10px] ${
@@ -160,20 +163,24 @@ export default function Productview({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-6 text-sm text-gray-300">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-300 text-xs sm:text-sm md:text-[15px]">
           <div>
             <p className="mt-3">
-              <strong className="text-[15px]">ID:</strong>{" "}
+              <strong className="text-xs sm:text-sm md:text-[15px]">ID:</strong>{" "}
               {selectedProduct.productId}
             </p>
             <p className="mt-3">
-              <strong className="text-[15px]">Name:</strong>{" "}
+              <strong className="text-xs sm:text-sm md:text-[15px]">
+                Name:
+              </strong>{" "}
               {selectedProduct.productName}
             </p>
             <p className="mt-3">
-              <strong className="text-[15px]">Program:</strong>{" "}
+              <strong className="text-xs sm:text-sm md:text-[15px]">
+                Program:
+              </strong>{" "}
               <span
-                className={`px-2 py-1 rounded text-[12px] ${
+                className={`px-2 py-1 rounded text-xs sm:text-sm md:text-[15px] ${
                   selectedProduct.programType === "Closed"
                     ? "checker"
                     : selectedProduct.programType === "Semi-Closed"
@@ -189,30 +196,43 @@ export default function Productview({
               </span>
             </p>
             <p className="mt-3">
-              <strong className="text-[15px]">Sub Category:</strong>{" "}
+              <strong className="text-xs sm:text-sm md:text-[15px]">
+                Sub Category:
+              </strong>{" "}
               {selectedProduct.subCategory}
             </p>
             <p className="mt-3">
-              <strong className="text-[15px]">Status:</strong>{" "}
+              <strong className="text-xs sm:text-sm md:text-[15px]">
+                Status:
+              </strong>{" "}
               {statusMap[selectedProduct.status]}
             </p>
           </div>
+
           <div>
             <p className="mt-3">
-              <strong className="text-[15px]">Currency:</strong>{" "}
+              <strong className="text-xs sm:text-sm md:text-[15px]">
+                Currency:
+              </strong>{" "}
               {selectedProduct.currency}
             </p>
             <p className="mt-3">
-              <strong className="text-[15px]">Card Type:</strong>{" "}
+              <strong className="text-xs sm:text-sm md:text-[15px]">
+                Card Type:
+              </strong>{" "}
               {selectedProduct.cardType}
             </p>
             <p className="mt-3">
-              <strong className="text-[15px]">Validity:</strong>{" "}
+              <strong className="text-xs sm:text-sm md:text-[15px]">
+                Validity:
+              </strong>{" "}
               {selectedProduct.minimumValidityDays} -{" "}
               {selectedProduct.maximumValidityDays} days
             </p>
             <p className="mt-3">
-              <strong className="text-[15px]">Access:</strong>{" "}
+              <strong className="text-xs sm:text-sm md:text-[15px]">
+                Access:
+              </strong>{" "}
               {accessMap[selectedProduct.productAccess]}
             </p>
           </div>
@@ -220,8 +240,10 @@ export default function Productview({
 
         {/* Remarks */}
         <div className="mt-4">
-          <p className="mt-3 text-[15px]">
-            <strong className="text-[15px]">Description:</strong>{" "}
+          <p className="mt-3 text-xs sm:text-sm md:text-[15px]">
+            <strong className="text-xs sm:text-sm md:text-[15px]">
+              Description:
+            </strong>{" "}
             {selectedProduct.productDescription || "No description available."}
           </p>
         </div>
@@ -231,31 +253,48 @@ export default function Productview({
       <div className="table-card-bg rounded-xl p-6 mt-6">
         <div className="flex items-center space-x-2 mb-2">
           <CardSimIcon className="w-4 h-4 primary-color" />
-          <h3 className="primary-color text-[15px]"> Transaction Limits</h3>
+          <h3 className="primary-color text-xs sm:text-sm md:text-[15px]">
+            {" "}
+            Transaction Limits
+          </h3>
         </div>
-        <div className="grid grid-cols-3 gap-4 text-sm text-gray-300">
+
+        {/* Grid content */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs sm:text-sm md:text-[15px] text-gray-300">
           <p>
-            <strong className="text-[15px]">Max Balance:</strong>{" "}
+            <strong className="text-xs sm:text-sm md:text-[15px]">
+              Max Balance:
+            </strong>{" "}
             {selectedProduct.maxBalance}
           </p>
           <p>
-            <strong className="text-[15px]">Max Load:</strong>{" "}
+            <strong className="text-xs sm:text-sm md:text-[15px]">
+              Max Load:
+            </strong>{" "}
             {selectedProduct.maxLoadAmount}
           </p>
           <p>
-            <strong className="text-[15px]">Daily Spend:</strong>{" "}
+            <strong className="text-xs sm:text-sm md:text-[15px]">
+              Daily Spend:
+            </strong>{" "}
             {selectedProduct.dailySpendLimit}
           </p>
           <p>
-            <strong className="text-[15px]">Monthly Spend:</strong>{" "}
+            <strong className="text-xs sm:text-sm md:text-[15px]">
+              Monthly Spend:
+            </strong>{" "}
             {selectedProduct.monthlySpendLimit}
           </p>
           <p>
-            <strong className="text-[15px]">Refund Limit:</strong>{" "}
+            <strong className="text-xs sm:text-sm md:text-[15px]">
+              Refund Limit:
+            </strong>{" "}
             {selectedProduct.refundLimit}
           </p>
           <p>
-            <strong className="text-[15px]">Txn/Day:</strong>{" "}
+            <strong className="text-xs sm:text-sm md:text-[15px]">
+              Txn/Day:
+            </strong>{" "}
             {selectedProduct.txnCountLimitPerDay}
           </p>
         </div>
@@ -265,31 +304,47 @@ export default function Productview({
       <div className="table-card-bg rounded-xl p-6 mt-6">
         <div className="flex items-center space-x-2 mb-2">
           <Shield className="w-4 h-4 primary-color" />
-          <h3 className="primary-color text-[15px]">Compliance</h3>
+          <h3 className="primary-color text-xs sm:text-sm md:text-[15px]">
+            Compliance
+          </h3>
         </div>
-        <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
+
+        {/* Grid content */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm md:text-[15px] text-gray-300">
           <p>
-            <strong className="text-[15px]">KYC Required:</strong>{" "}
+            <strong className="text-xs sm:text-sm md:text-[15px]">
+              KYC Required:
+            </strong>{" "}
             {formatValue(selectedProduct.kycRequired)}
           </p>
           <p>
-            <strong className="text-[15px]">KYC Level:</strong>{" "}
+            <strong className="text-xs sm:text-sm md:text-[15px]">
+              KYC Level:
+            </strong>{" "}
             {selectedProduct.kycLevelRequired}
           </p>
           <p>
-            <strong className="text-[15px]">Aadhaar Required:</strong>{" "}
+            <strong className="text-xs sm:text-sm md:text-[15px]">
+              Aadhaar Required:
+            </strong>{" "}
             {formatValue(selectedProduct.aadhaarRequired)}
           </p>
           <p>
-            <strong className="text-[15px]">PAN Required:</strong>{" "}
+            <strong className="text-xs sm:text-sm md:text-[15px]">
+              PAN Required:
+            </strong>{" "}
             {formatValue(selectedProduct.panRequired)}
           </p>
           <p>
-            <strong className="text-[15px]">AML/CFT:</strong>{" "}
+            <strong className="text-xs sm:text-sm md:text-[15px]">
+              AML/CFT:
+            </strong>{" "}
             {formatValue(selectedProduct.amlCftApplicable)}
           </p>
           <p>
-            <strong className="text-[15px]">PEP Check:</strong>{" "}
+            <strong className="text-xs sm:text-sm md:text-[15px]">
+              PEP Check:
+            </strong>{" "}
             {formatValue(selectedProduct.pepCheckRequired)}
           </p>
         </div>
@@ -299,13 +354,17 @@ export default function Productview({
       <div className="table-card-bg rounded-xl p-6 mt-6">
         <div className="flex items-center space-x-2 mb-2">
           <CreditCard className="w-4 h-4 primary-color" />
-          <h3 className="primary-color text-[15px]">Allowed Channels & MCCs</h3>
+          <h3 className="primary-color text-xs sm:text-sm md:text-[15px]">
+            Allowed Channels & MCCs
+          </h3>
         </div>
+
+        {/* Allowed Channels */}
         <div className="flex gap-2 flex-wrap mb-2">
           {selectedProduct.allowedChannels?.map((ch, idx) => (
             <span
               key={idx}
-              className="px-2 py-1 bg-gray-800 rounded text-xs primary-color"
+              className="px-2 py-1 bg-gray-800 rounded text-[10px] sm:text-xs text-[#00d4aa]"
             >
               {ch.includes("_") || ch.includes("-")
                 ? ch
@@ -323,8 +382,12 @@ export default function Productview({
             </span>
           ))}
         </div>
-        <div className="text-sm text-gray-300">
-          <strong className="text-[15px]">MCC Codes:</strong>{" "}
+
+        {/* MCC Codes */}
+        <div className="text-xs sm:text-sm md:text-[15px] text-gray-300">
+          <strong className="text-xs sm:text-sm md:text-[15px]">
+            MCC Codes:
+          </strong>{" "}
           {selectedProduct.allowedMccCodes?.join(", ") || "-"}
         </div>
       </div>
@@ -333,27 +396,37 @@ export default function Productview({
       <div className="table-card-bg rounded-xl p-6 mt-6">
         <div className="flex items-center space-x-2 mb-2">
           <VaultIcon className="w-4 h-4 primary-color" />
-          <h3 className="primary-color text-[15px]">Validity Settings</h3>
+          <h3 className="primary-color text-[13px] sm:text-[15px]">
+            Validity Settings
+          </h3>
         </div>
-        <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
+        <div className="grid grid-cols-2 gap-4 text-xs sm:text-sm text-gray-300">
           <p>
-            <strong className="text-[15px]">Validity Period (Months):</strong>{" "}
+            <strong className="text-[13px] sm:text-[15px]">
+              Validity Period (Months):
+            </strong>{" "}
             {selectedProduct.validityPeriodMonths}
           </p>
           <p>
-            <strong className="text-[15px]">Auto Renewal:</strong>{" "}
+            <strong className="text-[13px] sm:text-[15px]">
+              Auto Renewal:
+            </strong>{" "}
             {formatValue(selectedProduct.autoRenewal)}
           </p>
           <p>
-            <strong className="text-[15px]">Expiry Warning Days:</strong>{" "}
+            <strong className="text-[13px] sm:text-[15px]">
+              Expiry Warning Days:
+            </strong>{" "}
             {selectedProduct.expiryWarningDays}
           </p>
           <p>
-            <strong className="text-[15px]">Dormant Period Days:</strong>{" "}
+            <strong className="text-[13px] sm:text-[15px]">
+              Dormant Period Days:
+            </strong>{" "}
             {selectedProduct.dormantPeriodDays}
           </p>
           <p>
-            <strong className="text-[15px]">
+            <strong className="text-[13px] sm:text-[15px]">
               Closure Allowed Post Expiry:
             </strong>{" "}
             {formatValue(selectedProduct.closureAllowedPostExpiry)}
@@ -365,31 +438,41 @@ export default function Productview({
       <div className="table-card-bg rounded-xl p-6 mt-6">
         <div className="flex items-center space-x-2 mb-2">
           <FileText className="w-4 h-4 primary-color" />
-          <h3 className="primary-color text-[15px]">Other Settings</h3>
+          <h3 className="primary-color text-[13px] sm:text-[15px]">
+            Other Settings
+          </h3>
         </div>
-        <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm text-gray-300">
           <p>
-            <strong className="text-[15px]">Reloadable:</strong>{" "}
+            <strong className="text-[13px] sm:text-[15px]">Reloadable:</strong>{" "}
             {formatValue(selectedProduct.reloadable)}
           </p>
           <p>
-            <strong className="text-[15px]">Transferable:</strong>{" "}
+            <strong className="text-[13px] sm:text-[15px]">
+              Transferable:
+            </strong>{" "}
             {formatValue(selectedProduct.transferable)}
           </p>
           <p>
-            <strong className="text-[15px]">Multi Use Allowed:</strong>{" "}
+            <strong className="text-[13px] sm:text-[15px]">
+              Multi Use Allowed:
+            </strong>{" "}
             {formatValue(selectedProduct.multiUseAllowed)}
           </p>
           <p>
-            <strong className="text-[15px]">Audit Trail:</strong>{" "}
+            <strong className="text-[13px] sm:text-[15px]">Audit Trail:</strong>{" "}
             {formatValue(selectedProduct.auditTrailEnabled)}
           </p>
           <p>
-            <strong className="text-[15px]">Domestic Transfer:</strong>{" "}
+            <strong className="text-[13px] sm:text-[15px]">
+              Domestic Transfer:
+            </strong>{" "}
             {formatValue(selectedProduct.domesticTransferAllowed)}
           </p>
           <p>
-            <strong className="text-[15px]">Cross Border Allowed:</strong>{" "}
+            <strong className="text-[13px] sm:text-[15px]">
+              Cross Border Allowed:
+            </strong>{" "}
             {formatValue(selectedProduct.crossBorderAllowed)}
           </p>
         </div>
@@ -399,19 +482,25 @@ export default function Productview({
       <div className="table-card-bg rounded-xl p-6 mt-6">
         <div className="flex items-center space-x-2 mb-2">
           <ReceiptPoundSterlingIcon className="w-4 h-4 primary-color" />
-          <h3 className="primary-color text-[15px]">Eligibility</h3>
+          <h3 className="primary-color text-[13px] sm:text-[15px]">
+            Eligibility
+          </h3>
         </div>
-        <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm text-gray-300">
           <p>
-            <strong className="text-[15px]">Age:</strong>{" "}
+            <strong className="text-[13px] sm:text-[15px]">Age:</strong>{" "}
             {selectedProduct.customerAgeMin} - {selectedProduct.customerAgeMax}
           </p>
           <p>
-            <strong className="text-[15px]">Customer Types:</strong>{" "}
+            <strong className="text-[13px] sm:text-[15px]">
+              Customer Types:
+            </strong>{" "}
             {selectedProduct.eligibleCustomerTypes?.join(", ")}
           </p>
           <p>
-            <strong className="text-[15px]">Employment Types:</strong>{" "}
+            <strong className="text-[13px] sm:text-[15px]">
+              Employment Types:
+            </strong>{" "}
             {selectedProduct.employmentTypesAllowed?.join(", ")}
           </p>
         </div>
@@ -421,9 +510,9 @@ export default function Productview({
       <div className="table-card p-4 rounded-md mt-5">
         <div className="flex items-center space-x-2 mb-2">
           <NotebookPen className="w-4 h-4 primary-color" />
-          <h3 className="primary-color text-[15px]">Remarks</h3>
+          <h3 className="primary-color text-[13px] sm:text-[15px]">Remarks</h3>
         </div>
-        <p className="text-gray-300 text-[16px]">
+        <p className="text-gray-300 text-[14px] sm:text-[16px]">
           {selectedProduct.remarks || "No remarks available"}
         </p>
       </div>
@@ -433,19 +522,23 @@ export default function Productview({
       <div className="product-actions mt-6">
         <div className="flex items-center space-x-2 mb-2">
           <Shield className="w-4 h-4 primary-color" />
-          <h3 className="primary-color text-[15px]">Product Review Actions</h3>
+          <h3 className="primary-color text-[13px] sm:text-[15px]">
+            Product Review Actions
+          </h3>
         </div>
+
         <div className="button-group">
           <button
-            className="btn approval-btn-blue"
+            className="btn approval-btn-blue sm:w-auto"
             onClick={() => handleActionClick(3)}
           >
             <RefreshCw className="w-4 h-4" />
             <span>Recheck Product</span>
           </button>
-          <div className="button-group-row flex gap-2 mt-2">
+
+          <div className="button-group-row flex flex-col sm:flex-row gap-2 mt-2">
             <button
-              className="btn approval-btn-green"
+              className="btn approval-btn-green w-full sm:w-auto"
               onClick={() => handleActionClick(0)}
             >
               <Check className="w-4 h-4" />
@@ -453,7 +546,7 @@ export default function Productview({
             </button>
 
             <button
-              className="btn approval-btn-red"
+              className="btn approval-btn-red w-full sm:w-auto"
               onClick={() => handleActionClick(2)}
             >
               <X className="w-4 h-4" />
@@ -461,7 +554,8 @@ export default function Productview({
             </button>
           </div>
         </div>
-        <p className="note text-gray-400 text-sm mt-2">
+
+        <p className="note text-gray-400 text-[12px] sm:text-sm mt-2 text-center sm:text-left">
           Review all product details carefully before making a decision
         </p>
       </div>

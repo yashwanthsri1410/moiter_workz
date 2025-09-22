@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
-import "../../styles/styles.css";
 import { Users, UserPlus, Clock, Shield } from "lucide-react";
 import PieChart from "./PieChart";
 import BarChart from "./BarChart";
 import RecentCustomer from "./RecentCustomer";
-
-// import "./All.css";
 
 const CustomerManagement = () => {
   const [data, setData] = useState(null);
@@ -22,94 +19,99 @@ const CustomerManagement = () => {
       .catch((err) => console.error("Failed to fetch dashboard data:", err));
   }, []);
 
-  if (!data) return <p>Loading...</p>;
+  if (!data) return <p className="text-gray-400">Loading...</p>;
 
   const { total_customers, active_customers, active_percentage } =
     data.customerSummary;
 
   return (
-    <div className="dashboard-container-dx91u">
-      {/* Row 1 */}
-
-      <div className="dashboard-row1-dx91u">
+    <div className="p-5 space-y-5">
+      {/* Row 1 - Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Total Customers */}
-        <div className="stat-card-dx91u total-customers-dx91u corner-box">
-          <div className="card-top-dx91u">
-            <div className="card-header-dx91u">
-              <h3>Total Customers</h3>
-              <Users className="card-icon-dx91u" />
-            </div>
+        <div className="bg-[#0d1017] rounded-lg p-4 flex flex-col gap-4 shadow hover:-translate-y-1 transition corner-box">
+          <div className="flex justify-between items-center">
+            <h3 className="text-xs font-semibold text-gray-400">
+              Total Customers
+            </h3>
+            <Users className="w-4 h-4 text-blue-500" />
           </div>
           <span></span>
-          <div className="card-bottom-dx91u">
-            <p className="stat-value-dx91u">
-              {total_customers.toLocaleString()}
-            </p>
-
-            <div className="active-row-dx91u">
-              <p className="stat-sub-dx91u">
-                Active: {active_customers.toLocaleString()}
-              </p>
-              <p className="stat-percentage-dx91u">{active_percentage}%</p>
-            </div>
-
-            <div className="progress-bar-dx91u">
-              <div
-                className="progress-fill-dx91u"
-                style={{ width: `${active_percentage}%` }}
-              ></div>
-            </div>
+          <p className="text-2xl font-bold text-[#00d4aa]">
+            {total_customers.toLocaleString()}
+          </p>
+          <div className="flex justify-between text-xs text-gray-300">
+            <p>Active: {active_customers.toLocaleString()}</p>
+            <p>{active_percentage}%</p>
+          </div>
+          <div className="w-full h-1.5 bg-gray-200 rounded">
+            <div
+              className="h-1.5 bg-[#00d48e] rounded"
+              style={{ width: `${active_percentage}%` }}
+            ></div>
           </div>
         </div>
 
         {/* Customer Added Today */}
-        <div className="stat-card-dx91u customer-today-dx91u corner-box">
-          <div className="card-header-dx91u">
-            <h3>Customer Added Today</h3>
-            <UserPlus className="card-icon-dx91u" />
+        <div className="bg-[#0d1017] rounded-lg p-4 flex flex-col gap-4 shadow hover:-translate-y-1 transition corner-box">
+          <div className="flex justify-between items-center">
+            <h3 className="text-xs font-semibold text-gray-400">
+              Customer Added Today
+            </h3>
+            <UserPlus className="w-4 h-4 text-blue-500" />
           </div>
           <span></span>
-          <p className="stat-value-dx91u">{data.customersAddedToday}</p>
+          <p className="text-2xl font-bold text-[#00d4aa]">
+            {data.customersAddedToday}
+          </p>
         </div>
 
         {/* KYC Pending */}
-        <div className="stat-card-dx91u kyc-pending-dx91u corner-box">
-          <div className="card-header-dx91u">
-            <h3>KYC Pending</h3>
-            <Clock className="card-icon-dx91u warning-dx91u" />
+        <div className="bg-[#0d1017] rounded-lg p-4 flex flex-col gap-4 shadow hover:-translate-y-1 transition corner-box">
+          <div className="flex justify-between items-center">
+            <h3 className="text-xs font-semibold text-gray-400">KYC Pending</h3>
+            <Clock className="w-4 h-4 text-yellow-500" />
           </div>
           <span></span>
-          <p className="stat-value-dx91u highlight-yellow-dx91u">
+          <p className="text-2xl font-bold text-yellow-500">
             {data.kycPendingCount.toLocaleString()}
           </p>
         </div>
 
         {/* High Risk */}
-        <div className="stat-card-dx91u high-risk-dx91u corner-box">
-          <div className="card-header-dx91u">
-            <h3>High Risk</h3>
-            <Shield className="card-icon-dx91u danger-dx91u" />
+        <div className="bg-[#0d1017] rounded-lg p-4 flex flex-col gap-4 shadow hover:-translate-y-1 transition corner-box">
+          <div className="flex justify-between items-center">
+            <h3 className="text-xs font-semibold text-gray-400">High Risk</h3>
+            <Shield className="w-4 h-4 text-red-500" />
           </div>
           <span></span>
-          <p className="stat-value-dx91u highlight-red-dx91u">
+          <p className="text-2xl font-bold text-red-500">
             {data.highRiskCount.toLocaleString()}
           </p>
         </div>
       </div>
 
-      {/* Row 2 */}
-      <div className="dashboard-row2-dx91u">
-        <div className="piechart-box-dx91u">
-          <PieChart />
+      {/* Row 2 - Charts */}
+      {/* Row 2 - Charts */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* Pie Chart */}
+        <div className="md:h-[400px] w-full flex items-center justify-center">
+          <div className="w-full h-full">
+            <PieChart />
+          </div>
         </div>
-        <div className="piechart-box-dx91u">
-          <BarChart />
+
+        {/* Bar Chart */}
+        <div className="h-[300px] md:h-[400px] w-full flex items-center justify-center">
+          <div className="w-full h-full">
+            <BarChart />
+          </div>
         </div>
       </div>
 
-      {/* Row 3 */}
-      <div className="dashboard-row3-dx91u">
-        <RecentCustomer />
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200 rounded-lg">
+        {" "}
+        <RecentCustomer />{" "}
       </div>
     </div>
   );

@@ -205,7 +205,7 @@ const BarChart_Trans = () => {
   };
 
   return (
-    <div className="corner-box chart-box-a91z">
+    <div className="corner-box">
       <Bar data={chartData} options={options} plugins={[verticalTicks]} />
       <span></span>
     </div>

@@ -1417,7 +1417,6 @@ export default function Partnercreate() {
                 </button>
               ))}
             </div>
-
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}

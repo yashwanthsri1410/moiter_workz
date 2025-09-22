@@ -417,6 +417,29 @@ select:focus {
   flex-direction: column;
 }
 
+@media (max-width: 640px) {
+  .kyc-compliance-grid {
+    display: grid; /* keep it grid */
+    grid-template-columns: 1fr; /* single column */
+    gap: 1rem; /* smaller gap on mobile */
+  }
+
+  .kyc-left,
+  .compliance-table {
+    width: 100%;
+  }
+
+  .form-group label,
+  .compliance-label,
+  .radio-group label {
+    font-size: 0.75rem; /* smaller font on mobile */
+  }
+
+  .form-input,
+  .radio-group input + span {
+    font-size: 0.75rem;
+  }
+}
 .compliance-title {
   color: #00c2c2;
   /* teal like your screenshot */
@@ -1570,7 +1593,7 @@ tbody tr {
 }
 
 .table-wrapper {
-  overflow: hidden;
+  /* overflow: hidden; */
   border: 1px solid #1f2937;
   border-radius: 8px;
 }
@@ -1620,6 +1643,30 @@ tbody tr {
   font-size: 12px;
   color: var(--primary-color);
   font-weight: normal;
+}
+/* Custom scrollbar */
+.table-scrollbar::-webkit-scrollbar {
+  height: 6px; /* for horizontal scrollbar */
+}
+
+.table-scrollbar::-webkit-scrollbar-track {
+  background: #0a1625; /* track background */
+  border-radius: 10px;
+}
+
+.table-scrollbar::-webkit-scrollbar-thumb {
+  background: #00d4aa; /* thumb color */
+  border-radius: 10px;
+}
+
+.table-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #00b894; /* darker shade on hover */
+}
+
+/* For Firefox */
+.table-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #00d4aa #0d0f12;
 }
 
 /* ---------- Guidelines ---------- */
@@ -2697,7 +2744,6 @@ textarea.form-input {
 .partner-overview-section p {
   margin-bottom: 12px;
   text-align: left;
-  
 }
 
 .partner-overview-label {
@@ -2721,6 +2767,31 @@ textarea.form-input {
   align-items: center;
   gap: 6px;
   margin-top: 4px;
+}
+
+.partner-overview-icon {
+  color: #9ca3af;
+}
+@media (max-width: 640px) {
+  .partner-overview-content {
+    display: flex !important;
+    flex-direction: column;
+    gap: 0px; /* smaller gap for mobile */
+  }
+
+  .partner-overview-section p {
+    margin-bottom: 8px;
+  }
+
+  .partner-overview-label,
+  .partner-overview-bold {
+    font-size: 12px; /* slightly smaller font on mobile */
+  }
+
+  .partner-overview-icon-inline {
+    gap: 4px;
+    margin-top: 2px;
+  }
 }
 
 /* Secondary card grid layout */
@@ -3257,3 +3328,7 @@ textarea.form-input {
   border-radius: 6px;
   object-fit: contain;
 }
+
+/* --------------------------------------------------------------------------------------------- */
+/* Media Query */
+/* --------------------------------------------------------------------------------------------- */

@@ -207,12 +207,13 @@ const Cards = () => {
   }
 
   return (
-    <div className="db-dashboard">
-      <WalletCard data={data} />
-      <BalanceCard data={data} />
-      <LoadCard data={data} />
-      <SpendCard data={data} />
-    </div>
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-0">
+  <WalletCard data={data} />
+  <BalanceCard data={data} />
+  <LoadCard data={data} />
+  <SpendCard data={data} />
+</div>
+
   );
 };
 

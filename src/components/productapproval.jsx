@@ -134,33 +134,39 @@ export default function ProductApproval() {
         </>
       ) : (
         <>
-          <div className="card-header">
-            <div className="card-header-left">
-              <div className="flex items-center gap-[10px]">
-                <div className="header-icon-box">
-                  <PackagePlus className="primary-color w-4 h-4" />
-                </div>
+          <div className="card-header flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+            {/* Left section */}
+            <div className="card-header-left flex items-center gap-3 justify-center sm:justify-start">
+              <div className="header-icon-box">
+                <PackagePlus className="primary-color w-4 h-4" />
               </div>
-              <div>
+              <div className="text-center sm:text-left">
                 <h1 className="header-title">Product Approvals</h1>
                 <p className="header-subtext">
                   Review and approve product configurations
                 </p>
               </div>
             </div>
-            <div className="card-header-right">
-              <div className="portal-info">
-                <p className="portal-label">{configurations.length} total</p>
-                <p className="portal-link">checker Portal</p>
+
+            {/* Right section */}
+            <div className="card-header-right flex justify-center sm:justify-end w-full">
+              <div className="portal-info text-center sm:text-right">
+                <p className="portal-label text-center sm:text-right">
+                  {configurations.length} total
+                </p>
+                <p className="portal-link">Checker Portal</p>
               </div>
             </div>
           </div>
 
           <div className="tables-search-card rounded-xl p-3 flex flex-col gap-3 mt-6">
-            {/* Top row: Search + Filters + Pagination */}
-            <div className="flex items-center gap-2">
+            {/* Top row: Search + Filters */}
+            <div
+              className="flex flex-col md:flex-row md:items-center gap-2 w-full"
+              style={{ alignItems: "center" }}
+            >
               {/* Search Box */}
-              <div className="search-box relative">
+              <div className="search-box relative flex-1 w-full md:w-auto">
                 <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
                 <input
                   type="text"
@@ -169,13 +175,13 @@ export default function ProductApproval() {
                     setSearchQuery(e.target.value);
                     setCurrentPage(1); // reset to page 1 when searching
                   }}
-                  className="search-input-approval"
+                  className="search-input-approval !w-full md:w-auto"
                   placeholder="Search configurations..."
                 />
               </div>
 
               {/* Program Type Filter */}
-              <div className="form-group">
+              <div className="form-group w-full md:w-auto">
                 <select
                   name="programType"
                   value={selectedProgramType}
@@ -183,7 +189,7 @@ export default function ProductApproval() {
                     setSelectedProgramType(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="form-input"
+                  className="form-input w-full md:w-auto"
                 >
                   <option value="">All Program Types</option>
                   <option value="Closed">Closed</option>
@@ -191,7 +197,8 @@ export default function ProductApproval() {
                   <option value="Semi-Closed">Semi-Closed</option>
                 </select>
               </div>
-              {/* Filter Button (can be used to reset filters later) */}
+
+              {/* Reset Filters */}
               <button
                 onClick={() => {
                   setSelectedProgramType("");
@@ -199,15 +206,15 @@ export default function ProductApproval() {
                   setSearchQuery("");
                   setCurrentPage(1);
                 }}
-                className="filter-btn"
+                className="filter-btn flex items-center gap-1 px-3 py-1 shrink-0 max-w-[100px] md:max-w-none"
               >
-                <Filter className="filter-icon" />
+                <Filter className="filter-icon w-3 h-3" />
                 Reset
               </button>
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center gap-2 ">
+            <div className="flex items-center justify-center md:justify-start gap-2 w-full mt-2">
               {/* Prev Button */}
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
@@ -221,8 +228,10 @@ export default function ProductApproval() {
                 <ChevronLeft className="w-4 h-4" />
               </button>
 
-              {/* Active Page Only */}
-              <span className={paginationStyle}>{currentPage}</span>
+              {/* Active Page */}
+              <span className="w-6 h-6 flex items-center justify-center rounded-md bg-[#00d4aa] text-black text-[12px]">
+                {currentPage}
+              </span>
 
               {/* Next Button */}
               <button
@@ -248,86 +257,102 @@ export default function ProductApproval() {
               </p>
             </div>
 
-            <div className="table-wrapper mt-5">
-              <table className="w-full text-left">
-                <thead className="table-head">
+            <div className="table-wrapper mt-5 overflow-x-auto table-scrollbar">
+              <table className="w-full text-left border-collapse min-w-[800px]">
+                <thead className="table-head sticky top-0 bg-[#0c0f16] z-10">
                   <tr>
                     <th className="table-cell">ID</th>
                     <th className="table-cell">Configuration Name</th>
                     <th className="table-cell">Program Type</th>
                     <th className="table-cell">Sub Category</th>
-                    <th className="table-cell"> Status</th>
+                    <th className="table-cell">Status</th>
                     <th className="table-cell">Remarks</th>
                     {/* <th className="table-cell">Product Accessibility</th> */}
                     <th className="table-cell">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {paginatedConfigurations.map((cfg, idx) => (
-                    <tr key={cfg.productId || idx} className="table-row">
-                      <td className="table-content primary-color">
-                        {cfg.productId}
-                      </td>
-                      <td className="table-content">{cfg.productName}</td>
-                      <td className="table-content">
-                        <span
-                          className={`px-2 py-1 rounded text-[10px] ${
-                            cfg.programType === "Closed"
-                              ? "checker"
-                              : cfg.programType === "Semi-Closed"
-                              ? "infra"
-                              : cfg.programType === "Open"
-                              ? "superuser"
-                              : cfg.programType === "open"
-                              ? "maker"
-                              : ""
-                          }`}
-                        >
-                          {cfg.programType}
-                        </span>
-                      </td>
-                      <td className="table-content">{cfg.subCategory}</td>
-                      <td>
-                        <span
-                          className={`px-2 py-1 rounded text-[10px] ${
-                            cfg.status === 0
-                              ? "checker"
-                              : cfg.status === 1
-                              ? "infra"
-                              : cfg.status === 2
-                              ? "superuser"
-                              : cfg.status === 3
-                              ? "maker"
-                              : ""
-                          }`}
-                        >
-                          {getStatusLabel(cfg.status)}
-                        </span>
-                      </td>
-                      <td className="table-content ">{cfg.remarks}</td>
-                      {/* <td >
+                  {paginatedConfigurations.length > 0 ? (
+                    paginatedConfigurations.map((cfg, idx) => (
+                      <tr key={cfg.productId || idx} className="table-row">
+                        <td className="table-content primary-color whitespace-nowrap">
+                          {cfg.productId}
+                        </td>
+                        <td className="table-content whitespace-nowrap">
+                          {cfg.productName}
+                        </td>
+                        <td className="table-content whitespace-nowrap">
+                          <span
+                            className={`px-2 py-1 rounded text-[10px] ${
+                              cfg.programType === "Closed"
+                                ? "checker"
+                                : cfg.programType === "Semi-Closed"
+                                ? "infra"
+                                : cfg.programType === "Open"
+                                ? "superuser"
+                                : cfg.programType === "open"
+                                ? "maker"
+                                : ""
+                            }`}
+                          >
+                            {cfg.programType}
+                          </span>
+                        </td>
+                        <td className="table-content whitespace-nowrap">
+                          {cfg.subCategory}
+                        </td>
+                        <td className="table-content whitespace-nowrap">
+                          <span
+                            className={`px-2 py-1 rounded text-[10px] ${
+                              cfg.status === 0
+                                ? "checker"
+                                : cfg.status === 1
+                                ? "infra"
+                                : cfg.status === 2
+                                ? "superuser"
+                                : cfg.status === 3
+                                ? "maker"
+                                : ""
+                            }`}
+                          >
+                            {getStatusLabel(cfg.status)}
+                          </span>
+                        </td>
+                        <td className="table-content whitespace-nowrap">
+                          {cfg.remarks || "-"}
+                        </td>
 
-                                            <span
-                                                className={`w-[70px] gap-[5px] flex items-center px-2 py-1 rounded text-[10px] leading-none ${cfg.productAccess === 1 ? " checker" : cfg.productAccess === 2 ? "superuser" : ""
-                                                    }`} onClick={() => { submitAction(cfg); setid(cfg?.productId) }}
-                                            >
-                                                <Power className="w-3 h-3" />
-                                                {getproductacessLabel(cfg.productAccess)}
-                                            </span>
+                        {/* Product Accessibility (optional) */}
+                        {/* <td>
+              <span
+                className={`w-[70px] gap-[5px] flex items-center px-2 py-1 rounded text-[10px] leading-none ${
+                  cfg.productAccess === 1
+                    ? "checker"
+                    : cfg.productAccess === 2
+                    ? "superuser"
+                    : ""
+                }`}
+                onClick={() => {
+                  submitAction(cfg);
+                  setid(cfg?.productId);
+                }}
+              >
+                <Power className="w-3 h-3" />
+                {getproductacessLabel(cfg.productAccess)}
+              </span>
+            </td> */}
 
-                                        </td> */}
-
-                      <td className="table-content">
-                        <button
-                          className="header-icon-box"
-                          onClick={() => setSelectedProduct(cfg)}
-                        >
-                          <EyeIcon className="primary-color w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                  {paginatedConfigurations.length === 0 && (
+                        <td className="table-content flex gap-2">
+                          <button
+                            className="header-icon-box"
+                            onClick={() => setSelectedProduct(cfg)}
+                          >
+                            <EyeIcon className="primary-color w-4 h-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
                     <tr>
                       <td
                         colSpan="8"

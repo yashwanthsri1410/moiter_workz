@@ -107,64 +107,64 @@ export default function ModuleCreation({ onBack }) {
   };
 
   const handleUpdate = async (moduleId) => {
-  if (!editedModuleName.trim()) return alert("Please enter module name.");
+    if (!editedModuleName.trim()) return alert("Please enter module name.");
 
-  const original = modules.find((mod) => mod.moduleId === moduleId);
-  if (!original) return alert("Module not found.");
+    const original = modules.find((mod) => mod.moduleId === moduleId);
+    if (!original) return alert("Module not found.");
 
-  const newNameLower = editedModuleName.trim().toLowerCase();
-  if (newNameLower === original.moduleName.toLowerCase()) {
-    alert("No changes detected.");
-    setEditingModuleId(null);
-    setEditedModuleName("");
-    return;
-  }
+    const newNameLower = editedModuleName.trim().toLowerCase();
+    if (newNameLower === original.moduleName.toLowerCase()) {
+      alert("No changes detected.");
+      setEditingModuleId(null);
+      setEditedModuleName("");
+      return;
+    }
 
-  const exists = modules.some(
-    (mod) =>
-      mod.moduleId !== moduleId &&
-      mod.moduleName.trim().toLowerCase() === newNameLower
-  );
-  if (exists) return alert("A module with this name already exists.");
-
-  const now = new Date().toISOString();
-  const payload = {
-    moduleId,
-    logId:
-      original.logId && original.logId !== "00000000-0000-0000-0000-000000000000"
-        ? original.logId // reuse existing logId
-        : uuidv4(),      // generate new one if missing
-    newName: editedModuleName.trim(),
-    metadata: {
-      ipAddress: ip,
-      userAgent: navigator.userAgent,
-      headers:
-        headersError ||
-        JSON.stringify({ "content-type": "application/json" }),
-      channel: "web",
-      auditMetadata: {
-        createdBy: username,
-        createdDate: now,
-        modifiedBy: username,
-        modifiedDate: now,
-      },
-    },
-  };
-
-  try {
-    await axios.put(
-      `${API_BASE_URL}/ums/api/UserManagement/module_update`,
-      payload
+    const exists = modules.some(
+      (mod) =>
+        mod.moduleId !== moduleId &&
+        mod.moduleName.trim().toLowerCase() === newNameLower
     );
-    setEditingModuleId(null);
-    setEditedModuleName("");
-    fetchModules();
-  } catch (error) {
-    console.error("Update error:", error);
-    alert("Failed to update module.");
-  }
-};
+    if (exists) return alert("A module with this name already exists.");
 
+    const now = new Date().toISOString();
+    const payload = {
+      moduleId,
+      logId:
+        original.logId &&
+        original.logId !== "00000000-0000-0000-0000-000000000000"
+          ? original.logId // reuse existing logId
+          : uuidv4(), // generate new one if missing
+      newName: editedModuleName.trim(),
+      metadata: {
+        ipAddress: ip,
+        userAgent: navigator.userAgent,
+        headers:
+          headersError ||
+          JSON.stringify({ "content-type": "application/json" }),
+        channel: "web",
+        auditMetadata: {
+          createdBy: username,
+          createdDate: now,
+          modifiedBy: username,
+          modifiedDate: now,
+        },
+      },
+    };
+
+    try {
+      await axios.put(
+        `${API_BASE_URL}/ums/api/UserManagement/module_update`,
+        payload
+      );
+      setEditingModuleId(null);
+      setEditedModuleName("");
+      fetchModules();
+    } catch (error) {
+      console.error("Update error:", error);
+      alert("Failed to update module.");
+    }
+  };
 
   const filteredModules = modules.filter((mod) =>
     mod.moduleName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -174,82 +174,128 @@ export default function ModuleCreation({ onBack }) {
     <div className="department-page">
       {/* Header */}
       <div className="form-header">
-        <div className="back-title">
-          <div className="header-left">
-            <div className="flex items-center gap-[10px]">
-              <button className="header-icon-btn" onClick={onBack}>
-                <ArrowLeft className="primary-color w-4 h-4" />
-              </button>
-
-              <div className="header-icon-box">
-                <Settings className="primary-color w-4 h-4" />
-              </div>
-            </div>
-            <div>
-              <h1 className="header-title">Module Management</h1>
-              <p className="header-subtext">
+        <div className="back-title flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+          {/* Mobile Header */}
+          <div className="flex items-center justify-between w-full sm:hidden">
+            <button className="header-icon-btn" onClick={onBack}>
+              <ArrowLeft className="primary-color w-4 h-4" />
+            </button>
+            <div className="flex flex-col items-center text-center">
+              <h1 className="header-title text-base">Module Management</h1>
+              <p className="header-subtext text-xs">
                 Create and manage application modules
               </p>
             </div>
+            <div className="header-icon-box">
+              <Settings className="primary-color w-4 h-4" />
+            </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* Active count */}
-            <button className="btn-count">
+          {/* Active Modules below for mobile */}
+          <div className="flex justify-center w-full sm:hidden mt-2">
+            <button className="btn-count text-xs">
               <span className="w-2 h-2 rounded-full bg-[#00f5a0]"></span>
               {modules.length} Active Modules
             </button>
           </div>
+
+          {/* Desktop Header */}
+          <div className="hidden sm:flex sm:justify-between sm:items-center w-full gap-[10px]">
+            <div className="header-left flex items-center gap-[10px]">
+              <button className="header-icon-btn" onClick={onBack}>
+                <ArrowLeft className="primary-color w-5 h-5" />
+              </button>
+              <div className="header-icon-box">
+                <Settings className="primary-color w-5 h-5" />
+              </div>
+              <div className="flex flex-col">
+                <h1 className="header-title text-lg">Module Management</h1>
+                <p className="header-subtext text-sm">
+                  Create and manage application modules
+                </p>
+              </div>
+            </div>
+
+            <div className="search-toggle">
+              {/* Search */}
+              <div className="search-box">
+                <Search className="absolute left-3 top-2 text-gray-400 w-4 h-4" />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search modules..."
+                  className="search-input"
+                />
+              </div>
+
+              {/* Toggle form */}
+              <button
+                onClick={() => setShowForm(!showForm)}
+                className="btn-toggle"
+              >
+                {showForm ? (
+                  <>
+                    <X className="w-3 h-3" /> Close Form
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-3 h-3" /> Create Department
+                  </>
+                )}
+              </button>
+              <div className="flex items-center gap-4">
+                <button className="btn-count text-sm">
+                  <span className="w-2 h-2 rounded-full bg-[#00f5a0]"></span>
+                  {modules.length} Active Modules
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="search-toggle">
-          {/* Search */}
-          <div className="search-box">
+        {/* Search & Toggle */}
+        <div className="search-toggle flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 items-center mt-2">
+          <div className="search-box relative">
             <Search className="absolute left-3 top-2 text-gray-400 w-4 h-4" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search modules..."
-              className="search-input"
+              className="search-input !w-[250px]"
             />
           </div>
-
-          {/* Toggle form */}
-          <button onClick={() => setShowForm(!showForm)} className="btn-toggle">
-            {showForm ? (
-              <>
-                <X className="w-3 h-3" /> Close Form
-              </>
-            ) : (
-              <>
-                <Plus className="w-3 h-3" /> Create Department
-              </>
-            )}
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="btn-toggle flex items-center justify-center gap-1"
+          >
+            <Plus className="w-4 h-4" />
+            {showForm ? "Close Form" : "Create Module"}
           </button>
         </div>
       </div>
 
       {/* Create Form */}
       {showForm && (
-        <form onSubmit={handleCreate} className="department-form">
+        <form onSubmit={handleCreate} className="department-form mt-4">
           <h2 className="form-title">Create New Module</h2>
-
-          <div>
-            <label className="form-label">Module Name</label>
-            <input
-              type="text"
-              value={newModuleName}
-              onChange={handleNewModuleNameChange}
-              placeholder="Enter module name (letters only)..."
-              className="form-input"
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Only letters, spaces, and hyphens are allowed
-            </p>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <label className="form-label">Module Name</label>
+              <input
+                type="text"
+                value={newModuleName}
+                onChange={handleNewModuleNameChange}
+                placeholder="Enter module name (letters only)..."
+                className="form-input"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Only letters, spaces, and hyphens are allowed
+              </p>
+            </div>
           </div>
-
-          <div className="form-actions">
+          <div className="flex justify-end gap-4 pt-2">
             <button
               type="button"
               onClick={() => setShowForm(false)}
@@ -263,11 +309,10 @@ export default function ModuleCreation({ onBack }) {
           </div>
         </form>
       )}
-
       {/* Table */}
       <div className="table-card">
-        <div className="table-header">
-          <p className="table-title">
+        <div className="table-header flex justify-between items-center mb-4">
+          <p className="table-title flex items-center gap-2">
             <Settings className="w-5 h-5" /> Existing Modules
           </p>
           <span className="table-subtext">
@@ -275,26 +320,27 @@ export default function ModuleCreation({ onBack }) {
           </span>
         </div>
 
-        <div className="table-wrapper">
-          <table className="w-full text-left">
+        {/* Responsive Table Wrapper */}
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200 rounded-lg table-scrollbar">
+          <table className="w-full min-w-[600px] text-left table-auto border-collapse">
             <thead className="table-head">
               <tr>
-                <th className="table-cell">Module Name</th>
-                <th className="table-cell-icon flex gap-4">Actions</th>
+                <th className="table-cell px-4 py-2">Module Name</th>
+                <th className="table-cell px-4 py-2 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-800 text-sm">
               {filteredModules.length > 0 ? (
                 filteredModules.map((mod) => (
                   <tr key={mod.moduleId} className="table-row">
-                    <td className="table-cell-name">
+                    <td className="px-4 py-2">
                       {editingModuleId === mod.moduleId ? (
                         <div>
                           <input
                             type="text"
                             value={editedModuleName}
                             onChange={handleEditedModuleNameChange}
-                            className="form-input"
+                            className="form-input w-full"
                             placeholder="Enter new name (letters only)..."
                           />
                           <p className="text-xs text-gray-500 mt-1">
@@ -302,14 +348,13 @@ export default function ModuleCreation({ onBack }) {
                           </p>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-1 ">
-                          {" "}
-                          <Settings className="w-4 h-4 primary-color " />
+                        <div className="flex items-center gap-1">
+                          <Settings className="w-4 h-4 primary-color" />
                           {mod.moduleName}
                         </div>
                       )}
                     </td>
-                    <td className="table-cell-icon flex gap-4">
+                    <td className="px-4 py-2 flex justify-end gap-4">
                       {editingModuleId === mod.moduleId ? (
                         <>
                           <button
@@ -329,20 +374,15 @@ export default function ModuleCreation({ onBack }) {
                           </button>
                         </>
                       ) : (
-                        <>
-                          <button
-                            onClick={() => {
-                              setEditingModuleId(mod.moduleId);
-                              setEditedModuleName(mod.moduleName);
-                            }}
-                            className="primary-color hover:underline flex items-center gap-1"
-                          >
-                            <Pencil className="w-4 h-4" /> Edit
-                          </button>
-                          {/* <button className="text-red-500 hover:underline flex items-center gap-1">
-                        <Trash2 className="w-4 h-4" /> Delete
-                      </button> */}
-                        </>
+                        <button
+                          onClick={() => {
+                            setEditingModuleId(mod.moduleId);
+                            setEditedModuleName(mod.moduleName);
+                          }}
+                          className="text-[#00f5a0] hover:underline flex items-center gap-1"
+                        >
+                          <Pencil className="w-4 h-4" /> Edit
+                        </button>
                       )}
                     </td>
                   </tr>
@@ -351,7 +391,7 @@ export default function ModuleCreation({ onBack }) {
                 <tr>
                   <td
                     colSpan={2}
-                    className="table-cell table-cell-muted text-center"
+                    className="text-center text-gray-500 px-4 py-2"
                   >
                     No modules found.
                   </td>
@@ -363,23 +403,27 @@ export default function ModuleCreation({ onBack }) {
       </div>
 
       {/* Guidelines */}
-      <div className="guidelines-card">
-        <h3 className="guidelines-title">Module Management Guidelines</h3>
-        <div className="guidelines-grid">
+      <div className="guidelines-card mt-4">
+        <h3 className="guidelines-title text-base sm:text-lg">
+          Module Management Guidelines
+        </h3>
+        <div className="guidelines-grid text-sm sm:text-base">
           <p>
-            📘 <span>Create:</span> Add new modules
+            📘 <span className="font-semibold">Create:</span> Add new modules
           </p>
           <p>
-            🔍 <span>Search:</span> Find modules quickly
+            🔍 <span className="font-semibold">Search:</span> Find modules
+            quickly
           </p>
         </div>
-        <div className="guidelines-grid">
+        <div className="guidelines-grid text-sm sm:text-base">
           <p>
-            ✏️ <span>Edit:</span> Modify module names inline
+            ✏️ <span className="font-semibold">Edit:</span> Modify module names
+            inline
           </p>
           <p>
-            ⚠️ <span>Validation:</span> Only letters, spaces, and hyphens
-            allowed
+            ⚠️ <span className="font-semibold">Validation:</span> Only letters,
+            spaces, and hyphens allowed
           </p>
         </div>
       </div>

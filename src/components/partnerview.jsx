@@ -101,141 +101,169 @@ export default function Partnerview({
   return (
     <div>
       {/* Header */}
-      <div className="card-header mb-[20px]">
-        <div className="card-header-left flex items-center gap-3">
+      <div className="card-header flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-[20px]">
+        {/* Left section */}
+        <div className="card-header-left flex flex-wrap items-center gap-3">
           <button
-            className="approval-back-button"
+            className="approval-back-button whitespace-nowrap flex items-center gap-1"
             onClick={() => setSelectedPartner(null)}
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Approvals
           </button>
+
           <div className="header-icon-box">
             <Calculator className="primary-color w-4 h-4" />
           </div>
-          <div>
-            <h1 className="header-title">Partner Approvals</h1>
-            <p className="header-subtext">
+
+          <div className="flex flex-col">
+            <h1 className="header-title text-sm sm:text-base md:text-lg">
+              Partner Approvals
+            </h1>
+            <p className="header-subtext text-xs sm:text-sm md:text-base">
               Review and approve Partner configurations
             </p>
           </div>
         </div>
-        <div className="card-header-right">
-          <div className="portal-info flex gap-2">
-            <p className="portal-link">
-              <span
-                className={`px-2 py-1 rounded text-[10px] ${
-                  selectedPartner.partnerType === "Aggregator"
-                    ? "checker"
-                    : selectedPartner.partnerType === "Retailer"
-                    ? "infra"
-                    : "superuser"
-                }`}
-              >
-                {selectedPartner.partnerType}
-              </span>
-            </p>
-            <p className="portal-link">
-              <span
-                className={`px-2 py-1 rounded text-[10px] ${
-                  selectedPartner.status === 0
-                    ? "checker"
-                    : selectedPartner.status === 1
-                    ? "infra"
-                    : selectedPartner.status === 2
-                    ? "superuser"
-                    : "maker"
-                }`}
-              >
-                {getStatusLabel(selectedPartner.status)}
-              </span>
-            </p>
-          </div>
+
+        {/* Right section */}
+        <div className="card-header-right flex flex-wrap gap-2 mt-2 sm:mt-0">
+          <p className="portal-link">
+            <span
+              className={`px-2 py-1 rounded text-[10px] ${
+                selectedPartner.partnerType === "Aggregator"
+                  ? "checker"
+                  : selectedPartner.partnerType === "Retailer"
+                  ? "infra"
+                  : "superuser"
+              }`}
+            >
+              {selectedPartner.partnerType}
+            </span>
+          </p>
+          <p className="portal-link">
+            <span
+              className={`px-2 py-1 rounded text-[10px] ${
+                selectedPartner.status === 0
+                  ? "checker"
+                  : selectedPartner.status === 1
+                  ? "infra"
+                  : selectedPartner.status === 2
+                  ? "superuser"
+                  : "maker"
+              }`}
+            >
+              {getStatusLabel(selectedPartner.status)}
+            </span>
+          </p>
         </div>
       </div>
 
       {/* Partner Overview */}
-      <div className="partner-overview-card">
-        <h2 className="partner-overview-title">
-          <Info size={18} className="primary-color" /> Partner Overview
+      <div className="partner-overview-card p-4 bg-white rounded-lg shadow-md">
+        <h2 className="partner-overview-title flex items-center text-lg sm:text-xl font-semibold text-gray-800 mb-4">
+          <Info size={18} className="primary-color mr-2" />
+          Partner Overview
         </h2>
-        <div className="partner-overview-content">
-          <div className="partner-overview-section">
+
+        <div className="partner-overview-content flex flex-col sm:flex-row sm:gap-6 gap-4">
+          {/* Section 1 */}
+          <div className="partner-overview-section flex-1 text-sm sm:text-base">
             <p>
-              <span className="partner-overview-label">Partner Name</span>{" "}
+              <span className="partner-overview-label font-medium">
+                Partner Name
+              </span>{" "}
               <br />
-              <span className="partner-overview-bold">
+              <span className="partner-overview-bold font-semibold">
                 {selectedPartner.partnerName}
               </span>
             </p>
             <p>
-              <span className="partner-overview-label">Partner Type</span>{" "}
+              <span className="partner-overview-label font-medium">
+                Partner Type
+              </span>{" "}
               <br />
-              <span className="partner-overview-bold">
+              <span className="partner-overview-bold font-semibold">
                 {selectedPartner.partnerType}
               </span>
             </p>
             <p>
-              <span className="partner-overview-label">Status</span> <br />
-              <span className="partner-overview-bold">
+              <span className="partner-overview-label font-medium">Status</span>{" "}
+              <br />
+              <span className="partner-overview-bold font-semibold">
                 {selectedPartner.partnerStatus}
               </span>
             </p>
           </div>
 
-          <div className="partner-overview-section">
+          {/* Section 2 */}
+          <div className="partner-overview-section flex-1 text-sm sm:text-base">
             <p>
-              <span className="partner-overview-label">Contact Name</span>{" "}
+              <span className="partner-overview-label font-medium">
+                Contact Name
+              </span>{" "}
               <br />
-              <span className="partner-overview-bold">
+              <span className="partner-overview-bold font-semibold">
                 {selectedPartner.contactName}
               </span>
             </p>
             <p>
-              <span className="partner-overview-label">Email</span> <br />
-              <span className="partner-overview-icon-inline">
+              <span className="partner-overview-label font-medium">Email</span>{" "}
+              <br />
+              <span className="partner-overview-icon-inline flex items-center gap-1">
                 <Mail size={16} className="partner-overview-icon" />
-                <span className="partner-overview-bold">
+                <span className="partner-overview-bold font-semibold">
                   {selectedPartner.contactEmail}
                 </span>
               </span>
             </p>
             <p>
-              <span className="partner-overview-label">Phone</span> <br />
-              <span className="partner-overview-icon-inline">
+              <span className="partner-overview-label font-medium">Phone</span>{" "}
+              <br />
+              <span className="partner-overview-icon-inline flex items-center gap-1">
                 <Phone size={16} className="partner-overview-icon" />
-                <span className="partner-overview-bold">
+                <span className="partner-overview-bold font-semibold">
                   {selectedPartner.contactPhone}
                 </span>
               </span>
             </p>
             <p>
-              <span className="partner-overview-label">KYC Status</span> <br />
-              <span className="partner-overview-bold">
+              <span className="partner-overview-label font-medium">
+                KYC Status
+              </span>{" "}
+              <br />
+              <span className="partner-overview-bold font-semibold">
                 {selectedPartner.kycStatus}
               </span>
             </p>
           </div>
 
-          <div className="partner-overview-section">
+          {/* Section 3 */}
+          <div className="partner-overview-section flex-1 text-sm sm:text-base">
             <p>
-              <span className="partner-overview-label">Onboarding Date</span>{" "}
+              <span className="partner-overview-label font-medium">
+                Onboarding Date
+              </span>{" "}
               <br />
-              <span className="partner-overview-bold">
+              <span className="partner-overview-bold font-semibold">
                 {new Date(selectedPartner.onboardingDate).toLocaleDateString()}
               </span>
             </p>
             <p>
-              <span className="partner-overview-label">Portal Access</span>{" "}
+              <span className="partner-overview-label font-medium">
+                Portal Access
+              </span>{" "}
               <br />
-              <span className="partner-overview-bold">
+              <span className="partner-overview-bold font-semibold">
                 {selectedPartner.portalAccessEnabled ? "Yes" : "No"}
               </span>
             </p>
             <p>
-              <span className="partner-overview-label">Support Tickets</span>{" "}
+              <span className="partner-overview-label font-medium">
+                Support Tickets
+              </span>{" "}
               <br />
-              <span className="partner-overview-bold">
+              <span className="partner-overview-bold font-semibold">
                 {selectedPartner.supportTicketCount}
               </span>
             </p>
@@ -421,21 +449,27 @@ export default function Partnerview({
 
       {/* Partner Review Actions */}
       <div className="product-actions mt-6">
+        {/* Header */}
         <div className="flex items-center space-x-2 mb-2">
           <Shield className="w-4 h-4 primary-color" />
-          <h3 className="primary-color text-[15px]">Partner Review Actions</h3>
+          <h3 className="primary-color text-[13px] sm:text-[15px]">
+            Partner Review Actions
+          </h3>
         </div>
-        <div className="button-group">
+
+        {/* Buttons */}
+        <div className="button-group flex flex-col sm:flex-row sm:items-center sm:space-x-2 gap-2">
           <button
-            className="btn approval-btn-blue"
+            className="btn approval-btn-blue sm:w-auto"
             onClick={() => handleActionClick(3)}
           >
             <RefreshCw className="w-4 h-4" />
             <span>Recheck Partner</span>
           </button>
-          <div className="button-group-row flex gap-2 mt-2">
+
+          <div className="button-group-row flex flex-col sm:flex-row gap-2 mt-2">
             <button
-              className="btn approval-btn-green"
+              className="btn approval-btn-green w-full sm:w-auto"
               onClick={() => handleActionClick(0)}
             >
               <Check className="w-4 h-4" />
@@ -443,7 +477,7 @@ export default function Partnerview({
             </button>
 
             <button
-              className="btn approval-btn-red"
+              className="btn approval-btn-red w-full sm:w-auto"
               onClick={() => handleActionClick(2)}
             >
               <X className="w-4 h-4" />
@@ -451,10 +485,13 @@ export default function Partnerview({
             </button>
           </div>
         </div>
-        <p className="note text-gray-400 text-sm mt-2">
+
+        {/* Note */}
+        <p className="note text-gray-400 text-[12px] sm:text-sm mt-2 text-center sm:text-left">
           Review all product details carefully before making a decision
         </p>
       </div>
+
       {/* Modal */}
       {showModal && (
         <div className="modal-overlay">

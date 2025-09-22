@@ -127,47 +127,46 @@ export default function CreateDesignationForm({ onBack }) {
     setEditText("");
   };
 
- const handleSaveEdit = async (desig) => {
-  if (!editText.trim()) return alert("Designation cannot be empty");
+  const handleSaveEdit = async (desig) => {
+    if (!editText.trim()) return alert("Designation cannot be empty");
 
-  const now = new Date().toISOString();
-  const payload = {
-    designationId: desig.designationId,
-    newDescription: editText.trim(),
-    logId:
-      desig.logId && desig.logId !== "00000000-0000-0000-0000-000000000000"
-        ? desig.logId
-        : uuidv4(),
-    metadata: {
-      ipAddress: ip,
-      userAgent: navigator.userAgent,
-      headers:
-        headersError ||
-        JSON.stringify({ "content-type": "application/json" }),
-      channel: "web",
-      auditMetadata: {
-        createdBy: username,
-        createdDate: now,
-        modifiedBy: username,
-        modifiedDate: now,
+    const now = new Date().toISOString();
+    const payload = {
+      designationId: desig.designationId,
+      newDescription: editText.trim(),
+      logId:
+        desig.logId && desig.logId !== "00000000-0000-0000-0000-000000000000"
+          ? desig.logId
+          : uuidv4(),
+      metadata: {
+        ipAddress: ip,
+        userAgent: navigator.userAgent,
+        headers:
+          headersError ||
+          JSON.stringify({ "content-type": "application/json" }),
+        channel: "web",
+        auditMetadata: {
+          createdBy: username,
+          createdDate: now,
+          modifiedBy: username,
+          modifiedDate: now,
+        },
       },
-    },
+    };
+
+    try {
+      await axios.put(
+        `${API_BASE_URL}/ums/api/UserManagement/designation_update`,
+        payload
+      );
+      handleCancelEdit();
+      fetchDesignations();
+    } catch (err) {
+      console.error("Error updating designation:", err);
+      setHeadersError("Error updating designation:" + err);
+      alert("Update failed");
+    }
   };
-
-  try {
-    await axios.put(
-      `${API_BASE_URL}/ums/api/UserManagement/designation_update`,
-      payload
-    );
-    handleCancelEdit();
-    fetchDesignations();
-  } catch (err) {
-    console.error("Error updating designation:", err);
-    setHeadersError("Error updating designation:" + err);
-    alert("Update failed");
-  }
-};
-
 
   // Grouped with filtering
   const groupedDesignations = departments.reduce((acc, dept) => {
@@ -190,57 +189,85 @@ export default function CreateDesignationForm({ onBack }) {
     <div className="department-page">
       {/* Header */}
       <div className="form-header">
-        <div className="back-title">
-          <div className="header-left">
-            <div className="flex items-center gap-[10px]">
-              <button className="header-icon-btn" onClick={onBack}>
-                <ArrowLeft className="primary-color w-4 h-4" />
-              </button>
+        <div className="back-title flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+          {/* Top row for mobile: Arrow + Title + Badge Icon */}
+          <div className="flex items-center justify-between w-full sm:hidden">
+            {/* Arrow */}
+            <button className="header-icon-btn" onClick={onBack}>
+              <ArrowLeft className="primary-color w-4 h-4" />
+            </button>
 
-              <div className="header-icon-box">
-                <Badge className="primary-color w-4 h-4" />
-              </div>
-            </div>
-            <div>
-              <h1 className="header-title"> Designation Management</h1>
-              <p className="header-subtext">
-                {" "}
+            {/* Title & Subtitle centered */}
+            <div className="flex flex-col items-center text-center">
+              <h1 className="header-title text-base">Designation Management</h1>
+              <p className="header-subtext text-xs">
                 Create and manage designations under departments
               </p>
             </div>
+
+            {/* Badge Icon */}
+            <div className="header-icon-box">
+              <Badge className="primary-color w-4 h-4" />
+            </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* Active count */}
-            <button className="btn-count">
-              <span className="w-2 h-2 rounded-full bg-[#04CF6A]  plus"></span>
+          {/* Active Designations below for mobile */}
+          <div className="flex justify-center w-full sm:hidden mt-2">
+            <button className="btn-count text-xs">
+              <span className="w-2 h-2 rounded-full bg-[#04CF6A] plus"></span>
               {designations.length} Active Designations
             </button>
           </div>
+
+          {/* Desktop layout (sm and above) */}
+          <div className="hidden sm:flex sm:justify-between sm:items-center w-full gap-[10px]">
+            {/* Left: Arrow + Badge Icon + Title */}
+            <div className="header-left flex items-center gap-[10px]">
+              <button className="header-icon-btn" onClick={onBack}>
+                <ArrowLeft className="primary-color w-4 h-4" />
+              </button>
+              <div className="header-icon-box">
+                <Badge className="primary-color w-4 h-4" />
+              </div>
+              <div className="flex flex-col">
+                <h1 className="header-title text-lg">Designation Management</h1>
+                <p className="header-subtext text-sm">
+                  Create and manage designations under departments
+                </p>
+              </div>
+            </div>
+
+            {/* Right: Active Designations */}
+            <div className="flex items-center gap-4">
+              <button className="btn-count text-sm">
+                <span className="w-2 h-2 rounded-full bg-[#04CF6A] plus"></span>
+                {designations.length} Active Designations
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="search-toggle">
+
+        {/* Search & Toggle */}
+        <div className="search-toggle flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 items-center">
           {/* Search */}
-          <div className="search-box">
-            <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
+          <div className="search-box relative">
+            <Search className="absolute left-3 top-2 text-gray-400 !w-3 h-3" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search designations..."
-              className="search-input"
+              className="search-input !w-[250px]" // fixed width
             />
           </div>
+
           {/* Toggle form */}
-          <button onClick={() => setShowForm(!showForm)} className="btn-toggle">
-            {showForm ? (
-              <>
-                <X className="w-3 h-3" /> Close Form
-              </>
-            ) : (
-              <>
-                <Plus className="w-3 h-3" /> Create Department
-              </>
-            )}
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="btn-toggle flex items-center justify-center gap-1"
+          >
+            <Plus className="w-3 h-3" />
+            {showForm ? "Close Form" : "Create Designations"}
           </button>
         </div>
       </div>
@@ -298,9 +325,10 @@ export default function CreateDesignationForm({ onBack }) {
       )}
 
       {/* Table */}
-      <div className="table-card-bg rounded-xl border  p-4 shadow-lg">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="flex items-center gap-2 primary-color font-semibold text-lg">
+      <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 shadow-lg overflow-x-auto">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+          <h2 className="primary-color flex items-center gap-2 font-semibold text-lg">
             <Badge className="w-5 h-5" /> Existing Designations
           </h2>
           <span className="text-sm text-gray-400">
@@ -308,13 +336,14 @@ export default function CreateDesignationForm({ onBack }) {
           </span>
         </div>
 
-        <div className="table-wrapper">
-          <table className="w-full text-left">
+        {/* Table */}
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200 rounded-lg table-scrollbar">
+          <table className="w-full text-left table-auto min-w-[600px] border-collapse">
             <thead className="table-head">
               <tr>
-                <th className="table-cell">Department</th>
-                <th className="table-cell">Designation</th>
-                <th className="table-cell-icon flex gap-4">Action</th>
+                <th className="table-cell px-4 py-2">Department</th>
+                <th className="table-cell px-4 py-2">Designation</th>
+                <th className="table-cell px-4 py-2 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800 text-sm">
@@ -322,24 +351,22 @@ export default function CreateDesignationForm({ onBack }) {
                 groupedDesignations.map((group) =>
                   group.designations.map((desig, id) => (
                     <tr key={desig.designationId} className="table-row">
-                      <td className="table-cell-name">
-                        <div className="flex items-center gap-1 ">
+                      <td className="table-cell-name px-4 py-2">
+                        <div className="flex items-center gap-1">
                           {id === 0 ? (
-                            <Building2 className="w-4 h-4 primary-color " />
-                          ) : (
-                            ""
-                          )}{" "}
+                            <Building2 className="w-4 h-4 primary-color" />
+                          ) : null}{" "}
                           {id === 0 ? group.deptName : ""}
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-gray-300">
+                      <td className="px-4 py-2 text-gray-300">
                         {editId === desig.designationId ? (
                           <div>
                             <input
                               type="text"
                               value={editText}
                               onChange={handleEditTextChange}
-                              className="form-input"
+                              className="form-input w-full"
                               placeholder="Enter new name (letters only)..."
                             />
                             <p className="text-xs text-gray-500 mt-1">
@@ -347,19 +374,18 @@ export default function CreateDesignationForm({ onBack }) {
                             </p>
                           </div>
                         ) : (
-                          <div className="flex items-center gap-1 ">
-                            {" "}
-                            <Badge className="w-4 h-4 primary-color " />
+                          <div className="flex items-center gap-1">
+                            <Badge className="w-4 h-4 primary-color" />
                             {desig.designationDesc}
                           </div>
                         )}
                       </td>
-                      <td className="table-cell-icon flex gap-4">
+                      <td className="table-cell-icon px-4 py-2 flex justify-end gap-4">
                         {editId === desig.designationId ? (
                           <>
                             <button
                               onClick={() =>
-                                handleSaveEdit(desig)
+                                handleSaveEdit(desig.designationId)
                               }
                               className="primary-color hover:underline"
                             >
@@ -388,7 +414,7 @@ export default function CreateDesignationForm({ onBack }) {
                 <tr>
                   <td
                     colSpan={3}
-                    className="table-cell table-cell-muted text-center"
+                    className="table-cell table-cell-muted text-center px-4 py-2"
                   >
                     No designations found.
                   </td>
@@ -400,8 +426,8 @@ export default function CreateDesignationForm({ onBack }) {
       </div>
 
       {/* Guidelines */}
-      <div className="table-card-bg rounded-xl p-4 mt-6 shadow-lg">
-        <h3 className="primary-color font-semibold mb-3">
+      {/* <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 mt-6 shadow-lg">
+        <h3 className="text-teal-400 font-semibold mb-3">
           Designation Management Guidelines
         </h3>
         <div className="grid md:grid-cols-2 gap-3 text-sm text-gray-300">
@@ -419,6 +445,30 @@ export default function CreateDesignationForm({ onBack }) {
           </p>
           <p>
             ⚠️ <span className="text-white">Validation:</span> Only letters,
+            spaces, and hyphens allowed
+          </p>
+        </div>
+      </div> */}
+      <div className="guidelines-card">
+        <h3 className="guidelines-title primary-color text-base sm:text-lg">
+          Department Management Guidelines
+        </h3>
+        <div className="guidelines-grid text-sm sm:text-base">
+          <p>
+            📘 <span className="font-semibold">Create:</span> Add new
+            designations under departments
+          </p>
+          <p>
+            🔍 <span className="font-semibold">Search:</span> Quickly find
+            designations
+          </p>
+        </div>
+        <div className="guidelines-grid text-sm sm:text-base">
+          <p>
+            ✏️ <span className="font-semibold">Edit:</span>Update designation
+          </p>
+          <p>
+            ⚠️ <span className="font-semibold">Validation:</span> Only letters,
             spaces, and hyphens allowed
           </p>
         </div>
