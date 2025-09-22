@@ -4,7 +4,7 @@
 
 :root {
   /*/////////////////// red theme////////////////////////////////// */
-  --primary-color: red;
+  /* --primary-color: red;
   --menu-hover-bg: #1c1717;
   --borderBg-color: #3b0000;
   --alert-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
@@ -44,11 +44,11 @@
     rgba(0, 255, 200, 0.15),
     transparent
   );
-  --body-color: #0e0101;
+  --body-color: #0e0101; */
 
   /* //////////////////////////////base theme/////////////////////////////////////////// */
 
-  /* --primary-color: #00d4aa;
+  --primary-color: #00d4aa;
   --menu-hover-bg: rgba(16, 185, 129, 0.1);
   --borderBg-color: #00d4aa33;
   --alert-shadow: 0 0 30px rgba(0, 255, 200, 0.3);
@@ -89,7 +89,7 @@
     rgba(255, 0, 0, 0.15),
     transparent
   );
-  --body-color: #0a0b0e; */
+  --body-color: #0a0b0e;
 }
 
 body {
