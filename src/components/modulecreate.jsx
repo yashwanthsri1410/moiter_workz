@@ -216,40 +216,11 @@ export default function ModuleCreation({ onBack }) {
               </div>
             </div>
 
-            <div className="search-toggle">
-              {/* Search */}
-              <div className="search-box">
-                <Search className="absolute left-3 top-2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search modules..."
-                  className="search-input"
-                />
-              </div>
-
-              {/* Toggle form */}
-              <button
-                onClick={() => setShowForm(!showForm)}
-                className="btn-toggle"
-              >
-                {showForm ? (
-                  <>
-                    <X className="w-3 h-3" /> Close Form
-                  </>
-                ) : (
-                  <>
-                    <Plus className="w-3 h-3" /> Create Department
-                  </>
-                )}
+            <div className="flex items-center gap-4">
+              <button className="btn-count text-sm">
+                <span className="w-2 h-2 rounded-full bg-[#00f5a0]"></span>
+                {modules.length} Active Modules
               </button>
-              <div className="flex items-center gap-4">
-                <button className="btn-count text-sm">
-                  <span className="w-2 h-2 rounded-full bg-[#00f5a0]"></span>
-                  {modules.length} Active Modules
-                </button>
-              </div>
             </div>
           </div>
         </div>
