@@ -359,7 +359,9 @@ const EmployeeCreationForm = ({ onBack }) => {
       >
         {/* Full Name */}
         <div className="label-input">
-          <label className="form-label text-sm sm:text-base">Full Name *</label>
+          <label className="form-label text-sm sm:text-base mandatory-space">
+            Full Name
+          </label>
           <input
             type="text"
             placeholder="Enter user's full name"
@@ -372,8 +374,8 @@ const EmployeeCreationForm = ({ onBack }) => {
 
         {/* Email */}
         <div className="label-input">
-          <label className="form-label text-sm sm:text-base">
-            Email Address *
+          <label className="form-label text-sm sm:text-base mandatory-space">
+            Email Address
           </label>
           <input
             type="email"
@@ -388,8 +390,8 @@ const EmployeeCreationForm = ({ onBack }) => {
         {/* Password */}
         {!selectedEmployee && (
           <div className="label-input relative">
-            <label className="form-label text-sm sm:text-base">
-              Password *
+            <label className="form-label text-sm sm:text-base mandatory-space">
+              Password
             </label>
             <input
               type={showPassword ? "text" : "password"}
@@ -411,8 +413,8 @@ const EmployeeCreationForm = ({ onBack }) => {
 
         {/* Department */}
         <div className="label-input">
-          <label className="form-label text-sm sm:text-base">
-            Department *
+          <label className="form-label text-sm sm:text-base mandatory-space">
+            Department
           </label>
           <select
             value={deptId}
@@ -436,8 +438,8 @@ const EmployeeCreationForm = ({ onBack }) => {
 
         {/* Designation */}
         <div className="label-input">
-          <label className="form-label text-sm sm:text-base">
-            Designation *
+          <label className="form-label text-sm sm:text-base mandatory-space">
+            Designation
           </label>
           <select
             value={designationId}
@@ -459,7 +461,9 @@ const EmployeeCreationForm = ({ onBack }) => {
 
         {/* Role */}
         <div className="label-input">
-          <label className="form-label text-sm sm:text-base">Role *</label>
+          <label className="form-label text-sm sm:text-base mandatory-space">
+            Role
+          </label>
           <select
             value={roleAccessId}
             onChange={handleRoleChange}
@@ -505,7 +509,9 @@ const EmployeeCreationForm = ({ onBack }) => {
 
         {/* User Type */}
         <div className="label-input">
-          <label className="form-label text-sm sm:text-base">User Type *</label>
+          <label className="form-label text-sm sm:text-base mandatory-space">
+            User Type
+          </label>
           <select
             onChange={(e) => setusertype(e.target.value)}
             className="form-select text-sm sm:text-base"

@@ -11,7 +11,7 @@ export default function PerformanceOverview() {
   const { productData, error } = useOperationStore();
 
   const totalTransactions = productData?.reduce(
-    (sum, item) => sum + item.activeWallets,
+    (sum, item) => sum + item.productCount,
     0
   );
 
@@ -21,7 +21,7 @@ export default function PerformanceOverview() {
     labels: productData?.map((item) => item.walletCategory),
     datasets: [
       {
-        data: productData?.map((item) => item.activeWallets),
+        data: productData?.map((item) => item.pctOfTotal),
         backgroundColor: COLORS,
         borderWidth: 0.5,
         borderColor: "#0f0f0f",
@@ -36,17 +36,22 @@ export default function PerformanceOverview() {
         display: false, // we’ll create custom legend below
       },
       tooltip: {
+        backgroundColor: "#fff", // white background
+        titleColor: "#1f2937", // dark title text
+        bodyColor: "#1f2937", // dark body text
+        borderColor: "#d1d5db", // light gray border to define edges
+        borderWidth: 1, // make border visible
         callbacks: {
           label: function (context) {
             let label = context.label || "";
             let value = context.raw || 0;
-            return `${label}: ${value?.toLocaleString()}`;
+            return `${label}: ${value.toLocaleString()}%`;
           },
         },
-        backgroundColor: "#fff",
-        titleColor: "#1f2937",
-        bodyColor: "#1f2937",
-        borderColor: "#fff",
+        // Optional: reduce shadow to avoid blur
+        shadowOffsetX: 0,
+        shadowOffsetY: 0,
+        shadowBlur: 0,
       },
     },
     elements: {
@@ -60,7 +65,7 @@ export default function PerformanceOverview() {
 
   const footerStats = [
     {
-      label: "Total Transactions",
+      label: "Total Products",
       value: totalTransactions?.toLocaleString(),
     },
     {

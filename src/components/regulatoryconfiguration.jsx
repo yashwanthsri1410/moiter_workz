@@ -19,7 +19,13 @@ import React, { useEffect, useRef, useState, useMemo } from "react";
 import axios from "axios";
 import usePublicIp from "../hooks/usePublicIp";
 import "../styles/styles.css";
-import { channels, inputStyle, options, transErr } from "../constants";
+import {
+  channels,
+  inputStyle,
+  noUpdate,
+  options,
+  transErr,
+} from "../constants";
 import ErrorText from "./reusable/errorText";
 import { v4 as uuidv4 } from "uuid";
 // import { PencilIcon, Plus,SquarePen  } from "lucide-react";
@@ -31,6 +37,7 @@ export default function RegulatoryConfig() {
   const [editingId, setEditingId] = useState(null);
   const [search, setSearch] = useState("");
   const [error, setError] = useState({});
+  const [isUpdate, setIsUpdate] = useState(false);
   const editingIdRef = useRef(null); // ✅ initialize ref
   const ip = usePublicIp();
   const username = localStorage.getItem("username") || "system";
@@ -151,6 +158,16 @@ export default function RegulatoryConfig() {
     }
   };
 
+  const categoriesCheck = () => {
+    const subCategoriesList = configurations?.map((e) => e.subCategory);
+
+    const checkCategories = subCategoriesList.some(
+      (item) => item.toLowerCase() === form.subCategory.toLowerCase()
+    );
+
+    return checkCategories;
+  };
+
   const handleBooleanSelect = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({
@@ -209,21 +226,35 @@ export default function RegulatoryConfig() {
     };
     // console.log(payload)
     // console.log(JSON.stringify(payload, null, 2));
+    const isCategoryExist = categoriesCheck();
+    if (!editingId) {
+      if (isCategoryExist) {
+        alert("Subcategory already exists. Please use a different one.");
+        return;
+      }
+    }
     try {
       const endpoint = isEditing
         ? `${API_BASE_URL}/ps/updateRbiConfiguration`
         : `${API_BASE_URL}/ps/create-RBI-Config`;
 
-      await axios[isEditing ? "put" : "post"](endpoint, payload);
-
-      alert("Configuration saved successfully!");
-      setForm(getDefaultForm(ip, username));
-      setEditingId(null);
-      editingIdRef.current = null;
+      const res = await axios[isEditing ? "put" : "post"](endpoint, payload);
+      const isNoUpdate = res.data.message === noUpdate;
+      if (isNoUpdate) {
+        alert("No changes Made");
+      } else {
+        setForm(getDefaultForm(ip, username));
+        alert("Configuration saved successfully!");
+        setEditingId(null);
+        editingIdRef.current = null;
+        setTimeout(() => {
+          setformOpen((prev) => !prev);
+        }, 1000);
+      }
       fetchConfigurations();
     } catch (err) {
       console.error("API Error:", err);
-      alert("Failed to save configuration");
+      alert("Failed to connect API. Try again later");
     }
   };
 
@@ -236,8 +267,8 @@ export default function RegulatoryConfig() {
           ? JSON.stringify(data.transactionReportableFlags, null, 2)
           : data.transactionReportableFlags || "",
     });
-    setEditingId(data.productId);
-    editingIdRef.current = data.productId; // ✅ store it
+    setEditingId(data.logId);
+    editingIdRef.current = data.logId; // ✅ store it
   };
 
   const numberFields = [
@@ -369,6 +400,14 @@ export default function RegulatoryConfig() {
     cashLoadCheck,
   ]);
 
+  useEffect(() => {
+    if (!isUpdate) {
+      setForm(getDefaultForm(ip, username));
+    }
+  }, [isUpdate]);
+
+  console.log(configurations?.filter((e) => e.subCategory === "summa"));
+
   return (
     <div className="config-forms">
       {/* Header */}
@@ -394,7 +433,10 @@ export default function RegulatoryConfig() {
         <div className="card-header-right flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
           <button
             className="btn-outline flex items-center gap-1 w-full sm:w-auto justify-center"
-            onClick={() => setformOpen((prev) => !prev)}
+            onClick={() => {
+              setformOpen((prev) => !prev);
+              setIsUpdate(false);
+            }}
           >
             {formOpen ? (
               <>
@@ -440,16 +482,22 @@ export default function RegulatoryConfig() {
             {/* First Row */}
             <div className="form-row flex flex-col sm:flex-row gap-4">
               <div className="form-group flex-1 flex flex-col">
-                <label className="mb-1 text-xs sm:text-sm font-medium">
+                <label className="mb-1 text-xs sm:text-sm font-medium mandatory">
                   Program Type
                 </label>
                 <select
                   name="programType"
                   value={form.programType}
                   onChange={handleChange}
-                  className="form-input p-2 border border-gray-300 rounded text-xs sm:text-sm"
+                  required // ✅ ensures browser validation
+                  disabled={editingId}
+                  className={`${
+                    editingId && "cursor-not-allowed"
+                  }  form-input p-2 border border-gray-300 rounded text-xs sm:text-sm`}
                 >
-                  <option value="">Select</option>
+                  <option value="" disabled hidden>
+                    Select
+                  </option>
                   <option value="Closed">Closed</option>
                   <option value="Semi-Closed">Semi-Closed</option>
                   <option value="Open">Open</option>
@@ -457,7 +505,7 @@ export default function RegulatoryConfig() {
               </div>
 
               <div className="form-group flex-1 flex flex-col">
-                <label className="mb-1 text-xs sm:text-sm font-medium">
+                <label className="mb-1 text-xs sm:text-sm font-medium mandatory">
                   Sub Category
                 </label>
                 <input
@@ -466,21 +514,28 @@ export default function RegulatoryConfig() {
                   value={form.subCategory}
                   onChange={handleChange}
                   placeholder="Enter sub category"
-                  className="form-input p-2 border border-gray-300 rounded text-xs sm:text-sm"
+                  required
+                  disabled={editingId}
+                  className={`${
+                    editingId && "cursor-not-allowed"
+                  }  form-input p-2 border border-gray-300 rounded text-xs sm:text-sm`}
                 />
               </div>
 
               <div className="form-group flex-1 flex flex-col">
-                <label className="mb-1 text-xs sm:text-sm font-medium">
+                <label className="mb-1 text-xs sm:text-sm font-medium mandatory">
                   Card Type
                 </label>
                 <select
                   name="cardType"
                   value={form.cardType}
                   onChange={handleChange}
+                  required
                   className="form-input p-2 border border-gray-300 rounded text-xs sm:text-sm"
                 >
-                  <option value="">Select</option>
+                  <option value="" disabled hidden>
+                    Select
+                  </option>
                   <option value="Physical">Physical</option>
                   <option value="Virtual">Virtual</option>
                   <option value="Both">Both</option>
@@ -516,16 +571,19 @@ export default function RegulatoryConfig() {
               {/* Left Column - Dropdowns */}
               <div className="kyc-left flex flex-col gap-3">
                 <div className="form-group flex flex-col">
-                  <label className="mb-1 text-xs sm:text-sm font-medium">
+                  <label className="mb-1 text-xs sm:text-sm font-medium mandatory">
                     KYC Level Required
                   </label>
                   <select
                     name="kycLevelRequired"
                     value={form.kycLevelRequired}
                     onChange={handleChange}
+                    required
                     className="form-input p-2 border border-gray-300 rounded text-xs sm:text-sm"
                   >
-                    <option value="">Select KYC level</option>
+                    <option value="" disabled hidden>
+                      Select KYC level
+                    </option>
                     <option value="nil">Nil</option>
                     <option value="min">Min</option>
                     <option value="medium">Medium</option>
@@ -535,16 +593,19 @@ export default function RegulatoryConfig() {
                 </div>
 
                 <div className="form-group flex flex-col">
-                  <label className="mb-1 text-xs sm:text-sm font-medium">
+                  <label className="mb-1 text-xs sm:text-sm font-medium mandatory">
                     Risk Profile
                   </label>
                   <select
                     name="riskProfile"
                     value={form.riskProfile}
                     onChange={handleChange}
+                    required
                     className="form-input p-2 border border-gray-300 rounded text-xs sm:text-sm"
                   >
-                    <option value="">Select risk profile</option>
+                    <option value="" disabled hidden>
+                      Select risk profile
+                    </option>
                     <option value="low">Low</option>
                     <option value="medium">Medium</option>
                     <option value="high">High</option>
@@ -1043,9 +1104,10 @@ export default function RegulatoryConfig() {
                           onClick={() => {
                             handleEdit(cfg);
                             setformOpen(true);
+                            setIsUpdate(true);
                           }}
                         >
-                          <SquarePen className="text-[#00d4aa] w-4 h-4 sm:w-5 sm:h-5" />
+                          <SquarePen size="12" className="text-[#00d4aa]" />
                         </button>
                       </td>
                     </tr>

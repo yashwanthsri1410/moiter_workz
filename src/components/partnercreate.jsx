@@ -37,7 +37,6 @@ export default function Partnercreate() {
   const [currentPage, setCurrentPage] = useState(1);
   const partnersPerPage = 5;
   const [products, setProducts] = useState([]); // fetched products
-  const [showProductDropdown, setShowProductDropdown] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [portalOptions, setPortalOptions] = useState([]);
   const [removedImages, setRemovedImages] = useState({
@@ -499,6 +498,12 @@ export default function Partnercreate() {
     }),
   };
 
+  useEffect(() => {
+    if (!isEditing) {
+      setForm(defaultFormValues);
+    }
+  }, [isEditing]);
+
   return (
     <div className="config-forms">
       {/* Header */}
@@ -520,7 +525,10 @@ export default function Partnercreate() {
         <div className="card-header-right">
           <button
             className="btn-outline"
-            onClick={() => setformOpen((prev) => !prev)}
+            onClick={() => {
+              setformOpen((prev) => !prev);
+              setIsEditing(false);
+            }}
           >
             {formOpen ? (
               <>
@@ -557,23 +565,25 @@ export default function Partnercreate() {
           {/* Grid Layout */}
           <div className="grid grid-cols-2 gap-2 mt-6">
             <div className="form-group">
-              <label>Partner Name</label>
+              <label className="mandatory">Partner Name</label>
               <input
                 type="text"
                 name="partnerName"
                 className="form-input"
                 placeholder="Enter partner name"
+                required
                 value={form.partnerName}
                 onChange={handleChange}
               />
             </div>
 
             <div className="form-group">
-              <label>Contact Name</label>
+              <label className="mandatory">Contact Name</label>
               <input
                 type="text"
                 name="contactName"
                 className="form-input"
+                required
                 placeholder="Enter contact name"
                 value={form.contactName}
                 onChange={handleChange}
@@ -581,10 +591,11 @@ export default function Partnercreate() {
             </div>
 
             <div className="form-group">
-              <label>Contact Email</label>
+              <label className="mandatory">Contact Email</label>
               <input
                 type="email"
                 name="contactEmail"
+                required
                 className="form-input"
                 placeholder="Enter contact email"
                 value={form.contactEmail}
@@ -593,11 +604,12 @@ export default function Partnercreate() {
             </div>
 
             <div className="form-group">
-              <label>Contact Phone</label>
+              <label className="mandatory">Contact Phone</label>
               <input
                 type="text"
                 name="contactPhone"
                 className="form-input"
+                required
                 placeholder="Enter contact phone"
                 value={form.contactPhone}
                 onChange={handleChange}
@@ -605,10 +617,11 @@ export default function Partnercreate() {
             </div>
 
             <div className="form-group">
-              <label>Address</label>
+              <label className="mandatory">Address</label>
               <input
                 type="text"
                 name="address"
+                required
                 className="form-input"
                 placeholder="Enter address"
                 value={form.address}
@@ -617,10 +630,11 @@ export default function Partnercreate() {
             </div>
 
             <div className="form-group">
-              <label>City</label>
+              <label className="mandatory">City</label>
               <input
                 type="text"
                 name="city"
+                required
                 className="form-input"
                 placeholder="Enter city"
                 value={form.city}
@@ -629,10 +643,11 @@ export default function Partnercreate() {
             </div>
 
             <div className="form-group">
-              <label>State</label>
+              <label className="mandatory">State</label>
               <input
                 type="text"
                 name="state"
+                required
                 className="form-input"
                 placeholder="Enter state"
                 value={form.state}
@@ -641,10 +656,11 @@ export default function Partnercreate() {
             </div>
 
             <div className="form-group">
-              <label>Pincode</label>
+              <label className="mandatory">Pincode</label>
               <input
                 type="text"
                 name="pincode"
+                required
                 className="form-input"
                 placeholder="Enter pincode"
                 value={form.pincode}
@@ -654,12 +670,13 @@ export default function Partnercreate() {
             </div>
 
             <div className="form-group">
-              <label>Partner Type</label>
+              <label className="mandatory">Partner Type</label>
               <select
                 name="partnerType"
                 value={form.partnerType}
                 onChange={handleChange}
                 className="form-input"
+                required
               >
                 <option value="">Select partner type</option>
                 <option value="Retailer">Retailer</option>
@@ -675,8 +692,9 @@ export default function Partnercreate() {
             </div>
 
             <div className="form-group">
-              <label>Partner Status</label>
+              <label className="mandatory">Partner Status</label>
               <select
+                required
                 name="partnerStatus"
                 value={form.partnerStatus}
                 onChange={handleChange}
@@ -1367,9 +1385,10 @@ export default function Partnercreate() {
                     <td className="table-content">
                       <button
                         className="header-icon-box"
-                        onClick={() =>
-                          handleEdit(partner.partnerName, partner.partnerType)
-                        }
+                        onClick={() => {
+                          handleEdit(partner.partnerName, partner.partnerType);
+                          setIsEditing(true);
+                        }}
                       >
                         <SquarePen className="primary-color w-3 h-3" />
                       </button>

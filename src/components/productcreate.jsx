@@ -536,6 +536,12 @@ export default function Productcreate() {
     }
   };
 
+  useEffect(() => {
+    if (!isEditing) {
+      setForm(getDefaultForm(ip, username));
+    }
+  }, [isEditing]);
+
   return (
     <div className="config-forms">
       <div className="card-header">
@@ -555,7 +561,10 @@ export default function Productcreate() {
         <div className="card-header-right">
           <button
             className="btn-outline"
-            onClick={() => setformOpen((prev) => !prev)}
+            onClick={() => {
+              setformOpen((prev) => !prev);
+              setIsEditing(false);
+            }}
           >
             {formOpen ? (
               <>
@@ -596,14 +605,17 @@ export default function Productcreate() {
             <h3 className="section-title">Basic Program Details</h3>
             <div className="form-row">
               <div className="form-group">
-                <label>Program Type</label>
+                <label className="mandatory">Program Type</label>
                 <select
                   name="programType"
                   value={form.programType}
+                  required
                   onChange={(e) => handleProgramTypeChange(e.target.value)}
                   className="form-input"
                 >
-                  <option value="">Select</option>
+                  <option value="" disabled hidden>
+                    Select
+                  </option>
                   {programTypes.map((pt) => (
                     <option key={pt} value={pt}>
                       {pt}
@@ -612,14 +624,20 @@ export default function Productcreate() {
                 </select>
               </div>
               <div className="form-group">
-                <label>Sub Category</label>
+                <label className="mandatory">Sub Category</label>
                 <select
                   name="subCategory"
                   value={form.subCategory}
+                  required
+                  disabled={!form.programType}
                   onChange={(e) => handleSubCategoryChange(e.target.value)}
-                  className="form-input"
+                  className={`form-input ${
+                    !form.programType && "cursor-not-allowed"
+                  }`}
                 >
-                  <option value="">Select</option>
+                  <option value="" disabled hidden>
+                    Select
+                  </option>
                   {filteredSubCategories.map((sc) => (
                     <option key={sc.subCategory} value={sc.subCategory}>
                       {sc.subCategory}
@@ -636,7 +654,8 @@ export default function Productcreate() {
                   name="programDescription"
                   value={form.programDescription || ""}
                   onChange={handleChange}
-                  className="form-input"
+                  className="form-input cursor-not-allowed"
+                  disabled
                   placeholder="Program description auto-filled"
                   readOnly={!!form.subCategory} // Make it read-only when a subcategory is selected
                 />
@@ -647,26 +666,28 @@ export default function Productcreate() {
               <>
                 <div className="form-row">
                   <div className="form-group">
-                    <label>Product Name</label>
+                    <label className="mandatory">Product Name</label>
                     <input
                       type="text"
                       name="productName"
                       value={form.productName}
                       onChange={handleChange}
                       className="form-input"
+                      required
                       placeholder="Enter product name"
                     />
                   </div>
                 </div>
                 <div className="form-row">
                   <div className="form-group">
-                    <label>Description</label>
+                    <label className="mandatory">Description</label>
                     <textarea
                       type="text"
                       name="productDescription"
                       value={form.productDescription}
                       onChange={handleChange}
                       className="form-input"
+                      required
                       placeholder="Enter description"
                     />
                   </div>
@@ -687,7 +708,7 @@ export default function Productcreate() {
                     type="text"
                     name="kycLevelRequired"
                     value={form.kycLevelRequired || "-"}
-                    readOnly
+                    disabled
                     className="form-input bg-gray-800 text-white cursor-not-allowed"
                   />
                 </div>
@@ -698,7 +719,7 @@ export default function Productcreate() {
                     type="text"
                     name="riskProfile"
                     value={form.riskProfile || "-"}
-                    readOnly
+                    disabled
                     className="form-input bg-gray-800 text-white cursor-not-allowed"
                   />
                 </div>
@@ -795,7 +816,8 @@ export default function Productcreate() {
                           handleChange(e);
                         }
                       }}
-                      className="form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none"
+                      disabled
+                      className="form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none cursor-not-allowed"
                       placeholder="Enter amount"
                     />
                   </div>
@@ -996,7 +1018,7 @@ export default function Productcreate() {
 
             {/* MCC Code */}
             <div className="form-group mt-4">
-              <label>MCC Code</label>
+              <label className="mandatory">MCC Code</label>
               <input
                 type="text"
                 name="allowedMccCodes"
@@ -1012,6 +1034,7 @@ export default function Productcreate() {
                   }))
                 }
                 className="form-input"
+                required
                 placeholder="Enter MCC codes separated by commas"
               />
             </div>

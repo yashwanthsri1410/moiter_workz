@@ -133,3 +133,14 @@ body {
 .react-select__option--is-focused {
   background-color: #333;
 }
+
+.mandatory::after {
+  content: "*";
+  color: #ef4444; /* Tailwind red-500 */
+}
+
+.mandatory-space::after {
+  content: "*";
+  color: #ef4444;
+  margin-left: 0.25rem;
+}
