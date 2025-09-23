@@ -507,24 +507,26 @@ export default function Partnercreate() {
   return (
     <div className="config-forms">
       {/* Header */}
-      <div className="card-header">
-        <div className="card-header-left">
-          <div className="flex items-center gap-[10px]">
+      <div className="card-header flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0 p-2 sm:p-4">
+        <div className="card-header-left flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-2">
+          <div className="flex items-center gap-2">
             <div className="header-icon-box">
               <CalculatorIcon className="primary-color w-4 h-4" />
             </div>
           </div>
           <div>
-            <h1 className="header-title">Distribution Partner Management</h1>
-            <p className="header-subtext">
+            <h1 className="header-title text-sm sm:text-lg font-semibold text-center sm:text-left">
+              Distribution Partner Management
+            </h1>
+            <p className="header-subtext text-xs sm:text-sm text-gray-400 text-center sm:text-left">
               Onboard and manage distribution partners
             </p>
           </div>
         </div>
 
-        <div className="card-header-right">
+        <div className="card-header-right flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
           <button
-            className="btn-outline"
+            className="btn-outline flex items-center gap-1 w-full sm:w-auto justify-center text-xs sm:text-sm"
             onClick={() => {
               setformOpen((prev) => !prev);
               setIsEditing(false);
@@ -547,9 +549,11 @@ export default function Partnercreate() {
               </>
             )}
           </button>
-          <div className="portal-info">
-            <p className="portal-label">Content Creation</p>
-            <p className="portal-link">Maker Portal</p>
+          <div className="portal-info text-center sm:text-left">
+            <p className="portal-label text-xs sm:text-sm">Content Creation</p>
+            <p className="portal-link text-xs sm:text-sm font-medium text-center sm:text-right">
+              Maker Portal
+            </p>
           </div>
         </div>
       </div>
@@ -563,13 +567,15 @@ export default function Partnercreate() {
             </h2>
           </div>
           {/* Grid Layout */}
-          <div className="grid grid-cols-2 gap-2 mt-6">
-            <div className="form-group">
-              <label className="mandatory">Partner Name</label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+            <div className="form-group flex flex-col">
+              <label className="text-sm sm:text-base mb-1 mandatory">
+                Partner Name
+              </label>
               <input
                 type="text"
                 name="partnerName"
-                className="form-input"
+                className="form-input p-2 text-sm sm:text-base"
                 placeholder="Enter partner name"
                 required
                 value={form.partnerName}
@@ -577,91 +583,98 @@ export default function Partnercreate() {
               />
             </div>
 
-            <div className="form-group">
-              <label className="mandatory">Contact Name</label>
+            <div className="form-group flex flex-col">
+              <label className="text-sm sm:text-base mb-1 mandatory">
+                Contact Name
+              </label>
               <input
                 type="text"
                 name="contactName"
-                className="form-input"
-                required
+                className="form-input p-2 text-sm sm:text-base"
                 placeholder="Enter contact name"
                 value={form.contactName}
                 onChange={handleChange}
               />
             </div>
 
-            <div className="form-group">
-              <label className="mandatory">Contact Email</label>
+            <div className="form-group flex flex-col">
+              <label className="text-sm sm:text-base mb-1 mandatory">
+                Contact Email
+              </label>
               <input
                 type="email"
                 name="contactEmail"
-                required
-                className="form-input"
+                className="form-input p-2 text-sm sm:text-base"
                 placeholder="Enter contact email"
                 value={form.contactEmail}
                 onChange={handleChange}
               />
             </div>
 
-            <div className="form-group">
-              <label className="mandatory">Contact Phone</label>
+            <div className="form-group flex flex-col">
+              <label className="text-sm sm:text-base mb-1 mandatory">
+                Contact Phone
+              </label>
               <input
                 type="text"
                 name="contactPhone"
-                className="form-input"
-                required
+                className="form-input p-2 text-sm sm:text-base"
                 placeholder="Enter contact phone"
                 value={form.contactPhone}
                 onChange={handleChange}
               />
             </div>
 
-            <div className="form-group">
-              <label className="mandatory">Address</label>
+            <div className="form-group flex flex-col">
+              <label className="text-sm sm:text-base mb-1 mandatory">
+                Address
+              </label>
               <input
                 type="text"
                 name="address"
-                required
-                className="form-input"
+                className="form-input text-sm sm:text-base"
                 placeholder="Enter address"
                 value={form.address}
                 onChange={handleChange}
               />
             </div>
 
-            <div className="form-group">
-              <label className="mandatory">City</label>
+            <div className="form-group flex flex-col">
+              <label className="text-sm sm:text-base mb-1 mandatory">
+                City
+              </label>
               <input
                 type="text"
                 name="city"
-                required
-                className="form-input"
+                className="form-input p-2 text-sm sm:text-base"
                 placeholder="Enter city"
                 value={form.city}
                 onChange={handleChange}
               />
             </div>
 
-            <div className="form-group">
-              <label className="mandatory">State</label>
+            <div className="form-group flex flex-col">
+              <label className="text-sm sm:text-base mb-1 mandatory">
+                State
+              </label>
               <input
                 type="text"
                 name="state"
-                required
-                className="form-input"
+                className="form-input p-2 text-sm sm:text-base"
                 placeholder="Enter state"
                 value={form.state}
                 onChange={handleChange}
               />
             </div>
 
-            <div className="form-group">
-              <label className="mandatory">Pincode</label>
+            <div className="form-group flex flex-col">
+              <label className="text-sm sm:text-base mb-1 mandatory">
+                Pincode
+              </label>
               <input
                 type="text"
                 name="pincode"
-                required
-                className="form-input"
+                className="form-input p-2 text-sm sm:text-base"
                 placeholder="Enter pincode"
                 value={form.pincode}
                 onChange={handleChange}
@@ -669,8 +682,10 @@ export default function Partnercreate() {
               />
             </div>
 
-            <div className="form-group">
-              <label className="mandatory">Partner Type</label>
+            <div className="form-group flex flex-col">
+              <label className="text-sm sm:text-base mb-1 mandatory">
+                Partner Type
+              </label>
               <select
                 name="partnerType"
                 value={form.partnerType}
@@ -691,8 +706,10 @@ export default function Partnercreate() {
               </select>
             </div>
 
-            <div className="form-group">
-              <label className="mandatory">Partner Status</label>
+            <div className="form-group flex flex-col">
+              <label className="text-sm sm:text-base mb-1 mandatory">
+                Partner Status
+              </label>
               <select
                 required
                 name="partnerStatus"
@@ -743,7 +760,7 @@ export default function Partnercreate() {
                 })}
               </div>
             )} */}
-            <div className="w-1/2 mt-2">
+            <div className="mt-2">
               <Select
                 isMulti
                 closeMenuOnSelect={false}
@@ -759,7 +776,7 @@ export default function Partnercreate() {
             </div>
           </div>
 
-          <div className="portal-access flex items-center gap-2 text-gray-300">
+          <div className="portal-access flex flex-col sm:flex-row sm:items-center gap-2 text-gray-300 w-full">
             {/* Status Dot */}
             <div className="status-dot"></div>
 
@@ -771,8 +788,7 @@ export default function Partnercreate() {
                   portalAccessEnabled: !prev.portalAccessEnabled,
                 }))
               }
-              className={`w-3 h-3 flex items-center justify-center border rounded-sm cursor-pointer
-      ${
+              className={`w-4 h-4 flex items-center justify-center border rounded-sm cursor-pointer
         form.portalAccessEnabled
           ? "check-box-clr-after"
           : "check-box-clr-before"
@@ -785,11 +801,13 @@ export default function Partnercreate() {
             </div>
 
             {/* Label */}
-            <span className="text-[13px]">Portal Access Enabled</span>
+            <span className="text-[12px] sm:text-[13px] w-full sm:w-auto">
+              Portal Access Enabled
+            </span>
 
             {/* ✅ Input appears only if checked */}
             {form.portalAccessEnabled && (
-              <div className="label-input">
+              <div className="label-input w-full sm:w-1/2 mt-2 sm:mt-0">
                 {/* <input
                                     name="portalUrl"
                                     value={form.portalUrl}
@@ -806,7 +824,7 @@ export default function Partnercreate() {
                     setForm({ ...form, portalUrl: Number(e.target.value) })
                   }
                   disabled={!form.portalAccessEnabled}
-                  className="form-select w-1/2"
+                  className="form-select w-full sm:w-full"
                 >
                   <option value="">-- Select Portal URL --</option>
                   {portalOptions.map((p) => (
@@ -819,12 +837,16 @@ export default function Partnercreate() {
             )}
           </div>
 
-          <div className="documents-section mt-8">
-            <h3 className="section-title">Documents</h3>
-            <div className="grid grid-cols-3 gap-6 mt-4">
+          <div className="documents-section mt-8 w-full">
+            <h3 className="section-title text-lg sm:text-xl mb-4 text-left">
+              Documents
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4 w-full">
               {/* Agreement */}
-              <div className="relative">
-                <label className=" text-[15px]">Agreement Document</label>
+              <div className="relative  w-full flex flex-col items-center sm:items-start text-center sm:text-left">
+                <label className="text-[14px] sm:text-[15px]">
+                  Agreement Document
+                </label>
                 <p className="text-[10px] text-gray-400">
                   (PDF/JPG/PNG, Max 5MB)
                 </p>
@@ -839,6 +861,7 @@ export default function Partnercreate() {
                         cursor: "pointer",
                         border: "1px solid #ccc",
                       }}
+                      className="max-w-full sm:max-w-[100px] cursor-pointer border border-gray-300 mx-auto sm:mx-0"
                       onClick={() =>
                         setModalImage(
                           `data:image/png;base64,${form.agreementDocument}`
@@ -847,13 +870,13 @@ export default function Partnercreate() {
                     />
                     <button
                       onClick={() => handleRemoveImage("agreementDocument")}
-                      className="absolute top-1 right-1 bg-red-600 text-white rounded px-2 py-0.5 text-xs opacity-0 group-hover:opacity-100 transition"
+                      className="max-w-full sm:max-w-[100px] cursor-pointer border border-gray-300 mx-auto sm:mx-0"
                     >
                       Edit
                     </button>
                   </div>
                 ) : (
-                  <div className="mt-2 space-y-2">
+                  <div className="mt-2 space-y-2 w-full flex flex-col items-center sm:items-start text-center sm:text-left">
                     {removedImages.agreementDocument && (
                       <button
                         onClick={() => handleUndoImage("agreementDocument")}
@@ -862,7 +885,7 @@ export default function Partnercreate() {
                         Undo
                       </button>
                     )}
-                    <div className="file-upload">
+                    <div className="file-upload flex flex-col items-center sm:items-start gap-2">
                       <label className="choose-btn cursor-pointer bg-gray-800 text-white px-3 py-1 rounded">
                         Choose File
                         <input
@@ -876,7 +899,7 @@ export default function Partnercreate() {
                           }}
                         />
                       </label>
-                      <span className="file-name ml-2 text-sm text-gray-300">
+                      <span className="file-name ml-2 text-sm text-gray-300 truncate max-w-[150px] sm:max-w-full">
                         {agreementFile ? agreementFile.name : "No file chosen"}
                       </span>
                     </div>
@@ -885,8 +908,10 @@ export default function Partnercreate() {
               </div>
 
               {/* ID Proof */}
-              <div className="relative">
-                <label className=" text-[15px]">ID Proof Document</label>
+              <div className="relative w-full flex flex-col items-center sm:items-start text-center sm:text-left">
+                <label className="text-[14px] sm:text-[15px]">
+                  ID Proof Document
+                </label>
                 <p className="text-[10px] text-gray-400">
                   (PDF/JPG/PNG, Max 2MB)
                 </p>
@@ -896,6 +921,7 @@ export default function Partnercreate() {
                     <img
                       src={`data:image/png;base64,${form.idProofDocument}`}
                       alt="ID Proof Document Preview"
+                      className="max-w-full sm:max-w-[100px] cursor-pointer border border-gray-300 mx-auto sm:mx-0"
                       style={{
                         maxWidth: "100px",
                         cursor: "pointer",
@@ -915,7 +941,7 @@ export default function Partnercreate() {
                     </button>
                   </div>
                 ) : (
-                  <div className="mt-2 space-y-2">
+                  <div className="mt-2 space-y-2 w-full flex flex-col items-center sm:items-start text-center sm:text-left">
                     {removedImages.idProofDocument && (
                       <button
                         onClick={() => handleUndoImage("idProofDocument")}
@@ -924,7 +950,7 @@ export default function Partnercreate() {
                         Undo
                       </button>
                     )}
-                    <div className="file-upload">
+                    <div className="file-upload flex flex-col items-center sm:items-start gap-2">
                       <label className="choose-btn cursor-pointer bg-gray-800 text-white px-3 py-1 rounded">
                         Choose File
                         <input
@@ -938,7 +964,7 @@ export default function Partnercreate() {
                           }}
                         />
                       </label>
-                      <span className="file-name ml-2 text-sm text-gray-300">
+                      <span className="file-name ml-2 text-sm text-gray-300 truncate max-w-[150px] sm:max-w-full">
                         {idFile ? idFile.name : "No file chosen"}
                       </span>
                     </div>
@@ -947,8 +973,8 @@ export default function Partnercreate() {
               </div>
 
               {/* Address Proof */}
-              <div className="relative">
-                <label className="primary-color text-[15px]">
+              <div className="relative w-full flex flex-col items-center sm:items-start text-center sm:text-left">
+                <label className="primary-color text-[14px] sm:text-[15px]">
                   Address Proof Document
                 </label>
                 <p className="text-[10px] text-gray-400">
@@ -960,6 +986,7 @@ export default function Partnercreate() {
                     <img
                       src={`data:image/png;base64,${form.addressProofDocument}`}
                       alt="Address Proof Document Preview"
+                      className="max-w-full sm:max-w-[100px] cursor-pointer border border-gray-300 mx-auto sm:mx-0"
                       style={{
                         maxWidth: "100px",
                         cursor: "pointer",
@@ -979,7 +1006,7 @@ export default function Partnercreate() {
                     </button>
                   </div>
                 ) : (
-                  <div className="mt-2 space-y-2">
+                  <div className="mt-2 space-y-2 w-full flex flex-col items-center sm:items-start text-center sm:text-left">
                     {removedImages.addressProofDocument && (
                       <button
                         onClick={() => handleUndoImage("addressProofDocument")}
@@ -988,7 +1015,7 @@ export default function Partnercreate() {
                         Undo
                       </button>
                     )}
-                    <div className="file-upload">
+                    <div className="file-upload flex flex-col items-center sm:items-start gap-2">
                       <label className="choose-btn cursor-pointer bg-gray-800 text-white px-3 py-1 rounded">
                         Choose File
                         <input
@@ -1002,7 +1029,7 @@ export default function Partnercreate() {
                           }}
                         />
                       </label>
-                      <span className="file-name ml-2 text-sm text-gray-300">
+                      <span className="file-name ml-2 text-sm text-gray-300 truncate max-w-[150px] sm:max-w-full">
                         {addressFile ? addressFile.name : "No file chosen"}
                       </span>
                     </div>
@@ -1024,8 +1051,8 @@ export default function Partnercreate() {
             </div>
           </div>
           {/* Advanced Configuration Section */}
-          <div className="advanced-config mt-10">
-            <h3 className="section-title primary-color">
+          <div className="advanced-config mt-10 w-full">
+            <h3 className="section-title primary-color text-lg sm:text-xl mb-4">
               Advanced Configuration
             </h3>
 
@@ -1034,14 +1061,14 @@ export default function Partnercreate() {
               <h4 className="text-sm font-semibold primary-color mb-4">
                 Compliance & KYC
               </h4>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="form-group">
-                  <label>KYC Level</label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="form-group w-full">
+                  <label className="text-sm sm:text-base">KYC Level</label>
                   <select
                     name="kycLevel"
                     value={form.kycLevel || ""}
                     onChange={handleChange}
-                    className="form-input"
+                    className="form-input w-full"
                   >
                     <option value="">-- Select Status --</option>
                     {getConstraintOptions(
@@ -1054,13 +1081,13 @@ export default function Partnercreate() {
                     ))}
                   </select>
                 </div>
-                <div className="form-group">
-                  <label>KYC Status</label>
+                <div className="form-group w-full">
+                  <label className="text-sm sm:text-base">KYC Status</label>
                   <select
                     name="kycStatus"
                     value={form.kycStatus || ""}
                     onChange={handleChange}
-                    className="form-input"
+                    className="form-input w-full"
                   >
                     <option value="">-- Select Status --</option>
                     {getConstraintOptions(
@@ -1074,13 +1101,13 @@ export default function Partnercreate() {
                   </select>
                 </div>
 
-                <div className="form-group">
-                  <label>Partner Status</label>
+                <div className="form-group w-full">
+                  <label className="text-sm sm:text-base">Partner Status</label>
                   <select
                     name="partnerStatus"
                     value={form.partnerStatus || ""}
                     onChange={handleChange}
-                    className="form-input"
+                    className="form-input w-full"
                   >
                     <option value="">-- Select Status --</option>
                     {getConstraintOptions(
@@ -1094,13 +1121,13 @@ export default function Partnercreate() {
                   </select>
                 </div>
 
-                <div className="form-group">
-                  <label>Risk Profile</label>
+                <div className="form-group w-full">
+                  <label className="text-sm sm:text-base">Risk Profile</label>
                   <select
                     name="riskProfile"
                     value={form.riskProfile || ""}
                     onChange={handleChange}
-                    className="form-input"
+                    className="form-input w-full"
                   >
                     <option value="">-- Select Status --</option>
                     {getConstraintOptions(
@@ -1114,12 +1141,12 @@ export default function Partnercreate() {
                   </select>
                 </div>
 
-                <div className="form-group">
-                  <label>PAN Number</label>
+                <div className="form-group w-full">
+                  <label className="text-sm sm:text-base">PAN Number</label>
                   <input
                     type="text"
                     name="panNumber"
-                    className="form-input"
+                    className="form-input w-full"
                     placeholder="Enter PAN number"
                     value={form.panNumber || ""}
                     onChange={handleChange}
@@ -1127,24 +1154,24 @@ export default function Partnercreate() {
                   />
                 </div>
 
-                <div className="form-group">
-                  <label>TAN Number</label>
+                <div className="form-group w-full">
+                  <label className="text-sm sm:text-base">TAN Number</label>
                   <input
                     type="text"
                     name="tanNumber"
-                    className="form-input"
+                    className="form-input w-full"
                     placeholder="Enter TAN number"
                     value={form.tanNumber || ""}
                     onChange={handleChange}
                     maxLength={10}
                   />
                 </div>
-                <div className="form-group">
-                  <label>GSTIN</label>
+                <div className="form-group w-full">
+                  <label className="text-sm sm:text-base">GSTIN</label>
                   <input
                     type="text"
                     name="gstin"
-                    className="form-input"
+                    className="form-input w-full"
                     placeholder="Enter GSTIN"
                     value={form.gstin || ""}
                     onChange={handleChange}
@@ -1159,13 +1186,15 @@ export default function Partnercreate() {
               <h4 className="text-sm font-semibold primary-color mb-4">
                 Financial Configuration
               </h4>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="form-group">
-                  <label>Card Issuance Commission %</label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="form-group w-full">
+                  <label className="text-sm sm:text-base">
+                    Card Issuance Commission %
+                  </label>
                   <input
                     type="number"
                     name="cardIssuanceCommissionPercent"
-                    className="form-input"
+                    className="form-input w-full"
                     placeholder="0"
                     value={form.cardIssuanceCommissionPercent || ""}
                     min="0"
@@ -1178,12 +1207,12 @@ export default function Partnercreate() {
                     }}
                   />
                 </div>
-                <div className="form-group">
+                <div className="form-group w-full">
                   <label>Transaction Commission %</label>
                   <input
                     type="number"
                     name="transactionCommissionPercent"
-                    className="form-input"
+                    className="form-input w-full"
                     placeholder="0"
                     value={form.transactionCommissionPercent || ""}
                     min="0"
@@ -1197,22 +1226,26 @@ export default function Partnercreate() {
                   />
                 </div>
 
-                <div className="form-group">
-                  <label>Monthly Fixed Fee</label>
+                <div className="form-group w-full">
+                  <label className="text-sm sm:text-base">
+                    Monthly Fixed Fee
+                  </label>
                   <input
                     type="number"
                     name="monthlyFixedFee"
-                    className="form-input"
+                    className="form-input w-full"
                     placeholder="0"
                     value={form.monthlyFixedFee || ""}
                     onChange={handleChange}
                   />
                 </div>
-                <div className="form-group">
-                  <label>Commission Currency</label>
+                <div className="form-group w-full">
+                  <label className="text-sm sm:text-base">
+                    Commission Currency
+                  </label>
                   <select
                     name="commissionCurrency"
-                    className="form-input"
+                    className="form-input w-full"
                     value={form.commissionCurrency || "INR"}
                     onChange={handleChange}
                   >
@@ -1222,11 +1255,13 @@ export default function Partnercreate() {
                   </select>
                 </div>
 
-                <div className="form-group">
-                  <label>Settlement Frequency</label>
+                <div className="form-group w-full">
+                  <label className="text-sm sm:text-base">
+                    Settlement Frequency
+                  </label>
                   <select
                     name="settlementFrequency"
-                    className="form-input"
+                    className="form-input w-full"
                     value={form.settlementFrequency || "monthly"}
                     onChange={handleChange}
                   >
@@ -1239,18 +1274,18 @@ export default function Partnercreate() {
             </div>
           </div>
 
-          <div className="form-footer">
+          <div className="form-footer flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mt-6 w-full">
             <button
               type="button"
-              className="btn-outline-back"
+              className="btn-outline-back  w-full sm:w-auto flex items-center justify-center sm:justify-start gap-2 px-4 py-2 text-sm sm:text-base"
               onClick={() => setformOpen(false)}
             >
-              <ArrowLeft className="icon" /> Back
+              <ArrowLeft className="icon w-4 h-4 sm:w-5 sm:h-5" /> Back
             </button>
-            <div className="footer-right">
+            <div className="footer-right flex flex-col sm:flex-row gap-3 sm:gap-2 w-full sm:w-auto">
               <button
                 type="button"
-                className="btn-outline-reset"
+                className="btn-outline-reset w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 text-sm sm:text-base"
                 onClick={() => {
                   setEditingId(null);
                   setIsEditing(false);
@@ -1259,8 +1294,11 @@ export default function Partnercreate() {
               >
                 <RotateCcw className="icon" /> Reset
               </button>
-              <button type="submit" className="btn-outline-reset">
-                <Save className="icon" />
+              <button
+                type="submit"
+                className="btn-outline-reset w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 text-sm sm:text-base"
+              >
+                <Save className="icon w-4 h-4 sm:w-5 sm:h-5" />
                 {editingId ? "Update partner" : "Create partner"}
               </button>
             </div>
@@ -1270,16 +1308,16 @@ export default function Partnercreate() {
       <div className="partner-network">
         <div className="table-card">
           {/* Header */}
-          <div className="table-header">
-            <h2 className="table-title flex items-center gap-2">
-              <CalculatorIcon className="primary-color w-5 h-5" />
+          <div className="table-header flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-4 px-2 sm:px-0">
+            <h2 className="table-title flex items-center gap-2 text-sm sm:text-base font-semibold">
+              <CalculatorIcon className="primary-color w-4 h-4 sm:w-5 sm:h-5" />
               Existing Partner Configurations
             </h2>
-            <div className="search-box">
-              <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
+            <div className="search-box  relative w-full sm:w-64">
+              <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3 sm:w-4 sm:h-4" />
               <input
                 type="text"
-                className="search-input"
+                className="search-input !w-full pl-8 pr-2 py-1 sm:py-2 text-xs sm:text-sm rounded border border-gray-700 focus:outline-none"
                 placeholder="Search partners..."
                 value={search}
                 onChange={(e) => {
@@ -1291,31 +1329,31 @@ export default function Partnercreate() {
           </div>
 
           {/* Table */}
-          <div className="table-wrapper">
-            <table className="w-full text-sm text-left">
-              <thead className="table-head">
+          <div className="table-wrapper overflow-x-auto w-full table-scrollbar">
+            <table className="min-w-full text-left border-collapse">
+              <thead className="table-head text-xs sm:text-sm">
                 <tr>
-                  <th className="table-cell">Partner Name</th>
-                  <th className="table-cell">Type</th>
-                  <th className="table-cell">Contact</th>
-                  <th className="table-cell">Status</th>
-                  <th className="table-cell">KYC Status</th>
-                  <th className="table-cell">Agreement</th>
-                  <th className="table-cell">ID Proof</th>
-                  <th className="table-cell">Address Proof</th>
-                  <th className="table-cell">Action</th>
+                  <th className="table-cell px-2 py-2">Partner Name</th>
+                  <th className="table-cell px-2 py-2">Type</th>
+                  <th className="table-cell px-2 py-2">Contact</th>
+                  <th className="table-cell px-2 py-2">Status</th>
+                  <th className="table-cell px-2 py-2">KYC Status</th>
+                  <th className="table-cell px-2 py-2">Agreement</th>
+                  <th className="table-cell px-2 py-2">ID Proof</th>
+                  <th className="table-cell px-2 py-2">Address Proof</th>
+                  <th className="table-cell px-2 py-2">Action</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="text-xs sm:text-sm">
                 {currentPartners.map((partner, index) => (
-                  <tr key={index} className="table-row">
-                    <td className="table-cell-name max-w-[100px]">
+                  <tr key={index} className="table-row hover:bg-gray-900">
+                    <td className="table-cell-name max-w-[120px] px-3 py-2 truncate">
                       <p className="truncate" title={partner.partnerName}>
                         {partner.partnerName}
                       </p>
                     </td>
-                    <td className="p-3">{partner.partnerType}</td>
-                    <td className="p-3 max-w-[100px]">
+                    <td className="px-3 py-2">{partner.partnerType}</td>
+                    <td className="px-3 py-2 max-w-[100px] truncate">
                       <p
                         className="truncate"
                         title={`${partner.contactName} ${partner.contactPhone}`}
@@ -1323,7 +1361,7 @@ export default function Partnercreate() {
                         {partner.contactName} {partner.contactPhone}
                       </p>
                     </td>
-                    <td className="p-3">
+                    <td className="px-3 py-2">
                       <span
                         className={`px-2 py-1 rounded text-[10px] ${
                           partner.partnerStatus === "Active"
@@ -1338,7 +1376,7 @@ export default function Partnercreate() {
                         {partner.partnerStatus}
                       </span>
                     </td>
-                    <td className="p-3">
+                    <td className="px-3 py-2">
                       <span
                         className={`px-2 py-1 rounded text-[10px] ${
                           partner.kycStatus === "Verified"
@@ -1349,7 +1387,7 @@ export default function Partnercreate() {
                         {partner.kycStatus}
                       </span>
                     </td>
-                    <td className="p-3">
+                    <td className="px-3 py-2">
                       {partner.agreementDocumentBase64 ? (
                         <span className="px-2 py-1 rounded text-[10px] checker">
                           Completed
@@ -1360,7 +1398,7 @@ export default function Partnercreate() {
                         </span>
                       )}
                     </td>
-                    <td className="p-3">
+                    <td className="px-3 py-2">
                       {partner.idProofDocumentBase64 ? (
                         <span className="px-2 py-1 rounded text-[10px] checker">
                           Verified
@@ -1371,7 +1409,7 @@ export default function Partnercreate() {
                         </span>
                       )}
                     </td>
-                    <td className="p-3">
+                    <td className="px-3 py-2">
                       {partner.addressProofDocumentBase64 ? (
                         <span className="px-2 py-1 rounded text-[10px] checker">
                           Verified
@@ -1408,17 +1446,17 @@ export default function Partnercreate() {
           </div>
 
           {/* Pagination */}
-          <div className="flex justify-between items-center mt-4 px-4">
+          <div className="flex flex-col sm:flex-row flex-wrap justify-center sm:justify-between items-center mt-4 px-4 gap-2">
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
+              className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center  ${
                 currentPage === 1
                   ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
                   : "bg-[#0a1625] text-white hover:primary-color"
               }`}
             >
-              <ChevronLeft className="w-4 h-4" /> Prev
+              <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" /> Prev
             </button>
 
             <div className="flex gap-2">
@@ -1426,7 +1464,7 @@ export default function Partnercreate() {
                 <button
                   key={i}
                   onClick={() => handlePageChange(i + 1)}
-                  className={`px-3 py-1 rounded-lg text-sm ${
+                  className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${
                     currentPage === i + 1
                       ? "primary-bg text-black font-bold"
                       : "bg-[#1c2b45] text-white hover:primary-color"
@@ -1436,10 +1474,11 @@ export default function Partnercreate() {
                 </button>
               ))}
             </div>
+
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
+              className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${
                 currentPage === totalPages
                   ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
                   : "bg-[#0a1625] text-white hover:primary-color"
@@ -1451,26 +1490,40 @@ export default function Partnercreate() {
         </div>
       </div>
       {/* Guidelines */}
-      <div className="guidelines-card">
-        <h3 className="guidelines-title">Partner Management Guidelines</h3>
-        <div className="guidelines-grid">
-          <p>
-            🏢 <span>Partner Onboarding:</span>Collect complete business and
-            contact information
+      <div className="guidelines-card bg-[#0d0f13] p-4 rounded-md border border-gray-800">
+        {/* Title */}
+        <h3 className="guidelines-title text-lg sm:text-xl font-semibold text-teal-400 mb-4">
+          Partner Management Guidelines
+        </h3>
+
+        {/* First row */}
+        <div className="guidelines-grid grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm sm:text-base text-gray-300">
+          <p className="text-xs sm:text-sm text-gray-300">
+            🏢{" "}
+            <span className="font-medium text-gray-200">
+              Partner Onboarding:
+            </span>{" "}
+            Collect complete business and contact information
           </p>
-          <p>
-            📋 <span> Document Verification:</span> Ensure all required
-            documents are uploaded and verified
+          <p className="text-xs sm:text-sm text-gray-300">
+            📋{" "}
+            <span className="font-medium text-gray-200">
+              Document Verification:
+            </span>{" "}
+            Ensure all required documents are uploaded and verified
           </p>
         </div>
-        <div className="guidelines-grid">
-          <p>
-            🤝 <span>Product Access:</span> Configure allowed products and
-            services for each partner
+
+        {/* Second row */}
+        <div className="guidelines-grid grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 text-sm sm:text-base text-gray-300">
+          <p className="text-xs sm:text-sm text-gray-300">
+            🤝{" "}
+            <span className="font-medium text-gray-200">Product Access:</span>{" "}
+            Configure allowed products and services for each partner
           </p>
-          <p>
-            ✅ <span> Portal Access:</span> Enable partner portal access for
-            self-service capabilities
+          <p className="text-xs sm:text-sm text-gray-300">
+            ✅ <span className="font-medium text-gray-200">Portal Access:</span>{" "}
+            Enable partner portal access for self-service capabilities
           </p>
         </div>
       </div>

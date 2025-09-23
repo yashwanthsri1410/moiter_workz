@@ -441,7 +441,7 @@ select:focus {
   }
 }
 .compliance-title {
-  color: #00c2c2;
+  color: var(--primary-color);
   /* teal like your screenshot */
   /* margin-bottom: 1rem; */
 }
@@ -1442,12 +1442,12 @@ tbody tr {
   display: flex;
   align-items: center;
   gap: 8px;
-  background-color: #0f131d;
+  background-color: var(--borderBg-color);
   border: 1px solid var(--borderBg-color);
   border-radius: 8px;
   padding: 4px 14px;
   font-size: 12px;
-  color: #d1d5db;
+  color: var(--primary-color);
   /* gray-300 */
   cursor: pointer;
   transition: all 0.2s ease-in-out;
@@ -1474,10 +1474,10 @@ tbody tr {
   font-size: 12px;
   border-radius: 10px;
   font-weight: 600;
-  background: #0f1114;
+  background:#0f1114;
   /* border: 1px solid var(--primary-color); */
   color: #22c55e;
-  box-shadow: 0 0 5px #22c55e;
+  box-shadow:0 0 5px #22c55e;
   transition: 0.3s;
 }
 
@@ -1589,7 +1589,7 @@ tbody tr {
 
 .table-subtext {
   font-size: 12px;
-  color: #9ca3af;
+  color: var(--primary-color);
 }
 
 .table-wrapper {
@@ -2926,7 +2926,7 @@ textarea.form-input {
   position: relative;
   border-radius: 16px;
   padding: 20px;
-  background: #11161a;
+  background:var(--cards-bg);
   overflow: hidden;
   color: white;
   border: 1px solid var(--borderBg-color);
@@ -3332,3 +3332,118 @@ textarea.form-input {
 /* --------------------------------------------------------------------------------------------- */
 /* Media Query */
 /* --------------------------------------------------------------------------------------------- */
+/* Default desktop sidebar */
+.sidebar {
+  width: 240px;
+  transition: all 0.3s ease;
+}
+
+.sidebar.collapsed {
+  width: 60px;
+}
+
+/* Mobile responsive: below 768px */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;      /* overlay */
+    top: 0;
+    left: -240px;         /* hidden by default */
+    width: 240px;
+    height: 100%;
+    /* background: white; */
+    z-index: 50;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+    transition: left 0.3s ease;
+  }
+
+  /* When sidebar is open */
+  .sidebar.open {
+    left: 0;              /* slides in */
+  }
+
+  /* Collapse button always visible in mobile */
+  .collapse-btn {
+    position: absolute;
+    top: 10px;
+    right: -40px; /* outside sidebar */
+    /* background: white;
+    border: 1px solid #ccc; */
+    border-radius: 4px;
+  }
+
+  /* Main content full width */
+  .main {
+    margin-left: 0 !important; /* no shift */
+  }
+}
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px;
+    height: 100%;
+    
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.15);
+  }
+
+  .sidebar.open {
+    transform: translateX(0); /* slide in */
+  }
+
+  .sidebar.hidden {
+    transform: translateX(-100%); /* hidden */
+  }
+
+  .mobile-sidebar-toggle {
+    display: flex;
+  }
+}
+/* Desktop sidebar default */
+.sidebar {
+  width: 240px;
+  transition: all 0.3s ease;
+}
+
+.sidebar.collapsed {
+  width: 60px;
+}
+
+/* Mobile <768px */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+   background-color: var(--body-color);
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar.hidden {
+    transform: translateX(-100%);
+  }
+
+  .mobile-sidebar-toggle {
+    display: flex;
+  }
+
+  .main {
+    margin-left: 0 !important;
+  }
+}
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none;
+  }
+}

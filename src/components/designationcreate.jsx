@@ -325,21 +325,22 @@ export default function CreateDesignationForm({ onBack }) {
       )}
 
       {/* Table */}
-      <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 shadow-lg overflow-x-auto">
+      <div className="table-card rounded-xl border border-gray-800 p-4 shadow-lg overflow-x-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
-          <h2 className="primary-color flex items-center gap-2 font-semibold text-lg">
+          <h2 className="primary-color flex items-center gap-2 text-lg table-title">
             <Badge className="w-5 h-5" /> Existing Designations
           </h2>
-          <span className="text-sm text-gray-400">
+          <span className="text-sm text-gray-400 table-subtext">
             Total: {designations.length} designations
           </span>
         </div>
 
         {/* Table */}
         <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200 rounded-lg table-scrollbar">
+              <div className="max-h-[350px] sm:max-h-full">
           <table className="w-full text-left table-auto min-w-[600px] border-collapse">
-            <thead className="table-head">
+            <thead className="table-head sticky top-0 z-10">
               <tr>
                 <th className="table-cell px-4 py-2">Department</th>
                 <th className="table-cell px-4 py-2">Designation</th>
@@ -424,6 +425,8 @@ export default function CreateDesignationForm({ onBack }) {
           </table>
         </div>
       </div>
+      </div>
+      
 
       {/* Guidelines */}
       {/* <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 mt-6 shadow-lg">

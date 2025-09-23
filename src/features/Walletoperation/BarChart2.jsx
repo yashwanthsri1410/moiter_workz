@@ -76,6 +76,7 @@ const BarChart = () => {
 
   //   fetchData();
   // }, []);
+  
   useEffect(() => {
     const fetchChartData = async () => {
       try {

@@ -184,7 +184,7 @@ export default function ScreenManagement({ onBack }) {
           <div className="flex items-center justify-between w-full sm:hidden">
             {/* Back button */}
             <button className="header-icon-btn" onClick={onBack}>
-              <ArrowLeft className="text-[#00d4aa] w-4 h-4" />
+              <ArrowLeft className="primary-color w-4 h-4" />
             </button>
 
             {/* Title & Subtitle */}
@@ -197,7 +197,7 @@ export default function ScreenManagement({ onBack }) {
 
             {/* Icon */}
             <div className="header-icon-box">
-              <Monitor className="text-[#00d4aa] w-4 h-4" />
+              <Monitor className="primary-color w-4 h-4" />
             </div>
           </div>
 
@@ -214,10 +214,10 @@ export default function ScreenManagement({ onBack }) {
             {/* Left: Back + Icon + Title */}
             <div className="header-left flex items-center gap-[10px]">
               <button className="header-icon-btn" onClick={onBack}>
-                <ArrowLeft className="text-[#00d4aa] w-5 h-5" />
+                <ArrowLeft className="primary-color w-5 h-5" />
               </button>
               <div className="header-icon-box">
-                <Monitor className="text-[#00d4aa] w-5 h-5" />
+                <Monitor className="primary-color w-5 h-5" />
               </div>
               <div className="flex flex-col">
                 <h1 className="header-title text-lg">Screen Management</h1>
@@ -315,23 +315,24 @@ export default function ScreenManagement({ onBack }) {
       )}
 
       {/* Table */}
-      <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 shadow-lg">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="flex items-center gap-2 text-teal-400 font-semibold text-lg">
+      <div className="table-card rounded-xl border border-gray-800 p-4 shadow-lg">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+          <h2 className="flex items-center gap-2 text-lg primary-color table-title">
             <Monitor className="w-5 h-5" /> Existing Screens
           </h2>
-          <span className="text-sm text-gray-400">
+          <span className="text-sm text-gray-400 table-subtext">
             Total: {screens.length} screens
           </span>
         </div>
 
-        <div className="table-wrapper">
-          <table className="w-full text-left">
-            <thead className="table-head">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200 rounded-lg table-scrollbar">
+              <div className="max-h-[350px] sm:max-h-full">
+          <table className="w-full min-w-[600px] text-left table-auto border-collapse">
+            <thead className="table-head sticky top-0 z-10">
               <tr>
-                <th className="table-cell">Module</th>
-                <th className="table-cell">Screen</th>
-                <th className="table-cell-icon color-[#00d4aa] flex gap-4">
+                <th className="table-cell px-4 py-2">Module</th>
+                <th className="table-cell px-4 py-2">Screen</th>
+                <th className="table-cell px-4 py-2 text-right">
                   Actions
                 </th>
               </tr>
@@ -341,25 +342,25 @@ export default function ScreenManagement({ onBack }) {
                 groupedScreens.map((group) =>
                   group.screens.map((screen, idx) => (
                     <tr key={screen.screenId} className="table-row">
-                      <td className="table-cell-name">
+                      <td className="table-cell-name px-4 py-2">
                         <div className="flex items-center gap-1 ">
                           {" "}
                           {idx === 0 ? (
-                            <Settings className="w-4 h-4 text-teal-400 " />
+                            <Settings className="w-4 h-4 primary-color" />
                           ) : (
                             ""
                           )}
                           {idx === 0 ? group.moduleName : ""}
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-gray-300">
+                      <td className="px-4 py-2 text-gray-300">
                         {editId === screen.screenId ? (
                           <div>
                             <input
                               type="text"
                               value={editText}
                               onChange={handleEditTextChange}
-                              className="form-input"
+                              className="form-input  w-full"
                               placeholder="Enter new name (letters only)..."
                             />
                             <p className="text-xs text-gray-500 mt-1">
@@ -369,12 +370,12 @@ export default function ScreenManagement({ onBack }) {
                         ) : (
                           <div className="flex items-center gap-1 ">
                             {" "}
-                            <Monitor className="w-4 h-4 text-teal-400 " />
+                            <Monitor className="w-4 h-4 primary-color " />
                             {screen.screenDesc}
                           </div>
                         )}
                       </td>
-                      <td className="table-cell-icon flex gap-4">
+                      <td className="table-cell-icon px-4 py-2 flex justify-end gap-4">
                         {editId === screen.screenId ? (
                           <>
                             <button
@@ -393,7 +394,7 @@ export default function ScreenManagement({ onBack }) {
                         ) : (
                           <button
                             onClick={() => handleEditInline(screen)}
-                            className="flex items-center gap-1 text-teal-400 hover:underline"
+                            className="flex items-center gap-1 primary-color hover:underline"
                           >
                             <Pencil className="w-4 h-4" /> Edit
                           </button>
@@ -406,7 +407,7 @@ export default function ScreenManagement({ onBack }) {
                 <tr>
                   <td
                     colSpan={3}
-                    className="table-cell table-cell-muted text-center"
+                    className="table-cell table-cell-muted text-center px-4 py-2"
                   >
                     No screens found.
                   </td>
@@ -416,29 +417,23 @@ export default function ScreenManagement({ onBack }) {
           </table>
         </div>
       </div>
-
-      {/* Guidelines */}
-      <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 mt-6 shadow-lg">
-        <h3 className="text-teal-400 font-semibold mb-3">
-          Screen Management Guidelines
-        </h3>
-        <div className="grid md:grid-cols-2 gap-3 text-sm text-gray-300">
-          <p>
-            📘 <span className="text-white">Create:</span> Add new screens under
-            modules
-          </p>
-          <p>
-            🔍 <span className="text-white">Search:</span> Quickly find screens
-          </p>
-          <p>
-            ✏️ <span className="text-white">Edit:</span> Update screen inline
-          </p>
-          <p>
-            ⚠️ <span className="text-white">Validation:</span> Only letters,
-            spaces, and hyphens allowed
-          </p>
-        </div>
       </div>
+        {/* Guidelines */}
+    <div className="guidelines-card mt-4">
+  <h3 className="guidelines-title text-base sm:text-lg text-teal-400 font-semibold">
+    Screen Management Guidelines
+  </h3>
+
+  <div className="guidelines-grid text-sm sm:text-base">
+    <p>📘 <span className="font-semibold">Create:</span> Add new screens under modules</p>
+    <p>🔍 <span className="font-semibold">Search:</span> Quickly find screens</p>
+  </div>
+
+  <div className="guidelines-grid text-sm sm:text-base">
+    <p>✏️ <span className="font-semibold">Edit:</span> Update screen inline</p>
+    <p>⚠️ <span className="font-semibold">Validation:</span> Only letters, spaces, and hyphens allowed</p>
+  </div>
+</div>
     </div>
   );
 }

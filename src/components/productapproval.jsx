@@ -229,7 +229,7 @@ export default function ProductApproval() {
               </button>
 
               {/* Active Page */}
-              <span className="w-6 h-6 flex items-center justify-center rounded-md bg-[#00d4aa] text-black text-[12px]">
+              <span className="w-6 h-6 flex items-center justify-center rounded-md primary-bg  text-black text-[12px]">
                 {currentPage}
               </span>
 

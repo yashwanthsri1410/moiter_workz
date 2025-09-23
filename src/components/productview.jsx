@@ -364,7 +364,7 @@ export default function Productview({
           {selectedProduct.allowedChannels?.map((ch, idx) => (
             <span
               key={idx}
-              className="px-2 py-1 bg-gray-800 rounded text-[10px] sm:text-xs text-[#00d4aa]"
+              className="px-2 py-1 bg-gray-800 rounded text-[10px] sm:text-xs primary-color"
             >
               {ch.includes("_") || ch.includes("-")
                 ? ch
