@@ -49,6 +49,8 @@ export default function CheckersDashboardLayout() {
   const [isLoading, setIsLoading] = useState(false);
   const [modules, setModules] = useState([]);
   const navigate = useNavigate();
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const isMobile = window.innerWidth <= 768;
 
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   useEffect(() => {
@@ -109,8 +111,19 @@ export default function CheckersDashboardLayout() {
     setOpenDropdown(openDropdown === menu ? null : menu);
     setActiveTab(modIdx)
   };
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return isMobile;
+};
   const renderContent = () => {
+    const isMobile = useIsMobile();
     switch (activeTab) {
       case "0":
       case "1":
@@ -177,12 +190,13 @@ export default function CheckersDashboardLayout() {
             <SystemSettings />
           </div>
         );
-      case "0-9":
-        return (
-          <div className="content">
-            <Infra />
-          </div>
-        );
+       case "0-9":
+      return !isMobile ? (   // ✅ only show on desktop
+        <div className="content">
+          <Infra />
+        </div>
+      ) : null;
+
 
       case "1-0":
         return (
@@ -222,23 +236,31 @@ export default function CheckersDashboardLayout() {
   return (
     <div className="layout">
       {/* Sidebar */}
-      <aside className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
+      <aside
+        className={`sidebar 
+          ${isCollapsed ? "collapsed" : ""} 
+          ${isMobile ? (isMobileOpen ? "open" : "hidden") : ""}
+        `}
+      >
         <div className="sidebar-header">
           <div className={`${isCollapsed ? "shrinked" : "notshrinked"}`}>
             <img src={logo} alt="Logo" />
           </div>
+
+          {/* Collapse button */}
           <button
             className="collapse-btn"
-            onClick={() => setIsCollapsed(!isCollapsed)}
+            onClick={() =>
+              isMobile ? setIsMobileOpen(!isMobileOpen) : setIsCollapsed(!isCollapsed)
+            }
           >
-            {isCollapsed ? (
+            {isCollapsed || (isMobile && !isMobileOpen) ? (
               <ChevronRight size={18} />
             ) : (
               <ChevronLeft size={18} />
             )}
           </button>
         </div>
-
         <div className="menu-bar">
           <nav className="menu">
              {modules.map((mod, modIdx) => {
@@ -270,6 +292,10 @@ export default function CheckersDashboardLayout() {
                                 {mod.screens.map((screen, screenIdx) => {
                                   // unique id combining module index + screen index
                                   const tabKey = `${modIdx}-${screenIdx}`;
+                                      // 🔴 Skip Infra when screen width < 768px
+                                      if (screen === "Infra" && window.innerWidth < 768) {
+                                      return null;
+                                         }
                                   return (
                                     <button
                                       key={tabKey}

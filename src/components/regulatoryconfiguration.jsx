@@ -973,7 +973,7 @@ export default function RegulatoryConfig() {
         <div className="table-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
           {/* Title */}
           <p className="table-title flex items-center gap-2 text-sm sm:text-base font-semibold text-gray-200">
-            <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-[#00d4aa]" />
+            <FileText className="w-4 h-4 sm:w-5 sm:h-5 primary-color" />
             Existing Regulatory Configurations
           </p>
 
@@ -995,19 +995,19 @@ export default function RegulatoryConfig() {
           <table className="min-w-full text-left text-sm sm:text-base border-collapse ">
             <thead className="table-head bg-gray-50">
               <tr>
-                <th className="table-cell px-4 py-2 whitespace-nowrap">
+                <th className="table-cell px-2 py-2 whitespace-nowrap">
                   Configuration Name
                 </th>
-                <th className="table-cell px-4 py-2 whitespace-nowrap">
+                <th className="table-cell px-2 py-2 whitespace-nowrap">
                   Program Type
                 </th>
-                <th className="table-cell px-4 py-2 whitespace-nowrap">
+                <th className="table-cell px-2 py-2 whitespace-nowrap">
                   KYC Level
                 </th>
-                <th className="table-cell px-4 py-2 whitespace-nowrap">
+                <th className="table-cell px-2 py-2 whitespace-nowrap">
                   Remarks
                 </th>
-                <th className="table-cell px-4 py-2 whitespace-nowrap">
+                <th className="table-cell px-2 py-2 whitespace-nowrap">
                   Actions
                 </th>
               </tr>
@@ -1045,7 +1045,7 @@ export default function RegulatoryConfig() {
                             setformOpen(true);
                           }}
                         >
-                          <SquarePen className="text-[#00d4aa] w-4 h-4 sm:w-5 sm:h-5" />
+                          <SquarePen className="primary-color w-3 h-3" />
                         </button>
                       </td>
                     </tr>

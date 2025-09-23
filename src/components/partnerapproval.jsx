@@ -209,7 +209,7 @@ export default function PartnerApproval() {
                 <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" />
               </button>
 
-              <span className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-md bg-[#00d4aa] text-black text-[12px] sm:text-[14px]">
+              <span className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-md primary-bg  text-black text-[12px] sm:text-[14px]">
                 {currentPage}
               </span>
 
@@ -348,7 +348,7 @@ export default function PartnerApproval() {
                 <tbody>
                   {paginatedPartners.map((partner, idx) => (
                     <tr key={idx} className="table-row">
-                      <td className="table-content text-[#00d4aa] text-sm sm:text-base">
+                      <td className="table-content text-sm sm:text-base">
                         {partner.partnerName}
                       </td>
                       <td className="table-content text-sm sm:text-base">
@@ -401,7 +401,7 @@ export default function PartnerApproval() {
                           className="header-icon-box"
                           onClick={() => setSelectedPartner(partner)}
                         >
-                          <EyeIcon className="text-[#00d4aa] w-4 h-4" />
+                          <EyeIcon className="primary-color w-4 h-4" />
                         </button>
                       </td>
                     </tr>

@@ -270,7 +270,7 @@ const KYCReviewQueue = () => {
               <button
                 key={page}
                 onClick={() => handlePageChange(page)}
-                className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${
+                className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm primary-bg  ${
                   currentPage === page
                     ? "bg-[#00d4aa] text-black font-bold"
                     : "bg-[#1c2b45] text-white hover:text-[#00d4aa]"
@@ -281,7 +281,7 @@ const KYCReviewQueue = () => {
             ))}
         </div>
 
-        <div className="flex gap-2">
+        {/* <div className="flex gap-2">
           {Array.from({ length: totalPages }, (_, i) => i + 1)
             .filter(
               (page) =>
@@ -302,7 +302,7 @@ const KYCReviewQueue = () => {
                 {page}
               </button>
             ))}
-        </div>
+        </div> */}
 
         {/* Next Button */}
         <button

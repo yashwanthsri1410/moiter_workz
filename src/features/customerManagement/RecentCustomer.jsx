@@ -212,8 +212,10 @@ const RecentCustomer = () => {
 
 
       {/* Table */}
-   <div className="w-full overflow-x-auto table-scrollbar">
+   <div className="w-full overflow-x-auto overflow-y-auto table-scrollbar">
   <div className="inline-block min-w-full align-middle">
+        <div className="max-h-[350px] sm:max-h-full">
+
     <table className="min-w-[700px] text-sm text-left border-collapse">
         
           <thead className="rc-thead">
@@ -270,6 +272,7 @@ const RecentCustomer = () => {
         </table>
       </div>
        </div>
+       </div>
 
       {/* Pagination - only show if NOT searching */}
       {searchTerm.trim() === "" && (
@@ -325,7 +328,7 @@ const RecentCustomer = () => {
           </button>
         </div>
       )}
-    </div>
+    </div> 
    
   );
 };

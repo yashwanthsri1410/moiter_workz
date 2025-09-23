@@ -148,7 +148,7 @@ export default function DepartmentCreation({ onBack }) {
           {/* Top row for mobile: Arrow + Title + Building Icon */}
           <div className="flex items-center justify-between w-full sm:hidden">
             {/* Arrow */}
-            <button className="header-icon-btn">
+            <button className="header-icon-btn" onClick={onBack}>
               <ArrowLeft className="primary-color w-4 h-4" />
             </button>
 
@@ -178,11 +178,11 @@ export default function DepartmentCreation({ onBack }) {
           <div className="hidden sm:flex sm:justify-between sm:items-center w-full gap-[10px]">
             {/* Left: Arrow + Building Icon + Title */}
             <div className="header-left flex items-center gap-[10px]">
-              <button className="header-icon-btn">
-                <ArrowLeft className="text-[#00d4aa] w-4 h-4" />
+              <button className="header-icon-btn " onClick={onBack}>
+                <ArrowLeft className="primary-color w-4 h-4" />
               </button>
               <div className="header-icon-box">
-                <Building2 className="text-[#00d4aa] w-4 h-4" />
+                <Building2 className="primary-color w-4 h-4" />
               </div>
               <div className="flex flex-col">
                 <h1 className="header-title text-lg">Department Management</h1>
@@ -271,9 +271,10 @@ export default function DepartmentCreation({ onBack }) {
           </span>
         </div>
 
-        <div className="table-wrapper">
+        <div className="w-full overflow-x-auto overflow-y-auto table-scrollbar">
+              <div className="max-h-[350px] sm:max-h-full">
           <table className="w-full text-left">
-            <thead className="table-head">
+            <thead className="table-head sticky top-0 z-10">
               <tr>
                 <th className="table-cell">Department Name</th>
                 <th className="table-cell-icon flex gap-4">Actions</th>
@@ -356,6 +357,7 @@ export default function DepartmentCreation({ onBack }) {
             </tbody>
           </table>
         </div>
+      </div>
       </div>
 
       {/* Guidelines */}

@@ -213,47 +213,66 @@ const RoleAccessForm = ({ onBack }) => {
     <div className="p-6 space-y-6 min-h-screen text-white">
       {/* Header */}
       <div className="form-header">
-        <div className="back-title">
-          <div className="header-left">
-            <div className="flex items-center gap-[10px]">
-              <button className="header-icon-btn" onClick={onBack}>
-                <ArrowLeft className="primary-color w-4 h-4" />
-              </button>
+          <div className="back-title flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+    {/* Mobile Header */}
+    <div className="flex items-center justify-between w-full sm:hidden">
+      <button className="header-icon-btn" onClick={onBack}>
+        <ArrowLeft className="primary-color w-4 h-4" />
+      </button>
+      <div className="flex flex-col items-center text-center">
+        <h1 className="header-title text-base">Role Access Management</h1>
+        <p className="header-subtext text-xs">Assign modules and screens to roles</p>
+      </div>
+      <div className="header-icon-box">
+        <UserCog className="primary-color w-4 h-4" />
+      </div>
+    </div>
 
-              <div className="header-icon-box">
-                <UserCog className="primary-color w-4 h-4" />
-              </div>
-            </div>
-            <div>
-              <h1 className="header-title">Role Access Management</h1>
-              <p className="header-subtext">
-                Assign modules and screens to roles
-              </p>
-            </div>
-          </div>
+    {/* Active Roles count for mobile */}
+    <div className="flex justify-center w-full sm:hidden mt-2">
+      <button className="btn-count text-xs">
+        <span className="w-2 h-2 rounded-full bg-[#04CF6A]"></span>
+        {roleDescriptions.length} Active roles
+      </button>
+    </div>
 
-          <div className="flex items-center gap-4">
-            {/* Active count */}
-            <button className="btn-count">
-              <span className="w-2 h-2 rounded-full bg-[#04CF6A]  plus"></span>
-              {roleDescriptions.length} Active roles
-            </button>
-          </div>
+    {/* Desktop Header */}
+    <div className="hidden sm:flex sm:justify-between sm:items-center w-full gap-[10px]">
+      <div className="header-left flex items-center gap-[10px]">
+        <button className="header-icon-btn" onClick={onBack}>
+          <ArrowLeft className="primary-color w-5 h-5" />
+        </button>
+        <div className="header-icon-box">
+          <UserCog className="primary-color w-5 h-5" />
         </div>
-        <div className="search-toggle">
+        <div className="flex flex-col">
+          <h1 className="header-title text-lg">Role Access Management</h1>
+          <p className="header-subtext text-sm">Assign modules and screens to roles</p>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-4">
+        <button className="btn-count text-sm">
+          <span className="w-2 h-2 rounded-full bg-[#04CF6A]"></span>
+          {roleDescriptions.length} Active roles
+        </button>
+      </div>
+    </div>
+  </div>
+        <div className="search-toggle flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 items-center mt-2">
           {/* Search */}
-          <div className="search-box">
+          <div className="search-box relative">
             <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search roles..."
-              className="search-input"
+              className="search-input !w-[250px] sm:!w-[300px]"
             />
           </div>
           {/* Toggle form */}
-          <button onClick={() => setShowForm(!showForm)} className="btn-toggle">
+          <button onClick={() => setShowForm(!showForm)} className="btn-toggle flex items-center justify-center gap-1">
             {showForm ? (
               <>
                 <X className="w-3 h-3" /> Close Form
@@ -269,10 +288,10 @@ const RoleAccessForm = ({ onBack }) => {
 
       {/* Create Form */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="department-form">
+        <form onSubmit={handleSubmit} className="department-form mt-4">
           <h2 className="form-title">Create New Role</h2>
 
-          <div>
+          <div className="mb-4">
             <label className="form-label">Role Description</label>
             <input
               type="text"
@@ -289,8 +308,8 @@ const RoleAccessForm = ({ onBack }) => {
 
           {/* Modules */}
           <div className="mt-[15px]">
-            <label className="form-label-role ">Select Modules</label>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <label className="form-label-role text-sm ">Select Modules</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {uniqueModules.map((module) => (
                 <label
                   key={module}
@@ -311,8 +330,8 @@ const RoleAccessForm = ({ onBack }) => {
           {/* Screens */}
           {selectedModules.map((module) => (
             <div key={module}>
-              <label className="form-label-role ">Screens for {module}</label>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <label className="form-label-role text-sm ">Screens for {module}</label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 {(screensPerModule[module] || []).map((screen) => (
                   <label
                     key={screen}
@@ -336,15 +355,15 @@ const RoleAccessForm = ({ onBack }) => {
             </div>
           ))}
 
-          <div className="flex justify-end gap-4 pt-2">
+          <div className="flex flex-col sm:flex-row justify-end sm:justify-end gap-2 sm:gap-4 pt-2">
             <button
               type="button"
               onClick={() => setShowForm(false)}
-              className="btn-cancel"
+              className="text-sm font-medium text-gray-300 hover:text-white"
             >
               Cancel
             </button>
-            <button type="submit" className="btn-toggle">
+            <button type="submit" className="btn-toggle text-center sm:text-center">
               Create Role
             </button>
           </div>
@@ -354,20 +373,21 @@ const RoleAccessForm = ({ onBack }) => {
       {/* Role List */}
       <div className="table-card-bg rounded-xl border  p-4 shadow-lg">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="flex items-center gap-2 primary-color font-semibold text-lg">
+          <h2 className="flex items-center gap-2 primary-color text-lg table-title">
             <UserCog className="w-5 h-5" /> Existing Roles
           </h2>
-          <span className="text-sm text-gray-400">
+          <span className="text-sm text-gray-400 table-subtext">
             Total: {roleDescriptions.length} roles
           </span>
         </div>
 
-        <div className="table-wrapper">
-          <table className="w-full text-left">
-            <thead className="table-head">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200 rounded-lg table-scrollbar">
+              <div className="max-h-[350px] sm:max-h-full">
+          <table className="w-full min-w-[600px] text-left table-auto border-collapse">
+            <thead className="table-head sticky top-0 z-10">
               <tr>
-                <th className="table-cell">Role Description</th>
-                <th className="table-cell-icon flex gap-4">Actions</th>
+                <th className="table-cell  px-4 py-2">Role Description</th>
+                <th className="table-cell  px-4 py-2 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800 text-sm">
@@ -380,14 +400,14 @@ const RoleAccessForm = ({ onBack }) => {
                   )
                   .map((role) => (
                     <tr key={role.roleAccessId} className="table-row">
-                      <td className="table-cell-name">
+                      <td className="px-4 py-2">
                         {editRole?.roleAccessId === role.roleAccessId ? (
                           <div>
                             <input
                               type="text"
                               value={editedRoleName}
                               onChange={handleEditedRoleNameChange}
-                              className="form-input"
+                              className="form-input w-full"
                               placeholder="Enter new name (letters only)..."
                             />
                             <p className="text-xs text-gray-500 mt-1">
@@ -446,30 +466,26 @@ const RoleAccessForm = ({ onBack }) => {
           </table>
         </div>
       </div>
-      {/* Guidelines */}
-      <div className="table-card-bg rounded-xl p-4 mt-6 shadow-lg">
-        <h3 className="primary-color font-semibold mb-3">
-          Role Management Guidelines
-        </h3>
-        <div className="grid md:grid-cols-2 gap-3 text-sm text-gray-300">
-          <p>
-            📘 <span className="text-white">Create:</span> Add new role under
-            departments
-          </p>
-          <p>
-            🔍 <span className="text-white">Search:</span> Quickly find role
-          </p>
-          <p>
-            ✏️ <span className="text-white">Edit:</span> Update designation
-            inline
-          </p>
-          <p>
-            ⚠️ <span className="text-white">Validation:</span> Only letters,
-            spaces, and hyphens allowed
-          </p>
-        </div>
       </div>
+      {/* Guidelines */}
+       <div className="guidelines-card mt-6 bg-[#0D0F12] rounded-xl border border-gray-800 p-4 shadow-lg">
+  <h3 className="guidelines-title text-base sm:text-lg text-teal-400 font-semibold mb-3">
+    Role Management Guidelines
+  </h3>
+
+  <div className="guidelines-grid text-sm sm:text-base">
+    <p>📘 <span className="font-semibold text-white">Create:</span> Add new roles under departments</p>
+    <p>🔍 <span className="font-semibold text-white">Search:</span> Quickly find roles</p>
+  </div>
+
+  <div className="guidelines-grid text-sm sm:text-base mt-2">
+    <p>✏️ <span className="font-semibold text-white">Edit:</span> Update designation inline</p>
+    <p>⚠️ <span className="font-semibold text-white">Validation:</span> Only letters, spaces, and hyphens allowed</p>
+  </div>
+</div>
+
     </div>
+    
   );
 };
 

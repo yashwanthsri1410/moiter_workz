@@ -29,7 +29,7 @@ const CustomerManagement = () => {
       {/* Row 1 - Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Total Customers */}
-        <div className="bg-[#0d1017] rounded-lg p-4 flex flex-col gap-4 shadow hover:-translate-y-1 transition corner-box">
+        <div className=" rounded-lg p-4 flex flex-col gap-4 shadow hover:-translate-y-1 transition corner-box">
           <div className="flex justify-between items-center">
             <h3 className="text-xs font-semibold text-gray-400">
               Total Customers

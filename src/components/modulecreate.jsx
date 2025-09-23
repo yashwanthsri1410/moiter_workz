@@ -293,8 +293,9 @@ export default function ModuleCreation({ onBack }) {
 
         {/* Responsive Table Wrapper */}
         <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200 rounded-lg table-scrollbar">
+              <div className="max-h-[350px] sm:max-h-full">
           <table className="w-full min-w-[600px] text-left table-auto border-collapse">
-            <thead className="table-head">
+            <thead className="table-head sticky top-0 z-10">
               <tr>
                 <th className="table-cell px-4 py-2">Module Name</th>
                 <th className="table-cell px-4 py-2 text-right">Actions</th>
@@ -350,7 +351,7 @@ export default function ModuleCreation({ onBack }) {
                             setEditingModuleId(mod.moduleId);
                             setEditedModuleName(mod.moduleName);
                           }}
-                          className="text-[#00f5a0] hover:underline flex items-center gap-1"
+                          className="primary-color hover:underline flex items-center gap-1"
                         >
                           <Pencil className="w-4 h-4" /> Edit
                         </button>
@@ -372,7 +373,7 @@ export default function ModuleCreation({ onBack }) {
           </table>
         </div>
       </div>
-
+      </div>
       {/* Guidelines */}
       <div className="guidelines-card mt-4">
         <h3 className="guidelines-title text-base sm:text-lg">
