@@ -235,8 +235,8 @@ const Employeelogin = () => {
                 "Authenticating..."
               ) : (
                 <>
-                  <Fingerprint className="login-btn-icon" /> Login
-                  <ArrowRight className="login-btn-icon " />
+                  <Fingerprint size="16" /> Login
+                  <ArrowRight size="16" />
                 </>
               )}
             </button>

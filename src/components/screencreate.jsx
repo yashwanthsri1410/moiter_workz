@@ -13,6 +13,8 @@ import {
   X,
 } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
+import GuidelinesCard from "./reusable/guidelinesCard";
+import { screenGuidelines } from "../constants/guidelines";
 
 export default function ScreenManagement({ onBack }) {
   const [modules, setModules] = useState([]);
@@ -174,7 +176,7 @@ export default function ScreenManagement({ onBack }) {
   }, []);
 
   return (
-    <div className="p-6 space-y-6 min-h-screen text-white">
+    <div>
       {/* Header */}
 
       <div className="form-header">
@@ -214,14 +216,14 @@ export default function ScreenManagement({ onBack }) {
             {/* Left: Back + Icon + Title */}
             <div className="header-left flex items-center gap-[10px]">
               <button className="header-icon-btn" onClick={onBack}>
-                <ArrowLeft className="primary-color w-5 h-5" />
+                <ArrowLeft className="primary-color w-4 h-4" />
               </button>
               <div className="header-icon-box">
-                <Monitor className="primary-color w-5 h-5" />
+                <Monitor className="primary-color w-4 h-4" />
               </div>
-              <div className="flex flex-col">
-                <h1 className="header-title text-lg">Screen Management</h1>
-                <p className="header-subtext text-sm">
+              <div>
+                <h1 className="user-title">Screen Management</h1>
+                <p className="user-subtitle">
                   Create and manage screens under modules
                 </p>
               </div>
@@ -315,35 +317,33 @@ export default function ScreenManagement({ onBack }) {
       )}
 
       {/* Table */}
-      <div className="table-card rounded-xl border border-gray-800 p-4 shadow-lg">
+      <div className="table-card">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
-          <h2 className="flex items-center gap-2 text-lg primary-color table-title">
-            <Monitor className="w-5 h-5" /> Existing Screens
-          </h2>
+          <div className="flex items-center gap-2 primary-color">
+            <Monitor className="w-4 h-4" />
+            <p className="user-table-header">Existing Screens</p>
+          </div>
           <span className="text-sm text-gray-400 table-subtext">
             Total: {screens.length} screens
           </span>
         </div>
 
-        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200 rounded-lg table-scrollbar">
-              <div className="max-h-[350px] sm:max-h-full">
-          <table className="w-full min-w-[600px] text-left table-auto border-collapse">
-            <thead className="table-head sticky top-0 z-10">
+        <div className="table-container">
+          <table>
+            <thead>
               <tr>
-                <th className="table-cell px-4 py-2">Module</th>
-                <th className="table-cell px-4 py-2">Screen</th>
-                <th className="table-cell px-4 py-2 text-right">
-                  Actions
-                </th>
+                <th>Module</th>
+                <th>Screen</th>
+                <th className="text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-800 text-sm">
+            <tbody>
               {groupedScreens.length > 0 ? (
                 groupedScreens.map((group) =>
                   group.screens.map((screen, idx) => (
-                    <tr key={screen.screenId} className="table-row">
-                      <td className="table-cell-name px-4 py-2">
-                        <div className="flex items-center gap-1 ">
+                    <tr key={screen.screenId}>
+                      <td>
+                        <div className="flex items-center gap-1 my-2">
                           {" "}
                           {idx === 0 ? (
                             <Settings className="w-4 h-4 primary-color" />
@@ -417,23 +417,11 @@ export default function ScreenManagement({ onBack }) {
           </table>
         </div>
       </div>
-      </div>
-        {/* Guidelines */}
-    <div className="guidelines-card mt-4">
-  <h3 className="guidelines-title text-base sm:text-lg text-teal-400 font-semibold">
-    Screen Management Guidelines
-  </h3>
-
-  <div className="guidelines-grid text-sm sm:text-base">
-    <p>📘 <span className="font-semibold">Create:</span> Add new screens under modules</p>
-    <p>🔍 <span className="font-semibold">Search:</span> Quickly find screens</p>
-  </div>
-
-  <div className="guidelines-grid text-sm sm:text-base">
-    <p>✏️ <span className="font-semibold">Edit:</span> Update screen inline</p>
-    <p>⚠️ <span className="font-semibold">Validation:</span> Only letters, spaces, and hyphens allowed</p>
-  </div>
-</div>
+      {/* Guidelines */}
+      <GuidelinesCard
+        title="Screen Management Guidelines"
+        guidelines={screenGuidelines}
+      />
     </div>
   );
 }

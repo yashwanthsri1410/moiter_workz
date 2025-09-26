@@ -6,16 +6,7 @@
   margin-top: 1.25rem; /* mt-5 */
 }
 
-.monitoring-container {
-  padding: 2rem 0; /* p-8 */
-}
-
 /* Monitoring.css */
-
-.monitoring-root {
-  text-align: center;
-  padding: 2rem 0; /* p-8 */
-}
 
 .db-down-banner {
   margin: -4rem 0 1rem 0; /* -m-8 mb-4 */
@@ -24,20 +15,6 @@
   font-weight: 600;
   padding: 1rem;
   border-radius: 0.375rem; /* rounded-md */
-}
-
-.monitoring-title {
-  font-size: 1.875rem; /* text-3xl */
-  font-weight: 700; /* font-bold */
-  color: var(--primary-color);
-}
-
-.sweeper-text {
-  position: relative;
-  overflow: hidden;
-  color: #9ca3af; /* gray-400 */
-  font-size: 0.875rem; /* text-sm */
-  margin-top: 0.25rem;
 }
 
 .sweeper-line {
@@ -353,11 +330,6 @@
 
 .stat-value.red {
   color: #f87171; /* red-400 */
-}
-
-table thead tr th {
-  color: var(--primary-color);
-  font-weight: 400;
 }
 
 /* Endpoints section */

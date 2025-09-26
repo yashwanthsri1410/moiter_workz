@@ -17,6 +17,8 @@ import usePublicIp from "../hooks/usePublicIp";
 import "../styles/styles.css";
 import { channels, options } from "../constants";
 import { v4 as uuidv4 } from "uuid";
+import GuidelinesCard from "./reusable/guidelinesCard";
+import { productGuidelines } from "../constants/guidelines";
 
 // 🔹 Mapper function
 const mapFormToApiSchema = (form, username, ip, isEditing = false, empId) => {
@@ -543,7 +545,7 @@ export default function Productcreate() {
   }, [isEditing]);
 
   return (
-    <div className="config-forms">
+    <>
       <div className="card-header flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0">
         {/* Left Section */}
         <div className="card-header-left flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-2">
@@ -553,10 +555,8 @@ export default function Productcreate() {
             </div>
           </div>
           <div>
-            <h1 className="header-title  text-base sm:text-lg font-semibold text-center sm:text-left">
-              Product Configuration Management
-            </h1>
-            <p className="header-subtext text-sm sm:text-base text-gray-400 text-center sm:text-left">
+            <h1 className="user-title">Product Configuration Management</h1>
+            <p className="user-subtitle">
               Create and manage financial products and services
             </p>
           </div>
@@ -1100,13 +1100,13 @@ export default function Productcreate() {
       {/* Existing Configurations */}
       <div className="table-card mt-[18px]">
         <div className="table-header flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-4 px-2 sm:px-0">
-          <p className="table-title flex items-center gap-2 text-sm sm:text-base font-semibold text-gray-200">
-            <PackagePlus className="w-4 h-4 sm:w-5 sm:h-5" />
-            Existing product Configurations
-          </p>
+          <div className="flex items-center gap-2 primary-color">
+            <PackagePlus className="w-4 h-4" />
+            <p className="user-table-header">Existing product Configurations</p>
+          </div>
           {/* Search bar */}
           <div className="search-box relative w-full sm:w-64">
-            <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3 sm:w-4 sm:h-4" />
+            <Search size="14" className="absolute left-3 top-2 text-gray-400" />
             <input
               type="text"
               className="search-input !w-full pl-8 pr-2 py-1 sm:py-2 text-xs sm:text-sm rounded border"
@@ -1117,34 +1117,36 @@ export default function Productcreate() {
           </div>
         </div>
 
-        <div className="table-wrapper overflow-x-auto w-full table-scrollbar">
+        <div className="table-container">
           {/* Table */}
-          <table className="min-w-full text-left border-collapse">
-            <thead className="table-head text-xs sm:text-sm">
+          <table>
+            <thead>
               <tr>
                 {/* <th className="table-cell">#</th> */}
-                <th className="table-cell px-2 py-2">Configuration NAME</th>
-                <th className="table-cell px-2 py-2">Program Type</th>
-                <th className="table-cell px-2 py-2">KYC Level</th>
-                <th className="table-cell px-2 py-2">Status</th>
-                <th className="table-cell px-2 py-2">Remarks</th>
-                <th className="table-cell px-2 py-2">Actions</th>
+                <th>Configuration Name</th>
+                <th>Program Type</th>
+                <th>KYC Level</th>
+                <th>Status</th>
+                <th>Remarks</th>
+                <th>Actions</th>
               </tr>
             </thead>
-            <tbody className="text-xs sm:text-sm">
+            <tbody>
               {paginatedConfigurations &&
                 paginatedConfigurations.map((cfg, idx) => {
                   const formattedKYCLevel =
                     cfg.kycLevelRequired.charAt(0).toUpperCase() +
                     cfg.kycLevelRequired.slice(1).toLowerCase();
                   return (
-                    <tr key={cfg.productId || idx} className="table-row">
-                      <td className="table-content">{cfg.productName}</td>
-                      <td className="table-content">{cfg.programType}</td>
-                      <td className="table-content">
-                        {formattedKYCLevel || "-"}
+                    <tr key={cfg.productId || idx}>
+                      <td className="max-w-[120px]">
+                        <p className="truncate" title={cfg.productName}>
+                          {cfg.productName}
+                        </p>
                       </td>
-                      <td className="table-content">
+                      <td>{cfg.programType}</td>
+                      <td>{formattedKYCLevel || "-"}</td>
+                      <td>
                         <span
                           className={` px-2 py-1 rounded text-[10px] ${
                             cfg.isActive ? "checker" : "superuser"
@@ -1153,8 +1155,8 @@ export default function Productcreate() {
                           {cfg.isActive ? "active" : "Inactive"}
                         </span>
                       </td>
-                      <td className="table-content">{cfg.remarks || "-"}</td>
-                      <td className="table-content">
+                      <td>{cfg.remarks || "-"}</td>
+                      <td>
                         <button
                           className="header-icon-box"
                           onClick={() => handleEdit(cfg)}
@@ -1182,8 +1184,8 @@ export default function Productcreate() {
             disabled={currentPage === 1}
             className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center  ${
               currentPage === 1
-                ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                : "bg-[#0a1625] text-white hover:primary-color"
+                ? "prev-next-disabled-btn"
+                : "prev-next-active-btn"
             }`}
           >
             <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" /> Prev
@@ -1196,8 +1198,8 @@ export default function Productcreate() {
                 onClick={() => handlePageChange(i + 1)}
                 className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${
                   currentPage === i + 1
-                    ? "primary-bg text-black font-bold"
-                    : "bg-[#1c2b45] text-white hover:primary-color"
+                    ? "active-pagination-btn"
+                    : "inactive-pagination-btn"
                 }`}
               >
                 {i + 1}
@@ -1210,8 +1212,8 @@ export default function Productcreate() {
             disabled={currentPage === totalPages}
             className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${
               currentPage === totalPages
-                ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                : "bg-[#0a1625] text-white hover:primary-color"
+                ? "prev-next-disabled-btn"
+                : "prev-next-active-btn"
             }`}
           >
             Next <ChevronRight className="w-4 h-4" />
@@ -1219,35 +1221,10 @@ export default function Productcreate() {
         </div>
       </div>
       {/* Guidelines */}
-      <div className="guidelines-card p-2 sm:p-4 bg-[#0d0f13] rounded-md border border-gray-800 w-full overflow-hidden">
-        <h3 className="guidelines-title text-teal-400 text-xs sm:text-base font-semibold mb-4">
-          Product Creation Guidelines
-        </h3>
-
-        {/* First Grid */}
-        <div className="guidelines-grid grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
-          <p className="text-xs sm:text-sm text-gray-300 break-words">
-            📦 <span className="font-medium">Basic Details:</span> Provide
-            product name, description, and category
-          </p>
-          <p className="text-xs sm:text-sm text-gray-300 break-words">
-            💲 <span className="font-medium">Pricing Setup:</span> Define price,
-            currency, and applicable taxes
-          </p>
-        </div>
-
-        {/* Second Grid */}
-        <div className="guidelines-grid grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-          <p className="text-xs sm:text-sm text-gray-300 break-words">
-            ⚙️ <span className="font-medium">Configuration:</span> Set product
-            attributes, features, and usage limits
-          </p>
-          <p className="text-xs sm:text-sm text-gray-300 break-words">
-            📜 <span className="font-medium">Compliance:</span> Ensure product
-            meets regulatory and policy requirements
-          </p>
-        </div>
-      </div>
-    </div>
+      <GuidelinesCard
+        title="Product Creation Guidelines"
+        guidelines={productGuidelines}
+      />
+    </>
   );
 }

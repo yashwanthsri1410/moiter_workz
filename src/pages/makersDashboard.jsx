@@ -48,7 +48,7 @@ export default function DashboardLayout() {
   const [isLoading, setIsLoading] = useState(false);
   const [modules, setModules] = useState([]);
   const navigate = useNavigate();
-    const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const isMobile = window.innerWidth <= 768;
 
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -108,117 +108,56 @@ export default function DashboardLayout() {
 
   const toggleDropdown = (menu, modIdx) => {
     setOpenDropdown(openDropdown === menu ? null : menu);
-    setActiveTab(modIdx)
+    setActiveTab(modIdx);
   };
   const useIsMobile = () => {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  
+
     useEffect(() => {
       const handleResize = () => setIsMobile(window.innerWidth < 768);
       window.addEventListener("resize", handleResize);
       return () => window.removeEventListener("resize", handleResize);
     }, []);
-  
+
     return isMobile;
   };
 
   const renderContent = () => {
-     const isMobile = useIsMobile();
-    switch (activeTab) {
-      case "0":
-      case "1":
-        return (
-          <div className="content">
-            {" "}
-            <Maincheckerdashboard />
-          </div>
-        );
-      case "0-0":
-        return (
-          <div className="content">
-            <CustomerManagement />
-          </div>
-        );
-      case "0-1":
-        return (
-          <div className="content">
-            {" "}
-            <Walletranscation />
-          </div>
-        );
-      case "0-2":
-        return (
-          <div className="content">
-            <TransactionsAnalystics />
-          </div>
-        );
-      case "0-3":
-        return (
-          <div className="content">
-            {" "}
-            <ComplianceKYC />
-          </div>
-        );
-      case "0-4":
-        return (
-          <div className="content">
-            <RiskManagement />
-          </div>
-        );
-      case "0-5":
-        return (
-          <div className="content">
-            {" "}
-            <Productperformance />
-          </div>
-        );
-      case "0-6":
-        return (
-          <div className="content">
-            <PartnerMangement />
-          </div>
-        );
-      case "0-7":
-        return (
-          <div className="content">
-            <ReportsAndAnalytics />
-          </div>
-        );
-      case "0-8":
-        return (
-          <div className="content">
-            <SystemSettings />
-          </div>
-        );
-     case "0-9":
-      return !isMobile ? (   // ✅ only show on desktop
-        <div className="content">
+    const isMobile = useIsMobile();
+
+    const tabMap = {
+      0: <Maincheckerdashboard />,
+      1: <Maincheckerdashboard />,
+      "0-0": <CustomerManagement />,
+      "0-1": <Walletranscation />,
+      "0-2": <TransactionsAnalystics />,
+      "0-3": <ComplianceKYC />,
+      "0-4": <RiskManagement />,
+      "0-5": <Productperformance />,
+      "0-6": <PartnerMangement />,
+      "0-7": <ReportsAndAnalytics />,
+      "0-8": <SystemSettings />,
+
+      "1-0": <Regulatoryconfiguration />,
+      "1-1": <Productcreate />,
+      "1-2": <Partnercreate />,
+    };
+
+    if (activeTab === "0-9") {
+      return !isMobile ? (
+        <div className="content content p-5 space-y-5">
           <Infra />
         </div>
       ) : null;
-
-      case "1-0":
-        return (
-          <div className="content">
-            <Regulatoryconfiguration />
-          </div>
-        );
-      case "1-1":
-        return (
-          <div className="content">
-            <Productcreate />
-          </div>
-        );
-      case "1-2":
-        return (
-          <div className="content">
-            <Partnercreate />
-          </div>
-        );
-      default:
-        return <div className="content">Select an option</div>;
     }
+
+    return (
+      <div className="content content p-5 space-y-5">
+        {tabMap[activeTab] || "Select an option"}
+      </div>
+    );
   };
+
   // Define dashboard children tabs
   const dashboardTabs = [
     "customer",
@@ -234,7 +173,7 @@ export default function DashboardLayout() {
   return (
     <div className="layout">
       {/* Sidebar */}
-    <aside
+      <aside
         className={`sidebar 
           ${isCollapsed ? "collapsed" : ""} 
           ${isMobile ? (isMobileOpen ? "open" : "hidden") : ""}
@@ -249,7 +188,9 @@ export default function DashboardLayout() {
           <button
             className="collapse-btn"
             onClick={() =>
-              isMobile ? setIsMobileOpen(!isMobileOpen) : setIsCollapsed(!isCollapsed)
+              isMobile
+                ? setIsMobileOpen(!isMobileOpen)
+                : setIsCollapsed(!isCollapsed)
             }
           >
             {isCollapsed || (isMobile && !isMobileOpen) ? (
@@ -268,8 +209,9 @@ export default function DashboardLayout() {
                 <div key={modIdx}>
                   <button
                     onClick={() => toggleDropdown(mod.module.trim(), tabKey)}
-                    className={`menu-header ${openDropdown === mod.module.trim() ? "active" : ""
-                      }`}
+                    className={`main-menu-list ${
+                      openDropdown === mod.module.trim() ? "active" : ""
+                    }`}
                   >
                     <LayoutGrid size={16} className="menu-icon" />
                     {!isCollapsed && (
@@ -291,15 +233,17 @@ export default function DashboardLayout() {
                       {mod.screens.map((screen, screenIdx) => {
                         // unique id combining module index + screen index
                         const tabKey = `${modIdx}-${screenIdx}`;
-                          // 🔴 Skip Infra when screen width < 768px
-                                      if (screen === "Infra" && window.innerWidth < 768) {
-                                      return null;
-                                         }
+                        // 🔴 Skip Infra when screen width < 768px
+                        if (screen === "Infra" && window.innerWidth < 768) {
+                          return null;
+                        }
                         return (
                           <button
                             key={tabKey}
                             onClick={() => setActiveTab(tabKey)}
-                            className={activeTab === tabKey ? "submenu-active" : ""}
+                            className={`submenu-list
+                              ${activeTab === tabKey ? "submenu-active" : ""}
+                            `}
                           >
                             <ChevronRight size={14} /> {screen}
                           </button>
@@ -308,7 +252,7 @@ export default function DashboardLayout() {
                     </div>
                   )}
                 </div>
-              )
+              );
             })}
           </nav>
         </div>

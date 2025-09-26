@@ -121,7 +121,7 @@ export default function UserManagementSystem() {
   const checkers = users.checker || 0;
 
   return (
-    <div className="department-page">
+    <div>
       {/* Header */}
       <div className="form-header">
         <div className="back-title flex flex-col items-center text-center sm:flex-row sm:justify-between sm:items-center sm:text-left">
@@ -131,8 +131,8 @@ export default function UserManagementSystem() {
               <Shield className="primary-color w-4 h-4" />
             </div>
             <div>
-              <h1 className="header-title">User Management System</h1>
-              <p className="header-subtext">
+              <h1 className="user-title">User Management System</h1>
+              <p className="user-subtitle">
                 Monitor and manage your organization’s workforce
               </p>
             </div>
@@ -194,9 +194,10 @@ export default function UserManagementSystem() {
       <div className="table-card">
         <div className="table-header flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 text-center sm:text-left">
           {/* Left (Title + Icon) */}
-          <h2 className="table-title flex items-center justify-center sm:justify-start gap-2">
-            <Users className="w-5 h-5" /> User Directory
-          </h2>
+          <div className="flex items-center gap-2 primary-color">
+            <Users className="w-4 h-4" />
+            <p className="user-table-header">User Directory</p>
+          </div>
 
           {/* Right (Subtext) */}
           <p className="table-subtext">
@@ -205,71 +206,66 @@ export default function UserManagementSystem() {
         </div>
 
         {/* Search Bar */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mb-4">
+        <div className="flex flex-col sm:flex-row sm:justify-between items-stretch sm:items-center gap-2 w-full sm:w-auto mb-4">
           {/* Search Bar */}
-          <div className="flex items-center bg-[#0a1625] px-3 py-2 rounded-lg w-full sm:w-[90%]">
-            <Search className="w-4 h-4 text-gray-400" />
+          <div className="relative flex items-center w-full sm:w-60">
+            <Search size="14" className="absolute left-3 top-2 text-gray-400" />
             <input
               type="text"
               placeholder="Search users by name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-transparent outline-none text-sm text-white w-full ml-2"
+              className="search-input-approval"
             />
           </div>
 
           {/* Button */}
           <div className="flex justify-center sm:justify-start w-full sm:w-auto">
-            <button
-              className="filter-btn sm:w-auto text-center"
-              onClick={exportPDF}
-            >
-              <Download className="filter-icon" />
+            <button className="btn-toggle" onClick={exportPDF}>
+              <Download color="black" className="w-4 h-4 mr-1" />
               Export PDF
             </button>
           </div>
         </div>
 
         {/* Table */}
-        <div className="w-full overflow-x-auto table-scrollbar">
-          <div className="inline-block min-w-full align-middle">
-            <table className="min-w-[700px] text-sm text-left border-collapse">
-              <thead className="table-head">
-                <tr>
-                  <th className="table-cell">Emp ID</th>
-                  <th className="table-cell">User Name</th>
-                  <th className="table-cell">Email ID</th>
-                  <th className="table-cell">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedEmployees.length > 0 ? (
-                  paginatedEmployees.map((e, i) => (
-                    <tr key={i} className="table-row">
-                      <td className="table-cell-name">{e.empId}</td>
-                      <td className="table-cell-name">{e.userName}</td>
-                      <td className="table-cell-name">{e.email}</td>
-                      <td className="table-cell-name">
-                        <span
-                          className={`px-2 py-1 text-[9px] rounded ${getStatusClass(
-                            e.status
-                          )}`}
-                        >
-                          {getStatusLabel(e.status)}
-                        </span>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={4} className="text-center py-4 text-gray-500">
-                      No users found.
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Emp ID</th>
+                <th>User Name</th>
+                <th>Email ID</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedEmployees.length > 0 ? (
+                paginatedEmployees.map((e, i) => (
+                  <tr key={i}>
+                    <td>{e.empId}</td>
+                    <td>{e.userName}</td>
+                    <td>{e.email}</td>
+                    <td>
+                      <p
+                        className={`px-2 my-1 inline-block py-1 text-[10px] rounded ${getStatusClass(
+                          e.status
+                        )}`}
+                      >
+                        {getStatusLabel(e.status)}
+                      </p>
                     </td>
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="text-center py-4 text-gray-500">
+                    No users found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
 
         {/* Pagination */}
@@ -280,8 +276,8 @@ export default function UserManagementSystem() {
             disabled={currentPage === 1}
             className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${
               currentPage === 1
-                ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                : "bg-[#0a1625] text-white primary-color"
+                ? "prev-next-disabled-btn"
+                : "prev-next-active-btn"
             }`}
           >
             <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" /> Prev
@@ -302,8 +298,8 @@ export default function UserManagementSystem() {
                   onClick={() => handlePageChange(page)}
                   className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${
                     currentPage === page
-                      ? "bg-[#00d4aa] text-black font-bold"
-                      : "bg-[#1c2b45] text-white primary-color"
+                      ? "active-pagination-btn"
+                      : "inactive-pagination-btn"
                   }`}
                 >
                   {page}
@@ -317,8 +313,8 @@ export default function UserManagementSystem() {
             disabled={currentPage === totalPages}
             className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${
               currentPage === totalPages
-                ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                : "bg-[#0a1625] text-white primary-color"
+                ? "prev-next-disabled-btn"
+                : "prev-next-active-btn"
             }`}
           >
             Next <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />

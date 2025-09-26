@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ArrowLeft, Building2, Pencil, Search, Plus, X } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
+import GuidelinesCard from "./reusable/guidelinesCard";
+import { departmentGuidelines } from "../constants/guidelines";
 
 export default function DepartmentCreation({ onBack }) {
   const [departmentName, setDepartmentName] = useState("");
@@ -141,7 +143,7 @@ export default function DepartmentCreation({ onBack }) {
   );
 
   return (
-    <div className="department-page">
+    <>
       {/* Header */}
       <div className="form-header">
         <div className="back-title flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
@@ -184,9 +186,9 @@ export default function DepartmentCreation({ onBack }) {
               <div className="header-icon-box">
                 <Building2 className="primary-color w-4 h-4" />
               </div>
-              <div className="flex flex-col">
-                <h1 className="header-title text-lg">Department Management</h1>
-                <p className="header-subtext text-sm">
+              <div>
+                <h1 className="user-title">Department Management</h1>
+                <p className="user-subtitle">
                   Create and manage organizational departments
                 </p>
               </div>
@@ -263,28 +265,28 @@ export default function DepartmentCreation({ onBack }) {
       {/* Table */}
       <div className="table-card">
         <div className="table-header">
-          <p className="table-title">
-            <Building2 className="w-5 h-5" /> Existing Departments
-          </p>
+          <div className="flex items-center gap-2 primary-color">
+            <Building2 className="w-4 h-4" />
+            <p className="user-table-header">Existing Departments</p>
+          </div>
           <span className="table-subtext">
             Total: {filteredDepartments.length} departments
           </span>
         </div>
 
-        <div className="w-full overflow-x-auto overflow-y-auto table-scrollbar">
-              <div className="max-h-[350px] sm:max-h-full">
-          <table className="w-full text-left">
-            <thead className="table-head sticky top-0 z-10">
+        <div className="table-container">
+          <table>
+            <thead>
               <tr>
-                <th className="table-cell">Department Name</th>
-                <th className="table-cell-icon flex gap-4">Actions</th>
+                <th>Department Name</th>
+                <th className="text-end">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredDepartments.length > 0 ? (
                 filteredDepartments.map((dept) => (
-                  <tr key={dept.deptId} className="table-row">
-                    <td className="table-cell-name">
+                  <tr key={dept.deptId}>
+                    <td>
                       {editingDeptId === dept.deptId ? (
                         <div>
                           <input
@@ -306,9 +308,9 @@ export default function DepartmentCreation({ onBack }) {
                         </div>
                       )}
                     </td>
-                    <td className="table-cell-icon flex gap-4 ">
+                    <td className="flex justify-end">
                       {editingDeptId === dept.deptId ? (
-                        <>
+                        <div className="flex gap-4 py-2">
                           <button
                             onClick={() => handleUpdate(dept.deptId)}
                             className="primary-color hover:underline"
@@ -324,9 +326,9 @@ export default function DepartmentCreation({ onBack }) {
                           >
                             Cancel
                           </button>
-                        </>
+                        </div>
                       ) : (
-                        <>
+                        <div className="flex gap-4 py-2">
                           <button
                             onClick={() => {
                               setEditingDeptId(dept.deptId);
@@ -339,7 +341,7 @@ export default function DepartmentCreation({ onBack }) {
                           {/* <button className="text-red-500 hover:underline flex items-center gap-1">
                             <Trash2 className="w-4 h-4" /> Delete
                           </button> */}
-                        </>
+                        </div>
                       )}
                     </td>
                   </tr>
@@ -358,34 +360,12 @@ export default function DepartmentCreation({ onBack }) {
           </table>
         </div>
       </div>
-      </div>
 
       {/* Guidelines */}
-      <div className="guidelines-card">
-        <h3 className="guidelines-title text-base sm:text-lg">
-          Department Management Guidelines
-        </h3>
-        <div className="guidelines-grid text-sm sm:text-base">
-          <p>
-            📘 <span className="font-semibold">Create:</span> Add new
-            departments
-          </p>
-          <p>
-            🔍 <span className="font-semibold">Search:</span> Find departments
-            quickly
-          </p>
-        </div>
-        <div className="guidelines-grid text-sm sm:text-base">
-          <p>
-            ✏️ <span className="font-semibold">Edit:</span> Modify department
-            names inline
-          </p>
-          <p>
-            ⚠️ <span className="font-semibold">Validation:</span> Only letters,
-            spaces, and hyphens allowed
-          </p>
-        </div>
-      </div>
-    </div>
+      <GuidelinesCard
+        title="Department Management Guidelines"
+        guidelines={departmentGuidelines}
+      />
+    </>
   );
 }

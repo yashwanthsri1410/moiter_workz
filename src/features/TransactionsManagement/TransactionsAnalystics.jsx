@@ -18,64 +18,63 @@ const TranscationsAnalystics = () => {
 
   const { total_customers } = data.customerSummary;
 
+  const statCards = [
+    {
+      title: "Total Transactions",
+      value: (total_customers || 0).toLocaleString(),
+      icon: <TrendingUp className="card-icon-dx91u" />,
+      className: "total-customers-dx91u",
+      valueClass: "primary-color",
+    },
+    {
+      title: "Transaction Value",
+      value: data.customersAddedToday,
+      icon: <Wallet className="card-icon-dx91u" />,
+      className: "customer-today-dx91u",
+      extra: (
+        <div className="mt-1 text-gray-400 text-xs">
+          <div>Avg Transaction</div>
+          <div className="text-white text-sm">₹808</div>
+        </div>
+      ),
+      valueClass: "primary-color",
+    },
+    {
+      title: "Failed Transactions",
+      value: (data.kycPendingCount || 0).toLocaleString(),
+      icon: <XCircle className="card-icon-dx91u warning-dx91u" />,
+      className: "kyc-pending-dx91u",
+      valueClass: "text-[#eab308]",
+    },
+    {
+      title: "Fee Revenue",
+      value: (data.highRiskCount || 0).toLocaleString(),
+      icon: <TrendingUp className="card-icon-dx91u danger-dx91u" />,
+      className: "high-risk-dx91u",
+      valueClass: "text-[#ef4444]",
+    },
+  ];
+
   return (
-    <div className="p-4 flex flex-col gap-6">
+    <>
       {/* Row 1 - Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Total Transactions */}
-        <div className="stat-card-dx91u total-customers-dx91u corner-box">
-          <div className="card-top-dx91u">
+        {statCards.map((card, index) => (
+          <div
+            key={index}
+            className={`stat-card-dx91u ${card.className} corner-box`}
+          >
             <div className="card-header-dx91u">
-              <h3>Total Transactions</h3>
-              <TrendingUp className="card-icon-dx91u" />
+              <h3 className="submenu-card-label">{card.title}</h3>
+              {card.icon}
             </div>
-          </div>
-          <span></span>
-          <div className="card-bottom-dx91u">
-            <p className="stat-value-dx91u">
-              {total_customers.toLocaleString()}
+            <span></span>
+            <p className={`submenu-card-value ${card.valueClass || ""}`}>
+              {card.value}
             </p>
+            {card.extra && card.extra}
           </div>
-        </div>
-
-        {/* Transaction Value */}
-        <div className="stat-card-dx91u customer-today-dx91u corner-box">
-          <div className="card-header-dx91u">
-            <h3>Transaction Value</h3>
-            <Wallet className="card-icon-dx91u" />
-          </div>
-          <span></span>
-          <p className="stat-value-dx91u">{data.customersAddedToday}</p>
-
-          <div className="mt-1 text-gray-400 text-xs">
-            <div>Avg Transaction</div>
-            <div className="text-white text-sm">₹808</div>
-          </div>
-        </div>
-
-        {/* Failed Transactions */}
-        <div className="stat-card-dx91u kyc-pending-dx91u corner-box">
-          <div className="card-header-dx91u">
-            <h3>Failed Transactions</h3>
-            <XCircle className="card-icon-dx91u warning-dx91u" />
-          </div>
-          <span></span>
-          <p className="stat-value-dx91u highlight-yellow-dx91u">
-            {data.kycPendingCount.toLocaleString()}
-          </p>
-        </div>
-
-        {/* Fee Revenue */}
-        <div className="stat-card-dx91u high-risk-dx91u corner-box">
-          <div className="card-header-dx91u">
-            <h3>Fee Revenue</h3>
-            <TrendingUp className="card-icon-dx91u danger-dx91u" />
-          </div>
-          <span></span>
-          <p className="stat-value-dx91u highlight-red-dx91u">
-            {data.highRiskCount.toLocaleString()}
-          </p>
-        </div>
+        ))}
       </div>
 
       {/* Row 2 - Charts */}
@@ -92,7 +91,7 @@ const TranscationsAnalystics = () => {
       <div className="w-full">
         <TransactionStream_Trans />
       </div>
-    </div>
+    </>
   );
 };
 

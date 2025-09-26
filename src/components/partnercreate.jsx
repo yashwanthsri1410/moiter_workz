@@ -24,6 +24,8 @@ import {
   prepareDocuments,
 } from "../utils/constraintParser";
 import { v4 as uuidv4 } from "uuid";
+import GuidelinesCard from "./reusable/guidelinesCard";
+import { partnerGuidelines } from "../constants/guidelines";
 // import { PencilIcon, Plus,SquarePen  } from "lucide-react";
 
 export default function Partnercreate() {
@@ -505,7 +507,7 @@ export default function Partnercreate() {
   }, [isEditing]);
 
   return (
-    <div className="config-forms">
+    <>
       {/* Header */}
       <div className="card-header flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0 p-2 sm:p-4">
         <div className="card-header-left flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-2">
@@ -515,10 +517,8 @@ export default function Partnercreate() {
             </div>
           </div>
           <div>
-            <h1 className="header-title text-sm sm:text-lg font-semibold text-center sm:text-left">
-              Distribution Partner Management
-            </h1>
-            <p className="header-subtext text-xs sm:text-sm text-gray-400 text-center sm:text-left">
+            <h1 className="user-title">Distribution Partner Management</h1>
+            <p className="user-subtitle">
               Onboard and manage distribution partners
             </p>
           </div>
@@ -1306,15 +1306,20 @@ export default function Partnercreate() {
         </form>
       )}
       <div className="partner-network">
-        <div className="table-card">
+        <div className="table-card mt-[18px]">
           {/* Header */}
           <div className="table-header flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-4 px-2 sm:px-0">
-            <h2 className="table-title flex items-center gap-2 text-sm sm:text-base font-semibold">
-              <CalculatorIcon className="primary-color w-4 h-4 sm:w-5 sm:h-5" />
-              Existing Partner Configurations
-            </h2>
-            <div className="search-box  relative w-full sm:w-64">
-              <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3 sm:w-4 sm:h-4" />
+            <div className="flex items-center gap-2 primary-color">
+              <CalculatorIcon className="w-4 h-4" />
+              <p className="user-table-header">
+                Existing Partner Configurations
+              </p>
+            </div>
+            <div className="search-box relative w-full sm:w-64">
+              <Search
+                size="14"
+                className="absolute left-3 top-2 text-gray-400"
+              />
               <input
                 type="text"
                 className="search-input !w-full pl-8 pr-2 py-1 sm:py-2 text-xs sm:text-sm rounded border border-gray-700 focus:outline-none"
@@ -1329,31 +1334,31 @@ export default function Partnercreate() {
           </div>
 
           {/* Table */}
-          <div className="table-wrapper overflow-x-auto w-full table-scrollbar">
-            <table className="min-w-full text-left border-collapse">
-              <thead className="table-head text-xs sm:text-sm">
+          <div className="table-container">
+            <table>
+              <thead>
                 <tr>
-                  <th className="table-cell px-2 py-2">Partner Name</th>
-                  <th className="table-cell px-2 py-2">Type</th>
-                  <th className="table-cell px-2 py-2">Contact</th>
-                  <th className="table-cell px-2 py-2">Status</th>
-                  <th className="table-cell px-2 py-2">KYC Status</th>
-                  <th className="table-cell px-2 py-2">Agreement</th>
-                  <th className="table-cell px-2 py-2">ID Proof</th>
-                  <th className="table-cell px-2 py-2">Address Proof</th>
-                  <th className="table-cell px-2 py-2">Action</th>
+                  <th>Partner Name</th>
+                  <th>Type</th>
+                  <th>Contact</th>
+                  <th>Status</th>
+                  <th>KYC Status</th>
+                  <th>Agreement</th>
+                  <th>ID Proof</th>
+                  <th>Address Proof</th>
+                  <th>Action</th>
                 </tr>
               </thead>
-              <tbody className="text-xs sm:text-sm">
+              <tbody>
                 {currentPartners.map((partner, index) => (
-                  <tr key={index} className="table-row hover:bg-gray-900">
-                    <td className="table-cell-name max-w-[120px] px-3 py-2 truncate">
+                  <tr key={index}>
+                    <td className="max-w-[120px]">
                       <p className="truncate" title={partner.partnerName}>
                         {partner.partnerName}
                       </p>
                     </td>
-                    <td className="px-3 py-2">{partner.partnerType}</td>
-                    <td className="px-3 py-2 max-w-[100px] truncate">
+                    <td>{partner.partnerType}</td>
+                    <td className="max-w-[100px]">
                       <p
                         className="truncate"
                         title={`${partner.contactName} ${partner.contactPhone}`}
@@ -1361,7 +1366,7 @@ export default function Partnercreate() {
                         {partner.contactName} {partner.contactPhone}
                       </p>
                     </td>
-                    <td className="px-3 py-2">
+                    <td>
                       <span
                         className={`px-2 py-1 rounded text-[10px] ${
                           partner.partnerStatus === "Active"
@@ -1376,7 +1381,7 @@ export default function Partnercreate() {
                         {partner.partnerStatus}
                       </span>
                     </td>
-                    <td className="px-3 py-2">
+                    <td>
                       <span
                         className={`px-2 py-1 rounded text-[10px] ${
                           partner.kycStatus === "Verified"
@@ -1387,7 +1392,7 @@ export default function Partnercreate() {
                         {partner.kycStatus}
                       </span>
                     </td>
-                    <td className="px-3 py-2">
+                    <td>
                       {partner.agreementDocumentBase64 ? (
                         <span className="px-2 py-1 rounded text-[10px] checker">
                           Completed
@@ -1398,7 +1403,7 @@ export default function Partnercreate() {
                         </span>
                       )}
                     </td>
-                    <td className="px-3 py-2">
+                    <td>
                       {partner.idProofDocumentBase64 ? (
                         <span className="px-2 py-1 rounded text-[10px] checker">
                           Verified
@@ -1409,7 +1414,7 @@ export default function Partnercreate() {
                         </span>
                       )}
                     </td>
-                    <td className="px-3 py-2">
+                    <td>
                       {partner.addressProofDocumentBase64 ? (
                         <span className="px-2 py-1 rounded text-[10px] checker">
                           Verified
@@ -1420,7 +1425,7 @@ export default function Partnercreate() {
                         </span>
                       )}
                     </td>
-                    <td className="table-content">
+                    <td>
                       <button
                         className="header-icon-box"
                         onClick={() => {
@@ -1452,8 +1457,8 @@ export default function Partnercreate() {
               disabled={currentPage === 1}
               className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center  ${
                 currentPage === 1
-                  ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                  : "bg-[#0a1625] text-white hover:primary-color"
+                  ? "prev-next-disabled-btn"
+                  : "prev-next-active-btn"
               }`}
             >
               <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" /> Prev
@@ -1466,8 +1471,8 @@ export default function Partnercreate() {
                   onClick={() => handlePageChange(i + 1)}
                   className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${
                     currentPage === i + 1
-                      ? "primary-bg text-black font-bold"
-                      : "bg-[#1c2b45] text-white hover:primary-color"
+                      ? "active-pagination-btn"
+                      : "inactive-pagination-btn"
                   }`}
                 >
                   {i + 1}
@@ -1480,8 +1485,8 @@ export default function Partnercreate() {
               disabled={currentPage === totalPages}
               className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${
                 currentPage === totalPages
-                  ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                  : "bg-[#0a1625] text-white hover:primary-color"
+                  ? "prev-next-disabled-btn"
+                  : "prev-next-active-btn"
               }`}
             >
               Next <ChevronRight className="w-4 h-4" />
@@ -1490,43 +1495,10 @@ export default function Partnercreate() {
         </div>
       </div>
       {/* Guidelines */}
-      <div className="guidelines-card bg-[#0d0f13] p-4 rounded-md border border-gray-800">
-        {/* Title */}
-        <h3 className="guidelines-title text-lg sm:text-xl font-semibold text-teal-400 mb-4">
-          Partner Management Guidelines
-        </h3>
-
-        {/* First row */}
-        <div className="guidelines-grid grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm sm:text-base text-gray-300">
-          <p className="text-xs sm:text-sm text-gray-300">
-            🏢{" "}
-            <span className="font-medium text-gray-200">
-              Partner Onboarding:
-            </span>{" "}
-            Collect complete business and contact information
-          </p>
-          <p className="text-xs sm:text-sm text-gray-300">
-            📋{" "}
-            <span className="font-medium text-gray-200">
-              Document Verification:
-            </span>{" "}
-            Ensure all required documents are uploaded and verified
-          </p>
-        </div>
-
-        {/* Second row */}
-        <div className="guidelines-grid grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 text-sm sm:text-base text-gray-300">
-          <p className="text-xs sm:text-sm text-gray-300">
-            🤝{" "}
-            <span className="font-medium text-gray-200">Product Access:</span>{" "}
-            Configure allowed products and services for each partner
-          </p>
-          <p className="text-xs sm:text-sm text-gray-300">
-            ✅ <span className="font-medium text-gray-200">Portal Access:</span>{" "}
-            Enable partner portal access for self-service capabilities
-          </p>
-        </div>
-      </div>
-    </div>
+      <GuidelinesCard
+        title="Partner Management Guidelines"
+        guidelines={partnerGuidelines}
+      />
+    </>
   );
 }

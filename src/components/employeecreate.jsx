@@ -313,39 +313,35 @@ const EmployeeCreationForm = ({ onBack }) => {
   };
 
   return (
-    <>
+    <div>
       {/* Top Bar */}
-      <div className="top-bar">
-        <div className="back-title flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-          {/* Mobile Header */}
-          <div className="flex items-center justify-between w-full sm:hidden">
+      <div className="back-title flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+        {/* Mobile Header */}
+        <div className="flex items-center justify-between w-full sm:hidden">
+          <button className="header-icon-btn" onClick={onBack}>
+            <ArrowLeft className="primary-color w-4 h-4" />
+          </button>
+          <div className="flex flex-col items-center text-center">
+            <h1 className="header-title text-base">User Management</h1>
+            <p className="header-subtext text-xs">Create new team members</p>
+          </div>
+          <div className="header-icon-box">
+            <User className="primary-color w-4 h-4" />
+          </div>
+        </div>
+
+        {/* Desktop Header */}
+        <div className="hidden sm:flex sm:justify-between sm:items-center w-full gap-[10px]">
+          <div className="header-left flex items-center gap-[10px]">
             <button className="header-icon-btn" onClick={onBack}>
               <ArrowLeft className="primary-color w-4 h-4" />
             </button>
-            <div className="flex flex-col items-center text-center">
-              <h1 className="header-title text-base">User Management</h1>
-              <p className="header-subtext text-xs">Create new team members</p>
-            </div>
             <div className="header-icon-box">
               <User className="primary-color w-4 h-4" />
             </div>
-          </div>
-
-          {/* Desktop Header */}
-          <div className="hidden sm:flex sm:justify-between sm:items-center w-full gap-[10px]">
-            <div className="header-left flex items-center gap-[10px]">
-              <button className="header-icon-btn" onClick={onBack}>
-                <ArrowLeft className="primary-color w-5 h-5" />
-              </button>
-              <div className="header-icon-box">
-                <User className="primary-color w-5 h-5" />
-              </div>
-              <div className="flex flex-col">
-                <h1 className="header-title text-lg">User Management</h1>
-                <p className="header-subtext text-sm">
-                  Create new team members
-                </p>
-              </div>
+            <div>
+              <h1 className="user-title">User Management</h1>
+              <p className="user-subtitle">Create new team members</p>
             </div>
           </div>
         </div>
@@ -536,154 +532,145 @@ const EmployeeCreationForm = ({ onBack }) => {
         </button>
       </form>
 
-      <div className="config-forms">
-        <div className="card-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-center sm:text-left">
-          {/* Left Side (icon + text always in one row) */}
-          <div className="flex items-center justify-center sm:justify-start gap-3">
-            <div className="header-icon-box">
-              <FileText className="primary-color w-4 h-4" />
-            </div>
-            <div>
-              <h1 className="header-title">Employees</h1>
-              <p className="header-subtext">View and manage employee records</p>
-            </div>
+      <div className="card-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-center sm:text-left">
+        {/* Left Side (icon + text always in one row) */}
+        <div className="flex items-center justify-center sm:justify-start gap-3">
+          <div className="header-icon-box">
+            <FileText className="primary-color w-4 h-4" />
           </div>
-
-          {/* Right Side (same row on sm and above, stacks below on mobile) */}
-          <div className="card-header-right flex justify-center sm:justify-end">
-            <div className="portal-info !text-center sm:text-right">
-              <p className="portal-label">{employees.length} total</p>
-              <p className="portal-link">Admin Portal</p>
-            </div>
+          <div>
+            <h1 className="header-title">Employees</h1>
+            <p className="header-subtext">View and manage employee records</p>
           </div>
         </div>
 
-        {/* Filters & Pagination */}
-        <div className="tables-search-card rounded-xl p-3 flex flex-col gap-3 items-center md:items-start mt-2.5">
-          <div className="flex flex-col items-center md:items-start md:flex-row gap-2 w-full">
-            {/* Search */}
-            <div className="search-box relative flex-1">
-              <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="search-input-approval !w-full !sm:w-[50rem]"
-                placeholder="Search employees..."
-              />
-            </div>
+        {/* Right Side (same row on sm and above, stacks below on mobile) */}
+        <div className="card-header-right flex justify-center sm:justify-end">
+          <div className="portal-info !text-center sm:text-right">
+            <p className="portal-label">{employees.length} total</p>
+            <p className="portal-link">Admin Portal</p>
+          </div>
+        </div>
+      </div>
 
-            {/* Reset Filters */}
-            <button
-              onClick={() => {
-                setSearchQuery("");
+      {/* Filters & Pagination */}
+      <div className="table-card rounded-xl p-3 flex flex-col gap-3 items-center md:items-start mt-2.5">
+        <div className="flex flex-col items-center md:items-start md:flex-row gap-2 w-full">
+          {/* Search */}
+          <div className="search-box relative flex-1">
+            <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
                 setCurrentPage(1);
               }}
-              className="filter-btn flex items-center gap-1 px-3 py-1 shrink-0 w-auto sm:w-auto max-w-[100px]"
-            >
-              <Filter className="filter-icon w-3 h-3" />
-              Reset
-            </button>
+              className="search-input-approval !w-full !sm:w-[50rem]"
+              placeholder="Search employees..."
+            />
           </div>
 
-          {/* Pagination */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
-                currentPage === 1
-                  ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
-                  : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
-              }`}
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-
-            <span className={paginationStyle}>{currentPage}</span>
-
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
-                currentPage === totalPages
-                  ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
-                  : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
-              }`}
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
+          {/* Reset Filters */}
+          <button
+            onClick={() => {
+              setSearchQuery("");
+              setCurrentPage(1);
+            }}
+            className="reset-btn"
+          >
+            <Filter className="w-3 h-3" />
+            Reset
+          </button>
         </div>
 
-        {/* Table */}
-        <div className="table-card mt-[18px]">
-          <div className="table-header">
-            <p className="table-title">
-              <FileText className="w-5 h-5" />
-              Employee List
-            </p>
-          </div>
+        {/* Pagination */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
+              currentPage === 1
+                ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
+                : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
+            }`}
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
 
-          <div className="table-wrapper mt-5 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200 rounded-lg table-scrollbar">
-            <table className="w-full min-w-[768px] text-left table-auto border-collapse">
-              <thead className="table-head">
-                <tr>
-                  <th className="table-cell px-4 py-2">EMP ID</th>
-                  <th className="table-cell px-4 py-2">NAME</th>
-                  <th className="table-cell px-4 py-2">EMAIL</th>
-                  <th className="table-cell px-4 py-2">DEPARTMENT</th>
-                  <th className="table-cell px-4 py-2">DESIGNATION</th>
-                  <th className="table-cell px-4 py-2">ROLE</th>
-                  <th className="table-cell px-4 py-2">STATUS</th>
-                  <th className="table-cell px-4 py-2">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedConfigurations.length > 0 ? (
-                  paginatedConfigurations.map((emp) => (
-                    <tr key={emp.empId} className="table-row">
-                      <td className="table-content px-4 py-2">{emp.empId}</td>
-                      <td className="table-content px-4 py-2">
-                        {emp.userName}
-                      </td>
-                      <td className="table-content px-4 py-2">{emp.email}</td>
-                      <td className="table-content px-4 py-2">
-                        {emp.deptName}
-                      </td>
-                      <td className="table-content px-4 py-2">
-                        {emp.designationDesc}
-                      </td>
-                      <td className="table-content px-4 py-2">
-                        {emp.roleDescription}
-                      </td>
-                      <td className="table-content px-4 py-2">
-                        <span
-                          className={`px-2 py-1 text-[9px] rounded ${
-                            emp.status === 0
-                              ? "checker"
-                              : emp.status === 1
-                              ? "infra"
-                              : emp.status === 2
-                              ? "inactive"
-                              : "maker"
-                          }`}
-                        >
-                          {emp.status === 0
-                            ? "Approved"
+          <span className={paginationStyle}>{currentPage}</span>
+
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
+              currentPage === totalPages
+                ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
+                : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
+            }`}
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="table-card mt-[18px]">
+        <div className="table-header">
+          <div className="flex items-center gap-2 primary-color">
+            <FileText className="w-4 h-4" />
+            <p className="user-table-header">Employee List</p>
+          </div>
+        </div>
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>EMP ID</th>
+                <th>NAME</th>
+                <th>EMAIL</th>
+                <th>DEPARTMENT</th>
+                <th>DESIGNATION</th>
+                <th>ROLE</th>
+                <th>STATUS</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedConfigurations.length > 0 ? (
+                paginatedConfigurations.map((emp) => (
+                  <tr key={emp.empId} className="table-row">
+                    <td>{emp.empId}</td>
+                    <td>{emp.userName}</td>
+                    <td>{emp.email}</td>
+                    <td>{emp.deptName}</td>
+                    <td>{emp.designationDesc}</td>
+                    <td>{emp.roleDescription}</td>
+                    <td>
+                      <span
+                        className={`px-2 py-1 text-[10px] rounded ${
+                          emp.status === 0
+                            ? "checker"
                             : emp.status === 1
-                            ? "Pending"
+                            ? "infra"
                             : emp.status === 2
-                            ? "Rejected"
-                            : emp.status === 3
-                            ? "Recheck"
-                            : ""}
-                        </span>
-                      </td>
-                      <td className="table-content px-4 py-2 flex gap-2">
+                            ? "inactive"
+                            : "maker"
+                        }`}
+                      >
+                        {emp.status === 0
+                          ? "Approved"
+                          : emp.status === 1
+                          ? "Pending"
+                          : emp.status === 2
+                          ? "Rejected"
+                          : emp.status === 3
+                          ? "Recheck"
+                          : ""}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="flex gap-2 my-1">
                         <button
                           className="header-icon-box"
                           onClick={() => {
@@ -692,24 +679,24 @@ const EmployeeCreationForm = ({ onBack }) => {
                             handleScroll();
                           }}
                         >
-                          <EyeIcon className="primary-color w-4 h-4" />
+                          <EyeIcon size="16" className="primary-color" />
                         </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="8" className="text-center py-4 text-gray-500">
-                      No employees found.
+                      </div>
                     </td>
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="8" className="text-center py-4 text-gray-500">
+                    No employees found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

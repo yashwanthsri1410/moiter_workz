@@ -29,10 +29,10 @@ export default function KYCCompliance() {
   return (
     <div className="text-white my-6">
       {/* Header */}
-      <h2 className="flex items-center gap-2 text-[18px] primary-color mb-6">
-        <Shield size={18} />
-        KYC & Compliance
-      </h2>
+      <div className="flex items-center gap-2 mb-6">
+        <Shield size={18} className="primary-color" />
+        <span className="root-title">KYC & Compliance</span>
+      </div>
 
       {/* Cards */}
       <div className="flex gap-6">
@@ -44,13 +44,13 @@ export default function KYCCompliance() {
             <span />
             {/* Left Text */}
             <div>
-              <p className="text-sm text-gray-400">{item.label}</p>
-              <p className={`text-2xl font-bold ${item.color}`}>{item.value}</p>
+              <p className="dash-kyc-label">{item.label}</p>
+              <p className={`dash-kyc-values ${item.color}`}>{item.value}</p>
             </div>
 
             {/* Right Icon */}
             <div
-              className={`w-10 h-10 flex items-center justify-center rounded-full ${item.iconBg}`}
+              className={`dash-kyc-icons flex items-center justify-center rounded-full ${item.iconBg}`}
             >
               {item.icon}
             </div>

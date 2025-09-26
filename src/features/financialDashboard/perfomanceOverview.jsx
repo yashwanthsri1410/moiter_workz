@@ -81,18 +81,18 @@ export default function PerformanceOverview() {
   }
   return (
     <div>
-      <h2 className="flex items-center gap-2 text-[18px] text-primary mb-6">
+      <div className="flex items-center gap-2 mb-6">
         <span>
-          <ChartColumn size="18" />
+          <ChartColumn size="18" className="text-[var(--primary-color)]" />
         </span>{" "}
-        Performance Overview
-      </h2>
+        <span className="root-title">Performance Overview</span>
+      </div>
       <div className="glass-card h-[500px] flex flex-col corner-box">
         <span />
         {/* Header */}
         <div className="flex items-center text-primary gap-2 mb-4">
           <Box size={18} />
-          <h2 className="text-sm font-medium">Product Performance Analytics</h2>
+          <span className="card-root-label">Product Performance Analytics</span>
         </div>
 
         {/* Chart with fixed height */}
@@ -106,24 +106,24 @@ export default function PerformanceOverview() {
             {productData?.map((item, index) => (
               <div key={index} className="flex items-center gap-2">
                 <span
-                  className="w-2 h-2 rounded-full"
+                  className="card-legend-circle"
                   style={{ backgroundColor: COLORS[index % COLORS.length] }}
                 />
-                <span className="text-gray-300">{item.walletCategory}</span>
+                <span className="card-legend-list">{item.walletCategory}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Footer */}
-        <div className="thin-border my-[13px] mx-[-16px] xl:mx-[-32px]" />
+        <div className="footer-line" />
         <div className="pt-4 flex justify-around text-center">
           {footerStats.map((stat, index) => (
             <div key={index}>
-              <div className="primary-color font-bold text-lg">
+              <div className="primary-color dash-footer-values">
                 {stat.value}
               </div>
-              <div className="text-xs text-gray-400">{stat.label}</div>
+              <div className="dash-footer-label">{stat.label}</div>
             </div>
           ))}
         </div>

@@ -84,7 +84,7 @@ const LoadedUnLoaded = ({ isLoaded }) => {
               ) : (
                 <ArrowDown size="18" className="icon-danger" />
               )}
-              <span className="card-text">
+              <span className="card-root-label">
                 {isLoaded ? "Current Day Loading" : "Current Day Unloading"}
               </span>
             </p>
@@ -98,12 +98,12 @@ const LoadedUnLoaded = ({ isLoaded }) => {
                 <div className="flex justify-center">
                   <ul className="legend grid grid-cols-2 gap-3">
                     {labels.map((label, i) => (
-                      <li key={label} className="legend-item ">
+                      <li key={label} className="flex items-center gap-[6px]">
                         <span
-                          className="legend-color w-3 h-3 rounded-sm"
+                          className="card-legend-circle"
                           style={{ backgroundColor: colors[i % colors.length] }}
                         />
-                        <span className="muted truncate">{label}</span>
+                        <span className="card-legend-list">{label}</span>
                       </li>
                     ))}
                   </ul>
@@ -111,15 +111,19 @@ const LoadedUnLoaded = ({ isLoaded }) => {
               </div>
             </div>
           </div>
-          <div className="thin-border my-[13px] mx-[-16px] xl:mx-[-32px]" />
+          <div className="footer-line" />
           {/* Footer */}
           <div className="footer mx-5 lg:mx-0 mx-3">
             {stats.map((item, i) => (
-              <div key={i} className="footer-item">
-                <h1 className={`${isLoaded ? "text-primary" : "text-danger"}`}>
+              <div key={i} className="text-center">
+                <h1
+                  className={`dash-footer-values ${
+                    isLoaded ? "text-primary" : "text-danger"
+                  }`}
+                >
                   {item.value}
                 </h1>
-                <span className="muted">{item.label}</span>
+                <span className="dash-footer-label">{item.label}</span>
               </div>
             ))}
           </div>

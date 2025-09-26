@@ -144,65 +144,62 @@ const PieChart = () => {
       },
     };
 
-    
     // custom tooltip
-const externalTooltipHandler = (context) => {
-  let tooltipEl = document.getElementById("chartjs-tooltip");
-  if (!tooltipEl) {
-    tooltipEl = document.createElement("div");
-    tooltipEl.id = "chartjs-tooltip";
-    tooltipEl.style.background = "#11161a";
-    tooltipEl.style.width = "120px";
-    tooltipEl.style.border = "1px solid #50887dff";
-    tooltipEl.style.borderRadius = "10px";
-    tooltipEl.style.color = "white";
-    tooltipEl.style.opacity = 1;
-    tooltipEl.style.pointerEvents = "none";
-    tooltipEl.style.position = "absolute";
-    tooltipEl.style.transition = "all .1s ease";
-    tooltipEl.style.padding = "10px";
-    tooltipEl.style.fontFamily = "Arial, sans-serif";
-    document.body.appendChild(tooltipEl);
-  }
+    const externalTooltipHandler = (context) => {
+      let tooltipEl = document.getElementById("chartjs-tooltip");
+      if (!tooltipEl) {
+        tooltipEl = document.createElement("div");
+        tooltipEl.id = "chartjs-tooltip";
+        tooltipEl.style.background = "#11161a";
+        tooltipEl.style.width = "120px";
+        tooltipEl.style.border = "1px solid #50887dff";
+        tooltipEl.style.borderRadius = "10px";
+        tooltipEl.style.color = "white";
+        tooltipEl.style.opacity = 1;
+        tooltipEl.style.pointerEvents = "none";
+        tooltipEl.style.position = "absolute";
+        tooltipEl.style.transition = "all .1s ease";
+        tooltipEl.style.padding = "10px";
+        tooltipEl.style.fontFamily = "Arial, sans-serif";
+        document.body.appendChild(tooltipEl);
+      }
 
-  const tooltipModel = context.tooltip;
+      const tooltipModel = context.tooltip;
 
-  if (tooltipModel.opacity === 0) {
-    tooltipEl.style.opacity = 0;
-    return;
-  }
+      if (tooltipModel.opacity === 0) {
+        tooltipEl.style.opacity = 0;
+        return;
+      }
 
-  // Get current screen width
-  const width = window.innerWidth;
-  let fontSize = "13px"; // default desktop
-  if (width <= 768) fontSize = "10px"; // tablet
-  if (width <= 480) fontSize = "8px";  // mobile
+      // Get current screen width
+      const width = window.innerWidth;
+      let fontSize = "13px"; // default desktop
+      if (width <= 768) fontSize = "10px"; // tablet
+      if (width <= 480) fontSize = "8px"; // mobile
 
-  if (tooltipModel.body) {
-    const dataIndex = tooltipModel.dataPoints[0].dataIndex;
-    const label = context.chart.data.labels[dataIndex];
-    const value = context.chart.data.datasets[0].data[dataIndex];
+      if (tooltipModel.body) {
+        const dataIndex = tooltipModel.dataPoints[0].dataIndex;
+        const label = context.chart.data.labels[dataIndex];
+        const value = context.chart.data.datasets[0].data[dataIndex];
 
-    tooltipEl.innerHTML = `
+        tooltipEl.innerHTML = `
       <div style="margin-bottom:5px; font-size:${fontSize};">${label}</div>
       <div style="color:var(--primary-color); font-size:${fontSize};">${value} customers</div>
     `;
-  }
+      }
 
-  const canvasRect = context.chart.canvas.getBoundingClientRect();
-  tooltipEl.style.left =
-    canvasRect.left + window.pageXOffset + tooltipModel.caretX + "px";
-  tooltipEl.style.top =
-    canvasRect.top +
-    window.pageYOffset +
-    tooltipModel.caretY -
-    tooltipEl.offsetHeight -
-    10 +
-    "px";
-  tooltipEl.style.opacity = 1;
-};
-
-
+      const canvasRect = context.chart.canvas.getBoundingClientRect();
+      tooltipEl.style.left =
+        canvasRect.left + window.pageXOffset + tooltipModel.caretX + "px";
+      tooltipEl.style.top =
+        canvasRect.top +
+        window.pageYOffset +
+        tooltipModel.caretY -
+        tooltipEl.offsetHeight -
+        10 +
+        "px";
+      tooltipEl.style.opacity = 1;
+    };
 
     chartRef.current = new ChartJS(ctx, {
       type: "pie",

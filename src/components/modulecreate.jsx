@@ -12,6 +12,8 @@ import {
   X,
 } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
+import GuidelinesCard from "./reusable/guidelinesCard";
+import { moduleGuidelines } from "../constants/guidelines";
 
 export default function ModuleCreation({ onBack }) {
   const [modules, setModules] = useState([]);
@@ -171,7 +173,7 @@ export default function ModuleCreation({ onBack }) {
   );
 
   return (
-    <div className="department-page">
+    <div>
       {/* Header */}
       <div className="form-header">
         <div className="back-title flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
@@ -203,14 +205,14 @@ export default function ModuleCreation({ onBack }) {
           <div className="hidden sm:flex sm:justify-between sm:items-center w-full gap-[10px]">
             <div className="header-left flex items-center gap-[10px]">
               <button className="header-icon-btn" onClick={onBack}>
-                <ArrowLeft className="primary-color w-5 h-5" />
+                <ArrowLeft className="primary-color w-4 h-4" />
               </button>
               <div className="header-icon-box">
-                <Settings className="primary-color w-5 h-5" />
+                <Settings className="primary-color w-4 h-4" />
               </div>
-              <div className="flex flex-col">
-                <h1 className="header-title text-lg">Module Management</h1>
-                <p className="header-subtext text-sm">
+              <div>
+                <h1 className="user-title">Module Management</h1>
+                <p className="user-subtitle">
                   Create and manage application modules
                 </p>
               </div>
@@ -283,48 +285,50 @@ export default function ModuleCreation({ onBack }) {
       {/* Table */}
       <div className="table-card">
         <div className="table-header flex justify-between items-center mb-4">
-          <p className="table-title flex items-center gap-2">
-            <Settings className="w-5 h-5" /> Existing Modules
-          </p>
+          <div className="flex items-center gap-2 primary-color">
+            <Settings className="w-4 h-4" />
+            <p className="user-table-header">Existing Modules</p>
+          </div>
           <span className="table-subtext">
             Total: {filteredModules.length} modules
           </span>
         </div>
 
         {/* Responsive Table Wrapper */}
-        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200 rounded-lg table-scrollbar">
-              <div className="max-h-[350px] sm:max-h-full">
-          <table className="w-full min-w-[600px] text-left table-auto border-collapse">
-            <thead className="table-head sticky top-0 z-10">
+        <div className="table-container">
+          <table>
+            <thead>
               <tr>
-                <th className="table-cell px-4 py-2">Module Name</th>
-                <th className="table-cell px-4 py-2 text-right">Actions</th>
+                <th>Module Name</th>
+                <th className="text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-800 text-sm">
+            <tbody>
               {filteredModules.length > 0 ? (
                 filteredModules.map((mod) => (
-                  <tr key={mod.moduleId} className="table-row">
-                    <td className="px-4 py-2">
-                      {editingModuleId === mod.moduleId ? (
-                        <div>
-                          <input
-                            type="text"
-                            value={editedModuleName}
-                            onChange={handleEditedModuleNameChange}
-                            className="form-input w-full"
-                            placeholder="Enter new name (letters only)..."
-                          />
-                          <p className="text-xs text-gray-500 mt-1">
-                            Only letters, spaces, and hyphens are allowed
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1">
-                          <Settings className="w-4 h-4 primary-color" />
-                          {mod.moduleName}
-                        </div>
-                      )}
+                  <tr key={mod.moduleId}>
+                    <td>
+                      <div className="my-2">
+                        {editingModuleId === mod.moduleId ? (
+                          <div>
+                            <input
+                              type="text"
+                              value={editedModuleName}
+                              onChange={handleEditedModuleNameChange}
+                              className="form-input w-full"
+                              placeholder="Enter new name (letters only)..."
+                            />
+                            <p className="text-xs text-gray-500 mt-1">
+                              Only letters, spaces, and hyphens are allowed
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-1">
+                            <Settings className="w-4 h-4 primary-color" />
+                            {mod.moduleName}
+                          </div>
+                        )}
+                      </div>
                     </td>
                     <td className="px-4 py-2 flex justify-end gap-4">
                       {editingModuleId === mod.moduleId ? (
@@ -373,32 +377,11 @@ export default function ModuleCreation({ onBack }) {
           </table>
         </div>
       </div>
-      </div>
       {/* Guidelines */}
-      <div className="guidelines-card mt-4">
-        <h3 className="guidelines-title text-base sm:text-lg">
-          Module Management Guidelines
-        </h3>
-        <div className="guidelines-grid text-sm sm:text-base">
-          <p>
-            📘 <span className="font-semibold">Create:</span> Add new modules
-          </p>
-          <p>
-            🔍 <span className="font-semibold">Search:</span> Find modules
-            quickly
-          </p>
-        </div>
-        <div className="guidelines-grid text-sm sm:text-base">
-          <p>
-            ✏️ <span className="font-semibold">Edit:</span> Modify module names
-            inline
-          </p>
-          <p>
-            ⚠️ <span className="font-semibold">Validation:</span> Only letters,
-            spaces, and hyphens allowed
-          </p>
-        </div>
-      </div>
+      <GuidelinesCard
+        title="Module Management Guidelines"
+        guidelines={moduleGuidelines}
+      />
     </div>
   );
 }

@@ -123,7 +123,7 @@ export default function ProductApproval() {
     }
   };
   return (
-    <div className="config-forms">
+    <>
       {selectedProduct ? (
         <>
           <Productview
@@ -140,9 +140,9 @@ export default function ProductApproval() {
               <div className="header-icon-box">
                 <PackagePlus className="primary-color w-4 h-4" />
               </div>
-              <div className="text-center sm:text-left">
-                <h1 className="header-title">Product Approvals</h1>
-                <p className="header-subtext">
+              <div>
+                <h1 className="user-title">Product Approvals</h1>
+                <p className="user-subtitle text-nowrap">
                   Review and approve product configurations
                 </p>
               </div>
@@ -167,7 +167,10 @@ export default function ProductApproval() {
             >
               {/* Search Box */}
               <div className="search-box relative flex-1 w-full md:w-auto">
-                <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
+                <Search
+                  size="14"
+                  className="absolute left-3 top-2 text-gray-400"
+                />
                 <input
                   type="text"
                   value={searchQuery}
@@ -206,15 +209,15 @@ export default function ProductApproval() {
                   setSearchQuery("");
                   setCurrentPage(1);
                 }}
-                className="filter-btn flex items-center gap-1 px-3 py-1 shrink-0 max-w-[100px] md:max-w-none"
+                className="reset-btn"
               >
-                <Filter className="filter-icon w-3 h-3" />
+                <Filter className="w-3 h-3" />
                 Reset
               </button>
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center justify-center md:justify-start gap-2 w-full mt-2">
+            <div className="flex items-center justify-center md:justify-start gap-2 w-full">
               {/* Prev Button */}
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
@@ -251,37 +254,33 @@ export default function ProductApproval() {
           {/* Table */}
           <div className="table-card mt-[18px]">
             <div className="table-header">
-              <p className="table-title">
-                <PackagePlus className="w-5 h-5" />
-                Pending Product Approvals
-              </p>
+              <div className="flex items-center gap-2 primary-color">
+                <PackagePlus className="w-4 h-4" />
+                <p className="user-table-header">Pending Product Approvals</p>
+              </div>
             </div>
 
-            <div className="table-wrapper mt-5 overflow-x-auto table-scrollbar">
-              <table className="w-full text-left border-collapse min-w-[800px]">
-                <thead className="table-head sticky top-0 bg-[#0c0f16] z-10">
+            <div className="table-container">
+              <table>
+                <thead>
                   <tr>
-                    <th className="table-cell">ID</th>
-                    <th className="table-cell">Configuration Name</th>
-                    <th className="table-cell">Program Type</th>
-                    <th className="table-cell">Sub Category</th>
-                    <th className="table-cell">Status</th>
-                    <th className="table-cell">Remarks</th>
-                    {/* <th className="table-cell">Product Accessibility</th> */}
-                    <th className="table-cell">Actions</th>
+                    <th>Product ID</th>
+                    <th>Configuration Name</th>
+                    <th>Program Type</th>
+                    <th>Sub Category</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                    {/* <th >Product Accessibility</th> */}
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {paginatedConfigurations.length > 0 ? (
                     paginatedConfigurations.map((cfg, idx) => (
-                      <tr key={cfg.productId || idx} className="table-row">
-                        <td className="table-content primary-color whitespace-nowrap">
-                          {cfg.productId}
-                        </td>
-                        <td className="table-content whitespace-nowrap">
-                          {cfg.productName}
-                        </td>
-                        <td className="table-content whitespace-nowrap">
+                      <tr key={cfg.productId || idx}>
+                        <td>{cfg.productId}</td>
+                        <td>{cfg.productName}</td>
+                        <td>
                           <span
                             className={`px-2 py-1 rounded text-[10px] ${
                               cfg.programType === "Closed"
@@ -298,10 +297,12 @@ export default function ProductApproval() {
                             {cfg.programType}
                           </span>
                         </td>
-                        <td className="table-content whitespace-nowrap">
-                          {cfg.subCategory}
+                        <td className="max-w-[120px]">
+                          <p className="truncate" title={cfg.subCategory}>
+                            {cfg.subCategory}
+                          </p>
                         </td>
-                        <td className="table-content whitespace-nowrap">
+                        <td>
                           <span
                             className={`px-2 py-1 rounded text-[10px] ${
                               cfg.status === 0
@@ -318,9 +319,7 @@ export default function ProductApproval() {
                             {getStatusLabel(cfg.status)}
                           </span>
                         </td>
-                        <td className="table-content whitespace-nowrap">
-                          {cfg.remarks || "-"}
-                        </td>
+                        <td>{cfg.remarks || "-"}</td>
 
                         {/* Product Accessibility (optional) */}
                         {/* <td>
@@ -342,13 +341,15 @@ export default function ProductApproval() {
               </span>
             </td> */}
 
-                        <td className="table-content flex gap-2">
-                          <button
-                            className="header-icon-box"
-                            onClick={() => setSelectedProduct(cfg)}
-                          >
-                            <EyeIcon className="primary-color w-4 h-4" />
-                          </button>
+                        <td>
+                          <div className="flex gap-2">
+                            <button
+                              className="header-icon-box"
+                              onClick={() => setSelectedProduct(cfg)}
+                            >
+                              <EyeIcon className="primary-color w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -368,6 +369,6 @@ export default function ProductApproval() {
           </div>
         </>
       )}
-    </div>
+    </>
   );
 }

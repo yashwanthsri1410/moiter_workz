@@ -28,6 +28,8 @@ import {
 } from "../constants";
 import ErrorText from "./reusable/errorText";
 import { v4 as uuidv4 } from "uuid";
+import GuidelinesCard from "./reusable/guidelinesCard";
+import { regulatoryGuidelines } from "../constants/guidelines";
 // import { PencilIcon, Plus,SquarePen  } from "lucide-react";
 
 export default function RegulatoryConfig() {
@@ -406,10 +408,8 @@ export default function RegulatoryConfig() {
     }
   }, [isUpdate]);
 
-  console.log(configurations?.filter((e) => e.subCategory === "summa"));
-
   return (
-    <div className="config-forms">
+    <>
       {/* Header */}
       <div className="card-header flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0">
         {/* Left Section */}
@@ -420,10 +420,8 @@ export default function RegulatoryConfig() {
             </div>
           </div>
           <div>
-            <h1 className="header-title text-base sm:text-lg font-semibold text-center sm:text-left">
-              Regulatory Configuration Management
-            </h1>
-            <p className="header-subtext text-sm sm:text-base text-gray-500 text-center sm:text-left">
+            <h1 className="user-title">Regulatory Configuration Management</h1>
+            <p className="user-subtitle">
               Configure regulatory compliance and guidelines
             </p>
           </div>
@@ -682,7 +680,7 @@ export default function RegulatoryConfig() {
               Transaction Limits
             </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Cash Loading Limit */}
               <div className="form-group flex flex-col">
                 <label className="text-xs sm:text-sm text-gray-300 mb-1">
@@ -823,7 +821,7 @@ export default function RegulatoryConfig() {
                   />
                 </div>
 
-                <div className="form-group flex flex-col text-left">
+                <div className="form-group flex flex-col text-left mt-6">
                   <label className="text-sm text-gray-300 mb-1 text-left">
                     Min Age
                   </label>
@@ -1033,14 +1031,19 @@ export default function RegulatoryConfig() {
       <div className="table-card mt-[18px]">
         <div className="table-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
           {/* Title */}
-          <p className="table-title flex items-center gap-2 text-sm sm:text-base font-semibold text-gray-200">
-            <FileText className="w-4 h-4 sm:w-5 sm:h-5 primary-color" />
-            Existing Regulatory Configurations
-          </p>
+          <div className="flex items-center gap-2 primary-color">
+            <FileText className="w-4 h-4 primary-color" />
+            <p className="user-table-header">
+              Existing Regulatory Configurations
+            </p>
+          </div>
 
           {/* Search bar */}
           <div className="relative w-full sm:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-3 h-3" />
+            <Search
+              size="14"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            />
             <input
               type="text"
               className="search-input !w-full pl-8 pr-3 py-2 text-xs sm:text-sm rounded-md border border-gray-700 bg-[#0d0f13] text-gray-200 focus:outline-none focus:ring-1 focus:ring-[#00d4aa]"
@@ -1051,26 +1054,16 @@ export default function RegulatoryConfig() {
           </div>
         </div>
 
-        <div className="table-wrapper w-full overflow-x-auto table-scrollbar">
+        <div className="table-container">
           {/* Table */}
-          <table className="min-w-full text-left text-sm sm:text-base border-collapse ">
-            <thead className="table-head bg-gray-50">
+          <table>
+            <thead>
               <tr>
-                <th className="table-cell px-2 py-2 whitespace-nowrap">
-                  Configuration Name
-                </th>
-                <th className="table-cell px-2 py-2 whitespace-nowrap">
-                  Program Type
-                </th>
-                <th className="table-cell px-2 py-2 whitespace-nowrap">
-                  KYC Level
-                </th>
-                <th className="table-cell px-2 py-2 whitespace-nowrap">
-                  Remarks
-                </th>
-                <th className="table-cell px-2 py-2 whitespace-nowrap">
-                  Actions
-                </th>
+                <th>Configuration Name</th>
+                <th>Program Type</th>
+                <th>KYC Level</th>
+                <th>Remarks</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -1080,27 +1073,18 @@ export default function RegulatoryConfig() {
                     cfg.kycLevelRequired.charAt(0).toUpperCase() +
                     cfg.kycLevelRequired.slice(1).toLowerCase();
                   return (
-                    <tr
-                      key={cfg.productId || idx}
-                      className="table-row border-b"
-                    >
-                      <td className="table-content px-4 py-2 max-w-[120px] whitespace-nowrap">
+                    <tr key={cfg.productId || idx}>
+                      <td className="max-w-[120px]">
                         <p className="truncate" title={cfg.subCategory}>
                           {cfg.subCategory}
                         </p>
                       </td>
-                      <td className="table-content px-4 py-2 whitespace-nowrap">
-                        {cfg.programType}
-                      </td>
-                      <td className="table-content px-4 py-2 whitespace-nowrap">
-                        {formattedKYCLevel}
-                      </td>
-                      <td className="table-content px-4 py-2 whitespace-nowrap">
-                        {cfg.remarks || "-"}
-                      </td>
-                      <td className="table-content px-4 py-2 whitespace-nowrap">
+                      <td>{cfg.programType}</td>
+                      <td>{formattedKYCLevel}</td>
+                      <td>{cfg.remarks || "-"}</td>
+                      <td>
                         <button
-                          className="header-icon-box p-1 sm:p-2"
+                          className="header-icon-box"
                           onClick={() => {
                             handleEdit(cfg);
                             setformOpen(true);
@@ -1135,8 +1119,8 @@ export default function RegulatoryConfig() {
             disabled={currentPage === 1}
             className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${
               currentPage === 1
-                ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                : "bg-[#0a1625] text-white hover:primary-color"
+                ? "prev-next-disabled-btn"
+                : "prev-next-active-btn"
             }`}
           >
             <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" /> Prev
@@ -1150,8 +1134,8 @@ export default function RegulatoryConfig() {
                 onClick={() => setCurrentPage(i + 1)}
                 className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${
                   currentPage === i + 1
-                    ? "primary-bg text-black font-bold"
-                    : "bg-[#1c2b45] text-white hover:primary-color"
+                    ? "active-pagination-btn"
+                    : "inactive-pagination-btn"
                 }`}
               >
                 {i + 1}
@@ -1165,8 +1149,8 @@ export default function RegulatoryConfig() {
             disabled={currentPage === totalPages}
             className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${
               currentPage === totalPages
-                ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                : "bg-[#0a1625] text-white hover:primary-color"
+                ? "prev-next-disabled-btn"
+                : "prev-next-active-btn"
             }`}
           >
             Next <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -1174,40 +1158,10 @@ export default function RegulatoryConfig() {
         </div>
       </div>
       {/* Guidelines */}
-      <div className="guidelines-card bg-[#0d0f13] p-2 sm:p-4 rounded-md border border-gray-800 w-full overflow-hidden">
-        {/* Title */}
-        <h3 className="guidelines-title text-sm sm:text-lg font-semibold text-teal-400 mb-4 break-words">
-          Regulatory Configuration Guidelines
-        </h3>
-
-        {/* First row */}
-        <div className="guidelines-grid grid grid-cols-1 sm:grid-cols-2 gap-3 text-[10px] sm:text-sm text-gray-300">
-          <p className="text-xs sm:text-sm break-words">
-            ⚖️{" "}
-            <span className="font-medium text-gray-200">
-              Compliance Mapping:
-            </span>{" "}
-            Assign applicable regulatory frameworks (e.g., GDPR, AML, KYC)
-          </p>
-          <p className="text-xs sm:text-sm break-words">
-            📜 <span className="font-medium text-gray-200">Policy Upload:</span>{" "}
-            Ensure regulatory policies and certifications are uploaded
-          </p>
-        </div>
-
-        {/* Second row */}
-        <div className="guidelines-grid grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 text-[10px] sm:text-sm text-gray-300">
-          <p className="text-xs sm:text-sm break-words">
-            🔒{" "}
-            <span className="font-medium text-gray-200">Access Control:</span>{" "}
-            Define permissions in line with regulatory requirements
-          </p>
-          <p className="text-xs sm:text-sm break-words">
-            📊 <span className="font-medium text-gray-200">Audit Trail:</span>{" "}
-            Enable logging to track changes and regulatory approvals
-          </p>
-        </div>
-      </div>
-    </div>
+      <GuidelinesCard
+        title="Regulatory Configuration Guidelines"
+        guidelines={regulatoryGuidelines}
+      />
+    </>
   );
 }

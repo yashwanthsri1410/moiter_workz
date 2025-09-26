@@ -90,7 +90,7 @@ export default function Productview({
     }
   };
   return (
-    <div className="config-forms">
+    <div>
       {/* Header */}
       <div className="card-header flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         {/* Left section */}
