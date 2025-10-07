@@ -77,10 +77,12 @@ const RoleAccessForm = ({ onBack }) => {
 
   // Handle edited role name input change with validation
   const handleEditedRoleNameChange = (e) => {
-    const value = e.target.value;
-    if (validateInput(value)) {
-      setEditedRoleName(value);
-    }
+    // const value = e.target.value;
+    // if (validateInput(value)) {
+    //   setEditedRoleName(value);
+    // }
+    const value = e.target.value.replace(/[^a-zA-Z\s-_]/g, "");
+    setEditedRoleName(value);
   };
 
   const handleModuleCheckboxChange = (module) => {
@@ -177,7 +179,7 @@ const RoleAccessForm = ({ onBack }) => {
     if (!editRole) return;
 
     const payload = {
-      logId: editRole.logId, // use from API (fetched role)
+      logId: editRole.logId || uuidv4(), // use from API (fetched role)
       roleAccessId: editRole.roleAccessId,
       newRoleDescription: editedRoleName,
       metadata: {
@@ -195,7 +197,7 @@ const RoleAccessForm = ({ onBack }) => {
 
     try {
       await axios.put(
-        `${API_BASE_URL}/ums/api/UserManagement/update-role-description`,
+        `${API_BASE_URL}/ums/api/UserManagement/update-role-access/bulk`,
         payload
       );
       alert("Role description updated!");
@@ -288,7 +290,7 @@ const RoleAccessForm = ({ onBack }) => {
               </>
             ) : (
               <>
-                <Plus className="w-3 h-3" /> Create Department
+                <Plus className="w-3 h-3" /> Create Role
               </>
             )}
           </button>

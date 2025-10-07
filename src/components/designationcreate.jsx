@@ -334,8 +334,12 @@ export default function CreateDesignationForm({ onBack }) {
             <Badge className="w-4 h-4" />
             <p className="user-table-header">Existing Designations</p>
           </div>
-          <span className="text-sm text-gray-400 table-subtext">
-            Total: {designations.length} designations
+          <span className="text-sm text-gray-400 ">
+            Total:{" "}
+            <span className="text-sm table-subtext">
+              {" "}
+              {designations.length} designations
+            </span>
           </span>
         </div>
 
@@ -388,9 +392,7 @@ export default function CreateDesignationForm({ onBack }) {
                           {editId === desig.designationId ? (
                             <>
                               <button
-                                onClick={() =>
-                                  handleSaveEdit(desig.designationId)
-                                }
+                                onClick={() => handleSaveEdit(desig)}
                                 className="primary-color hover:underline"
                               >
                                 Save

@@ -128,6 +128,7 @@ export default function ScreenManagement({ onBack }) {
     if (!editText.trim()) return alert("Screen name cannot be empty");
 
     const now = new Date().toISOString();
+
     const payload = {
       screenId: screen.screenId,
       logId:
@@ -148,7 +149,6 @@ export default function ScreenManagement({ onBack }) {
         },
       },
     };
-
     try {
       await axios.put(
         `${API_BASE_URL}/ums/api/UserManagement/screen_update`,
@@ -379,7 +379,7 @@ export default function ScreenManagement({ onBack }) {
                         {editId === screen.screenId ? (
                           <>
                             <button
-                              onClick={() => handleSaveEdit(screen.screenId)}
+                              onClick={() => handleSaveEdit(screen)}
                               className="text-teal-400 hover:underline"
                             >
                               Save

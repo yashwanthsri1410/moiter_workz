@@ -6,13 +6,16 @@ const SendRequestInfo = () => {
   useEffect(() => {
     const fetchClientInfo = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/app1/api/Department/get-request-info`, {
-          headers: {
-            "X-Custom-Header": "ClientInitCall", // optional custom header
-          },
-        });
+        const response = await axios.get(
+          `${API_BASE_URL}/app1/api/Department/get-request-info`,
+          {
+            headers: {
+              "X-Custom-Header": "ClientInitCall", // optional custom header
+            },
+          }
+        );
 
-        console.log("✅ Client Info received:", response.data);
+        // console.log("✅ Client Info received:", response.data);
       } catch (error) {
         console.error("❌ Error calling get-request-info:", error);
       }
