@@ -17,6 +17,8 @@ import usePublicIp from "../hooks/usePublicIp";
 import "../styles/styles.css";
 import { channels, options } from "../constants";
 import { v4 as uuidv4 } from "uuid";
+import GuidelinesCard from "./reusable/guidelinesCard";
+import { productGuidelines } from "../constants/guidelines";
 
 // 🔹 Mapper function
 const mapFormToApiSchema = (form, username, ip, isEditing = false, empId) => {
@@ -539,25 +541,32 @@ export default function Productcreate() {
     }
   };
 
+  useEffect(() => {
+    if (!isEditing) {
+      setForm(getDefaultForm(ip, username));
+    }
+  }, [isEditing]);
+
   return (
-    <div className="config-forms">
-      <div className="card-header">
-        <div className="card-header-left">
-          <div className="flex items-center gap-[10px]">
+    <>
+      <div className="card-header flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0">
+        {/* Left Section */}
+        <div className="card-header-left flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-2">
+          <div className="flex items-center gap-2">
             <div className="header-icon-box">
               <PackagePlus className="primary-color w-4 h-4" />
             </div>
           </div>
           <div>
-            <h1 className="header-title">Product Configuration Management</h1>
-            <p className="header-subtext">
+            <h1 className="user-title">Product Configuration Management</h1>
+            <p className="user-subtitle">
               Create and manage financial products and services
             </p>
           </div>
         </div>
-        <div className="card-header-right">
+        <div className="card-header-right flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
           <button
-            className="btn-outline"
+            className="btn-outline  flex items-center gap-1 w-full sm:w-auto justify-center"
             onClick={() =>{ setformOpen((prev) => !prev),setForm("")}}
           >
             {formOpen ? (
@@ -576,9 +585,11 @@ export default function Productcreate() {
               </>
             )}
           </button>
-          <div className="portal-info">
-            <p className="portal-label">Content Creation</p>
-            <p className="portal-link">Maker Portal</p>
+          <div className="portal-info text-center sm:text-left">
+            <p className="portal-label text-sm">Content Creation</p>
+            <p className="portal-link text-sm font-medium text-center sm:text-right">
+              Maker Portal
+            </p>
           </div>
         </div>
       </div>
@@ -595,18 +606,25 @@ export default function Productcreate() {
           </div>
 
           {/* ================= Basic Program Details ================= */}
-          <div className="form-section">
-            <h3 className="section-title">Basic Program Details</h3>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Program Type</label>
+          <div className="form-section  p-4 bg-white rounded-lg shadow-sm">
+            <h3 className="section-title  text-sm sm:text-lg font-semibold mb-4">
+              Basic Program Details
+            </h3>
+            <div className="form-row flex flex-col sm:flex-row gap-4">
+              <div className="form-group flex-1 flex flex-col">
+                <label className="mb-1 text-xs sm:text-sm font-medium mandatory">
+                  Program Type
+                </label>
                 <select
                   name="programType"
                   value={form.programType}
+                  required
                   onChange={(e) => handleProgramTypeChange(e.target.value)}
-                  className="form-input"
+                  className="form-input p-2 border border-gray-300 rounded text-xs sm:text-sm"
                 >
-                  <option value="">Select</option>
+                  <option value="" disabled hidden>
+                    Select
+                  </option>
                   {programTypes.map((pt) => (
                     <option key={pt} value={pt}>
                       {pt}
@@ -614,15 +632,23 @@ export default function Productcreate() {
                   ))}
                 </select>
               </div>
-              <div className="form-group">
-                <label>Sub Category</label>
+              <div className="form-group flex-1 flex flex-col">
+                <label className="mb-1 text-xs sm:text-sm font-medium mandatory">
+                  Sub Category
+                </label>
                 <select
                   name="subCategory"
                   value={form.subCategory}
+                  required
+                  disabled={!form.programType}
                   onChange={(e) => handleSubCategoryChange(e.target.value)}
-                  className="form-input"
+                  className={`form-input p-2 border border-gray-300 rounded text-xs sm:text-sm ${
+                    !form.programType && "cursor-not-allowed"
+                  }`}
                 >
-                  <option value="">Select</option>
+                  <option value="" disabled hidden>
+                    Select
+                  </option>
                   {filteredSubCategories.map((sc) => (
                     <option key={sc.subCategory} value={sc.subCategory}>
                       {sc.subCategory}
@@ -631,16 +657,18 @@ export default function Productcreate() {
                 </select>
               </div>
             </div>
-
-            <div className="form-row">
-              <div className="form-group full-width">
-                <label>Program Description</label>
+            {/* Second Row */}
+            <div className="form-row mt-4">
+              <div className="form-group flex flex-col w-full">
+                <label className="mb-1 text-xs sm:text-sm font-medium">
+                  Program Description
+                </label>
                 <textarea
                   name="programDescription"
                   value={form.programDescription || ""}
                   onChange={handleChange}
                   className="form-input"
-                  placeholder="Program description auto-filled"
+                  placeholder="Program description p-2 border border-gray-300 rounded text-xs sm:text-sm w-full table-scrollbar"
                   readOnly={!!form.subCategory} // Make it read-only when a subcategory is selected
                 />
               </div>
@@ -648,28 +676,34 @@ export default function Productcreate() {
 
             {form.subCategory && (
               <>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Product Name</label>
+                <div className="form-row mt-4 flex flex-col sm:flex-row gap-4">
+                  <div className="form-group flex-1 flex flex-col">
+                    <label className="mb-1 text-xs sm:text-sm font-medium mandatory">
+                      Product Name
+                    </label>
                     <input
                       type="text"
                       name="productName"
                       value={form.productName}
                       onChange={handleChange}
-                      className="form-input"
+                      className="form-input p-2 border border-gray-300 rounded text-xs sm:text-sm"
+                      required
                       placeholder="Enter product name"
                     />
                   </div>
                 </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Description</label>
+                <div className="form-row mt-4">
+                  <div className="form-group flex flex-col w-full">
+                    <label className="mb-1 text-xs sm:text-sm font-medium mandatory">
+                      Description
+                    </label>
                     <textarea
                       type="text"
                       name="productDescription"
                       value={form.productDescription}
                       onChange={handleChange}
-                      className="form-input"
+                      className="form-input p-2 border border-gray-300 rounded text-xs sm:text-sm w-full table-scrollbar"
+                      required
                       placeholder="Enter description"
                     />
                   </div>
@@ -690,7 +724,7 @@ export default function Productcreate() {
                     type="text"
                     name="kycLevelRequired"
                     value={form.kycLevelRequired || "-"}
-                    readOnly
+                    disabled
                     className="form-input bg-gray-800 text-white cursor-not-allowed"
                   />
                 </div>
@@ -701,7 +735,7 @@ export default function Productcreate() {
                     type="text"
                     name="riskProfile"
                     value={form.riskProfile || "-"}
-                    readOnly
+                    disabled
                     className="form-input bg-gray-800 text-white cursor-not-allowed"
                   />
                 </div>
@@ -768,10 +802,10 @@ export default function Productcreate() {
 
           {/* ================= Transaction Limits ================= */}
           <div className="form-section bg-[#0d0f13] p-4 rounded-md border border-gray-800">
-            <h3 className="section-title primary-color mb-4">
+            <h3 className="section-title primary-color text-sm sm:text-base mb-4">
               Transaction Limits
             </h3>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {[
                 { label: "Cash Loading Limit", field: "cashLoadingLimit" },
                 { label: "Daily Spend Limit", field: "dailySpendLimit" },
@@ -798,7 +832,8 @@ export default function Productcreate() {
                           handleChange(e);
                         }
                       }}
-                      className="form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none"
+                      disabled
+                      className="form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none cursor-not-allowed"
                       placeholder="Enter amount"
                     />
                   </div>
@@ -809,27 +844,29 @@ export default function Productcreate() {
 
           {/* ================= Features & Validity ================= */}
           <div className="form-section bg-[#0d0f13] p-4 rounded-md border border-gray-800">
-            <h3 className="section-title primary-color mb-4">
+            <h3 className="section-title primary-color text-sm sm:text-base mb-4">
               Features & Validity Settings
             </h3>
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Left - Validity */}
               <div>
-                <h4 className="compliance-title text-[15px] mb-[5px]">
+                <h4 className="compliance-title text-[15px] mb-[5px] text-xs sm:text-sm mb-2">
                   Validity & Age Settings
                 </h4>
                 {/* <div className="form-group">
                                     <label>Validity Period (Months)</label>
                                     <input type="number" name="validityPeriodMonths" value={form.validityPeriodMonths || ""} onChange={handleChange} className="form-input" />
                                 </div> */}
-                <div className="form-group">
-                  <label>Grace Period (Days)</label>
+                <div className="form-group mb-4">
+                  <label className="text-xs sm:text-sm text-gray-300 mb-1">
+                    Grace Period (Days)
+                  </label>
                   <input
                     type="number"
                     name="gracePeriodDays"
                     value={form.gracePeriodDays || 0}
                     onChange={handleChange}
-                    className="form-input"
+                    className="form-input p-2 text-xs sm:text-sm border border-gray-700 rounded-md bg-transparent focus:outline-none focus:border-teal-400 w-full"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -840,7 +877,7 @@ export default function Productcreate() {
                       name="customerAgeMin"
                       value={form.customerAgeMin || ""}
                       onChange={handleChange}
-                      className="form-input"
+                      className="form-input p-2 text-xs sm:text-sm border border-gray-700 rounded-md bg-transparent focus:outline-none focus:border-teal-400 w-full"
                     />
                   </div>
                 </div>
@@ -848,8 +885,10 @@ export default function Productcreate() {
 
               {/* Right - Features */}
               <div>
-                <h4 className="compliance-title">Key Features</h4>
-                <div className="compliance-table">
+                <h4 className="compliance-title  text-xs sm:text-sm mb-2">
+                  Key Features
+                </h4>
+                <div className="compliance-table flex flex-col gap-3">
                   {[
                     {
                       label: "Authorization Required",
@@ -870,10 +909,15 @@ export default function Productcreate() {
                       field: "crossBorderAllowed",
                     },
                   ].map(({ label, field }) => (
-                    <div key={field} className="compliance-row">
-                      <span className="compliance-label">{label}</span>
-                      <div className="radio-group">
-                        <label>
+                    <div
+                      key={field}
+                      className="compliance-row flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4"
+                    >
+                      <span className="compliance-label text-xs sm:text-sm text-gray-300">
+                        {label}
+                      </span>
+                      <div className="radio-group flex gap-4">
+                        <label className="flex items-center gap-1 text-xs sm:text-sm">
                           <input
                             type="radio"
                             name={field}
@@ -907,16 +951,16 @@ export default function Productcreate() {
 
           {/* ================= Payment Methods ================= */}
           <div className="form-section bg-[#0d0f13] p-4 rounded-md border border-gray-800">
-            <h3 className="section-title primary-color mb-4">
+            <h3 className="section-title primary-color text-sm sm:text-base mb-4">
               Payment Methods & Channels
             </h3>
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Topup Channels */}
               <div>
-                <h4 className="compliance-title text-gray-200 mb-2">
+                <h4 className="compliance-title text-gray-200 text-xs sm:text-sm mb-2">
                   Loading Channels
                 </h4>
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2 sm:gap-3">
                   {options.map((method) => {
                     const checked = Array.isArray(form.topUpMethod)
                       ? form.topUpMethod.includes(method)
@@ -925,7 +969,7 @@ export default function Productcreate() {
                     return (
                       <label
                         key={method}
-                        className="flex items-center gap-3 cursor-pointer text-gray-300"
+                        className="flex items-center gap-2 sm:gap-3 cursor-pointer text-gray-300 text-xs sm:text-sm"
                       >
                         <div
                           onClick={() => toggleLoading(method)}
@@ -946,7 +990,7 @@ export default function Productcreate() {
 
               {/* Unloading Channels */}
               <div>
-                <h4 className="compliance-title text-gray-200 mb-2">
+                <h4 className="compliance-title text-xs sm:text-sm mb-2">
                   Unloading Channels
                 </h4>
                 <div className="flex flex-col gap-3">
@@ -977,11 +1021,11 @@ export default function Productcreate() {
                     return (
                       <label
                         key={method}
-                        className="flex items-center gap-3 cursor-pointer text-gray-300"
+                        className="flex items-center gap-3 cursor-pointer text-gray-300 text-xs sm:text-sm"
                       >
                         <div
                           onClick={() => toggleUnloading(method)}
-                          className={`w-3 h-3 flex items-center justify-center border 
+                          className={`w-3 h-3 flex items-center justify-center border rounded-sm  
             ${checked ? "check-box-clr-after" : "check-box-clr-before"}
             transition-colors duration-200`}
                         >
@@ -998,8 +1042,10 @@ export default function Productcreate() {
             </div>
 
             {/* MCC Code */}
-            <div className="form-group mt-4">
-              <label>MCC Code</label>
+            <div className="form-group mt-4 flex flex-col">
+              <label className="text-xs sm:text-sm text-gray-300 mb-1 mandatory">
+                MCC Code
+              </label>
               <input
                 type="text"
                 name="allowedMccCodes"
@@ -1014,25 +1060,26 @@ export default function Productcreate() {
                     allowedMccCodes: e.target.value, // keep as string while typing
                   }))
                 }
-                className="form-input"
+                className="form-input p-2 text-xs sm:text-sm border border-gray-700 rounded-md bg-transparent focus:outline-none focus:border-teal-400 w-full"
+                required
                 placeholder="Enter MCC codes separated by commas"
               />
             </div>
           </div>
 
           {/* ================= Footer ================= */}
-          <div className="form-footer">
+          <div className="form-footer flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mt-4 px-2 sm:px-0">
             <button
               type="button"
-              className="btn-outline-back"
+              className="btn-outline-back flex items-center justify-center w-full sm:w-auto px-3 py-2 text-sm sm:text-base gap-2"
               onClick={() => setformOpen(false)}
             >
               <ArrowLeft className="icon" /> Back
             </button>
-            <div className="footer-right">
+            <div className="footer-right flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
               <button
                 type="button"
-                className="btn-outline-reset"
+                className="btn-outline-reset flex items-center justify-center w-full sm:w-auto px-3 py-2 text-sm sm:text-base gap-2"
                 onClick={() => {
                   setEditingId(null);
                   setIsEditing(false);
@@ -1041,7 +1088,10 @@ export default function Productcreate() {
               >
                 <RotateCcw className="icon" /> Reset
               </button>
-              <button type="submit" className="btn-outline-reset">
+              <button
+                type="submit"
+                className="btn-outline-reset flex items-center justify-center w-full sm:w-auto px-3 py-2 text-sm sm:text-base gap-2"
+              >
                 <Save className="icon" />
                 {editingId ? "Update Configuration" : "Create Configuration"}
               </button>
@@ -1052,17 +1102,17 @@ export default function Productcreate() {
 
       {/* Existing Configurations */}
       <div className="table-card mt-[18px]">
-        <div className="table-header">
-          <p className="table-title">
-            <PackagePlus className="w-5 h-5" />
-            Existing product Configurations
-          </p>
+        <div className="table-header flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mb-4 px-2 sm:px-0">
+          <div className="flex items-center gap-2 primary-color">
+            <PackagePlus className="w-4 h-4" />
+            <p className="user-table-header">Existing product Configurations</p>
+          </div>
           {/* Search bar */}
-          <div className="search-box">
-            <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
+          <div className="search-box relative w-full sm:w-64">
+            <Search size="14" className="absolute left-3 top-2 text-gray-400" />
             <input
               type="text"
-              className="search-input"
+              className="search-input !w-full pl-8 pr-2 py-1 sm:py-2 text-xs sm:text-sm rounded border"
               placeholder="Search configurations..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -1070,18 +1120,18 @@ export default function Productcreate() {
           </div>
         </div>
 
-        <div className="table-wrapper">
+        <div className="table-container">
           {/* Table */}
-          <table className="w-full text-left">
-            <thead className="table-head">
+          <table>
+            <thead>
               <tr>
                 {/* <th className="table-cell">#</th> */}
-                <th className="table-cell">Configuration NAME</th>
-                <th className="table-cell">Program Type</th>
-                <th className="table-cell">KYC Level</th>
-                <th className="table-cell">Status</th>
-                <th className="table-cell">Remarks</th>
-                <th className="table-cell">Actions</th>
+                <th>Configuration Name</th>
+                <th>Program Type</th>
+                <th>KYC Level</th>
+                <th>Status</th>
+                <th>Remarks</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -1091,13 +1141,15 @@ export default function Productcreate() {
                     cfg.kycLevelRequired.charAt(0).toUpperCase() +
                     cfg.kycLevelRequired.slice(1).toLowerCase();
                   return (
-                    <tr key={cfg.productId || idx} className="table-row">
-                      <td className="table-content">{cfg.productName}</td>
-                      <td className="table-content">{cfg.programType}</td>
-                      <td className="table-content">
-                        {formattedKYCLevel || "-"}
+                    <tr key={cfg.productId || idx}>
+                      <td className="max-w-[120px]">
+                        <p className="truncate" title={cfg.productName}>
+                          {cfg.productName}
+                        </p>
                       </td>
-                      <td className="table-content">
+                      <td>{cfg.programType}</td>
+                      <td>{formattedKYCLevel || "-"}</td>
+                      <td>
                         <span
                           className={` px-2 py-1 rounded text-[10px] ${cfg.isActive ? "checker" : "superuser"
                             }`}
@@ -1105,8 +1157,8 @@ export default function Productcreate() {
                           {cfg.isActive ? "active" : "Inactive"}
                         </span>
                       </td>
-                      <td className="table-content">{cfg.remarks || "-"}</td>
-                      <td className="table-content">
+                      <td>{cfg.remarks || "-"}</td>
+                      <td>
                         <button
                           className="header-icon-box"
                           onClick={() => handleEdit(cfg)}
@@ -1128,16 +1180,17 @@ export default function Productcreate() {
           </table>
         </div>
         {/* Pagination */}
-        <div className="flex justify-between items-center mt-4 px-4">
+        <div className="flex flex-col sm:flex-row flex-wrap justify-center sm:justify-between items-center mt-4 px-4 gap-2">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${currentPage === 1
-                ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                : "bg-[#0a1625] text-white hover:primary-color"
-              }`}
+            className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center  ${
+              currentPage === 1
+                ? "prev-next-disabled-btn"
+                : "prev-next-active-btn"
+            }`}
           >
-            <ChevronLeft className="w-4 h-4" /> Prev
+            <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" /> Prev
           </button>
 
           <div className="flex gap-2">
@@ -1145,10 +1198,11 @@ export default function Productcreate() {
               <button
                 key={i}
                 onClick={() => handlePageChange(i + 1)}
-                className={`px-3 py-1 rounded-lg text-sm ${currentPage === i + 1
-                    ? "primary-bg text-black font-bold"
-                    : "bg-[#1c2b45] text-white hover:primary-color"
-                  }`}
+                className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${
+                  currentPage === i + 1
+                    ? "active-pagination-btn"
+                    : "inactive-pagination-btn"
+                }`}
               >
                 {i + 1}
               </button>
@@ -1158,40 +1212,21 @@ export default function Productcreate() {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${currentPage === totalPages
-                ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                : "bg-[#0a1625] text-white hover:primary-color"
-              }`}
+            className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${
+              currentPage === totalPages
+                ? "prev-next-disabled-btn"
+                : "prev-next-active-btn"
+            }`}
           >
             Next <ChevronRight className="w-4 h-4" />
           </button>
         </div>
       </div>
       {/* Guidelines */}
-      <div className="guidelines-card">
-        <h3 className="guidelines-title">Product Creation Guidelines</h3>
-        <div className="guidelines-grid">
-          <p>
-            📦 <span>Basic Details:</span> Provide product name, description,
-            and category
-          </p>
-          <p>
-            💲 <span> Pricing Setup:</span> Define price, currency, and
-            applicable taxes
-          </p>
-        </div>
-
-        <div className="guidelines-grid">
-          <p>
-            ⚙️ <span> Configuration:</span> Set product attributes, features,
-            and usage limits
-          </p>
-          <p>
-            📜 <span> Compliance:</span> Ensure product meets regulatory and
-            policy requirements
-          </p>
-        </div>
-      </div>
-    </div>
+      <GuidelinesCard
+        title="Product Creation Guidelines"
+        guidelines={productGuidelines}
+      />
+    </>
   );
 }

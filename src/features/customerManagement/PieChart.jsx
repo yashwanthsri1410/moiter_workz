@@ -160,7 +160,6 @@ const PieChart = () => {
         tooltipEl.style.position = "absolute";
         tooltipEl.style.transition = "all .1s ease";
         tooltipEl.style.padding = "10px";
-        tooltipEl.style.fontSize = "13px";
         tooltipEl.style.fontFamily = "Arial, sans-serif";
         document.body.appendChild(tooltipEl);
       }
@@ -172,15 +171,21 @@ const PieChart = () => {
         return;
       }
 
+      // Get current screen width
+      const width = window.innerWidth;
+      let fontSize = "13px"; // default desktop
+      if (width <= 768) fontSize = "10px"; // tablet
+      if (width <= 480) fontSize = "8px"; // mobile
+
       if (tooltipModel.body) {
         const dataIndex = tooltipModel.dataPoints[0].dataIndex;
         const label = context.chart.data.labels[dataIndex];
         const value = context.chart.data.datasets[0].data[dataIndex];
 
         tooltipEl.innerHTML = `
-          <div style="margin-bottom:5px;">${label}</div>
-          <div style="color:var(--primary-color);">${value} customers</div>
-        `;
+      <div style="margin-bottom:5px; font-size:${fontSize};">${label}</div>
+      <div style="color:var(--primary-color); font-size:${fontSize};">${value} customers</div>
+    `;
       }
 
       const canvasRect = context.chart.canvas.getBoundingClientRect();

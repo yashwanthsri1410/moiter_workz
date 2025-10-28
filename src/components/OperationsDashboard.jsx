@@ -122,10 +122,10 @@ const OperationsDashboard = () => {
   }
 
   return (
-    <div className="dashboard-container">
-      <div className="dashboard-title">
-        <h1 className="dashboard-heading">Financial Dashboard Overview</h1>
-        <p className="dashboard-subtitle">
+    <>
+      <div className="text-center">
+        <h1 className="root-header">Financial Dashboard Overview</h1>
+        <p className="root-sub-header">
           Real-time insights into wallet operations, transactions and system
           performance
         </p>
@@ -148,7 +148,7 @@ const OperationsDashboard = () => {
         </div>
       </div>
       <KYCCompliance />
-    </div>
+    </>
   );
 };
 

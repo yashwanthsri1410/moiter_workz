@@ -11,7 +11,7 @@ export default function PerformanceOverview() {
   const { productData, error } = useOperationStore();
 
   const totalTransactions = productData?.reduce(
-    (sum, item) => sum + item.activeWallets,
+    (sum, item) => sum + item.productCount,
     0
   );
 
@@ -21,7 +21,7 @@ export default function PerformanceOverview() {
     labels: productData?.map((item) => item.walletCategory),
     datasets: [
       {
-        data: productData?.map((item) => item.activeWallets),
+        data: productData?.map((item) => item.pctOfTotal),
         backgroundColor: COLORS,
         borderWidth: 0.5,
         borderColor: "#0f0f0f",
@@ -36,17 +36,22 @@ export default function PerformanceOverview() {
         display: false, // we’ll create custom legend below
       },
       tooltip: {
+        backgroundColor: "#fff", // white background
+        titleColor: "#1f2937", // dark title text
+        bodyColor: "#1f2937", // dark body text
+        borderColor: "#d1d5db", // light gray border to define edges
+        borderWidth: 1, // make border visible
         callbacks: {
           label: function (context) {
             let label = context.label || "";
             let value = context.raw || 0;
-            return `${label}: ${value?.toLocaleString()}`;
+            return `${label}: ${value.toLocaleString()}%`;
           },
         },
-        backgroundColor: "#fff",
-        titleColor: "#1f2937",
-        bodyColor: "#1f2937",
-        borderColor: "#fff",
+        // Optional: reduce shadow to avoid blur
+        shadowOffsetX: 0,
+        shadowOffsetY: 0,
+        shadowBlur: 0,
       },
     },
     elements: {
@@ -60,7 +65,7 @@ export default function PerformanceOverview() {
 
   const footerStats = [
     {
-      label: "Total Transactions",
+      label: "Total Products",
       value: totalTransactions?.toLocaleString(),
     },
     {
@@ -76,18 +81,18 @@ export default function PerformanceOverview() {
   }
   return (
     <div>
-      <h2 className="flex items-center gap-2 text-[18px] text-primary mb-6">
+      <div className="flex items-center gap-2 mb-6">
         <span>
-          <ChartColumn size="18" />
+          <ChartColumn size="18" className="text-[var(--primary-color)]" />
         </span>{" "}
-        Performance Overview
-      </h2>
+        <span className="root-title">Performance Overview</span>
+      </div>
       <div className="glass-card h-[500px] flex flex-col corner-box">
         <span />
         {/* Header */}
         <div className="flex items-center text-primary gap-2 mb-4">
           <Box size={18} />
-          <h2 className="text-sm font-medium">Product Performance Analytics</h2>
+          <span className="card-root-label">Product Performance Analytics</span>
         </div>
 
         {/* Chart with fixed height */}
@@ -101,24 +106,24 @@ export default function PerformanceOverview() {
             {productData?.map((item, index) => (
               <div key={index} className="flex items-center gap-2">
                 <span
-                  className="w-2 h-2 rounded-full"
+                  className="card-legend-circle"
                   style={{ backgroundColor: COLORS[index % COLORS.length] }}
                 />
-                <span className="text-gray-300">{item.walletCategory}</span>
+                <span className="card-legend-list">{item.walletCategory}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Footer */}
-        <div className="thin-border my-[13px] mx-[-16px] xl:mx-[-32px]" />
+        <div className="footer-line" />
         <div className="pt-4 flex justify-around text-center">
           {footerStats.map((stat, index) => (
             <div key={index}>
-              <div className="primary-color font-bold text-lg">
+              <div className="primary-color dash-footer-values">
                 {stat.value}
               </div>
-              <div className="text-xs text-gray-400">{stat.label}</div>
+              <div className="dash-footer-label">{stat.label}</div>
             </div>
           ))}
         </div>

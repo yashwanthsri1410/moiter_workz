@@ -24,71 +24,68 @@ const CustomerManagement = () => {
   const { total_customers, active_customers, active_percentage } =
     data.customerSummary;
 
+  const stats = [
+    {
+      title: "Total Customers",
+      value: total_customers.toLocaleString(),
+      subText: `Active: ${active_customers.toLocaleString()}`,
+      percentage: `${active_percentage}%`,
+      progress: active_percentage,
+      color: "text-[#00d4aa]",
+      progressColor: "bg-[#00d48e]",
+      icon: <Users className="w-4 h-4 text-blue-500" />,
+    },
+    {
+      title: "Customer Added Today",
+      value: data.customersAddedToday,
+      color: "text-[#00d4aa]",
+      icon: <UserPlus className="w-4 h-4 text-blue-500" />,
+    },
+    {
+      title: "KYC Pending",
+      value: data.kycPendingCount.toLocaleString(),
+      color: "text-yellow-500",
+      icon: <Clock className="w-4 h-4 text-yellow-500" />,
+    },
+    {
+      title: "High Risk",
+      value: data.highRiskCount.toLocaleString(),
+      color: "text-red-500",
+      icon: <Shield className="w-4 h-4 text-red-500" />,
+    },
+  ];
+
   return (
-    <div className="p-5 space-y-5">
+    <>
       {/* Row 1 - Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {/* Total Customers */}
-        <div className="bg-[#0d1017] rounded-lg p-4 flex flex-col gap-4 shadow hover:-translate-y-1 transition corner-box">
-          <div className="flex justify-between items-center">
-            <h3 className="text-xs font-semibold text-gray-400">
-              Total Customers
-            </h3>
-            <Users className="w-4 h-4 text-blue-500" />
-          </div>
-          <span></span>
-          <p className="text-2xl font-bold text-[#00d4aa]">
-            {total_customers.toLocaleString()}
-          </p>
-          <div className="flex justify-between text-xs text-gray-300">
-            <p>Active: {active_customers.toLocaleString()}</p>
-            <p>{active_percentage}%</p>
-          </div>
-          <div className="w-full h-1.5 bg-gray-200 rounded">
-            <div
-              className="h-1.5 bg-[#00d48e] rounded"
-              style={{ width: `${active_percentage}%` }}
-            ></div>
-          </div>
-        </div>
+        {stats.map((stat, idx) => (
+          <div key={idx} className="stat-card-dx91u high-risk-dx91u corner-box">
+            <div className="flex justify-between items-center">
+              <h3 className="submenu-card-label">{stat.title}</h3>
+              {stat.icon}
+            </div>
 
-        {/* Customer Added Today */}
-        <div className="bg-[#0d1017] rounded-lg p-4 flex flex-col gap-4 shadow hover:-translate-y-1 transition corner-box">
-          <div className="flex justify-between items-center">
-            <h3 className="text-xs font-semibold text-gray-400">
-              Customer Added Today
-            </h3>
-            <UserPlus className="w-4 h-4 text-blue-500" />
-          </div>
-          <span></span>
-          <p className="text-2xl font-bold text-[#00d4aa]">
-            {data.customersAddedToday}
-          </p>
-        </div>
+            <span></span>
+            <p className={`submenu-card-value ${stat.color}`}>{stat.value}</p>
 
-        {/* KYC Pending */}
-        <div className="bg-[#0d1017] rounded-lg p-4 flex flex-col gap-4 shadow hover:-translate-y-1 transition corner-box">
-          <div className="flex justify-between items-center">
-            <h3 className="text-xs font-semibold text-gray-400">KYC Pending</h3>
-            <Clock className="w-4 h-4 text-yellow-500" />
+            {/* Extra info only for "Total Customers" */}
+            {stat.subText && (
+              <>
+                <div className="flex justify-between text-xs text-gray-300">
+                  <p>{stat.subText}</p>
+                  <p>{stat.percentage}</p>
+                </div>
+                <div className="w-full h-1.5 bg-gray-200 rounded">
+                  <div
+                    className={`h-1.5 ${stat.progressColor} rounded`}
+                    style={{ width: `${stat.progress}%` }}
+                  ></div>
+                </div>
+              </>
+            )}
           </div>
-          <span></span>
-          <p className="text-2xl font-bold text-yellow-500">
-            {data.kycPendingCount.toLocaleString()}
-          </p>
-        </div>
-
-        {/* High Risk */}
-        <div className="bg-[#0d1017] rounded-lg p-4 flex flex-col gap-4 shadow hover:-translate-y-1 transition corner-box">
-          <div className="flex justify-between items-center">
-            <h3 className="text-xs font-semibold text-gray-400">High Risk</h3>
-            <Shield className="w-4 h-4 text-red-500" />
-          </div>
-          <span></span>
-          <p className="text-2xl font-bold text-red-500">
-            {data.highRiskCount.toLocaleString()}
-          </p>
-        </div>
+        ))}
       </div>
 
       {/* Row 2 - Charts */}
@@ -113,7 +110,7 @@ const CustomerManagement = () => {
         {" "}
         <RecentCustomer />{" "}
       </div>
-    </div>
+    </>
   );
 };
 

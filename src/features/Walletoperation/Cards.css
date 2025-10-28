@@ -29,30 +29,11 @@
   align-items: center;
 }
 
-.db-stat-title {
-  font-size: 14px;
-  color: #9ca3af;
-}
-
-.db-stat-value {
-  font-size: 22px;
-  font-weight: bold;
-  line-height: 1.2;
-  color: var(--primary-color);
-  margin: 0;
-}
-
 .db-stat-body {
   display: flex;
   flex-direction: column;
   gap: 10px;
   /* margin-bottom: 20px; */
-}
-
-.db-stat-value-box {
-  display: flex;
-  flex-direction: column;
-  margin: 0;
 }
 
 .db-stat-change {
@@ -140,13 +121,7 @@
 .db-yellow {
   color: yellow;
 }
-.db-stat-value-red {
-  font-size: 22px;
-  font-weight: bold;
-  line-height: 1.2;
-  color: oklch(0.704 0.191 22.216);
-  margin: 0;
-}
+
 .db-footer-label-size {
   font-size: 12px;
 }

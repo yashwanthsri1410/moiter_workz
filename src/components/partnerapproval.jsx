@@ -75,7 +75,7 @@ export default function PartnerApproval() {
     }
   };
   return (
-    <div className="config-forms">
+    <>
       {selectedPartner ? (
         <>
           <Partnerview
@@ -94,10 +94,8 @@ export default function PartnerApproval() {
                 <CalculatorIcon className="primary-color w-4 h-4 sm:w-5 sm:h-5" />
               </div>
               <div>
-                <h1 className="header-title text-[14px] sm:text-lg font-semibold">
-                  Pending Partner Applications
-                </h1>
-                <p className="header-subtext text-[12px] sm:text-sm text-gray-400">
+                <h1 className="user-title">Pending Partner Applications</h1>
+                <p className="user-subtitle">
                   Review and manage partner onboarding
                 </p>
               </div>
@@ -169,7 +167,10 @@ export default function PartnerApproval() {
             <div className="flex flex-col items-center md:items-start md:flex-row gap-2 w-full">
               {/* Search Box */}
               <div className="search-box relative flex-1 w-full md:w-auto">
-                <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3 md:w-4 md:h-4" />
+                <Search
+                  size="14"
+                  className="absolute left-3 top-2 text-gray-400"
+                />
                 <input
                   type="text"
                   value={searchQuery}
@@ -188,9 +189,9 @@ export default function PartnerApproval() {
                   setSearchQuery("");
                   setCurrentPage(1);
                 }}
-                className="filter-btn flex items-center gap-1 px-3 py-1 shrink-0 max-w-[100px] md:max-w-none"
+                className="reset-btn"
               >
-                <Filter className="filter-icon w-3 h-3 md:w-4 md:h-4" />
+                <Filter className="filter-icon w-3 h-3" />
                 Reset
               </button>
             </div>
@@ -200,7 +201,7 @@ export default function PartnerApproval() {
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-md transition ${
+                className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
                   currentPage === 1
                     ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
                     : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
@@ -209,14 +210,14 @@ export default function PartnerApproval() {
                 <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" />
               </button>
 
-              <span className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-md bg-[#00d4aa] text-black text-[12px] sm:text-[14px]">
+              <span className="w-6 h-6 flex items-center justify-center rounded-md primary-bg  text-black text-[12px] sm:text-[14px]">
                 {currentPage}
               </span>
 
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center rounded-md transition ${
+                className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
                   currentPage === totalPages
                     ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
                     : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
@@ -230,10 +231,12 @@ export default function PartnerApproval() {
           {/* Table */}
           <div className="table-card mt-[18px]">
             <div className="table-header">
-              <p className="table-title">
-                <CalculatorIcon className="w-5 h-5" />
-                Pending Partner Applications
-              </p>
+              <div className="flex items-center gap-2 primary-color">
+                <CalculatorIcon className="w-4 h-4" />
+                <p className="user-table-header">
+                  Pending Partner Applications
+                </p>
+              </div>
             </div>
 
             {/* <div className="table-wrapper mt-5">
@@ -332,31 +335,27 @@ export default function PartnerApproval() {
               </table>
             </div> */}
 
-            <div className="table-wrapper mt-5 overflow-x-auto table-scrollbar">
-              <table className="w-full text-left min-w-[700px]">
-                <thead className="table-head">
+            <div className="table-container">
+              <table>
+                <thead>
                   <tr>
-                    <th className="table-cell">Partner Name</th>
-                    <th className="table-cell">Partner Type</th>
-                    <th className="table-cell">KYC Status</th>
-                    <th className="table-cell">Partner Status</th>
-                    <th className="table-cell">Status</th>
-                    <th className="table-cell">Remarks</th>
-                    <th className="table-cell">Actions</th>
+                    <th>Partner Name</th>
+                    <th>Partner Type</th>
+                    <th>KYC Status</th>
+                    <th>Partner Status</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {paginatedPartners.map((partner, idx) => (
-                    <tr key={idx} className="table-row">
-                      <td className="table-content text-[#00d4aa] text-sm sm:text-base">
-                        {partner.partnerName}
-                      </td>
-                      <td className="table-content text-sm sm:text-base">
-                        {partner.partnerType}
-                      </td>
-                      <td className="table-content">
+                    <tr key={idx}>
+                      <td>{partner.partnerName}</td>
+                      <td>{partner.partnerType}</td>
+                      <td>
                         <span
-                          className={`px-2 py-1 rounded text-[10px] sm:text-xs ${
+                          className={`px-2 py-1 rounded text-[10px]  ${
                             partner.kycStatus === "Verified"
                               ? "checker"
                               : partner.kycStatus === "Pending"
@@ -371,14 +370,14 @@ export default function PartnerApproval() {
                           {partner.kycStatus}
                         </span>
                       </td>
-                      <td className="table-content text-[10px] sm:text-xs">
-                        <span className="px-2 py-1 rounded">
-                          {partner.partnerStatus}
-                        </span>
+                      <td>
+                        {/* <span className="px-2 py-1  rounded"> */}
+                        {partner.partnerStatus}
+                        {/* </span> */}
                       </td>
-                      <td className="table-content text-[10px] sm:text-xs">
+                      <td>
                         <span
-                          className={`px-2 py-1 rounded ${
+                          className={`px-2 py-1 text-[10px] rounded ${
                             partner.status === 0
                               ? "checker"
                               : partner.status === 1
@@ -393,15 +392,13 @@ export default function PartnerApproval() {
                           {getStatusLabel(partner.status)}
                         </span>
                       </td>
-                      <td className="table-content text-sm sm:text-base">
-                        {partner.remarks || "-"}
-                      </td>
-                      <td className="table-content text-sm sm:text-base">
+                      <td>{partner.remarks || "-"}</td>
+                      <td>
                         <button
                           className="header-icon-box"
                           onClick={() => setSelectedPartner(partner)}
                         >
-                          <EyeIcon className="text-[#00d4aa] w-4 h-4" />
+                          <EyeIcon className="primary-color w-4 h-4" />
                         </button>
                       </td>
                     </tr>
@@ -422,6 +419,6 @@ export default function PartnerApproval() {
           </div>
         </>
       )}
-    </div>
+    </>
   );
 }

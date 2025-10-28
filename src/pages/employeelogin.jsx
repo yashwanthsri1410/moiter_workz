@@ -122,7 +122,10 @@ const Employeelogin = () => {
       }
     } catch (err) {
       console.error("Login error:", err.response?.data || err.message);
-      setError(err.response?.data?.message || "Invalid username or password.");
+      setError(
+        err.response?.data?.message ||
+          "Login api failed. Please try again later"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -235,8 +238,8 @@ const Employeelogin = () => {
                 "Authenticating..."
               ) : (
                 <>
-                  <Fingerprint className="login-btn-icon" /> Login
-                  <ArrowRight className="login-btn-icon " />
+                  <Fingerprint size="16" /> Login
+                  <ArrowRight size="16" />
                 </>
               )}
             </button>

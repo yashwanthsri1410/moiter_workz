@@ -6,7 +6,7 @@ import BarChart from "./BarChart2";
 
 const Walletranscation = () => {
   return (
-    <div className="dashboard-container-dx91u">
+    <>
       {" "}
       {/* Row 1 */}
       <div className="dashboard-row1-dx91uz">
@@ -25,7 +25,7 @@ const Walletranscation = () => {
       <div className="rounded-xl shadow-md">
         <BarChart />
       </div>
-    </div>
+    </>
   );
 };
 

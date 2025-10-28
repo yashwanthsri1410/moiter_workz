@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
-import AppRoutes from './AppRoutes';
+import AppRoutes from "./AppRoutes";
 import { AlertProvider, useAlert } from "./components/AlertProvider";
-
+import ThemeSwitcher from "./components/themeSwitcher";
 function AppWrapper() {
   return (
     <AlertProvider>
@@ -14,7 +14,6 @@ function AppWrapper() {
 function App() {
   const [role, setRole] = useState("");
   const { showAlert } = useAlert();
-
   // Override default alert
   useEffect(() => {
     window.alert = (message) => {
@@ -23,9 +22,12 @@ function App() {
   }, [showAlert]);
 
   return (
-    <Router basename={"/MW-Prepaid"}>
-      <AppRoutes setRole={setRole} />
-    </Router>
+    <>
+      <Router basename={"/MW-Prepaid"}>
+        <AppRoutes setRole={setRole} />
+      </Router>
+      <ThemeSwitcher />
+    </>
   );
 }
 

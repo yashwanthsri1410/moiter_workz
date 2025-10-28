@@ -90,7 +90,7 @@ export default function Productview({
     }
   };
   return (
-    <div className="config-forms">
+    <div>
       {/* Header */}
       <div className="card-header flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         {/* Left section */}
@@ -364,7 +364,7 @@ export default function Productview({
           {selectedProduct.allowedChannels?.map((ch, idx) => (
             <span
               key={idx}
-              className="px-2 py-1 bg-gray-800 rounded text-[10px] sm:text-xs text-[#00d4aa]"
+              className="px-2 py-1 bg-gray-800 rounded text-[10px] sm:text-xs primary-color"
             >
               {ch.includes("_") || ch.includes("-")
                 ? ch

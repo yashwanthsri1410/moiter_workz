@@ -99,20 +99,18 @@ export default function WalletSummary() {
 
   return (
     <div>
-      <h2 className="flex items-center gap-2 text-primary mb-6">
+      <div className="flex items-center gap-2 mb-6">
         <span>
-          <Wallet size="18" />
+          <Wallet size="18" className="text-primary" />
         </span>
-        <span className="text-[18px]">Wallet Performance Summary</span>
-      </h2>
+        <span className="root-title">Wallet Performance Summary</span>
+      </div>
       <div className="glass-card h-[500px] flex flex-col corner-box">
         <span></span>
         {/* Header */}
-        <div className="flex justify-between items-center mb-4">
-          <div className="text-primary flex items-center gap-2">
-            <WalletCards size={16} />
-            <p className="text-sm">Wallet Distribution Status</p>
-          </div>
+        <div className="text-primary flex items-center gap-2 mb-4">
+          <WalletCards size={18} />
+          <p className="card-root-label">Wallet Distribution Status</p>
         </div>
 
         {/* Bar Chart with same fixed height */}

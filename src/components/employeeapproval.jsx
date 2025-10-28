@@ -89,7 +89,7 @@ export default function EmployeeApproval() {
   };
 
   return (
-    <div className="config-forms">
+    <>
       {selectedEmployee ? (
         <>
           <EmployeeView
@@ -103,13 +103,13 @@ export default function EmployeeApproval() {
           {/* Header */}
           <div className="card-header flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
             {/* Left section */}
-            <div className="card-header-left flex items-center gap-3 justify-center sm:justify-start">
+            <div className="flex items-center gap-3 justify-center sm:justify-start">
               <div className="header-icon-box">
                 <UserCheck2Icon className="primary-color w-4 h-4" />
               </div>
-              <div className="text-center sm:text-left">
-                <h1 className="header-title">Employee Approvals</h1>
-                <p className="header-subtext">
+              <div>
+                <h1 className="user-title">Employee Approvals</h1>
+                <p className="user-subtitle text-nowrap">
                   Review and approve employee configurations
                 </p>
               </div>
@@ -127,15 +127,18 @@ export default function EmployeeApproval() {
           </div>
 
           {/* Filters & Pagination */}
-          <div className="tables-search-card rounded-xl p-3 flex flex-col gap-3 items-center md:items-start mt-2.5">
+          <div className="tables-search-card rounded-xl p-3 flex flex-col gap-3 items-center md:items-start mt-6">
             {/* Search + Reset */}
             <div
               className="flex flex-col items-center md:items-start md:flex-row gap-2 w-full"
               style={{ alignItems: "center" }}
             >
               {/* Search */}
-              <div className="search-box relative flex-1">
-                <Search className="absolute left-3 top-2 text-gray-400 w-3 h-3" />
+              <div className=" relative flex-1">
+                <Search
+                  size="14"
+                  className="absolute left-3 top-2 text-gray-400"
+                />
                 <input
                   type="text"
                   value={searchQuery}
@@ -154,9 +157,9 @@ export default function EmployeeApproval() {
                   setSearchQuery("");
                   setCurrentPage(1);
                 }}
-                className="filter-btn flex items-center gap-1 px-3 py-1 shrink-0 max-w-[100px] md:max-w-none"
+                className="reset-btn"
               >
-                <Filter className="filter-icon w-3 h-3" />
+                <Filter className="w-3 h-3" />
                 Reset
               </button>
             </div>
@@ -193,38 +196,38 @@ export default function EmployeeApproval() {
           {/* Table */}
           <div className="table-card mt-[18px]">
             <div className="table-header">
-              <p className="table-title">
-                <UserCheck2Icon className="w-5 h-5" />
-                Pending Employee Approvals
-              </p>
+              <div className="flex items-center gap-2 primary-color">
+                <UserCheck2Icon className="w-4 h-4" />
+                <p className="user-table-header">Pending Employee Approvals</p>
+              </div>
             </div>
 
-            <div className="table-wrapper mt-5 overflow-x-auto table-scrollbar">
-              <table className="w-full text-left min-w-[800px]">
-                <thead className="table-head">
+            <div className="table-container">
+              <table>
+                <thead>
                   <tr>
-                    <th className="table-cell">ID</th>
-                    <th className="table-cell">NAME</th>
-                    <th className="table-cell">EMAIL</th>
-                    <th className="table-cell">DEPARTMENT</th>
-                    <th className="table-cell">DESIGNATION</th>
-                    <th className="table-cell">ROLE</th>
-                    <th className="table-cell">USER STATUS</th>
-                    <th className="table-cell">REMARKS</th>
-                    <th className="table-cell">ACTIONS</th>
+                    <th>ID</th>
+                    <th>NAME</th>
+                    <th>EMAIL</th>
+                    <th>DEPARTMENT</th>
+                    <th>DESIGNATION</th>
+                    <th>ROLE</th>
+                    <th>USER STATUS</th>
+                    <th>REMARKS</th>
+                    <th>ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>
                   {paginatedConfigurations.length > 0 ? (
                     paginatedConfigurations.map((cfg, idx) => (
-                      <tr key={idx} className="table-row">
-                        <td className="table-content">{cfg.empId}</td>
-                        <td className="table-content">{cfg.userName}</td>
-                        <td className="table-content">{cfg.email}</td>
-                        <td className="table-content">{cfg.deptName}</td>
-                        <td className="table-content">{cfg.designationDesc}</td>
-                        <td className="table-content">{cfg.roleDescription}</td>
-                        <td className="table-content">
+                      <tr key={idx}>
+                        <td>{cfg.empId}</td>
+                        <td>{cfg.userName}</td>
+                        <td>{cfg.email}</td>
+                        <td>{cfg.deptName}</td>
+                        <td>{cfg.designationDesc}</td>
+                        <td>{cfg.roleDescription}</td>
+                        <td>
                           <span
                             className={`px-2 py-1 rounded text-[10px] ${
                               cfg.status === 0
@@ -239,14 +242,16 @@ export default function EmployeeApproval() {
                             {getStatusLabel(cfg.status)}
                           </span>
                         </td>
-                        <td className="table-content">{cfg.remarks || "-"}</td>
-                        <td className="table-content flex gap-2">
-                          <button
-                            className="header-icon-box"
-                            onClick={() => setSelectedEmployee(cfg)}
-                          >
-                            <EyeIcon className="primary-color w-4 h-4" />
-                          </button>
+                        <td>{cfg.remarks || "-"}</td>
+                        <td className="table-content">
+                          <div className="flex gap-2">
+                            <button
+                              className="header-icon-box"
+                              onClick={() => setSelectedEmployee(cfg)}
+                            >
+                              <EyeIcon className="primary-color w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -266,6 +271,6 @@ export default function EmployeeApproval() {
           </div>
         </>
       )}
-    </div>
+    </>
   );
 }

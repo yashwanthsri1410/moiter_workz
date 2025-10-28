@@ -57,11 +57,11 @@ const RiskManagement = () => {
     // fetchData();
   }, []);
   return (
-    <div >
+    <>
       <StatCards stats={stats} />
-      <div className="stat-card-dx91u corner-box p-2 shadow-md rounded-lg mt-5 mx-5">
+      <div className="stat-card-dx91u corner-box p-2 shadow-md rounded-lg">
         {/* Header */}
-        <h2 className="primary-color text-sm">Risk Management Dashboard</h2>
+        <h2 className="card-root-label text-sm">Risk Management Dashboard</h2>
         <div className="flex justify-between items-center mt-3">
           <p className="text-gray-400 text-sm mt-2">Overall Risk Level</p>
 
@@ -77,11 +77,11 @@ const RiskManagement = () => {
             <div
               className="primary-bg h-3 rounded-full"
               style={{ width: `${progress}%` }}
-            ></div>
+            />
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -73,7 +73,7 @@ const Monitoring = ({
   }, [dbUp]);
 
   return (
-    <div className="monitoring-root">
+    <div className="text-center">
       {isDBStrType ? null : isDBBoolType && !dbStatus ? (
         <h1 className="db-down-banner">
           🚨 DB is down — Please check the connection and retry later
@@ -81,8 +81,8 @@ const Monitoring = ({
       ) : null}
 
       {/* Title */}
-      <h1 className="monitoring-title">API Monitoring Dashboard</h1>
-      <p className="sweeper-text">
+      <h1 className="root-header">API Monitoring Dashboard</h1>
+      <p className="relative overflow-hidden root-sub-header">
         Real-time service monitoring and analytics
         <span className="sweeper-line" aria-hidden="true" />
       </p>

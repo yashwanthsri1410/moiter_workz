@@ -66,9 +66,7 @@ const ServiceDetails = () => {
     <>
       {!isEmptyObj && (
         <div className="px-[40px]">
-          <h1 style={{ fontSize: "22px" }} className="monitoring-title ">
-            API Service Details
-          </h1>
+          <h1 className="root-header">API Service Details</h1>
 
           {/* Search Box */}
           <div className="my-6 flex items-center w-full max-w-md rounded-full bg-[#0f172a] px-4 py-2 border border-transparent focus-within:border-[var(--primary-color)] transition">
@@ -83,34 +81,35 @@ const ServiceDetails = () => {
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto">
-            <span className="span" />
-            <table className="w-full table-card text-left text-sm text-gray-300 rounded-xl ">
-              <thead className="text-gray-400 text-xs">
+          <div className="table-container">
+            <table>
+              <thead>
                 <tr>
-                  <th className="px-6 py-3">API Service</th>
-                  <th className="px-6 py-3">Sub API</th>
-                  <th className="px-6 py-3">Request Count</th>
-                  <th className="px-6 py-3">Status</th>
+                  <th>API Service</th>
+                  <th>Sub API</th>
+                  <th>Request Count</th>
+                  <th>Status</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredServices?.length > 0 ? (
                   filteredServices.map((service, sIdx) => (
                     <React.Fragment key={sIdx}>
-                      <tr className="bg-gray-900/20 hover:bg-gray-700/30 transition">
-                        <td className="px-6 py-3 font-medium text-white">
-                          {service?.name}
+                      <tr>
+                        <td>{service?.name}</td>
+                        <td>{service?.endpoints?.length === 0 ? "—" : ""}</td>
+                        <td>
+                          <p
+                            className={`text-green-400 ${
+                              service?.usageCount !== 0 && "zoom-animate"
+                            }`}
+                          >
+                            {service?.usageCount}
+                          </p>
                         </td>
-                        <td className="px-6 py-3 text-gray-400 italic">
-                          {service?.endpoints?.length === 0 ? "—" : ""}
-                        </td>
-                        <td className="px-6 py-3 text-green-400 zoom-animate">
-                          {service?.usageCount}
-                        </td>
-                        <td className="px-6 py-3">
-                          <span
-                            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                        <td>
+                          <div
+                            className={`inline-flex my-1 items-center px-2 py-1 rounded-full text-xs font-medium ${
                               service?.isRunning
                                 ? "bg-green-900/30 text-green-400"
                                 : "bg-red-900/30 text-red-400"
@@ -122,25 +121,24 @@ const ServiceDetails = () => {
                               } w-[6px] h-[6px] mr-2 rounded-full bg-current`}
                             ></span>
                             {service.isRunning ? "Active" : "InActive"}
-                          </span>
+                          </div>
                         </td>
                       </tr>
 
                       {service.endpoints.map((ep, eIdx) => (
-                        <tr
-                          key={eIdx}
-                          className="bg-gray-900/20 hover:bg-gray-800 transition"
-                        >
-                          <td className="px-6 py-3"></td>
-                          <td className="px-6 py-3">
-                            {ep.url.split("/").filter(Boolean).pop()}
-                          </td>
-                          <td className="px-6 py-3 text-green-400 zoom-animate">
+                        <tr key={eIdx}>
+                          <td></td>
+                          <td>{ep.url.split("/").filter(Boolean).pop()}</td>
+                          <td
+                            className={`text-green-400 ${
+                              ep.usageCount !== 0 && "zoom-animate"
+                            }`}
+                          >
                             {ep.usageCount}
                           </td>
-                          <td className="px-6 py-3">
-                            <span
-                              className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                          <td>
+                            <div
+                              className={`my-1 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                                 ep.isRunning
                                   ? "bg-green-900/30 text-green-400"
                                   : "bg-red-900/30 text-red-400"
@@ -148,7 +146,7 @@ const ServiceDetails = () => {
                             >
                               <span className="zoom-animate w-[6px] h-[6px] mr-2 rounded-full bg-current"></span>
                               {ep.isRunning ? "Active" : "Down"}
-                            </span>
+                            </div>
                           </td>
                         </tr>
                       ))}

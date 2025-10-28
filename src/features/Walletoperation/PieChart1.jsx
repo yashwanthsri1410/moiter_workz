@@ -120,9 +120,9 @@ const PieChart1 = () => {
       if (!tooltipEl) {
         tooltipEl = document.createElement("div");
         tooltipEl.id = "chartjs-tooltip";
-        tooltipEl.style.background = "#11161a";
+        tooltipEl.style.background = "#222831";
         tooltipEl.style.width = "140px";
-        tooltipEl.style.border = "1px solid #50887dff";
+        tooltipEl.style.border = "1px solid var(--primary-color)";
         tooltipEl.style.borderRadius = "10px";
         tooltipEl.style.color = "white";
         tooltipEl.style.opacity = 1;

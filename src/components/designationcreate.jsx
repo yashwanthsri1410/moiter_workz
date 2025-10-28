@@ -11,6 +11,8 @@ import {
   X,
 } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
+import GuidelinesCard from "./reusable/guidelinesCard";
+import { designationGuidelines } from "../constants/guidelines";
 
 export default function CreateDesignationForm({ onBack }) {
   const [departments, setDepartments] = useState([]);
@@ -186,7 +188,7 @@ export default function CreateDesignationForm({ onBack }) {
   }, []);
 
   return (
-    <div className="department-page">
+    <div>
       {/* Header */}
       <div className="form-header">
         <div className="back-title flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
@@ -229,9 +231,9 @@ export default function CreateDesignationForm({ onBack }) {
               <div className="header-icon-box">
                 <Badge className="primary-color w-4 h-4" />
               </div>
-              <div className="flex flex-col">
-                <h1 className="header-title text-lg">Designation Management</h1>
-                <p className="header-subtext text-sm">
+              <div>
+                <h1 className="user-title">Designation Management</h1>
+                <p className="user-subtitle">
                   Create and manage designations under departments
                 </p>
               </div>
@@ -325,33 +327,38 @@ export default function CreateDesignationForm({ onBack }) {
       )}
 
       {/* Table */}
-      <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 shadow-lg overflow-x-auto">
+      <div className="table-card overflow-x-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
-          <h2 className="primary-color flex items-center gap-2 font-semibold text-lg">
-            <Badge className="w-5 h-5" /> Existing Designations
-          </h2>
-          <span className="text-sm text-gray-400">
-            Total: {designations.length} designations
+          <div className="flex items-center gap-2 primary-color">
+            <Badge className="w-4 h-4" />
+            <p className="user-table-header">Existing Designations</p>
+          </div>
+          <span className="text-sm text-gray-400 ">
+            Total:{" "}
+            <span className="text-sm table-subtext">
+              {" "}
+              {designations.length} designations
+            </span>
           </span>
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200 rounded-lg table-scrollbar">
-          <table className="w-full text-left table-auto min-w-[600px] border-collapse">
-            <thead className="table-head">
+        <div className="table-container">
+          <table>
+            <thead>
               <tr>
-                <th className="table-cell px-4 py-2">Department</th>
-                <th className="table-cell px-4 py-2">Designation</th>
-                <th className="table-cell px-4 py-2 text-right">Actions</th>
+                <th>Department</th>
+                <th>Designation</th>
+                <th className="text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-800 text-sm">
+            <tbody>
               {groupedDesignations.length > 0 ? (
                 groupedDesignations.map((group) =>
                   group.designations.map((desig, id) => (
-                    <tr key={desig.designationId} className="table-row">
-                      <td className="table-cell-name px-4 py-2">
+                    <tr key={desig.designationId}>
+                      <td>
                         <div className="flex items-center gap-1">
                           {id === 0 ? (
                             <Building2 className="w-4 h-4 primary-color" />
@@ -359,7 +366,7 @@ export default function CreateDesignationForm({ onBack }) {
                           {id === 0 ? group.deptName : ""}
                         </div>
                       </td>
-                      <td className="px-4 py-2 text-gray-300">
+                      <td>
                         {editId === desig.designationId ? (
                           <div>
                             <input
@@ -380,32 +387,32 @@ export default function CreateDesignationForm({ onBack }) {
                           </div>
                         )}
                       </td>
-                      <td className="table-cell-icon px-4 py-2 flex justify-end gap-4">
-                        {editId === desig.designationId ? (
-                          <>
+                      <td>
+                        <div className="py-2 flex justify-end gap-4">
+                          {editId === desig.designationId ? (
+                            <>
+                              <button
+                                onClick={() => handleSaveEdit(desig)}
+                                className="primary-color hover:underline"
+                              >
+                                Save
+                              </button>
+                              <button
+                                onClick={handleCancelEdit}
+                                className="text-gray-400 hover:underline"
+                              >
+                                Cancel
+                              </button>
+                            </>
+                          ) : (
                             <button
-                              onClick={() =>
-                                handleSaveEdit(desig.designationId)
-                              }
-                              className="primary-color hover:underline"
+                              onClick={() => handleEditInline(desig)}
+                              className="flex items-center gap-1 primary-color hover:underline"
                             >
-                              Save
+                              <Pencil className="w-4 h-4" /> Edit
                             </button>
-                            <button
-                              onClick={handleCancelEdit}
-                              className="text-gray-400 hover:underline"
-                            >
-                              Cancel
-                            </button>
-                          </>
-                        ) : (
-                          <button
-                            onClick={() => handleEditInline(desig)}
-                            className="flex items-center gap-1 primary-color hover:underline"
-                          >
-                            <Pencil className="w-4 h-4" /> Edit
-                          </button>
-                        )}
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -424,55 +431,11 @@ export default function CreateDesignationForm({ onBack }) {
           </table>
         </div>
       </div>
-
       {/* Guidelines */}
-      {/* <div className="bg-[#0D0F12] rounded-xl border border-gray-800 p-4 mt-6 shadow-lg">
-        <h3 className="text-teal-400 font-semibold mb-3">
-          Designation Management Guidelines
-        </h3>
-        <div className="grid md:grid-cols-2 gap-3 text-sm text-gray-300">
-          <p>
-            📘 <span className="text-white">Create:</span> Add new designations
-            under departments
-          </p>
-          <p>
-            🔍 <span className="text-white">Search:</span> Quickly find
-            designations
-          </p>
-          <p>
-            ✏️ <span className="text-white">Edit:</span> Update designation
-            inline
-          </p>
-          <p>
-            ⚠️ <span className="text-white">Validation:</span> Only letters,
-            spaces, and hyphens allowed
-          </p>
-        </div>
-      </div> */}
-      <div className="guidelines-card">
-        <h3 className="guidelines-title primary-color text-base sm:text-lg">
-          Department Management Guidelines
-        </h3>
-        <div className="guidelines-grid text-sm sm:text-base">
-          <p>
-            📘 <span className="font-semibold">Create:</span> Add new
-            designations under departments
-          </p>
-          <p>
-            🔍 <span className="font-semibold">Search:</span> Quickly find
-            designations
-          </p>
-        </div>
-        <div className="guidelines-grid text-sm sm:text-base">
-          <p>
-            ✏️ <span className="font-semibold">Edit:</span>Update designation
-          </p>
-          <p>
-            ⚠️ <span className="font-semibold">Validation:</span> Only letters,
-            spaces, and hyphens allowed
-          </p>
-        </div>
-      </div>
+      <GuidelinesCard
+        title="Designation Management Guidelines"
+        guidelines={designationGuidelines}
+      />
     </div>
   );
 }

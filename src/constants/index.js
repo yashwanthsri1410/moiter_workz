@@ -2,7 +2,7 @@ export const loadedUrl = "Export/wallet-loaded-dashboard";
 export const unLoadedUrl = "Export/wallet-unloaded-dashboard";
 export const transactionUrl = "Export/wallet-transcation-dashboard";
 export const walletPerfomanceUrl = "Export/wallet-status-dashboard";
-export const productUrl = "Export/user-wallet-cards";
+export const productUrl = "Export/user-wallet-category";
 export const partnerUrl = "Export/partner-performance";
 export const kycStatusUrl = "Export/customer_Kyc_dashboard_export";
 
@@ -66,3 +66,6 @@ export const paginationStyle =
 export const primaryColor = getComputedStyle(document.documentElement)
   .getPropertyValue("--primary-color")
   .trim();
+
+export const noUpdate =
+  "⚠️ No changes made. Same configuration already exists for (Semi-Closed - summa).";

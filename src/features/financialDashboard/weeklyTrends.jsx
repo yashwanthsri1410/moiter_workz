@@ -149,7 +149,7 @@ const WeeklyTrends = () => {
           <div className="flex-1 flex flex-col">
             <h2 className="flex items-center gap-2 mb-4">
               <TrendingUp size="18" className="text-primary" />
-              <span className="title-text">Weekly Trends</span>
+              <span className="card-root-label">Weekly Trends</span>
             </h2>
 
             {/* Chart grows to fill remaining height */}
@@ -159,7 +159,7 @@ const WeeklyTrends = () => {
           </div>
 
           {/* Divider always aligned */}
-          <div className="thin-border thin-border my-[13px] mx-[-16px] xl:mx-[-32px]" />
+          <div className="footer-line" />
 
           {/* Custom Legend fixed at bottom */}
           <div className="flex justify-between px-3 xl:px-10">
@@ -170,8 +170,10 @@ const WeeklyTrends = () => {
                   style={{ backgroundColor: item.color }}
                 ></span>
                 <div className="flex flex-col">
-                  <span className={item.textColor}>₹{item.value}M</span>
-                  <span className="muted">&nbsp;{item.label}</span>
+                  <span className={`dash-footer-values ${item.textColor}`}>
+                    ₹{item.value}M
+                  </span>
+                  <span className="dash-footer-label">&nbsp;{item.label}</span>
                 </div>
               </div>
             ))}

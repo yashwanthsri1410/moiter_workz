@@ -32,120 +32,161 @@ const ComplianceKYC = () => {
     { label: "Sanctions Screening", percent: 100 },
   ];
 
+  const complianceCards = [
+    {
+      title: "KYC Pending",
+      value: data?.kycPendingCount?.toLocaleString("en-IN"),
+      icon: <Clock10 className="w-4 h-4 text-[#ffeb00]" />,
+      valueClass: "text-[#eab308]",
+      subText: (
+        <p className="stat-sub-dx91u mb-[10px]">
+          <span className="text-[#ff6467]">+5.2%</span> from yesterday
+        </p>
+      ),
+      footer: (
+        <div className="active-row-dx91u flex justify-between">
+          <p className="stat-sub-dx91u">{data?.status}</p>
+          <p className="stat-percentage-dx91u">{data?.kycCompletionRate}%</p>
+        </div>
+      ),
+      progress: data?.kycCompletionRate,
+      className: "total-customers-dx91u",
+    },
+    {
+      title: "KYC Verified",
+      value: data?.kycVerifiedCount?.toLocaleString("en-IN"),
+      icon: <UserCheck className="w-4 h-4 text-[#30d80e]" />,
+      valueClass: "text-[#30d80e]",
+      subText: (
+        <p className="stat-sub-dx91u">
+          <span className="primary-color">+12.8%</span> this month
+        </p>
+      ),
+      footer: (
+        <div>
+          <p className="stat-sub-dx91u">Verification Rate</p>
+          <p className="primary-color text-[15px]">{data?.kycCompletionRate}</p>
+        </div>
+      ),
+      className: "customer-today-dx91u",
+    },
+    {
+      title: "AML Alerts",
+      value: "45",
+      icon: <AlertTriangle className="w-4 h-4 text-[#ff6467]" />,
+      valueClass: "text-[#ef4444]",
+      subText: (
+        <p className="stat-sub-dx91u">
+          <span className="primary-color">-8.2%</span> from last week
+        </p>
+      ),
+      footer: (
+        <div>
+          <p className="stat-sub-dx91u">High Priority</p>
+          <p className="text-[#ff6467] text-[15px]">12 cases</p>
+        </div>
+      ),
+      className: "kyc-pending-dx91u",
+    },
+    {
+      title: "Compliance Score",
+      value: data?.kycCompletionRate,
+      icon: <Shield className="w-4 h-4 primary-color" />,
+      valueClass: "primary-color",
+      subText: (
+        <p className="stat-sub-dx91u">
+          <span className="primary-color">+0.8%</span> improvement
+        </p>
+      ),
+      footer: (
+        <div className="active-row-dx91u">
+          <p className="stat-percentage-dx91u">Target: 67%</p>
+        </div>
+      ),
+      progress: 67,
+      className: "high-risk-dx91u",
+    },
+  ];
+
+  const alerts = [
+    {
+      bgColor: "#3b1c1c",
+      textColor: "#f87171",
+      icon: <AlertTriangle className="w-3 h-3 text-white" />,
+      text: "12 customers flagged for potential money laundering activities",
+    },
+    {
+      bgColor: "#3b341c",
+      textColor: "#facc15",
+      icon: <Clock className="w-3 h-3 text-white" />,
+      text: "847 KYC documents pending review for more than 3 days",
+    },
+    {
+      bgColor: "#1c2e3b",
+      textColor: "#60a5fa",
+      icon: <FileText className="w-3 h-3 text-white" />,
+      text: "Quarterly compliance report due in 5 days",
+    },
+  ];
+
   if (!data) return <p>Loading...</p>;
 
   return (
-    <div className="dashboard-container-dx91u space-y-6">
+    <>
       {/* Row 1 - Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* KYC Pending */}
-        <div className="stat-card-dx91u total-customers-dx91u corner-box">
-          <div className="card-header-dx91u flex justify-between items-center">
-            <h3>KYC Pending</h3>
-            <Clock10 className="w-4 h-4 text-[#ffeb00]" />
-          </div>
-          <p className="stat-value-dx91u highlight-yellow-dx91u">
-            {data?.kycPendingCount?.toLocaleString("en-IN")}
-          </p>
-          <p className="stat-sub-dx91u mb-[10px]">
-            <span className="text-[#ff6467]">+5.2%</span> from yesterday
-          </p>
-          <div className="active-row-dx91u flex justify-between">
-            <p className="stat-sub-dx91u">{data?.status}</p>
-            <p className="stat-percentage-dx91u">{data?.kycCompletionRate}%</p>
-          </div>
-          <div className="progress-bar-dx91u">
-            <div
-              className="progress-fill-dx91u"
-              style={{ width: `${data?.kycCompletionRate}%` }}
-            ></div>
-          </div>
-        </div>
+        {complianceCards.map((card, idx) => (
+          <div
+            key={idx}
+            className={`stat-card-dx91u ${card.className} corner-box`}
+          >
+            <div className="card-header-dx91u flex justify-between items-center">
+              <h3 className="submenu-card-label">{card.title}</h3>
+              {card.icon}
+            </div>
 
-        {/* KYC Verified */}
-        <div className="stat-card-dx91u customer-today-dx91u corner-box">
-          <div className="card-header-dx91u flex justify-between items-center">
-            <h3>KYC Verified</h3>
-            <UserCheck className="w-4 h-4 primary-color" />
-          </div>
-          <p className="stat-value-dx91u highlight-green-dx91u">
-            {data?.kycVerifiedCount?.toLocaleString("en-IN")}
-          </p>
-          <p className="stat-sub-dx91u">
-            <span className="primary-color">+12.8%</span> this month
-          </p>
-          <div>
-            <p className="stat-sub-dx91u">Verification Rate</p>
-            <p className="primary-color text-[15px]">
-              {data?.kycCompletionRate}
+            <p className={`submenu-card-value ${card.valueClass}`}>
+              {card.value}
             </p>
-          </div>
-        </div>
 
-        {/* AML Alerts */}
-        <div className="stat-card-dx91u kyc-pending-dx91u corner-box">
-          <div className="card-header-dx91u flex justify-between items-center">
-            <h3>AML Alerts</h3>
-            <AlertTriangle className="w-4 h-4 text-[#ff6467]" />
-          </div>
-          <p className="stat-value-dx91u highlight-red-dx91u">45</p>
-          <p className="stat-sub-dx91u">
-            <span className="primary-color">-8.2%</span> from last week
-          </p>
-          <div>
-            <p className="stat-sub-dx91u">High Priority</p>
-            <p className="text-[#ff6467] text-[15px]">12 cases</p>
-          </div>
-        </div>
+            {card.subText}
+            {card.footer}
 
-        {/* Compliance Score */}
-        <div className="stat-card-dx91u high-risk-dx91u corner-box">
-          <div className="card-header-dx91u flex justify-between items-center">
-            <h3>Compliance Score</h3>
-            <Shield className="w-4 h-4 text-[#00d4aa]" />
+            {card.progress !== undefined && (
+              <div className="progress-bar-dx91u">
+                <div
+                  className="progress-fill-dx91u"
+                  style={{ width: `${card.progress}%` }}
+                ></div>
+              </div>
+            )}
           </div>
-          <p className="stat-value-dx91u">{data?.kycCompletionRate}</p>
-          <p className="stat-sub-dx91u">
-            <span className="primary-color">+0.8%</span> improvement
-          </p>
-          <div className="active-row-dx91u">
-            <p className="stat-percentage-dx91u">Target: 67%</p>
-          </div>
-          <div className="progress-bar-dx91u">
-            <div className="progress-fill-dx91u" style={{ width: "67%" }}></div>
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Row 2 - Alerts + Metrics */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Priority Alerts */}
         <div className="stat-card-dx91u high-risk-dx91u corner-box p-4 space-y-3">
-          <h2 className="text-[#00d4aa] text-xs sm:text-sm md:text-[15px] flex items-center gap-2">
+          <h2 className="card-root-label flex items-center gap-2">
             <AlertTriangle className="w-4 h-4" /> Priority Alerts
           </h2>
 
-          <div className="bg-[#3b1c1c] text-[#f87171] px-4 py-2 rounded-[18px] flex items-center gap-3 text-xs sm:text-sm">
-            <AlertTriangle className="w-3 h-3 text-white" />
-            <span>
-              12 customers flagged for potential money laundering activities
-            </span>
-          </div>
-
-          <div className="bg-[#3b341c] text-[#facc15] px-4 py-2 rounded-[18px] flex items-center gap-3 text-xs sm:text-sm">
-            <Clock className="w-3 h-3 text-white" />
-            <span>847 KYC documents pending review for more than 3 days</span>
-          </div>
-
-          <div className="bg-[#1c2e3b] text-[#60a5fa] px-4 py-2 rounded-[18px] flex items-center gap-3 text-xs sm:text-sm">
-            <FileText className="w-3 h-3 text-white" />
-            <span>Quarterly compliance report due in 5 days</span>
-          </div>
+          {alerts.map((alert, index) => (
+            <div
+              key={index}
+              className="px-4 py-2 rounded-[18px] flex items-center gap-3 text-xs sm:text-sm"
+              style={{ backgroundColor: alert.bgColor, color: alert.textColor }}
+            >
+              {alert.icon}
+              <span>{alert.text}</span>
+            </div>
+          ))}
         </div>
 
         {/* Compliance Metrics */}
         <div className="stat-card-dx91u high-risk-dx91u corner-box p-4">
-          <h2 className="text-[#00d4aa] text-xs sm:text-sm md:text-[15px] flex items-center gap-2">
+          <h2 className="card-root-label flex items-center gap-2">
             Compliance Metrics
           </h2>
           <div className="space-y-4 mt-2">
@@ -171,7 +212,7 @@ const ComplianceKYC = () => {
       <div>
         <KYCReviewQueue />
       </div>
-    </div>
+    </>
   );
 };
 

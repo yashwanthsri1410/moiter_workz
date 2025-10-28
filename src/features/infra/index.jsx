@@ -43,7 +43,7 @@ const Infra = () => {
       setInfraSummary(summaryRes.data);
       setInfraStatus(statusRes.data);
     } catch (error) {
-      setError("Failed to Load Data Infra Summary/Status Data");
+      setError("Failed to Load Infra Summary/Status Data");
     }
   };
 
@@ -73,7 +73,7 @@ const Infra = () => {
 
   return (
     <>
-      <div className="monitoring-container">
+      <div>
         <Monitoring
           isDBStrType={isDBStrType}
           isDBBoolType={isDBBoolType}

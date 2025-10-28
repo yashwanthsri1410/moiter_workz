@@ -4,7 +4,7 @@
 
 :root {
   /*/////////////////// red theme////////////////////////////////// */
-  /* --primary-color: red;
+  --primary-color: red;
   --menu-hover-bg: #1c1717;
   --borderBg-color: #3b0000;
   --alert-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
@@ -44,11 +44,11 @@
     rgba(0, 255, 200, 0.15),
     transparent
   );
-  --body-color: #0e0101; */
+  --body-color: #0e0101;
 
   /* //////////////////////////////base theme/////////////////////////////////////////// */
 
-  --primary-color: #00d4aa;
+  /* --primary-color: #00d4aa;
   --menu-hover-bg: rgba(16, 185, 129, 0.1);
   --borderBg-color: #00d4aa33;
   --alert-shadow: 0 0 30px rgba(0, 255, 200, 0.3);
@@ -89,7 +89,7 @@
     rgba(255, 0, 0, 0.15),
     transparent
   );
-  --body-color: #0a0b0e;
+  --body-color: #0a0b0e; */
 }
 
 body {
@@ -117,6 +117,183 @@ body {
   font-family: 'Digital7Mono', monospace;
 }
 */
+
+/* common classes init*/
+.root-header {
+  @apply text-[20px] md:text-[30px] font-bold;
+  color: var(--primary-color);
+  /* operation Dashboard title and in infra 2 text title */
+}
+
+.root-sub-header {
+  @apply text-[12px] md:text-[14px] mt-1 text-gray-400;
+  /* operation Dashboard sub title and infra sub title*/
+}
+
+.card-root-label {
+  @apply text-[12px] md:text-[14px];
+  color: var(--primary-color);
+  letter-spacing: 0.5px;
+  /* all dashboard card menu labels */
+}
+
+.card-legend-circle {
+  @apply rounded-full w-1 md:w-1.5 h-1 md:h-1.5 shrink-0;
+}
+
+.card-legend-list {
+  @apply text-[10px] md:text-[12px] text-gray-400;
+}
+.root-title {
+  @apply text-[14px] md:text-[18px];
+  color: var(--primary-color);
+}
+
+.dash-footer-values {
+  @apply text-[12px] md:text-[14px];
+}
+
+.dash-footer-label {
+  @apply text-[10px] md:text-[12px] text-gray-400;
+}
+
+.footer-line {
+  @apply h-[1px] my-[13px] mx-[-16px] xl:mx-[-32px];
+  background-color: var(--card-footer-line);
+}
+
+.dash-kyc-label {
+  @apply text-[12px] md:text-[14px] text-gray-400;
+}
+
+.dash-kyc-values {
+  @apply text-[20px] md:text-[24px] font-bold;
+}
+
+.dash-kyc-icons {
+  @apply w-5 md:w-10  h-5 md:h-10;
+}
+
+.submenu-card-label {
+  @apply text-[12px] text-gray-400 font-bold;
+}
+
+.submenu-card-value {
+  @apply text-[20px] md:text-[24px] font-bold;
+}
+
+.user-title {
+  @apply text-[15px] md:text-[18px] font-bold mb-1 text-center sm:text-left;
+  color: var(--primary-color);
+}
+
+.user-subtitle {
+  @apply text-[12px] text-gray-400 text-center sm:text-left;
+}
+
+.user-table-header {
+  @apply text-[12px] md:text-[15px];
+}
+
+.guidelines-title {
+  @apply text-[12px] md:text-[14px] text-gray-200;
+}
+
+.guidelines-desc {
+  @apply text-[12px] md:text-[14px] text-gray-400;
+}
+
+/*------------------------------------------ table styles ---------------------------- */
+
+.table-container {
+  @apply overflow-x-auto overflow-y-auto border border-gray-800 rounded-lg w-full max-h-[350px] sm:max-h-full;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-color) transparent;
+}
+
+table thead {
+  @apply sticky top-0 z-10;
+}
+
+table thead tr,
+table tbody tr {
+  @apply border-b border-gray-800 bg-[#101316];
+}
+
+table tbody tr:hover {
+  @apply bg-[#161a1d];
+}
+
+table thead tr th {
+  @apply font-normal text-[14px] p-2 w-[400px] whitespace-nowrap;
+  color: var(--primary-color);
+}
+
+table tbody tr td {
+  @apply text-[12px] whitespace-nowrap px-2 py-1;
+}
+
+/*------------------------------------------ table styles end ---------------------------- */
+
+/* ---------------------------menu ------------------------------------------ */
+.submenu-list {
+  @apply text-[12px] text-[#d1d5db] px-2.5 py-1.5 rounded-lg cursor-pointer 
+    transition duration-300 flex items-center gap-[6px] font-extralight opacity-0 -translate-x-5;
+}
+
+.main-menu-list {
+  @apply text-[13px] flex items-center rounded-lg gap-[12px] px-2 py-1 border-0 bg-transparent font-semibold w-full;
+}
+
+.main-menu-list:hover,
+.submenu-list:hover {
+  background: var(--menu-hover-bg);
+  color: var(--primary-color);
+}
+.main-menu-list.active {
+  background: var(--primary-color);
+  color: #000;
+}
+.reset-btn {
+  @apply flex items-center gap-2 
+         bg-[var(--borderBg-color)] border border-[var(--borderBg-color)] rounded-lg 
+         px-[14px] py-[4px] text-[12px] text-[var(--primary-color)] 
+         cursor-pointer transition-all duration-200 ease-in-out;
+  &:hover {
+    @apply opacity-80;
+  }
+}
+
+/* ---------------------------menu lsit end------------------------------------------ */
+
+/*------------------------------- buttons----------------------------------------------- */
+.prev-next-disabled-btn {
+  @apply bg-[#1c2b45] text-gray-500 cursor-not-allowed;
+}
+.prev-next-active-btn {
+  @apply bg-[#0a1625] text-white hover:text-[var(--primary-color)];
+}
+.active-pagination-btn {
+  @apply primary-bg text-black font-bold;
+}
+.inactive-pagination-btn {
+  @apply bg-[#1c2b45] text-white hover:text-[var(--primary-color)];
+}
+
+.login-btn {
+  @apply h-[48px] rounded-lg bg-[var(--primary-color)] text-black font-semibold 
+    flex justify-center items-center gap-[10px] transition-opacity duration-200 ease-in-out 
+      mt-[-20px] text-[12px] opacity-90;
+  box-shadow: var(--login-btn-shadow);
+
+  &:hover {
+    @apply opacity-100;
+    box-shadow: 0 0 10px var(--primary-color);
+  }
+}
+/* -------------------------------------buttons rnd------------------------------------------- */
+/* common class end */
+
 .react-select__control {
   background-color: #1b1b3b;
   border-color: #333;
@@ -132,4 +309,15 @@ body {
 }
 .react-select__option--is-focused {
   background-color: #333;
+}
+
+.mandatory::after {
+  content: "*";
+  color: #ef4444; /* Tailwind red-500 */
+}
+
+.mandatory-space::after {
+  content: "*";
+  color: #ef4444;
+  margin-left: 0.25rem;
 }

@@ -164,6 +164,12 @@ const LineChart = () => {
       },
       tooltip: {
         enabled: true,
+        backgroundColor: "#222831",
+        borderColor: getComputedStyle(
+          document.documentElement
+        ).getPropertyValue("--primary-color"),
+        borderWidth: 0.5,
+        bodyColor: "white",
         callbacks: {
           label: (ctx) => `Balance: ₹${ctx.raw}M`,
           title: (ctx) => `Day ${ctx[0].label}`,
