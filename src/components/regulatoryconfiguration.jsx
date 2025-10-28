@@ -37,6 +37,10 @@ export default function RegulatoryConfig() {
   const [currentPage, setCurrentPage] = useState(1);
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const rowsPerPage = 5;
+  useEffect(() => {
+    // Whenever search term changes, go back to first page
+    setCurrentPage(1);
+  }, [search]);
   const getDefaultForm = (ip, editingId = null) => ({
     logId: uuidv4(),
     programType: "",
@@ -179,8 +183,8 @@ export default function RegulatoryConfig() {
       allowedChannels: Array.isArray(form.allowedChannels)
         ? form.allowedChannels
         : form.allowedChannels
-        ? [form.allowedChannels]
-        : [],
+          ? [form.allowedChannels]
+          : [],
 
       allowedMccCodes: undefined, // Remove if not part of schema
       ...(isEditing ? { modifiedBy: username } : { createdBy: username }),
@@ -211,8 +215,8 @@ export default function RegulatoryConfig() {
     // console.log(JSON.stringify(payload, null, 2));
     try {
       const endpoint = isEditing
-        ? `${API_BASE_URL}/ps/updateRbiConfiguration`
-        : `${API_BASE_URL}/ps/create-RBI-Config`;
+        ? `${API_BASE_URL}/ps/api/Product/updateRbiConfiguration`
+        : `${API_BASE_URL}/ps/api/Product/create-RBI-Config`;
 
       await axios[isEditing ? "put" : "post"](endpoint, payload);
 
@@ -297,8 +301,8 @@ export default function RegulatoryConfig() {
       [name]: numberFields.includes(name)
         ? Number(value)
         : type === "checkbox"
-        ? checked
-        : value,
+          ? checked
+          : value,
     }));
   };
 
@@ -394,7 +398,7 @@ export default function RegulatoryConfig() {
         <div className="card-header-right flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
           <button
             className="btn-outline flex items-center gap-1 w-full sm:w-auto justify-center"
-            onClick={() => setformOpen((prev) => !prev)}
+            onClick={() => {setformOpen((prev) => !prev),setForm("")}}
           >
             {formOpen ? (
               <>
@@ -621,7 +625,7 @@ export default function RegulatoryConfig() {
               Transaction Limits
             </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
               {/* Cash Loading Limit */}
               <div className="form-group flex flex-col">
                 <label className="text-xs sm:text-sm text-gray-300 mb-1">
@@ -1071,11 +1075,10 @@ export default function RegulatoryConfig() {
           <button
             onClick={() => setCurrentPage(currentPage - 1)}
             disabled={currentPage === 1}
-            className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${
-              currentPage === 1
+            className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${currentPage === 1
                 ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
                 : "bg-[#0a1625] text-white hover:primary-color"
-            }`}
+              }`}
           >
             <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" /> Prev
           </button>
@@ -1086,11 +1089,10 @@ export default function RegulatoryConfig() {
               <button
                 key={i}
                 onClick={() => setCurrentPage(i + 1)}
-                className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${
-                  currentPage === i + 1
+                className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${currentPage === i + 1
                     ? "primary-bg text-black font-bold"
                     : "bg-[#1c2b45] text-white hover:primary-color"
-                }`}
+                  }`}
               >
                 {i + 1}
               </button>
@@ -1101,11 +1103,10 @@ export default function RegulatoryConfig() {
           <button
             onClick={() => setCurrentPage(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${
-              currentPage === totalPages
+            className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${currentPage === totalPages
                 ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
                 : "bg-[#0a1625] text-white hover:primary-color"
-            }`}
+              }`}
           >
             Next <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
           </button>

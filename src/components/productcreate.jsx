@@ -71,9 +71,9 @@ const mapFormToApiSchema = (form, username, ip, isEditing = false, empId) => {
     allowedChannels: form.allowedChannels || [],
     allowedMccCodes: form.allowedMccCodes
       ? String(form.allowedMccCodes)
-          .split(",")
-          .map((c) => c.trim())
-          .filter(Boolean)
+        .split(",")
+        .map((c) => c.trim())
+        .filter(Boolean)
       : [],
     geoRestrictions: form.geoRestrictions || [],
     merchantWhitelistOnly: form.merchantWhitelistOnly ?? false,
@@ -169,7 +169,10 @@ export default function Productcreate() {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-
+  useEffect(() => {
+    // Whenever search term changes, go back to first page
+    setCurrentPage(1);
+  }, [searchTerm]);
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const handleEdit = async (cfg) => {
     try {
@@ -216,8 +219,8 @@ export default function Productcreate() {
         const channels = Array.isArray(matchedRbiConfig.allowedChannels)
           ? matchedRbiConfig.allowedChannels
           : typeof matchedRbiConfig.allowedChannels === "string"
-          ? matchedRbiConfig.allowedChannels.split(",").map((c) => c.trim())
-          : [];
+            ? matchedRbiConfig.allowedChannels.split(",").map((c) => c.trim())
+            : [];
 
         formData.allowedChannels = channels;
         formData.kycLevelRequired =
@@ -440,8 +443,8 @@ export default function Productcreate() {
       const channels = Array.isArray(matched.allowedChannels)
         ? matched.allowedChannels
         : typeof matched.allowedChannels === "string"
-        ? matched.allowedChannels.split(",").map((c) => c.trim())
-        : [];
+          ? matched.allowedChannels.split(",").map((c) => c.trim())
+          : [];
 
       const rawTopup = matched.topUpMethod || matched.topUpMethod || "";
 
@@ -504,14 +507,14 @@ export default function Productcreate() {
       if (isEditing) {
         // Update existing config
         await axios.put(
-          `${API_BASE_URL}/ps/productConfigurationUpdate`,
+          `${API_BASE_URL}/ps/api/Product/productConfigurationUpdate`,
           payload
         );
         alert("Product configuration updated successfully!");
       } else {
         // Create new config
         await axios.post(
-          `${API_BASE_URL}/ps/productConfigurationCreate`,
+          `${API_BASE_URL}/ps/api/Product/productConfigurationCreate`,
           payload
         );
         alert("Product configuration created successfully!");
@@ -555,7 +558,7 @@ export default function Productcreate() {
         <div className="card-header-right">
           <button
             className="btn-outline"
-            onClick={() => setformOpen((prev) => !prev)}
+            onClick={() =>{ setformOpen((prev) => !prev),setForm("")}}
           >
             {formOpen ? (
               <>
@@ -1096,9 +1099,8 @@ export default function Productcreate() {
                       </td>
                       <td className="table-content">
                         <span
-                          className={` px-2 py-1 rounded text-[10px] ${
-                            cfg.isActive ? "checker" : "superuser"
-                          }`}
+                          className={` px-2 py-1 rounded text-[10px] ${cfg.isActive ? "checker" : "superuser"
+                            }`}
                         >
                           {cfg.isActive ? "active" : "Inactive"}
                         </span>
@@ -1130,11 +1132,10 @@ export default function Productcreate() {
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
-              currentPage === 1
+            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${currentPage === 1
                 ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
                 : "bg-[#0a1625] text-white hover:primary-color"
-            }`}
+              }`}
           >
             <ChevronLeft className="w-4 h-4" /> Prev
           </button>
@@ -1144,11 +1145,10 @@ export default function Productcreate() {
               <button
                 key={i}
                 onClick={() => handlePageChange(i + 1)}
-                className={`px-3 py-1 rounded-lg text-sm ${
-                  currentPage === i + 1
+                className={`px-3 py-1 rounded-lg text-sm ${currentPage === i + 1
                     ? "primary-bg text-black font-bold"
                     : "bg-[#1c2b45] text-white hover:primary-color"
-                }`}
+                  }`}
               >
                 {i + 1}
               </button>
@@ -1158,11 +1158,10 @@ export default function Productcreate() {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
-              currentPage === totalPages
+            className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${currentPage === totalPages
                 ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
                 : "bg-[#0a1625] text-white hover:primary-color"
-            }`}
+              }`}
           >
             Next <ChevronRight className="w-4 h-4" />
           </button>

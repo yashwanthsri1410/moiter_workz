@@ -9,7 +9,7 @@ import {
   Check,
   CalculatorIcon,
   ChevronLeft,
-  ChevronRight,
+  ChevronRight
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -45,10 +45,19 @@ export default function Partnercreate() {
     idProofDocument: null,
     addressProofDocument: null,
   });
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+
+
 
   const [modalImage, setModalImage] = useState(null);
   const [constraints, setConstraints] = useState([]);
-
+  useEffect(() => {
+    // Whenever search term changes, go back to first page
+    setCurrentPage(1);
+  }, [search]);
   const handleRemoveImage = (type) => {
     setRemovedImages((prev) => ({
       ...prev,
@@ -222,7 +231,7 @@ export default function Partnercreate() {
     commissionCurrency: "INR",
     settlementFrequency: "monthly",
     allowedProducts: [],
-    portalUrl: "",
+    portalUrl: 0,
     webhookUrl: "default",
     agreementDocument: "",
     idProofDocument: "",
@@ -233,10 +242,12 @@ export default function Partnercreate() {
     kycSubmittedAt: new Date().toISOString(),
     kycVerifiedAt: new Date().toISOString(),
     kycVerifiedBy: "system",
+    password: ""
   };
 
   // Form state
   const [form, setForm] = useState({ ...defaultFormValues });
+  // console.log(form)
   // ✅ Keys allowed in backend schema
   const schemaKeys = [
     "logId",
@@ -268,13 +279,18 @@ export default function Partnercreate() {
     "agreementDocument",
     "idProofDocument",
     "addressProofDocument",
+    "password",
     "createdBy",
     "metadata",
     "requestInfo",
+    "revenueShareModel",
+    "CommissionCurrency ",
+    "SettlementFrequency "
   ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Password before encoding:", form.password);
     try {
       let payload = {
         ...form,
@@ -288,10 +304,8 @@ export default function Partnercreate() {
         allowedProducts: Array.isArray(form.allowedProducts)
           ? form.allowedProducts.join(",")
           : "",
-        portalUrl: form.portalAccessEnabled ? form.portalUrl : 0,
-        // agreementDocument: agreementFile ? await toBase64(agreementFile) : "",
-        // idProofDocument: idFile ? await toBase64(idFile) : "",
-        // addressProofDocument: addressFile ? await toBase64(addressFile) : "",
+        portalUrl: form.portalAccessEnabled ? Number(form.portalUrl) : 0,
+        password: form.password ? btoa(form.password) : "",
         metadata: buildMetadata("admin-user"),
         requestInfo: buildRequestInfo(ip, "admin-user"),
         createdBy: "admin-user",
@@ -305,7 +319,6 @@ export default function Partnercreate() {
       if (addressFile) {
         payload.addressProofDocument = await toBase64(addressFile);
       }
-
       // Only keep allowed keys as per schema
       payload = Object.fromEntries(
         Object.entries(payload).filter(([key]) => schemaKeys.includes(key))
@@ -315,14 +328,16 @@ export default function Partnercreate() {
       const isEditing = !!editingId; // true if editing
       const method = isEditing ? "put" : "post";
       const url = isEditing
-        ? `${API_BASE_URL}/ps/DistributionPartner-Update`
-        : `${API_BASE_URL}/ps/DistributionPartner-Create`;
+        ? `${API_BASE_URL}/ps/api/Product/DistributionPartner-update`
+        : `${API_BASE_URL}/ps/api/Product/DistributionPartner-Create`;
 
       // console.log("Submitting partner form");
       // console.log("Editing mode:", isEditing);
       // console.log("URL:", url);
-      // console.log("Payload:", payload);
-
+      console.log("Before encoding password:", form.password);
+      console.log("Encoded password:", btoa(form.password));
+      console.log("Payload object:", payload);
+      console.log(JSON.stringify(payload, null, 2));
       const res = await axios({
         method: method,
         url: url,
@@ -474,8 +489,8 @@ export default function Partnercreate() {
       backgroundColor: state.isSelected
         ? "#1452A8"
         : state.isFocused
-        ? "#1452A8"
-        : "transparent", // 🔹 transparent instead of solid
+          ? "#1452A8"
+          : "transparent", // 🔹 transparent instead of solid
       color: "#fff",
       fontSize: "12px",
       cursor: "pointer",
@@ -498,7 +513,8 @@ export default function Partnercreate() {
       fontSize: "13px",
     }),
   };
-
+  const passwordsMatch =
+    form.password && confirmPassword && form.password === confirmPassword;
   return (
     <div className="config-forms">
       {/* Header */}
@@ -520,7 +536,7 @@ export default function Partnercreate() {
         <div className="card-header-right">
           <button
             className="btn-outline"
-            onClick={() => setformOpen((prev) => !prev)}
+            onClick={() =>{ setformOpen((prev) => !prev),setForm({ ...defaultFormValues })}}
           >
             {formOpen ? (
               <>
@@ -689,42 +705,6 @@ export default function Partnercreate() {
           </div>
           <div className="mt-8 relative">
             <h3 className="section-title">Allowed Products</h3>
-
-            {/* Dropdown Toggle */}
-            {/* <button
-              type="button"
-              onClick={() => setShowProductDropdown(!showProductDropdown)}
-              className="w-1/2 mt-2 px-3 py-1 bg-[#0d1220] border border-teal-700/50 rounded-[8px] text-left text-gray-300 text-[13px]"
-            >
-              {form.allowedProducts.length > 0
-                ? form.allowedProducts.join(", ")
-                : "Select Products"}
-            </button> */}
-
-            {/* Dropdown Menu */}
-            {/* {showProductDropdown && (
-              <div className="absolute mt-0 w-1/2 bg-[#0d1220] border border-teal-700/50 rounded-[10px] shadow-lg z-10 max-h-60 overflow-y-auto">
-                {products.map((product) => {
-                  const checked = form.allowedProducts?.includes(
-                    product.productName
-                  );
-                  return (
-                    <label
-                      key={product.productId}
-                      className="flex items-center gap-2 px-3 py-2 hover:bg-[#1c2b45] cursor-pointer text-gray-300"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={checked}
-                        onChange={() => toggleAllowed(product.productName)}
-                        className="accent-teal-500"
-                      />
-                      <span className="text-sm">{product.productName}</span>
-                    </label>
-                  );
-                })}
-              </div>
-            )} */}
             <div className="w-1/2 mt-2">
               <Select
                 isMulti
@@ -754,11 +734,10 @@ export default function Partnercreate() {
                 }))
               }
               className={`w-3 h-3 flex items-center justify-center border rounded-sm cursor-pointer
-      ${
-        form.portalAccessEnabled
-          ? "check-box-clr-after"
-          : "check-box-clr-before"
-      }
+      ${form.portalAccessEnabled
+                  ? "check-box-clr-after"
+                  : "check-box-clr-before"
+                }
       transition-colors duration-200`}
             >
               {form.portalAccessEnabled && (
@@ -1219,7 +1198,69 @@ export default function Partnercreate() {
                 </div>
               </div>
             </div>
+            <div className="mt-8">
+              <h4 className="text-sm font-semibold primary-color mb-4">
+                Password Set-Up for Partner Portal Login
+              </h4>
+
+              <div className="grid grid-cols-2 gap-4">
+                {/* Password Field */}
+                <div className="form-group relative">
+                  <label>Password</label>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    className="form-input pr-10"
+                    placeholder="Enter password"
+                    value={form.password || ""}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, password: e.target.value }))
+                    }
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-3 top-9 text-gray-500 hover:text-gray-700"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+
+                {/* Confirm Password Field (frontend-only) */}
+                <div className="form-group relative">
+                  <label>Confirm Password</label>
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    className="form-input pr-10"
+                    placeholder="Re-enter password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    className="absolute right-3 top-9 text-gray-500 hover:text-gray-700"
+                  >
+                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Show validation message only */}
+              {confirmPassword && !passwordsMatch && (
+                <p className="text-red-500 text-sm mt-2">Passwords do not match.</p>
+              )}
+
+              {/* Optional success state */}
+              {passwordsMatch && (
+                <p className="text-green-500 text-sm mt-2">Passwords match!</p>
+              )}
+            </div>
+
+
           </div>
+
+
 
           <div className="form-footer">
             <button
@@ -1307,26 +1348,24 @@ export default function Partnercreate() {
                     </td>
                     <td className="p-3">
                       <span
-                        className={`px-2 py-1 rounded text-[10px] ${
-                          partner.partnerStatus === "Active"
-                            ? "checker"
-                            : partner.partnerStatus === "Onboarded"
+                        className={`px-2 py-1 rounded text-[10px] ${partner.partnerStatus === "Active"
+                          ? "checker"
+                          : partner.partnerStatus === "Onboarded"
                             ? "maker"
                             : partner.partnerStatus === "Inactive"
-                            ? "superuser"
-                            : ""
-                        }`}
+                              ? "superuser"
+                              : ""
+                          }`}
                       >
                         {partner.partnerStatus}
                       </span>
                     </td>
                     <td className="p-3">
                       <span
-                        className={`px-2 py-1 rounded text-[10px] ${
-                          partner.kycStatus === "Verified"
-                            ? "checker"
-                            : "superuser"
-                        }`}
+                        className={`px-2 py-1 rounded text-[10px] ${partner.kycStatus === "Verified"
+                          ? "checker"
+                          : "superuser"
+                          }`}
                       >
                         {partner.kycStatus}
                       </span>
@@ -1393,11 +1432,10 @@ export default function Partnercreate() {
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
-                currentPage === 1
-                  ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                  : "bg-[#0a1625] text-white hover:primary-color"
-              }`}
+              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${currentPage === 1
+                ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
+                : "bg-[#0a1625] text-white hover:primary-color"
+                }`}
             >
               <ChevronLeft className="w-4 h-4" /> Prev
             </button>
@@ -1407,11 +1445,10 @@ export default function Partnercreate() {
                 <button
                   key={i}
                   onClick={() => handlePageChange(i + 1)}
-                  className={`px-3 py-1 rounded-lg text-sm ${
-                    currentPage === i + 1
-                      ? "primary-bg text-black font-bold"
-                      : "bg-[#1c2b45] text-white hover:primary-color"
-                  }`}
+                  className={`px-3 py-1 rounded-lg text-sm ${currentPage === i + 1
+                    ? "primary-bg text-black font-bold"
+                    : "bg-[#1c2b45] text-white hover:primary-color"
+                    }`}
                 >
                   {i + 1}
                 </button>
@@ -1420,11 +1457,10 @@ export default function Partnercreate() {
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${
-                currentPage === totalPages
-                  ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
-                  : "bg-[#0a1625] text-white hover:primary-color"
-              }`}
+              className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm ${currentPage === totalPages
+                ? "bg-[#1c2b45] text-gray-500 cursor-not-allowed"
+                : "bg-[#0a1625] text-white hover:primary-color"
+                }`}
             >
               Next <ChevronRight className="w-4 h-4" />
             </button>

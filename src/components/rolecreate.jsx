@@ -30,7 +30,7 @@ const RoleAccessForm = ({ onBack }) => {
   // Function to validate input - allows only letters, spaces, and hyphens
   const validateInput = (input) => {
     // Regular expression to allow only letters, spaces, and hyphens
-    const regex = /^[a-zA-Z\s-]*$/;
+    const regex = /^[a-zA-Z\s-_]*$/;
     return regex.test(input);
   };
 
@@ -260,7 +260,7 @@ const RoleAccessForm = ({ onBack }) => {
               </>
             ) : (
               <>
-                <Plus className="w-3 h-3" /> Create Department
+                <Plus className="w-3 h-3" /> Create role
               </>
             )}
           </button>
@@ -283,7 +283,7 @@ const RoleAccessForm = ({ onBack }) => {
               required
             />
             <p className="text-xs text-gray-500 mt-1">
-              Only letters, spaces, and hyphens are allowed
+              Only letters, spaces,underscore and hyphens are allowed
             </p>
           </div>
 

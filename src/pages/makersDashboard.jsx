@@ -205,18 +205,6 @@ export default function DashboardLayout() {
         return <div className="content">Select an option</div>;
     }
   };
-  // Define dashboard children tabs
-  const dashboardTabs = [
-    "customer",
-    "wallet",
-    "transactions",
-    "compliance",
-    "risk",
-    "productperformance",
-    "partner",
-    "reports",
-    "system",
-  ];
   return (
     <div className="layout">
       {/* Sidebar */}
