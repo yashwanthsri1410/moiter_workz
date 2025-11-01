@@ -15,6 +15,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import GuidelinesCard from "./reusable/guidelinesCard";
 import { screenGuidelines } from "../constants/guidelines";
+import customConfirm from "./reusable/CustomConfirm";
 
 export default function ScreenManagement({ onBack }) {
   const [modules, setModules] = useState([]);
@@ -77,6 +78,8 @@ export default function ScreenManagement({ onBack }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+     const confirmAction = await customConfirm("Are you sure you want to continue?");
+    if (!confirmAction) return;
     if (!selectedModuleId || !screenName.trim()) {
       return alert("Please select a module and enter screen name");
     }

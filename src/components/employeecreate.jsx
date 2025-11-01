@@ -18,6 +18,7 @@ import "../styles/styles.css";
 import ErrorText from "./reusable/errorText";
 import { v4 as uuidv4 } from "uuid";
 import { paginationStyle } from "../constants";
+import customConfirm from "./reusable/CustomConfirm";
 
 const EmployeeCreationForm = ({ onBack }) => {
   const username = localStorage.getItem("username");
@@ -70,12 +71,12 @@ const EmployeeCreationForm = ({ onBack }) => {
         status === 1
           ? "Super User"
           : status === 2
-          ? "Normal User"
-          : status === 3
-          ? "Checker"
-          : status === 4
-          ? "Maker"
-          : "Infra Manager"
+            ? "Normal User"
+            : status === 3
+              ? "Checker"
+              : status === 4
+                ? "Maker"
+                : "Infra Manager"
       );
       setPassword("");
       if (selectedEmployee.roleAccessId) {
@@ -211,6 +212,8 @@ const EmployeeCreationForm = ({ onBack }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const confirmAction = await customConfirm("Are you sure you want to continue?");
+    if (!confirmAction) return;
     if (!validate(selectedEmployee)) return;
     if (selectedEmployee && !designationId) return;
 
@@ -234,10 +237,10 @@ const EmployeeCreationForm = ({ onBack }) => {
       logId: selectedEmployee && original?.logId ? original.logId : uuidv4(), // new only on create or missing
       ...(selectedEmployee
         ? {
-            modifiedBy: createdBy,
-            userId: selectedEmployee?.userId,
-            empId: selectedEmployee?.empId,
-          }
+          modifiedBy: createdBy,
+          userId: selectedEmployee?.userId,
+          empId: selectedEmployee?.empId,
+        }
         : { createdBy: createdBy, empId: `Emp${empId}` }),
       metadata: {
         ipAddress: ip || "0.0.0.0",
@@ -589,11 +592,10 @@ const EmployeeCreationForm = ({ onBack }) => {
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
-              currentPage === 1
+            className={`w-6 h-6 flex items-center justify-center rounded-md transition ${currentPage === 1
                 ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
                 : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
-            }`}
+              }`}
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -603,11 +605,10 @@ const EmployeeCreationForm = ({ onBack }) => {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
-              currentPage === totalPages
+            className={`w-6 h-6 flex items-center justify-center rounded-md transition ${currentPage === totalPages
                 ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
                 : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
-            }`}
+              }`}
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -648,25 +649,24 @@ const EmployeeCreationForm = ({ onBack }) => {
                     <td>{emp.roleDescription}</td>
                     <td>
                       <span
-                        className={`px-2 py-1 text-[10px] rounded ${
-                          emp.status === 0
+                        className={`px-2 py-1 text-[10px] rounded ${emp.status === 0
                             ? "checker"
                             : emp.status === 1
-                            ? "infra"
-                            : emp.status === 2
-                            ? "inactive"
-                            : "maker"
-                        }`}
+                              ? "infra"
+                              : emp.status === 2
+                                ? "inactive"
+                                : "maker"
+                          }`}
                       >
                         {emp.status === 0
                           ? "Approved"
                           : emp.status === 1
-                          ? "Pending"
-                          : emp.status === 2
-                          ? "Rejected"
-                          : emp.status === 3
-                          ? "Recheck"
-                          : ""}
+                            ? "Pending"
+                            : emp.status === 2
+                              ? "Rejected"
+                              : emp.status === 3
+                                ? "Recheck"
+                                : ""}
                       </span>
                     </td>
                     <td>

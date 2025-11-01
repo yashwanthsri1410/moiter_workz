@@ -26,6 +26,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import GuidelinesCard from "./reusable/guidelinesCard";
 import { partnerGuidelines } from "../constants/guidelines";
+import customConfirm from "./reusable/CustomConfirm";
 // import { PencilIcon, Plus,SquarePen  } from "lucide-react";
 
 export default function Partnercreate() {
@@ -291,7 +292,8 @@ export default function Partnercreate() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Password before encoding:", form.password);
+    const confirmAction = await customConfirm("Are you sure you want to continue?");
+    if (!confirmAction) return;
     try {
       let payload = {
         ...form,
@@ -335,10 +337,10 @@ export default function Partnercreate() {
       // console.log("Submitting partner form");
       // console.log("Editing mode:", isEditing);
       // console.log("URL:", url);
-      console.log("Before encoding password:", form.password);
-      console.log("Encoded password:", btoa(form.password));
-      console.log("Payload object:", payload);
-      console.log(JSON.stringify(payload, null, 2));
+      // console.log("Before encoding password:", form.password);
+      // console.log("Encoded password:", btoa(form.password));
+      // console.log("Payload object:", payload);
+      // console.log(JSON.stringify(payload, null, 2));
       const res = await axios({
         method: method,
         url: url,
@@ -544,7 +546,7 @@ export default function Partnercreate() {
         <div className="card-header-right flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
           <button
             className="btn-outline"
-            onClick={() =>{ setformOpen((prev) => !prev),setForm({ ...defaultFormValues })}}
+            onClick={() => { setformOpen((prev) => !prev), setForm({ ...defaultFormValues }) }}
           >
             {formOpen ? (
               <>
@@ -1527,11 +1529,10 @@ export default function Partnercreate() {
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center  ${
-                currentPage === 1
+              className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center  ${currentPage === 1
                   ? "prev-next-disabled-btn"
                   : "prev-next-active-btn"
-              }`}
+                }`}
             >
               <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" /> Prev
             </button>
@@ -1541,11 +1542,10 @@ export default function Partnercreate() {
                 <button
                   key={i}
                   onClick={() => handlePageChange(i + 1)}
-                  className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${
-                    currentPage === i + 1
+                  className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${currentPage === i + 1
                       ? "active-pagination-btn"
                       : "inactive-pagination-btn"
-                  }`}
+                    }`}
                 >
                   {i + 1}
                 </button>
@@ -1555,11 +1555,10 @@ export default function Partnercreate() {
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${
-                currentPage === totalPages
+              className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${currentPage === totalPages
                   ? "prev-next-disabled-btn"
                   : "prev-next-active-btn"
-              }`}
+                }`}
             >
               Next <ChevronRight className="w-4 h-4" />
             </button>

@@ -28,6 +28,7 @@ import ErrorText from "./reusable/errorText";
 import { v4 as uuidv4 } from "uuid";
 import GuidelinesCard from "./reusable/guidelinesCard";
 import { regulatoryGuidelines } from "../constants/guidelines";
+import customConfirm from "./reusable/CustomConfirm";
 // import { PencilIcon, Plus,SquarePen  } from "lucide-react";
 
 export default function RegulatoryConfig() {
@@ -182,7 +183,8 @@ export default function RegulatoryConfig() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const confirmAction = await customConfirm("Are you sure you want to continue?");
+    if (!confirmAction) return;
     const isEditing = editingIdRef.current !== null;
 
     // Convert arrays or objects to match API schema
@@ -492,9 +494,8 @@ export default function RegulatoryConfig() {
                   onChange={handleChange}
                   required // ✅ ensures browser validation
                   disabled={editingId}
-                  className={`${
-                    editingId && "cursor-not-allowed"
-                  }  form-input p-2 border border-gray-300 rounded text-xs sm:text-sm`}
+                  className={`${editingId && "cursor-not-allowed"
+                    }  form-input p-2 border border-gray-300 rounded text-xs sm:text-sm`}
                 >
                   <option value="" disabled hidden>
                     Select
@@ -517,9 +518,8 @@ export default function RegulatoryConfig() {
                   placeholder="Enter sub category"
                   required
                   disabled={editingId}
-                  className={`${
-                    editingId && "cursor-not-allowed"
-                  }  form-input p-2 border border-gray-300 rounded text-xs sm:text-sm`}
+                  className={`${editingId && "cursor-not-allowed"
+                    }  form-input p-2 border border-gray-300 rounded text-xs sm:text-sm`}
                 />
               </div>
 
@@ -1120,11 +1120,10 @@ export default function RegulatoryConfig() {
           <button
             onClick={() => setCurrentPage(currentPage - 1)}
             disabled={currentPage === 1}
-            className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${
-              currentPage === 1
+            className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${currentPage === 1
                 ? "prev-next-disabled-btn"
                 : "prev-next-active-btn"
-            }`}
+              }`}
           >
             <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" /> Prev
           </button>
@@ -1135,11 +1134,10 @@ export default function RegulatoryConfig() {
               <button
                 key={i}
                 onClick={() => setCurrentPage(i + 1)}
-                className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${
-                  currentPage === i + 1
+                className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${currentPage === i + 1
                     ? "active-pagination-btn"
                     : "inactive-pagination-btn"
-                }`}
+                  }`}
               >
                 {i + 1}
               </button>
@@ -1150,11 +1148,10 @@ export default function RegulatoryConfig() {
           <button
             onClick={() => setCurrentPage(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${
-              currentPage === totalPages
+            className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${currentPage === totalPages
                 ? "prev-next-disabled-btn"
                 : "prev-next-active-btn"
-            }`}
+              }`}
           >
             Next <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
           </button>

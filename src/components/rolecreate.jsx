@@ -13,6 +13,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import GuidelinesCard from "./reusable/guidelinesCard";
 import { roleGuidelines } from "../constants/guidelines";
+import customConfirm from "./reusable/CustomConfirm";
 
 const RoleAccessForm = ({ onBack }) => {
   const [modulesData, setModulesData] = useState([]);
@@ -122,6 +123,8 @@ const RoleAccessForm = ({ onBack }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+     const confirmAction = await customConfirm("Are you sure you want to continue?");
+    if (!confirmAction) return;
     const screenModuleList = [];
 
     selectedModules.forEach((module) => {

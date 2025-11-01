@@ -13,21 +13,22 @@ import {
   Check,
   X,
   RefreshCw,
+  ShoppingCartIcon,
 } from "lucide-react";
 import axios from "axios";
 import "../styles/styles.css";
 import customConfirm from "./reusable/CustomConfirm";
 
-export default function Partnerview({
-  selectedPartner,
-  setSelectedPartner,
-  fetchPartners,
+export default function Merchantview({
+  selectedMerchant,
+  setSelectedMerchant,
+  fetchMerchants,
 }) {
   const [remarks, setRemarks] = useState("");
   const [currentAction, setCurrentAction] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalImage, setModalImage] = useState(null);
-  if (!selectedPartner) return null;
+  if (!selectedMerchant) return null;
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const getStatusLabel = (value) => {
@@ -52,7 +53,7 @@ export default function Partnerview({
 
   const handleActionClick = (actionStatus) => {
     setCurrentAction(actionStatus);
-    setRemarks(selectedPartner.remarks || "");
+    setRemarks(selectedMerchant.remarks || "");
     setShowModal(true);
   };
   const submitAction = async () => {
@@ -60,9 +61,9 @@ export default function Partnerview({
     if (!confirmAction) return;
     try {
       const payload = {
-        partnerName: selectedPartner.partnerName,
-        logId: selectedPartner.logId,
-        partnerType: selectedPartner.partnerType,
+        MerchantName: selectedMerchant.MerchantName,
+        logId: selectedMerchant.logId,
+        MerchantType: selectedMerchant.MerchantType,
         actionStatus: Number(currentAction),
         checker: "checkerUser",
         remarks: remarks,
@@ -88,19 +89,20 @@ export default function Partnerview({
       };
 
       await axios.post(
-        `${API_BASE_URL}/ps/api/Product/approveDistributionPartner`,
+        `${API_BASE_URL}/ps/api/Product/approveDistributionMerchant`,
         payload
       );
       alert("Action submitted successfully!");
       setShowModal(false);
       setRemarks("");
-      fetchPartners();
+      fetchMerchants();
     } catch (err) {
       console.error("Error submitting action:", err);
       alert("Failed to submit action");
       setShowModal(false);
     }
   };
+  console.log(selectedMerchant)
   return (
     <div>
       {/* Header */}
@@ -109,22 +111,22 @@ export default function Partnerview({
         <div className="card-header-left flex flex-wrap items-center gap-3">
           <button
             className="approval-back-button whitespace-nowrap flex items-center gap-1"
-            onClick={() => setSelectedPartner(null)}
+            onClick={() => setSelectedMerchant(null)}
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Approvals
           </button>
 
           <div className="header-icon-box">
-            <Calculator className="primary-color w-4 h-4" />
+            <ShoppingCartIcon className="primary-color w-4 h-4" />
           </div>
 
           <div className="flex flex-col">
             <h1 className="header-title text-sm sm:text-base md:text-lg">
-              Partner Approvals
+              Merchant Approvals
             </h1>
             <p className="header-subtext text-xs sm:text-sm md:text-base">
-              Review and approve Partner configurations
+              Review and approve Merchant configurations
             </p>
           </div>
         </div>
@@ -134,39 +136,39 @@ export default function Partnerview({
           <p className="portal-link">
             <span
               className={`px-2 py-1 rounded text-[10px] ${
-                selectedPartner.partnerType === "Aggregator"
+                selectedMerchant.MerchantType === "Aggregator"
                   ? "checker"
-                  : selectedPartner.partnerType === "Retailer"
+                  : selectedMerchant.MerchantType === "Retailer"
                   ? "infra"
                   : "superuser"
               }`}
             >
-              {selectedPartner.partnerType}
+              {selectedMerchant.MerchantType}
             </span>
           </p>
           <p className="portal-link">
             <span
               className={`px-2 py-1 rounded text-[10px] ${
-                selectedPartner.status === 0
+                selectedMerchant.status === 0
                   ? "checker"
-                  : selectedPartner.status === 1
+                  : selectedMerchant.status === 1
                   ? "infra"
-                  : selectedPartner.status === 2
+                  : selectedMerchant.status === 2
                   ? "superuser"
                   : "maker"
               }`}
             >
-              {getStatusLabel(selectedPartner.status)}
+              {getStatusLabel(selectedMerchant.status)}
             </span>
           </p>
         </div>
       </div>
 
-      {/* Partner Overview */}
+      {/* Merchant Overview */}
       <div className="partner-overview-card p-4 bg-white rounded-lg shadow-md">
         <h2 className="partner-overview-title flex items-center text-lg sm:text-xl font-semibold text-gray-800 mb-4">
           <Info size={18} className="primary-color mr-2" />
-          Partner Overview
+          Merchant Overview
         </h2>
 
         <div className="partner-overview-content flex flex-col sm:flex-row sm:gap-6 gap-4">
@@ -174,27 +176,27 @@ export default function Partnerview({
           <div className="partner-overview-section flex-1 text-sm sm:text-base">
             <p>
               <span className="partner-overview-label font-medium">
-                Partner Name
+                Merchant Name
               </span>{" "}
               <br />
               <span className="partner-overview-bold font-semibold">
-                {selectedPartner.partnerName}
+                {selectedMerchant.shopName}
               </span>
             </p>
             <p>
               <span className="partner-overview-label font-medium">
-                Partner Type
+                Merchant Type
               </span>{" "}
               <br />
               <span className="partner-overview-bold font-semibold">
-                {selectedPartner.partnerType}
+                {selectedMerchant.category}
               </span>
             </p>
             <p>
               <span className="partner-overview-label font-medium">Status</span>{" "}
               <br />
               <span className="partner-overview-bold font-semibold">
-                {selectedPartner.partnerStatus}
+                {selectedMerchant.MerchantStatus}
               </span>
             </p>
           </div>
@@ -207,7 +209,7 @@ export default function Partnerview({
               </span>{" "}
               <br />
               <span className="partner-overview-bold font-semibold">
-                {selectedPartner.contactName}
+                {selectedMerchant.contactName}
               </span>
             </p>
             <p>
@@ -216,7 +218,7 @@ export default function Partnerview({
               <span className="partner-overview-icon-inline flex items-center gap-1">
                 <Mail size={16} className="partner-overview-icon" />
                 <span className="partner-overview-bold font-semibold">
-                  {selectedPartner.contactEmail}
+                  {selectedMerchant.contactEmail}
                 </span>
               </span>
             </p>
@@ -226,7 +228,7 @@ export default function Partnerview({
               <span className="partner-overview-icon-inline flex items-center gap-1">
                 <Phone size={16} className="partner-overview-icon" />
                 <span className="partner-overview-bold font-semibold">
-                  {selectedPartner.contactPhone}
+                  {selectedMerchant.mobileNumber}
                 </span>
               </span>
             </p>
@@ -236,7 +238,7 @@ export default function Partnerview({
               </span>{" "}
               <br />
               <span className="partner-overview-bold font-semibold">
-                {selectedPartner.kycStatus}
+                {selectedMerchant.kycStatus}
               </span>
             </p>
           </div>
@@ -249,7 +251,7 @@ export default function Partnerview({
               </span>{" "}
               <br />
               <span className="partner-overview-bold font-semibold">
-                {new Date(selectedPartner.onboardingDate).toLocaleDateString()}
+                {new Date(selectedMerchant.onboardingDate).toLocaleDateString()}
               </span>
             </p>
             <p>
@@ -258,7 +260,7 @@ export default function Partnerview({
               </span>{" "}
               <br />
               <span className="partner-overview-bold font-semibold">
-                {selectedPartner.portalAccessEnabled ? "Yes" : "No"}
+                {selectedMerchant.portalAccessEnabled ? "Yes" : "No"}
               </span>
             </p>
             <p>
@@ -267,7 +269,7 @@ export default function Partnerview({
               </span>{" "}
               <br />
               <span className="partner-overview-bold font-semibold">
-                {selectedPartner.supportTicketCount}
+                {selectedMerchant.supportTicketCount}
               </span>
             </p>
           </div>
@@ -275,21 +277,27 @@ export default function Partnerview({
       </div>
 
       {/* Address Info */}
-      <div className="partner-overview-card partner-overview-secondary">
+      <div className="partner-overview-card Merchant-overview-secondary">
         <h2 className="partner-overview-title">
           <MapPin size={18} className="primary-color" /> Address Information
         </h2>
         <div className="partner-overview-content">
           <div className="partner-overview-section">
+             <p>
+              <span className="partner-overview-label">Shop Name</span> <br />
+              <span className="partner-overview-bold">
+                {selectedMerchant.shopName || "-"}
+              </span>
+            </p>
             <p>
               <span className="partner-overview-label">Address</span> <br />
               <span className="partner-overview-bold">
                 <span className="partner-overview-bold">
                   {(() => {
                     try {
-                      return JSON.parse(selectedPartner.address).address;
+                      return JSON.parse(selectedMerchant.fullAddress).fullAddress;
                     } catch {
-                      return selectedPartner.address || "-";
+                      return selectedMerchant.fullAddress || "-";
                     }
                   })()}
                 </span>
@@ -298,19 +306,19 @@ export default function Partnerview({
             <p>
               <span className="partner-overview-label">City</span> <br />
               <span className="partner-overview-bold">
-                {selectedPartner.city || "-"}
+                {selectedMerchant.city || "-"}
               </span>
             </p>
             <p>
               <span className="partner-overview-label">State</span> <br />
               <span className="partner-overview-bold">
-                {selectedPartner.state || "-"}
+                {selectedMerchant.state || "-"}
               </span>
             </p>
             <p>
               <span className="partner-overview-label">Pincode</span> <br />
               <span className="partner-overview-bold">
-                {selectedPartner.pincode || "-"}
+                {selectedMerchant.pinCode || "-"}
               </span>
             </p>
           </div>
@@ -327,30 +335,13 @@ export default function Partnerview({
             <p>
               <span className="partner-overview-label">KYC Level</span> <br />
               <span className="partner-overview-bold">
-                {selectedPartner.kycLevel}
+                {selectedMerchant.kycType}
               </span>
             </p>
             <p>
               <span className="partner-overview-label">PAN Number</span> <br />
               <span className="partner-overview-bold">
-                {selectedPartner.panNumber}
-              </span>
-            </p>
-          </div>
-
-          <div className="partner-overview-section">
-            <p>
-              <span className="partner-overview-label">Risk Profile</span>{" "}
-              <br />
-              <span className="partner-overview-bold">
-                {selectedPartner.riskProfile}
-              </span>
-            </p>
-
-            <p>
-              <span className="partner-overview-label">TAN Number</span> <br />
-              <span className="partner-overview-bold">
-                {selectedPartner.tanNumber}
+                {selectedMerchant.panNumber}
               </span>
             </p>
           </div>
@@ -359,13 +350,13 @@ export default function Partnerview({
             <p>
               <span className="partner-overview-label">KYC Status</span> <br />
               <span className="partner-overview-bold">
-                {selectedPartner.kycStatus}
+                {selectedMerchant.kycStatus}
               </span>
             </p>
             <p>
-              <span className="partner-overview-label">GSTIN</span> <br />
+              <span className="partner-overview-label">GST Number</span> <br />
               <span className="partner-overview-bold">
-                {selectedPartner.gstin}
+                {selectedMerchant.gstNumber}
               </span>
             </p>
           </div>
@@ -380,14 +371,14 @@ export default function Partnerview({
           {/* Agreement Document */}
           <div className="partner-overview-section text-center flex flex-col items-center">
             <p className="partner-overview-label">Agreement Document</p>
-            {selectedPartner.agreementDocument ? (
+            {selectedMerchant.agreementCopy ? (
               <img
-                src={`data:image/png;base64,${selectedPartner.agreementDocument}`}
+                src={`data:image/png;base64,${selectedMerchant.agreementCopy}`}
                 alt="Agreement Document"
                 className="partner-overview-img cursor-pointer"
                 onClick={() =>
                   setModalImage(
-                    `data:image/png;base64,${selectedPartner.agreementDocument}`
+                    `data:image/png;base64,${selectedMerchant.agreementCopy}`
                   )
                 }
               />
@@ -399,14 +390,14 @@ export default function Partnerview({
           {/* ID Proof Document */}
           <div className="partner-overview-section text-center flex flex-col items-center">
             <p className="partner-overview-label">ID Proof Document</p>
-            {selectedPartner.idProofDocument ? (
+            {selectedMerchant.idProof ? (
               <img
-                src={`data:image/png;base64,${selectedPartner.idProofDocument}`}
+                src={`data:image/png;base64,${selectedMerchant.idProof}`}
                 alt="ID Proof Document"
                 className="partner-overview-img cursor-pointer"
                 onClick={() =>
                   setModalImage(
-                    `data:image/png;base64,${selectedPartner.idProofDocument}`
+                    `data:image/png;base64,${selectedMerchant.idProof}`
                   )
                 }
               />
@@ -418,14 +409,14 @@ export default function Partnerview({
           {/* Address Proof Document */}
           <div className="partner-overview-section text-center flex flex-col items-center">
             <p className="partner-overview-label">Address Proof Document</p>
-            {selectedPartner.addressProofDocument ? (
+            {selectedMerchant.addressProof ? (
               <img
-                src={`data:image/png;base64,${selectedPartner.addressProofDocument}`}
+                src={`data:image/png;base64,${selectedMerchant.addressProof}`}
                 alt="Address Proof Document"
                 className="partner-overview-img cursor-pointer"
                 onClick={() =>
                   setModalImage(
-                    `data:image/png;base64,${selectedPartner.addressProofDocument}`
+                    `data:image/png;base64,${selectedMerchant.addressProof}`
                   )
                 }
               />
@@ -450,13 +441,13 @@ export default function Partnerview({
         )}
       </div>
 
-      {/* Partner Review Actions */}
+      {/* Merchant Review Actions */}
       <div className="product-actions mt-6">
         {/* Header */}
         <div className="flex items-center space-x-2 mb-2">
           <Shield className="w-4 h-4 primary-color" />
           <h3 className="primary-color text-[13px] sm:text-[15px]">
-            Partner Review Actions
+            Merchant Review Actions
           </h3>
         </div>
 
@@ -467,7 +458,7 @@ export default function Partnerview({
             onClick={() => handleActionClick(3)}
           >
             <RefreshCw className="w-4 h-4" />
-            <span>Recheck Partner</span>
+            <span>Recheck Merchant</span>
           </button>
 
           <div className="button-group-row flex flex-col sm:flex-row gap-2 mt-2">
@@ -476,7 +467,7 @@ export default function Partnerview({
               onClick={() => handleActionClick(0)}
             >
               <Check className="w-4 h-4" />
-              <span>Approve Partner</span>
+              <span>Approve Merchant</span>
             </button>
 
             <button
@@ -484,7 +475,7 @@ export default function Partnerview({
               onClick={() => handleActionClick(2)}
             >
               <X className="w-4 h-4" />
-              <span>Reject Partner</span>
+              <span>Reject Merchant</span>
             </button>
           </div>
         </div>
@@ -500,9 +491,9 @@ export default function Partnerview({
         <div className="modal-overlay">
           <div className="modal-container">
             <h2 className="modal-title">
-              {currentAction === 0 && "Confirm Partner Approval"}
-              {currentAction === 2 && "Confirm Partner Rejection"}
-              {currentAction === 3 && "Confirm Partner Recheck"}
+              {currentAction === 0 && "Confirm Merchant Approval"}
+              {currentAction === 2 && "Confirm Merchant Rejection"}
+              {currentAction === 3 && "Confirm Merchant Recheck"}
             </h2>
 
             <p className="modal-subtext">
@@ -512,7 +503,7 @@ export default function Partnerview({
                 : currentAction === 2
                 ? "reject"
                 : "recheck"}{" "}
-              <b>{selectedPartner.partnerName}</b>? This action cannot be
+              <b>{selectedMerchant.MerchantName}</b>? This action cannot be
               undone.
             </p>
 
@@ -547,17 +538,17 @@ export default function Partnerview({
               >
                 {currentAction === 0 && (
                   <>
-                    <Check className="w-4 h-4" /> Approve Partner
+                    <Check className="w-4 h-4" /> Approve Merchant
                   </>
                 )}
                 {currentAction === 2 && (
                   <>
-                    <X className="w-4 h-4" /> Reject Partner
+                    <X className="w-4 h-4" /> Reject Merchant
                   </>
                 )}
                 {currentAction === 3 && (
                   <>
-                    <RefreshCw className="w-4 h-4" /> Recheck Partner
+                    <RefreshCw className="w-4 h-4" /> Recheck Merchant
                   </>
                 )}
               </button>

@@ -8,6 +8,7 @@ import {
   UserCheck2Icon,
 } from "lucide-react";
 import axios from "axios";
+import customConfirm from "./reusable/CustomConfirm"
 export default function EmployeeView({
   selectedEmployee,
   setSelectedEmployee,
@@ -38,6 +39,8 @@ export default function EmployeeView({
     setShowModal(true);
   };
   const submitAction = async () => {
+    const confirmAction = await customConfirm("Are you sure you want to continue?");
+    if (!confirmAction) return;
     const storedUsername = localStorage.getItem("username");
     try {
       // Only block Recheck action if employee is not pending
@@ -121,17 +124,16 @@ export default function EmployeeView({
           <div className="portal-info text-center sm:text-right">
             <p className="portal-link">
               <span
-                className={`px-2 py-1 rounded text-[10px] ${
-                  selectedEmployee.status === 0
+                className={`px-2 py-1 rounded text-[10px] ${selectedEmployee.status === 0
                     ? "checker"
                     : selectedEmployee.status === 1
-                    ? "infra"
-                    : selectedEmployee.status === 2
-                    ? "superuser"
-                    : selectedEmployee.status === 3
-                    ? "maker"
-                    : ""
-                }`}
+                      ? "infra"
+                      : selectedEmployee.status === 2
+                        ? "superuser"
+                        : selectedEmployee.status === 3
+                          ? "maker"
+                          : ""
+                  }`}
               >
                 {getStatusLabel(selectedEmployee.status)}
               </span>
@@ -207,11 +209,10 @@ export default function EmployeeView({
 
               {/* Reject Button */}
               <button
-                className={`btn approval-btn-red whitespace-nowrap ${
-                  selectedEmployee.status === 3
+                className={`btn approval-btn-red whitespace-nowrap ${selectedEmployee.status === 3
                     ? "opacity-20 cursor-not-allowed"
                     : ""
-                }`}
+                  }`}
                 onClick={() => handleActionClick(2)}
                 disabled={selectedEmployee.status === 3}
               >
@@ -246,8 +247,8 @@ export default function EmployeeView({
                 {currentAction === 0
                   ? "approve"
                   : currentAction === 2
-                  ? "reject"
-                  : "recheck"}{" "}
+                    ? "reject"
+                    : "recheck"}{" "}
                 <b>{selectedEmployee.EmployeeName}</b>? This action cannot be
                 undone.
               </p>
@@ -283,13 +284,12 @@ export default function EmployeeView({
                 </button>
 
                 <button
-                  className={`btn-submit w-full md:w-auto ${
-                    currentAction === 0
+                  className={`btn-submit w-full md:w-auto ${currentAction === 0
                       ? "btn-approve-green"
                       : currentAction === 2
-                      ? "btn-reject-red"
-                      : "btn-recheck-blue"
-                  }`}
+                        ? "btn-reject-red"
+                        : "btn-recheck-blue"
+                    }`}
                   onClick={submitAction}
                   disabled={
                     currentAction === 3 && Number(selectedEmployee.status) !== 1
