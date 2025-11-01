@@ -3,6 +3,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import AppRoutes from "./AppRoutes";
 import { AlertProvider, useAlert } from "./components/AlertProvider";
 import ThemeSwitcher from "./components/themeSwitcher";
+import "leaflet/dist/leaflet.css";
 function AppWrapper() {
   return (
     <AlertProvider>
@@ -20,7 +21,10 @@ function App() {
       showAlert(message, "info"); // default info type
     };
   }, [showAlert]);
-
+  window.history.pushState(null, "", window.location.href);
+  window.addEventListener("popstate", function () {
+    window.history.pushState(null, "", window.location.href);
+  });
   return (
     <>
       <Router basename={"/MW-Prepaid"}>

@@ -321,3 +321,20 @@ table tbody tr td {
   color: #ef4444;
   margin-left: 0.25rem;
 }
+
+.border-chart {
+  border-color: color-mix(in oklab, #008284 15%, transparent);
+}
+
+.bg-chart {
+  background-color: color-mix(in oklab, #008284 5%, transparent);
+}
+
+.bg-primary {
+  background-color: color-mix(in oklab, var(--primary-color) 10%, transparent);
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(54%) sepia(78%) saturate(300%) hue-rotate(120deg);
+  opacity: 1;
+}

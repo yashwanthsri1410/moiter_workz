@@ -40,25 +40,49 @@ import PartnerMangement from "../features/partnerManagement";
 import ReportsAndAnalytics from "../features/reportsAnalytics";
 import SystemSettings from "../features/systemSettings";
 import TransactionsAnalystics from "../features/TransactionsManagement/TransactionsAnalystics";
+import MerchantCreation from "../features/merchantCreation";
 
+const mockData = [
+  {
+    module: "Dashboard",
+    screens: [
+      "Customer Management",
+      "Wallet Operations",
+      "Transaction Analytics",
+      "Compliance & KYC",
+      "Risk Management",
+      "Product Performance",
+      "Partner Management",
+      "Reports & Analytics",
+      "System Settings",
+      "Infra",
+    ],
+  },
+  {
+    module: "Maker Console",
+    screens: ["Regulatory", "Product", "Partner Creation", "Merchant Creation"],
+  },
+];
 export default function DashboardLayout() {
   const [activeTab, setActiveTab] = useState("0");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [modules, setModules] = useState([]);
+  const [modules, setModules] = useState(mockData);
   const navigate = useNavigate();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const isMobile = window.innerWidth <= 768;
 
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  console.log(activeTab);
+
   useEffect(() => {
     const stored = localStorage.getItem("userData");
 
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        setModules(parsed?.moduleAccess || []);
+        // setModules(parsed?.moduleAccess || []);
       } catch (err) {
         console.error("Invalid localStorage data", err);
       }
@@ -141,6 +165,7 @@ export default function DashboardLayout() {
       "1-0": <Regulatoryconfiguration />,
       "1-1": <Productcreate />,
       "1-2": <Partnercreate />,
+      "1-3": <MerchantCreation />,
     };
 
     if (activeTab === "0-9") {

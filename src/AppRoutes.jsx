@@ -7,15 +7,17 @@ import ProtectedRoute from "./auth/ProtectedRoute";
 import MakersDashboard from "./pages/makersDashboard";
 import SuperuserDashboard from "./pages/superuserDashboard";
 import CheckersDashboardLayout from "./pages/checkersdashboard";
+import MerchantCreation from "./features/merchantCreation/index";
 
 function AppRoutes({ setRole }) {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/Login" />} />
       <Route path="/Login" element={<Employeelogin setRole={setRole} />} />
+      {/* <Route path="login" element={<MerchantCreation />} /> */}
 
       {/* Protected routes based on userType */}
-      
+
       <Route
         path="/Makers-dashboard"
         element={
@@ -24,7 +26,7 @@ function AppRoutes({ setRole }) {
           </ProtectedRoute>
         }
       />
-       <Route
+      <Route
         path="/Checkers-dashboard"
         element={
           <ProtectedRoute allowedRoles={[3]}>
@@ -34,9 +36,8 @@ function AppRoutes({ setRole }) {
       />
 
       {/* Protected routes for multiple or all user types */}
-     
 
-       <Route
+      <Route
         path="/Superuser-workplace"
         element={
           <ProtectedRoute allowedRoles={[1]}>
