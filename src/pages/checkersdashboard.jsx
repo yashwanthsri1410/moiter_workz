@@ -41,6 +41,8 @@ import PartnerMangement from "../features/partnerManagement";
 import SystemSettings from "../features/systemSettings";
 import ReportsAndAnalytics from "../features/reportsAnalytics";
 import TransactionsAnalystics from "../features/TransactionsManagement/TransactionsAnalystics";
+import MerchantApproval from "../components/merchantapproval";
+import PartnerE_MoneyApprovalApproval from "../components/PartnerE-MoneyApproval";
 
 export default function CheckersDashboardLayout() {
   const [activeTab, setActiveTab] = useState("0");
@@ -140,6 +142,8 @@ export default function CheckersDashboardLayout() {
       "1-0": <EmployeeApproval />,
       "1-1": <ProductApproval />,
       "1-2": <PartnerApproval />,
+      "1-3": <MerchantApproval />,
+      "1-4": <PartnerE_MoneyApprovalApproval />,
     };
 
     if (activeTab === "0-9") {
@@ -207,9 +211,8 @@ export default function CheckersDashboardLayout() {
                 <div key={modIdx}>
                   <button
                     onClick={() => toggleDropdown(mod.module.trim(), tabKey)}
-                    className={`main-menu-list ${
-                      openDropdown === mod.module.trim() ? "active" : ""
-                    }`}
+                    className={`main-menu-list ${openDropdown === mod.module.trim() ? "active" : ""
+                      }`}
                   >
                     <LayoutGrid size={16} className="menu-icon" />
                     {!isCollapsed && (

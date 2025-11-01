@@ -13,6 +13,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import GuidelinesCard from "./reusable/guidelinesCard";
 import { designationGuidelines } from "../constants/guidelines";
+import customConfirm from "./reusable/CustomConfirm";
 
 export default function CreateDesignationForm({ onBack }) {
   const [departments, setDepartments] = useState([]);
@@ -80,6 +81,8 @@ export default function CreateDesignationForm({ onBack }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+     const confirmAction = await customConfirm("Are you sure you want to continue?");
+    if (!confirmAction) return;
     if (!selectedDeptId || !designationDesc.trim()) {
       return alert("Please select department and enter designation");
     }
@@ -269,7 +272,7 @@ export default function CreateDesignationForm({ onBack }) {
             className="btn-toggle flex items-center justify-center gap-1"
           >
             <Plus className="w-3 h-3" />
-            {showForm ? "Close Form" : "Create Designations"}
+            {showForm ? "Close Form" : "Create Designation"}
           </button>
         </div>
       </div>

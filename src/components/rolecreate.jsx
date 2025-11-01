@@ -13,6 +13,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import GuidelinesCard from "./reusable/guidelinesCard";
 import { roleGuidelines } from "../constants/guidelines";
+import customConfirm from "./reusable/CustomConfirm";
 
 const RoleAccessForm = ({ onBack }) => {
   const [modulesData, setModulesData] = useState([]);
@@ -32,7 +33,7 @@ const RoleAccessForm = ({ onBack }) => {
   // Function to validate input - allows only letters, spaces, and hyphens
   const validateInput = (input) => {
     // Regular expression to allow only letters, spaces, and hyphens
-    const regex = /^[a-zA-Z\s-]*$/;
+    const regex = /^[a-zA-Z\s-_]*$/;
     return regex.test(input);
   };
 
@@ -122,6 +123,8 @@ const RoleAccessForm = ({ onBack }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+     const confirmAction = await customConfirm("Are you sure you want to continue?");
+    if (!confirmAction) return;
     const screenModuleList = [];
 
     selectedModules.forEach((module) => {
@@ -313,7 +316,7 @@ const RoleAccessForm = ({ onBack }) => {
               required
             />
             <p className="text-xs text-gray-500 mt-1">
-              Only letters, spaces, and hyphens are allowed
+              Only letters, spaces,underscore and hyphens are allowed
             </p>
           </div>
 

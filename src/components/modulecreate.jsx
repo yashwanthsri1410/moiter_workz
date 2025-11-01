@@ -14,6 +14,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import GuidelinesCard from "./reusable/guidelinesCard";
 import { moduleGuidelines } from "../constants/guidelines";
+import customConfirm from "./reusable/CustomConfirm";
 
 export default function ModuleCreation({ onBack }) {
   const [modules, setModules] = useState([]);
@@ -65,6 +66,8 @@ export default function ModuleCreation({ onBack }) {
 
   const handleCreate = async (e) => {
     e.preventDefault();
+     const confirmAction = await customConfirm("Are you sure you want to continue?");
+    if (!confirmAction) return;
     if (!newModuleName.trim()) return alert("Please enter module name.");
 
     const exists = modules.some(

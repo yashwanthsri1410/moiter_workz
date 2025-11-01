@@ -4,6 +4,7 @@ import { ArrowLeft, Building2, Pencil, Search, Plus, X } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import GuidelinesCard from "./reusable/guidelinesCard";
 import { departmentGuidelines } from "../constants/guidelines";
+import customConfirm from "./reusable/CustomConfirm";
 
 export default function DepartmentCreation({ onBack }) {
   const [departmentName, setDepartmentName] = useState("");
@@ -57,6 +58,8 @@ export default function DepartmentCreation({ onBack }) {
   // Create department
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const confirmAction = await customConfirm("Are you sure you want to continue?");
+    if (!confirmAction) return;
     if (!departmentName.trim()) return alert("Please enter a department name.");
 
     const exists = departments.some(

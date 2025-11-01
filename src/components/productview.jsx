@@ -15,6 +15,7 @@ import {
   PackagePlus,
 } from "lucide-react";
 import axios from "axios";
+import customConfirm from "./reusable/CustomConfirm";
 
 export default function Productview({
   selectedProduct,
@@ -51,6 +52,8 @@ export default function Productview({
     setShowModal(true);
   };
   const submitAction = async () => {
+     const confirmAction = await customConfirm("Are you sure you want to continue?");
+    if (!confirmAction) return;
     try {
       const payload = {
         productId: selectedProduct.productId,
@@ -61,7 +64,7 @@ export default function Productview({
         productAccess: selectedProduct.productAccess,
       };
       await axios.post(
-        `${API_BASE_URL}/ps/approveProductConfiguration`,
+        `${API_BASE_URL}/ps/api/Product/approveProductConfiguration`,
         payload
       );
 

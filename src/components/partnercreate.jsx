@@ -9,7 +9,7 @@ import {
   Check,
   CalculatorIcon,
   ChevronLeft,
-  ChevronRight,
+  ChevronRight
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -26,6 +26,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import GuidelinesCard from "./reusable/guidelinesCard";
 import { partnerGuidelines } from "../constants/guidelines";
+import customConfirm from "./reusable/CustomConfirm";
 // import { PencilIcon, Plus,SquarePen  } from "lucide-react";
 
 export default function Partnercreate() {
@@ -46,10 +47,19 @@ export default function Partnercreate() {
     idProofDocument: null,
     addressProofDocument: null,
   });
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+
+
 
   const [modalImage, setModalImage] = useState(null);
   const [constraints, setConstraints] = useState([]);
-
+  useEffect(() => {
+    // Whenever search term changes, go back to first page
+    setCurrentPage(1);
+  }, [search]);
   const handleRemoveImage = (type) => {
     setRemovedImages((prev) => ({
       ...prev,
@@ -223,7 +233,7 @@ export default function Partnercreate() {
     commissionCurrency: "INR",
     settlementFrequency: "monthly",
     allowedProducts: [],
-    portalUrl: "",
+    portalUrl: 0,
     webhookUrl: "default",
     agreementDocument: "",
     idProofDocument: "",
@@ -234,10 +244,12 @@ export default function Partnercreate() {
     kycSubmittedAt: new Date().toISOString(),
     kycVerifiedAt: new Date().toISOString(),
     kycVerifiedBy: "system",
+    password: ""
   };
 
   // Form state
   const [form, setForm] = useState({ ...defaultFormValues });
+  // console.log(form)
   // ✅ Keys allowed in backend schema
   const schemaKeys = [
     "logId",
@@ -269,13 +281,19 @@ export default function Partnercreate() {
     "agreementDocument",
     "idProofDocument",
     "addressProofDocument",
+    "password",
     "createdBy",
     "metadata",
     "requestInfo",
+    "revenueShareModel",
+    "CommissionCurrency ",
+    "SettlementFrequency "
   ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const confirmAction = await customConfirm("Are you sure you want to continue?");
+    if (!confirmAction) return;
     try {
       let payload = {
         ...form,
@@ -289,10 +307,8 @@ export default function Partnercreate() {
         allowedProducts: Array.isArray(form.allowedProducts)
           ? form.allowedProducts.join(",")
           : "",
-        portalUrl: form.portalAccessEnabled ? form.portalUrl : 0,
-        // agreementDocument: agreementFile ? await toBase64(agreementFile) : "",
-        // idProofDocument: idFile ? await toBase64(idFile) : "",
-        // addressProofDocument: addressFile ? await toBase64(addressFile) : "",
+        portalUrl: form.portalAccessEnabled ? Number(form.portalUrl) : 0,
+        password: form.password ? btoa(form.password) : "",
         metadata: buildMetadata("admin-user"),
         requestInfo: buildRequestInfo(ip, "admin-user"),
         createdBy: "admin-user",
@@ -306,7 +322,6 @@ export default function Partnercreate() {
       if (addressFile) {
         payload.addressProofDocument = await toBase64(addressFile);
       }
-
       // Only keep allowed keys as per schema
       payload = Object.fromEntries(
         Object.entries(payload).filter(([key]) => schemaKeys.includes(key))
@@ -316,14 +331,16 @@ export default function Partnercreate() {
       const isEditing = !!editingId; // true if editing
       const method = isEditing ? "put" : "post";
       const url = isEditing
-        ? `${API_BASE_URL}/ps/DistributionPartner-Update`
-        : `${API_BASE_URL}/ps/DistributionPartner-Create`;
+        ? `${API_BASE_URL}/ps/api/Product/DistributionPartner-update`
+        : `${API_BASE_URL}/ps/api/Product/DistributionPartner-Create`;
 
       // console.log("Submitting partner form");
       // console.log("Editing mode:", isEditing);
       // console.log("URL:", url);
-      // console.log("Payload:", payload);
-
+      // console.log("Before encoding password:", form.password);
+      // console.log("Encoded password:", btoa(form.password));
+      // console.log("Payload object:", payload);
+      // console.log(JSON.stringify(payload, null, 2));
       const res = await axios({
         method: method,
         url: url,
@@ -475,8 +492,8 @@ export default function Partnercreate() {
       backgroundColor: state.isSelected
         ? "#1452A8"
         : state.isFocused
-        ? "#1452A8"
-        : "transparent", // 🔹 transparent instead of solid
+          ? "#1452A8"
+          : "transparent", // 🔹 transparent instead of solid
       color: "#fff",
       fontSize: "12px",
       cursor: "pointer",
@@ -499,6 +516,8 @@ export default function Partnercreate() {
       fontSize: "13px",
     }),
   };
+  const passwordsMatch =
+    form.password && confirmPassword && form.password === confirmPassword;
 
   useEffect(() => {
     if (!isEditing) {
@@ -526,11 +545,8 @@ export default function Partnercreate() {
 
         <div className="card-header-right flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
           <button
-            className="btn-outline flex items-center gap-1 w-full sm:w-auto justify-center text-xs sm:text-sm"
-            onClick={() => {
-              setformOpen((prev) => !prev);
-              setIsEditing(false);
-            }}
+            className="btn-outline"
+            onClick={() => { setformOpen((prev) => !prev), setForm({ ...defaultFormValues }) }}
           >
             {formOpen ? (
               <>
@@ -1272,6 +1288,66 @@ export default function Partnercreate() {
                 </div>
               </div>
             </div>
+            <div className="mt-8">
+              <h4 className="text-sm font-semibold primary-color mb-4">
+                Password Set-Up for Partner Portal Login
+              </h4>
+
+              <div className="grid grid-cols-2 gap-4">
+                {/* Password Field */}
+                <div className="form-group relative">
+                  <label>Password</label>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    className="form-input pr-10"
+                    placeholder="Enter password"
+                    value={form.password || ""}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, password: e.target.value }))
+                    }
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-3 top-9 text-gray-500 hover:text-gray-700"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+
+                {/* Confirm Password Field (frontend-only) */}
+                <div className="form-group relative">
+                  <label>Confirm Password</label>
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    className="form-input pr-10"
+                    placeholder="Re-enter password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    className="absolute right-3 top-9 text-gray-500 hover:text-gray-700"
+                  >
+                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Show validation message only */}
+              {confirmPassword && !passwordsMatch && (
+                <p className="text-red-500 text-sm mt-2">Passwords do not match.</p>
+              )}
+
+              {/* Optional success state */}
+              {passwordsMatch && (
+                <p className="text-green-500 text-sm mt-2">Passwords match!</p>
+              )}
+            </div>
+
+
           </div>
 
           <div className="form-footer flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0 mt-6 w-full">
@@ -1368,26 +1444,24 @@ export default function Partnercreate() {
                     </td>
                     <td>
                       <span
-                        className={`px-2 py-1 rounded text-[10px] ${
-                          partner.partnerStatus === "Active"
-                            ? "checker"
-                            : partner.partnerStatus === "Onboarded"
+                        className={`px-2 py-1 rounded text-[10px] ${partner.partnerStatus === "Active"
+                          ? "checker"
+                          : partner.partnerStatus === "Onboarded"
                             ? "maker"
                             : partner.partnerStatus === "Inactive"
-                            ? "superuser"
-                            : ""
-                        }`}
+                              ? "superuser"
+                              : ""
+                          }`}
                       >
                         {partner.partnerStatus}
                       </span>
                     </td>
                     <td>
                       <span
-                        className={`px-2 py-1 rounded text-[10px] ${
-                          partner.kycStatus === "Verified"
-                            ? "checker"
-                            : "superuser"
-                        }`}
+                        className={`px-2 py-1 rounded text-[10px] ${partner.kycStatus === "Verified"
+                          ? "checker"
+                          : "superuser"
+                          }`}
                       >
                         {partner.kycStatus}
                       </span>
@@ -1455,11 +1529,10 @@ export default function Partnercreate() {
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center  ${
-                currentPage === 1
+              className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center  ${currentPage === 1
                   ? "prev-next-disabled-btn"
                   : "prev-next-active-btn"
-              }`}
+                }`}
             >
               <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" /> Prev
             </button>
@@ -1469,11 +1542,10 @@ export default function Partnercreate() {
                 <button
                   key={i}
                   onClick={() => handlePageChange(i + 1)}
-                  className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${
-                    currentPage === i + 1
+                  className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${currentPage === i + 1
                       ? "active-pagination-btn"
                       : "inactive-pagination-btn"
-                  }`}
+                    }`}
                 >
                   {i + 1}
                 </button>
@@ -1483,11 +1555,10 @@ export default function Partnercreate() {
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${
-                currentPage === totalPages
+              className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${currentPage === totalPages
                   ? "prev-next-disabled-btn"
                   : "prev-next-active-btn"
-              }`}
+                }`}
             >
               Next <ChevronRight className="w-4 h-4" />
             </button>

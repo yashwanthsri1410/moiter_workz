@@ -4,22 +4,8 @@ import {
   ChevronRight,
   ChevronLeft,
   LayoutGrid,
-  PackagePlus,
-  ShieldCheck,
-  CalculatorIcon,
-  User,
-  Wallet,
-  BarChart2,
-  FileCheck,
-  Shield,
-  Activity,
-  FileText,
-  Users,
-  Settings,
   ChevronDown,
   ChevronUp,
-  FileTextIcon,
-  Database,
   LoaderCircle,
 } from "lucide-react";
 import "../styles/styles.css";
@@ -182,19 +168,6 @@ export default function DashboardLayout() {
       </div>
     );
   };
-
-  // Define dashboard children tabs
-  const dashboardTabs = [
-    "customer",
-    "wallet",
-    "transactions",
-    "compliance",
-    "risk",
-    "productperformance",
-    "partner",
-    "reports",
-    "system",
-  ];
   return (
     <div className="layout">
       {/* Sidebar */}
