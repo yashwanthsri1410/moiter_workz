@@ -3,7 +3,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import AppRoutes from "./AppRoutes";
 import { AlertProvider, useAlert } from "./components/AlertProvider";
 import ThemeSwitcher from "./components/themeSwitcher";
-import "leaflet/dist/leaflet.css";
+// import "leaflet/dist/leaflet.css";
 function AppWrapper() {
   return (
     <AlertProvider>
