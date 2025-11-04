@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Mail,
   Phone,
@@ -14,10 +14,39 @@ import {
   X,
   RefreshCw,
   ShoppingCartIcon,
+  CircleCheckBig,
 } from "lucide-react";
 import axios from "axios";
 import "../styles/styles.css";
 import customConfirm from "./reusable/CustomConfirm";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMapEvents,
+} from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+
+// Fix Leaflet default marker icons
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl:
+    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
+
+// Subcomponent inside Merchantview (before the return statement)
+function LocationPicker({ setPosition }) {
+  useMapEvents({
+    click(e) {
+      setPosition(e.latlng);
+    },
+  });
+  return null;
+}
 
 export default function Merchantview({
   selectedMerchant,
@@ -30,7 +59,7 @@ export default function Merchantview({
   const [modalImage, setModalImage] = useState(null);
   if (!selectedMerchant) return null;
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-
+  const username = localStorage.getItem("username") || "guest";
   const getStatusLabel = (value) => {
     switch (value) {
       case 0:
@@ -63,11 +92,11 @@ export default function Merchantview({
     if (!confirmAction) return;
     try {
       const payload = {
-        MerchantName: selectedMerchant.MerchantName,
+        merchantId: selectedMerchant.merchantId,
+        shopName: selectedMerchant.shopName,
         logId: selectedMerchant.logId,
-        MerchantType: selectedMerchant.MerchantType,
         actionStatus: Number(currentAction),
-        checker: "checkerUser",
+        checker: username,
         remarks: remarks,
         metadata: {
           ipAddress: window.location.hostname,
@@ -75,9 +104,9 @@ export default function Merchantview({
           headers: "custom-headers-if-any",
           channel: "web",
           auditMetadata: {
-            createdBy: "checkerUser",
+            createdBy: "Maker",
             createdDate: new Date().toISOString(),
-            modifiedBy: "checkerUser",
+            modifiedBy: username,
             modifiedDate: new Date().toISOString(),
             header: {
               additionalProp1: {
@@ -91,7 +120,7 @@ export default function Merchantview({
       };
 
       await axios.post(
-        `${API_BASE_URL}/ps/api/Product/approveDistributionMerchant`,
+        `${API_BASE_URL}/ps/api/Product/approve-merchant`,
         payload
       );
       alert("Action submitted successfully!");
@@ -104,6 +133,11 @@ export default function Merchantview({
       setShowModal(false);
     }
   };
+  const [position, setPosition] = useState({
+    lat: selectedMerchant?.latitude || 13.015842219623803,
+    lng: selectedMerchant?.longitude || 80.20119845867158,
+  });
+
   return (
     <div>
       {/* Header */}
@@ -144,7 +178,7 @@ export default function Merchantview({
                   : "superuser"
               }`}
             >
-              {selectedMerchant.MerchantType}
+              {selectedMerchant.category}
             </span>
           </p>
           <p className="portal-link">
@@ -197,7 +231,7 @@ export default function Merchantview({
               <span className="partner-overview-label font-medium">Status</span>{" "}
               <br />
               <span className="partner-overview-bold font-semibold">
-                {selectedMerchant.MerchantStatus}
+                {getStatusLabel(selectedMerchant.status)}
               </span>
             </p>
           </div>
@@ -233,15 +267,6 @@ export default function Merchantview({
                 </span>
               </span>
             </p>
-            <p>
-              <span className="partner-overview-label font-medium">
-                KYC Status
-              </span>{" "}
-              <br />
-              <span className="partner-overview-bold font-semibold">
-                {selectedMerchant.kycStatus}
-              </span>
-            </p>
           </div>
 
           {/* Section 3 */}
@@ -262,15 +287,6 @@ export default function Merchantview({
               <br />
               <span className="partner-overview-bold font-semibold">
                 {selectedMerchant.portalAccessEnabled ? "Yes" : "No"}
-              </span>
-            </p>
-            <p>
-              <span className="partner-overview-label font-medium">
-                Support Tickets
-              </span>{" "}
-              <br />
-              <span className="partner-overview-bold font-semibold">
-                {selectedMerchant.supportTicketCount}
               </span>
             </p>
           </div>
@@ -327,6 +343,86 @@ export default function Merchantview({
         </div>
       </div>
 
+      {/* Location Map Section */}
+      <div className="partner-overview-card mt-4">
+        <h2 className="partner-overview-title flex items-center text-lg font-semibold mb-3">
+          <MapPin size={18} className="primary-color mr-2" />
+          Merchant Location Map
+        </h2>
+
+        <div className="w-full h-96 rounded-lg border border-gray-300 overflow-hidden">
+          <MapContainer
+            center={[position.lat, position.lng]}
+            zoom={13}
+            className="h-full w-full"
+          >
+            <TileLayer
+              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+              attribution="Tiles &copy; Esri"
+            />
+            <Marker position={position}>
+              <Popup>
+                <div style={{ fontFamily: "inherit" }}>
+                  <strong>{selectedMerchant.shopName}</strong>
+                  <br />
+                  <span>
+                    Lat: {position.lat.toFixed(5)}, Lng:{" "}
+                    {position.lng.toFixed(5)}
+                  </span>
+                </div>
+              </Popup>
+            </Marker>
+            <LocationPicker setPosition={setPosition} />
+          </MapContainer>
+        </div>
+
+        {/* Selected Coordinates Display */}
+        <div className="mt-3 partner-overview-card rounded-lg text-sm ">
+          <p>
+            <strong>Selected Coordinates:</strong> {position.lat.toFixed(5)},{" "}
+            {position.lng.toFixed(5)}
+          </p>
+        </div>
+      </div>
+
+      {/* Payment Configuration */}
+      <div className="partner-overview-card">
+        <h2 className="partner-overview-title">
+          <Shield size={18} className="primary-color" /> Payment Configuration
+        </h2>
+        <div className="partner-overview-content">
+          <div className="partner-overview-section">
+            <div>
+              <span className="partner-overview-label">Payment Types</span>{" "}
+              <br />
+              <div className="flex gap-2 flex-wrap mb-2">
+                {selectedMerchant?.paymentType?.split(",").map((type, idx) => {
+                  const formattedType = type
+                    .trim()
+                    .replace(/[_-]/g, " ")
+                    .split(" ")
+                    .map(
+                      (word) =>
+                        word.charAt(0).toUpperCase() +
+                        word.slice(1).toLowerCase()
+                    )
+                    .join(" ");
+
+                  return (
+                    <span
+                      key={idx}
+                      className="px-2 py-1 bg-gray-800 rounded text-[10px] sm:text-xs primary-color"
+                    >
+                      {formattedType}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Compliance & KYC */}
       <div className="partner-overview-card">
         <h2 className="partner-overview-title">
@@ -341,20 +437,17 @@ export default function Merchantview({
               </span>
             </p>
             <p>
-              <span className="partner-overview-label">PAN Number</span> <br />
+              <span className="partner-overview-label">
+                Merchant Discount Rate (MDR){" "}
+              </span>{" "}
+              <br />
               <span className="partner-overview-bold">
-                {selectedMerchant.panNumber}
+                {selectedMerchant.mdrMode} - {selectedMerchant.mdrValue}
               </span>
             </p>
           </div>
 
           <div className="partner-overview-section">
-            <p>
-              <span className="partner-overview-label">KYC Status</span> <br />
-              <span className="partner-overview-bold">
-                {selectedMerchant.kycStatus}
-              </span>
-            </p>
             <p>
               <span className="partner-overview-label">GST Number</span> <br />
               <span className="partner-overview-bold">
@@ -364,7 +457,7 @@ export default function Merchantview({
           </div>
         </div>
       </div>
-
+      {/*  Media & Documents */}
       <div className="partner-overview-card">
         <h2 className="partner-overview-title">
           <FileText size={18} className="primary-color" /> Media & Documents
@@ -484,7 +577,7 @@ export default function Merchantview({
 
         {/* Note */}
         <p className="note text-gray-400 text-[12px] sm:text-sm mt-2 text-center sm:text-left">
-          Review all product details carefully before making a decision
+          Review all Merchant details carefully before making a decision
         </p>
       </div>
 
