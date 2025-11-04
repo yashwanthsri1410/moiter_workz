@@ -1,45 +1,28 @@
-import { useState } from "react";
 import { Check } from "lucide-react";
+import { useMerchantFormStore } from "../../../store/merchantFormStore";
 
 const MerchantAgreement = () => {
-  const [formData, setFormData] = useState({
-    agreementAccepted: false,
-  });
-
-  const toggleAgreement = () => {
-    setFormData((prev) => ({
-      ...prev,
-      agreementAccepted: !prev.agreementAccepted,
-    }));
-  };
+  const { formData, toggleAgreement } = useMerchantFormStore();
 
   return (
     <div className="p-3 rounded-lg bg-chart border border-[var(--borderBg-color)]">
-      {/* Wrap button and label in a clickable flex container */}
-      <div className="flex items-end gap-3">
-        {/* Custom Checkbox */}
+      <div
+        className="flex items-end gap-3 cursor-pointer"
+        onClick={toggleAgreement}
+      >
         <button
           type="button"
-          className={`mt-1 size-4 rounded-[4px] border border-[var(--borderBg-color)] flex items-center justify-center 
-            ${
-              formData.agreementAccepted
-                ? "bg-[#008284]"
-                : "bg-input-background"
-            }`}
-          aria-checked={formData.agreementAccepted}
+          className={`mt-1 size-4 rounded-[4px] border flex items-center justify-center ${
+            formData.termsAndConditions ? "bg-[#008284]" : "bg-input-background"
+          }`}
+          aria-checked={formData.termsAndConditions}
           role="checkbox"
-          onClick={toggleAgreement}
         >
-          {formData.agreementAccepted && (
+          {formData.termsAndConditions && (
             <Check size={14} className="text-black" />
           )}
         </button>
-
-        {/* Label */}
-        <span
-          className="text-xs text-[#e2e8f0] font-semibold leading-snug cursor-pointer"
-          onClick={toggleAgreement}
-        >
+        <span className="text-xs text-[#e2e8f0] font-semibold leading-snug">
           I confirm that the merchant has accepted the terms and conditions.
         </span>
       </div>

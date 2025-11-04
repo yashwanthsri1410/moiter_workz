@@ -1,63 +1,47 @@
-import { Store, ChevronDown } from "lucide-react";
-import { useState } from "react";
-import {
-  categories,
-  merchantFormObj,
-  samplePinData,
-} from "../../../constants/merchantForm";
+import { categories } from "../../../constants/merchantForm";
+import { useMerchantFormStore } from "../../../store/merchantFormStore";
 
 const BasicInfo = () => {
-  const [formData, setFormData] = useState(merchantFormObj);
+  const { formData, updateForm, updatePinCode, pinData, stateName } =
+    useMerchantFormStore();
+  const { basicInfo } = formData;
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Update the state
-    setFormData((prev) => ({ ...prev, [name]: value }));
-
-    // Auto-fill city and state based on pincode
-    if (name === "pinCode" && value.length === 6) {
-      const location = samplePinData[value];
-      if (location) {
-        setFormData((prev) => ({
-          ...prev,
-          city: location.city,
-          state: location.state,
-          pinCode: value,
-        }));
-      } else {
-        setFormData((prev) => ({
-          ...prev,
-          city: "",
-          state: "",
-          pinCode: value,
-        }));
-      }
+    // Mobile number validation: only digits, max 10
+    if (name === "mobileNumber") {
+      if (/^\d{0,10}$/.test(value)) updateForm("basicInfo", name, value);
+      return;
     }
+
+    // Pin code: only digits, max 6
+    if (name === "pinCode") {
+      if (/^\d{0,6}$/.test(value)) updatePinCode(value);
+      return;
+    }
+
+    updateForm("basicInfo", name, value);
   };
 
   return (
     <>
-      {/* Grid 1 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Merchant Name */}
         <InputField
           label="Merchant / Shop Name"
-          name="merchantName"
+          name="shopName"
           placeholder="Enter shop name"
-          value={formData.merchantName}
+          value={basicInfo.shopName || ""}
           onChange={handleChange}
         />
-
-        {/* Contact Person Name */}
         <InputField
           label="Contact Person Name"
           name="contactName"
           placeholder="Enter contact name"
-          value={formData.contactName}
+          value={basicInfo.contactName || ""}
           onChange={handleChange}
         />
 
-        {/* Contact Number */}
         <div className="form-group flex flex-col">
           <Label text="Contact Number" />
           <div className="flex gap-2">
@@ -66,81 +50,86 @@ const BasicInfo = () => {
             </div>
             <input
               type="tel"
-              name="contactNumber"
+              name="mobileNumber"
               placeholder="Enter 10-digit number"
-              value={formData.contactNumber}
+              value={basicInfo.mobileNumber || ""}
               onChange={handleChange}
               className="form-input"
             />
           </div>
         </div>
 
-        {/* Email */}
         <InputField
           label="Email ID"
           name="email"
-          placeholder="merchant@example.com"
-          value={formData.email}
-          onChange={handleChange}
           type="email"
+          placeholder="merchant@example.com"
+          value={basicInfo.email || ""}
+          onChange={handleChange}
         />
 
-        {/* GST */}
         <InputField
           label="GST Number"
           name="gstNumber"
           placeholder="Enter GST number"
-          value={formData.gstNumber}
+          value={basicInfo.gstNumber || ""}
           onChange={handleChange}
         />
 
-        {/* Business Category */}
         <div className="form-group flex flex-col">
           <Label text="Business Category" />
-          <div className="relative">
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              className="form-input w-full"
-            >
-              <option value="">Select category</option>
-              {categories.map((item, i) => (
-                <option key={i} value={item.toLowerCase()}>
-                  {item}
-                </option>
-              ))}
-            </select>
-          </div>
+          <select
+            name="category"
+            value={basicInfo.category || ""}
+            onChange={handleChange}
+            className="form-input w-full"
+            required
+          >
+            <option value="" disabled hidden>
+              Select category
+            </option>
+            {categories.map((item) => (
+              <option key={item} value={item.toLowerCase()}>
+                {item}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
-      {/* Grid 2 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Pincode */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
         <InputField
           label="Pin Code"
           name="pinCode"
           placeholder="Enter 6-digit PIN"
-          value={formData.pinCode}
+          value={basicInfo.pinCode || ""}
           onChange={handleChange}
-          maxLength={6}
-        />
-        {/* City */}
-        <InputField
-          label="City"
-          name="city"
-          value={formData.city}
-          onChange={handleChange}
-          readOnly
         />
 
-        {/* State */}
+        <div className="form-group flex flex-col">
+          <Label text="City" />
+          <select
+            name="city"
+            value={basicInfo.city || ""}
+            onChange={handleChange}
+            className="form-input w-full"
+            required
+          >
+            <option value="" disabled hidden>
+              Select City
+            </option>
+            {pinData.map((city) => (
+              <option key={city} value={city}>
+                {city}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <InputField
           label="State"
           name="state"
-          value={formData.state}
-          onChange={handleChange}
+          value={basicInfo.state || stateName || ""}
           readOnly
         />
       </div>
@@ -148,14 +137,15 @@ const BasicInfo = () => {
   );
 };
 
-// 🔹 Reusable label component
+// -----------------------------
+// Label & InputField
+// -----------------------------
 const Label = ({ text }) => (
   <label className="flex items-center gap-2 text-xs sm:text-sm font-medium">
     {text}
   </label>
 );
 
-// 🔹 Reusable input component
 const InputField = ({
   label,
   name,
@@ -164,7 +154,6 @@ const InputField = ({
   value,
   onChange,
   readOnly,
-  maxLength,
 }) => (
   <div className="form-group flex flex-col">
     <Label text={label} />
@@ -175,10 +164,10 @@ const InputField = ({
       value={value}
       onChange={onChange}
       readOnly={readOnly}
-      maxLength={maxLength}
       className={`form-input ${
         readOnly ? "bg-gray-100 cursor-not-allowed" : ""
       }`}
+      required
     />
   </div>
 );

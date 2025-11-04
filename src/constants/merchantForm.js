@@ -15,18 +15,6 @@ export const categories = [
   "Services",
 ];
 
-export const merchantFormObj = {
-  merchantName: "",
-  contactName: "",
-  contactNumber: "",
-  email: "",
-  gstNumber: "",
-  category: "",
-  city: "",
-  state: "",
-  pinCode: "",
-};
-
 export const locationInstructions = [
   "Search for your address using the search bar above",
   "Or click anywhere on the map to place a marker",
@@ -78,7 +66,7 @@ export const kycUploads = [
   },
   {
     label: "ID and Address Proof",
-    name: "idAddressProof",
+    name: "idProof",
     note: "Choose and upload ID & address proof - PDF, JPG, PNG - Max 5MB",
   },
 ];
@@ -165,12 +153,3 @@ export const recheckMerchants = [
     date: "2024-01-22",
   },
 ];
-
-export const initialSchedule = daysOfWeek.reduce((acc, day) => {
-  acc[day.name] = {
-    isOpen: day.name !== "sunday", // Sunday closed by default
-    openingTime: "09:00",
-    closingTime: "18:00",
-  };
-  return acc;
-}, {});

@@ -60,7 +60,6 @@ export default function DashboardLayout() {
   const isMobile = window.innerWidth <= 768;
 
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-  console.log(activeTab);
 
   useEffect(() => {
     const stored = localStorage.getItem("userData");

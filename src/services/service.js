@@ -92,3 +92,9 @@ export const merchantOnboarding = (payload) =>
     ...payload,
     logId: uuidv4(),
   });
+
+export const getPinCodeDetails = (payload) =>
+  postRequest(`cs/api/Customer/Pincode`, payload);
+
+export const getMerchantDetails = () =>
+  getRequest(`${path}/Product/viewOnboardedMerchants`);

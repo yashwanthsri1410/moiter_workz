@@ -57,7 +57,9 @@ export default function Merchantview({
     setShowModal(true);
   };
   const submitAction = async () => {
-     const confirmAction = await customConfirm("Are you sure you want to continue?");
+    const confirmAction = await customConfirm(
+      "Are you sure you want to continue?"
+    );
     if (!confirmAction) return;
     try {
       const payload = {
@@ -102,7 +104,6 @@ export default function Merchantview({
       setShowModal(false);
     }
   };
-  console.log(selectedMerchant)
   return (
     <div>
       {/* Header */}
@@ -283,7 +284,7 @@ export default function Merchantview({
         </h2>
         <div className="partner-overview-content">
           <div className="partner-overview-section">
-             <p>
+            <p>
               <span className="partner-overview-label">Shop Name</span> <br />
               <span className="partner-overview-bold">
                 {selectedMerchant.shopName || "-"}
@@ -295,7 +296,8 @@ export default function Merchantview({
                 <span className="partner-overview-bold">
                   {(() => {
                     try {
-                      return JSON.parse(selectedMerchant.fullAddress).fullAddress;
+                      return JSON.parse(selectedMerchant.fullAddress)
+                        .fullAddress;
                     } catch {
                       return selectedMerchant.fullAddress || "-";
                     }
