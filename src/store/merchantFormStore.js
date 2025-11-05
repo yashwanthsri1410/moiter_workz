@@ -15,9 +15,9 @@ export const useMerchantFormStore = create((set) => ({
     },
     termsAndConditions: false,
   },
-
   pinData: [],
   stateName: "",
+  updatedMerchantData: {},
 
   updateForm: (section, key, value) =>
     set((state) => ({
@@ -81,4 +81,5 @@ export const useMerchantFormStore = create((set) => ({
         termsAndConditions: !state.formData.termsAndConditions,
       },
     })),
+  setUpdatedMerchantData: (data) => set(() => ({ updatedMerchantData: data })),
 }));

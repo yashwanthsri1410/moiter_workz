@@ -98,3 +98,9 @@ export const getPinCodeDetails = (payload) =>
 
 export const getMerchantDetails = () =>
   getRequest(`${path}/Product/viewOnboardedMerchants`);
+
+export const updateMerchantDetails = (payload) =>
+  postRequest(`${path}/Product/update-merchant`, {
+    ...payload,
+    logId: uuidv4(),
+  });

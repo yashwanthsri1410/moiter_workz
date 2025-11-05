@@ -1,6 +1,6 @@
 import { Store } from "lucide-react";
 
-const Header = () => {
+const MerchantHeader = () => {
   return (
     <div className="card-header flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0 p-2 sm:p-4">
       <div className="card-header-left flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-2">
@@ -21,4 +21,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default MerchantHeader;

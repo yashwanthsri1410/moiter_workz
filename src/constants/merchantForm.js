@@ -134,13 +134,13 @@ export const merchants = [
 ];
 
 export const columns = [
-  { key: "name", label: "Merchant Name" },
-  { key: "contact", label: "Contact" },
+  { key: "shopName", label: "Merchant Name" },
+  { key: "contactName", label: "Contact" },
   { key: "email", label: "Email" },
-  { key: "gst", label: "GST" },
+  { key: "gstNumber", label: "GST" },
   { key: "city", label: "City" },
-  { key: "payment", label: "Payment" },
-  { key: "mdr", label: "MDR" },
+  { key: "paymentType", label: "Payment" },
+  { key: "mdrValue", label: "MDR" },
   { key: "status", label: "Status" },
 ];
 

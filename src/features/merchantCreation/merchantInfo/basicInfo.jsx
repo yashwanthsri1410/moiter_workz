@@ -2,9 +2,16 @@ import { categories } from "../../../constants/merchantForm";
 import { useMerchantFormStore } from "../../../store/merchantFormStore";
 
 const BasicInfo = () => {
-  const { formData, updateForm, updatePinCode, pinData, stateName } =
-    useMerchantFormStore();
+  const {
+    formData,
+    updateForm,
+    updatePinCode,
+    pinData,
+    stateName,
+    updatedMerchantData,
+  } = useMerchantFormStore();
   const { basicInfo } = formData;
+  console.log(updatedMerchantData);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,14 +38,16 @@ const BasicInfo = () => {
           label="Merchant / Shop Name"
           name="shopName"
           placeholder="Enter shop name"
-          value={basicInfo.shopName || ""}
+          value={basicInfo.shopName || updatedMerchantData?.shopName || ""}
           onChange={handleChange}
         />
         <InputField
           label="Contact Person Name"
           name="contactName"
           placeholder="Enter contact name"
-          value={basicInfo.contactName || ""}
+          value={
+            basicInfo.contactName || updatedMerchantData?.contactName || ""
+          }
           onChange={handleChange}
         />
 
@@ -52,7 +61,11 @@ const BasicInfo = () => {
               type="tel"
               name="mobileNumber"
               placeholder="Enter 10-digit number"
-              value={basicInfo.mobileNumber || ""}
+              value={
+                basicInfo.mobileNumber ||
+                updatedMerchantData?.mobileNumber ||
+                ""
+              }
               onChange={handleChange}
               className="form-input"
             />
@@ -64,7 +77,7 @@ const BasicInfo = () => {
           name="email"
           type="email"
           placeholder="merchant@example.com"
-          value={basicInfo.email || ""}
+          value={basicInfo.email || updatedMerchantData.email || ""}
           onChange={handleChange}
         />
 
@@ -72,7 +85,7 @@ const BasicInfo = () => {
           label="GST Number"
           name="gstNumber"
           placeholder="Enter GST number"
-          value={basicInfo.gstNumber || ""}
+          value={basicInfo.gstNumber || updatedMerchantData?.gstNumber || ""}
           onChange={handleChange}
         />
 
@@ -80,7 +93,7 @@ const BasicInfo = () => {
           <Label text="Business Category" />
           <select
             name="category"
-            value={basicInfo.category || ""}
+            value={basicInfo.category || updatedMerchantData?.category || ""}
             onChange={handleChange}
             className="form-input w-full"
             required
@@ -102,7 +115,7 @@ const BasicInfo = () => {
           label="Pin Code"
           name="pinCode"
           placeholder="Enter 6-digit PIN"
-          value={basicInfo.pinCode || ""}
+          value={basicInfo.pinCode || updatedMerchantData?.pinCode || ""}
           onChange={handleChange}
         />
 

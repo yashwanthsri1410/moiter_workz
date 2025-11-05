@@ -48,7 +48,7 @@ const UseMerchantCreation = () => {
   };
   const fetchData = async () => {
     const res = await getMerchantDetails();
-    setMerchantData(res.data);
+    setMerchantData(res?.data);
   };
 
   useEffect(() => {

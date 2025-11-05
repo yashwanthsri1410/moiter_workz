@@ -1,23 +1,44 @@
-import { Store, Search, CircleAlert, SquarePen } from "lucide-react";
+import { Store, Search, CircleAlert, SquarePen, Check, X } from "lucide-react";
 import { useState, useRef } from "react";
 import {
   columns,
   merchants,
   recheckMerchants,
 } from "../../constants/merchantForm";
-
-// Sample data (replace with real data or props)
+import UseMerchantCreation from "../../hooks/useMerchantCreation";
+import { useMerchantFormStore } from "../../store/merchantFormStore";
 
 const MerchantList = ({ scrollToTop }) => {
+  const { merchantData } = UseMerchantCreation();
+  const { setUpdatedMerchantData } = useMerchantFormStore();
   const [search, setSearch] = useState("");
-  const scrollRef = useRef(null);
+  const [editRow, setEditRow] = useState(null); // currently editing merchant ID or index
+  const [editedData, setEditedData] = useState({}); // temp editable data
 
-  const filteredMerchants = merchants.filter((m) =>
-    m.name.toLowerCase().includes(search.toLowerCase())
-  );
-  const editAndSubmit = () => {
-    // scrollToTop();
+  const handleEdit = (merchant, index) => {
+    scrollToTop();
+    setUpdatedMerchantData(merchant);
+    //------------------- For input field open ----------
+    // setEditRow(index);
+    // setEditedData({ ...merchant });
   };
+
+  const handleChange = (e, key) => {
+    setEditedData((prev) => ({ ...prev, [key]: e.target.value }));
+  };
+
+  const handleCancel = () => {
+    setEditRow(null);
+    setEditedData({});
+  };
+
+  const handleUpdate = () => {
+    setEditRow(null);
+  };
+
+  const filteredMerchants = merchantData?.filter((m) =>
+    m?.shopName?.toLowerCase().includes(search?.toLowerCase())
+  );
 
   return (
     <div className="px-5 py-4 rounded-[12px] bg-[var(--cards-bg)] shadow-[0_0_10px_var(--borderBg-color)] border border-[var(--borderBg-color)]">
@@ -47,7 +68,6 @@ const MerchantList = ({ scrollToTop }) => {
             />
           </div>
         </div>
-
         {/* Recheck Section */}
         {recheckMerchants.length > 0 && (
           <div className="mb-6 p-6 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
@@ -78,7 +98,7 @@ const MerchantList = ({ scrollToTop }) => {
                         </div>
                         <button
                           className="inline-flex items-center gap-1.5 px-3 h-8 rounded-2xl bg-yellow-600 text-xs font-bold text-white hover:bg-yellow-700"
-                          onClick={scrollToTop}
+                          // onClick={scrollToTop}
                         >
                           <SquarePen className="w-3 h-3" />
                           Edit & Resubmit
@@ -100,61 +120,87 @@ const MerchantList = ({ scrollToTop }) => {
             </div>
           </div>
         )}
-
         {/* Merchant Table */}
-        <div className="rounded-lg overflow-hidden">
-          <div className="table-container">
-            <table className="w-full text-sm">
-              <thead className="[&>tr]:border-b">
-                <tr>
-                  {columns.map((col) => (
-                    <th key={col.key}>{col.label}</th>
-                  ))}
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredMerchants.map((m, i) => (
-                  <tr key={i} className="border-b hover:bg-muted/5">
-                    {columns.map((col) =>
-                      col.key !== "status" ? (
+        {/* {filteredMerchants?.length === 0 && (
+          <p className="text-sm text-red-500">Failed to Load Data</p>
+        )} */}
+        {filteredMerchants?.length > 0 && (
+          <div className="rounded-lg overflow-hidden">
+            <div className="table-container">
+              <table className="w-full text-sm">
+                <thead className="[&>tr]:border-b">
+                  <tr>
+                    {columns.map((col) => (
+                      <th key={col.key}>{col.label}</th>
+                    ))}
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredMerchants?.map((m, i) => (
+                    <tr key={i} className="border-b hover:bg-muted/5">
+                      {columns.map((col) => (
                         <td
                           key={col.key}
                           className={`p-2 text-xs ${
-                            col.key === "name"
-                              ? "font-medium text-chart-5"
-                              : "text-[#94a3b8] truncate"
+                            col.key === "paymentType" &&
+                            "max-w-[220px] truncate"
                           }`}
+                          title={col.key === "paymentType" && m[col.key]}
                         >
-                          {m[col.key]}
+                          {editRow === i ? (
+                            <input
+                              type="text"
+                              value={editedData[col.key] || ""}
+                              onChange={(e) => handleChange(e, col.key)}
+                              className="w-full p-1 rounded bg-transparent border border-[#2e2e2e] text-[#e2e8f0] focus:outline-none"
+                            />
+                          ) : (
+                            <span
+                              className={
+                                col.key === "shopName"
+                                  ? "font-medium text-chart-5"
+                                  : "text-[#94a3b8] truncate"
+                              }
+                            >
+                              {m[col.key]}
+                            </span>
+                          )}
                         </td>
-                      ) : (
-                        <td key={col.key} className="p-2">
-                          <span
-                            className={`px-2 py-1 text-xs rounded border ${
-                              m.status === "Active"
-                                ? "bg-green-500/10 border-green-500/20 text-green-500"
-                                : m.status === "Pending"
-                                ? "bg-yellow-500/10 border-yellow-500/20 text-yellow-500"
-                                : "bg-muted/10 border-white/20 text-[#94a3b8]"
-                            }`}
+                      ))}
+
+                      <td className="p-2 flex justify-center">
+                        {editRow === i ? (
+                          <div className="flex gap-2">
+                            <button
+                              onClick={handleUpdate}
+                              className="p-1 bg-green-500/10 text-green-500 rounded hover:bg-green-500/20"
+                            >
+                              <Check className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={handleCancel}
+                              className="p-1 bg-red-500/10 text-red-500 rounded hover:bg-red-500/20"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => handleEdit(m, i)}
+                            className="p-1 hover:bg-chart-5/10 rounded"
                           >
-                            {m.status}
-                          </span>
-                        </td>
-                      )
-                    )}
-                    <td className="p-2 flex justify-center">
-                      {/* <button className="inline-flex items-center justify-center p-1 border rounded-md border-[border-color:#94a3b8] hover:bg-chart-5/10 hover:border-chart-5/50"> */}
-                      <SquarePen className="w-4 h-4" />
-                      {/* </button> */}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                            <SquarePen className="w-4 h-4 text-[#94a3b8]" />
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
