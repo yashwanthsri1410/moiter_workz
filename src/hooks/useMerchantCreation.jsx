@@ -8,14 +8,16 @@ const UseMerchantCreation = () => {
   const createdBy = JSON.parse(localStorage.getItem("userData"))?.username;
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const businessHours = Object.values(formData?.businessHours);
-    const obj = formData?.paymentConfig?.paymentType;
+    const businessHours = Object.values(formData?.businessHours || {});
+    const obj = formData?.paymentConfig?.paymentType || {};
     const mdrMode = formData?.paymentConfig?.mdrType;
     const mdrValue = Number(formData?.paymentConfig?.mdrValue);
     const termsAndConditions = formData?.termsAndConditions;
+
     const paymentType = Object.keys(obj)
-      .filter((key) => obj?.[key] && key !== "all") // keep keys with true value, exclude 'all'
+      .filter((key) => obj?.[key] && key !== "all")
       .join(", ");
+
     if (Object.keys(obj).length === 0) {
       alert("Please select any one of payment type");
       return;
@@ -27,9 +29,13 @@ const UseMerchantCreation = () => {
 
     const payload = {
       partnerId: 1,
-      latitude: 5650,
-      longitude: 6560,
-      fullAddress: "Chennai, Thirumullaivoyil",
+      latitude: formData?.basicInfo?.latitude
+        ? Number(formData.basicInfo.latitude)
+        : null, // ✅ Convert to number or null
+      longitude: formData?.basicInfo?.longitude
+        ? Number(formData.basicInfo.longitude)
+        : null,
+      fullAddress: formData?.basicInfo?.fullAddress || "",
       fileFormat: "",
       createdBy,
       termsAndConditions,
@@ -40,15 +46,27 @@ const UseMerchantCreation = () => {
       mdrMode,
       mdrValue,
     };
-    const res = await merchantOnboarding(payload);
-    const isOnboarded = res.data.message.includes("onboarded successfully");
-    if (isOnboarded) {
-      alert("Merchant Onboarded Successfully");
+    try {
+      const res = await merchantOnboarding(payload);
+      // console.log("Merchant onboarding response:", res);
+
+      const message = res?.data?.message || res?.data?.status || "";
+      const isOnboarded = typeof message === "string" && message.includes("onboarded successfully");
+
+      if (isOnboarded) {
+        alert("Merchant Onboarded Successfully");
+      } else {
+        alert(`Unexpected response: ${message || "No message from server"}`);
+      }
+    } catch (error) {
+      console.error("Onboarding error:", error);
+      alert("Merchant onboarding failed. Please try again.");
     }
   };
+
   const fetchData = async () => {
     const res = await getMerchantDetails();
-    setMerchantData(res.data);
+    setMerchantData(res?.data);
   };
 
   useEffect(() => {

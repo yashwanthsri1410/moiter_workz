@@ -1,113 +1,262 @@
-// import React, { useState } from "react";
-// import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
-// import "leaflet/dist/leaflet.css";
-// import { Search, MapPin } from "lucide-react";
-// import L from "leaflet";
+import React, { useEffect, useRef, useState } from "react";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import axios from "axios";
+import { MapPin, Search, Globe, MapPinCheck } from "lucide-react";
+import { useMerchantFormStore } from "../../../store/merchantFormStore";
+export default function LocationPicker() {
+  const mapRef = useRef(null);
+  const markerRef = useRef(null);
+  const { formData, updateForm } = useMerchantFormStore();
+  const [latitude, setLatitude] = useState(formData.basicInfo.latitude || 11.9526);
+  const [longitude, setLongitude] = useState(formData.basicInfo.longitude || 79.7966);
+  const [address, setAddress] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [mapMode, setMapMode] = useState("satellite");
+  // Define map layers
+  useEffect(() => {
+    if (latitude && longitude) {
+      updateForm("basicInfo", "latitude", latitude);
+      updateForm("basicInfo", "longitude", longitude);
+      updateForm("basicInfo", "fullAddress", address);
+    }
+  }, [latitude, longitude, address, updateForm]);
+  const satelliteLayer = useRef(
+    L.tileLayer(
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      {
+        maxZoom: 19,
+        attribution:
+          'Tiles © <a href="https://www.esri.com/">Esri</a> — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, IGN, IGP',
+      }
+    )
+  );
 
-// // Fix default marker icon issues in Leaflet
-// delete L.Icon.Default.prototype._getIconUrl;
-// L.Icon.Default.mergeOptions({
-//   iconRetinaUrl:
-//     "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-//   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-//   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-// });
+  const streetLayer = useRef(
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "&copy; OpenStreetMap contributors",
+    })
+  );
 
-// const locationInstructions = [
-//   "Search for your address using the search bar above",
-//   "Or click anywhere on the map to place a marker",
-//   "Drag the marker to adjust the exact location",
-// ];
+  const labelsLayer = useRef(
+    L.tileLayer(
+      "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}.png",
+      { subdomains: "abcd", maxZoom: 19 }
+    )
+  );
 
-// // Move MapClickHandler OUTSIDE the main component
-// const MapClickHandler = ({ setMarkerPosition }) => {
-//   useMapEvents({
-//     click(e) {
-//       setMarkerPosition([e.latlng.lat, e.latlng.lng]);
-//     },
-//   });
-//   return null;
-// };
+  // Initialize map
+  useEffect(() => {
+    mapRef.current = L.map("map", {
+      center: [latitude, longitude],
+      zoom: 13,
+      layers: [satelliteLayer.current, labelsLayer.current],
+    });
 
-// const LocationPicker = () => {
-//   const [formData, setFormData] = useState({ search: "" });
-//   const [markerPosition, setMarkerPosition] = useState(null);
+    markerRef.current = L.marker([latitude, longitude], { draggable: true })
+      .addTo(mapRef.current)
+      .bindPopup("Selected Location")
+      .openPopup();
 
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormData({ ...formData, [name]: value });
-//   };
+    // Handle marker drag
+    markerRef.current.on("dragend", async () => {
+      const { lat, lng } = markerRef.current.getLatLng();
+      const latNum = Number(lat.toFixed(6));
+      const lngNum = Number(lng.toFixed(6));
+      setLatitude(latNum);
+      setLongitude(lngNum);
 
-//   return (
-//     <div className="space-y-3">
-//       {/* Label */}
-//       <label className="flex items-center gap-2 text-sm font-medium text-chart-5 select-none">
-//         <MapPin className="w-4 h-4" />
-//         Select Location on Map
-//       </label>
+      await fetchAddress(latNum, lngNum);
+      // ✅ update store
+      updateForm("basicInfo", "latitude", latNum);
+      updateForm("basicInfo", "longitude", lngNum);
+    });
 
-//       {/* Search Input */}
-//       <div className="flex gap-2 flex-col md:flex-row">
-//         <div className="relative flex-1">
-//           <Search className="absolute left-3 top-1/2 w-4 h-4 text-muted-foreground transform -translate-y-1/2" />
-//           <input
-//             type="text"
-//             name="search"
-//             value={formData.search}
-//             onChange={handleChange}
-//             placeholder="Search for address, city, landmark..."
-//             className="flex h-9 w-full rounded-md border px-3 py-1 pl-10 text-base text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary"
-//           />
-//         </div>
-//         <button
-//           type="button"
-//           disabled={!formData.search}
-//           className="inline-flex items-center gap-2 rounded-md bg-chart-5 px-4 py-2 text-white hover:bg-chart-5/80 disabled:opacity-50 disabled:pointer-events-none"
-//         >
-//           <Search className="w-4 h-4" />
-//           Search
-//         </button>
-//       </div>
+    // Handle map click
+    mapRef.current.on("click", async (e) => {
+      const { lat, lng } = e.latlng;
+      const latNum = Number(lat.toFixed(6));
+      const lngNum = Number(lng.toFixed(6));
 
-//       {/* Leaflet Map */}
-//       <div className="w-full h-96 rounded-lg border border-border overflow-hidden">
-//         <MapContainer
-//           center={[20, 77]}
-//           zoom={5}
-//           style={{ height: "100%", width: "100%" }}
-//         >
-//           <TileLayer
-//             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-//             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
-//           />
-//           {markerPosition && <Marker position={markerPosition} />}
-//           {/* Correctly render the click handler */}
-//           <MapClickHandler setMarkerPosition={setMarkerPosition} />
-//         </MapContainer>
-//       </div>
+      markerRef.current.setLatLng([latNum, lngNum]);
+      setLatitude(latNum);
+      setLongitude(lngNum);
 
-//       {/* Instructions */}
-//       <div className="flex items-start gap-2 p-3 rounded-lg bg-chart-5/5 border border-chart-5/20">
-//         <MapPin className="w-4 h-4 text-chart-5 mt-0.5 flex-shrink-0" />
-//         <div className="text-sm text-muted-foreground">
-//           <p className="text-chart-5 font-medium mb-1">
-//             How to select location:
-//           </p>
-//           <ul className="list-disc list-inside space-y-1">
-//             {locationInstructions.map((item, idx) => (
-//               <li key={idx}>{item}</li>
-//             ))}
-//           </ul>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
+      await fetchAddress(latNum, lngNum);
+    });
 
-// export default LocationPicker;
+    fetchAddress(latitude, longitude);
 
-const LocationPicker = () => {
-  return <div>LocationPicker</div>;
-};
+    return () => mapRef.current.remove();
+  }, []);
 
-export default LocationPicker;
+  // Toggle map view instantly
+  const toggleMapMode = () => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    if (mapMode === "satellite") {
+      map.removeLayer(satelliteLayer.current);
+      map.removeLayer(labelsLayer.current);
+      streetLayer.current.addTo(map);
+      setMapMode("street");
+    } else {
+      map.removeLayer(streetLayer.current);
+      satelliteLayer.current.addTo(map);
+      labelsLayer.current.addTo(map);
+      setMapMode("satellite");
+    }
+  };
+  const fetchAddress = async (lat, lng) => {
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+      );
+      const data = await res.json();
+      const fullAddress = data.display_name || "Unknown location";
+
+      setAddress(fullAddress);
+
+      // ✅ Save to global form store
+      updateForm("basicInfo", "latitude", lat);
+      updateForm("basicInfo", "longitude", lng);
+      updateForm("basicInfo", "fullAddress", fullAddress);
+    } catch (err) {
+      console.error("Error fetching address:", err);
+    }
+  };
+
+  // Manual lat/lon input update
+  const handleLatLonChange = async () => {
+    if (!latitude || !longitude) return;
+    const lat = parseFloat(latitude);
+    const lng = parseFloat(longitude);
+    mapRef.current.setView([lat, lng], 15);
+    markerRef.current.setLatLng([lat, lng]);
+    await fetchAddress(lat, lng);
+  };
+
+  // Handle address search
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+    try {
+      const res = await axios.get(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          searchQuery
+        )}`
+      );
+      if (res.data.length > 0) {
+        const { lat, lon, display_name } = res.data[0];
+        setLatitude(parseFloat(lat).toFixed(6));
+        setLongitude(parseFloat(lon).toFixed(6));
+        setAddress(display_name);
+        mapRef.current.setView([lat, lon], 15);
+        markerRef.current.setLatLng([lat, lon]);
+      } else {
+        alert("Location not found");
+      }
+    } catch (error) {
+      console.error("Search failed:", error);
+    }
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  return (
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <label className="flex items-center gap-2 text-sm font-medium text-[var(--primary-color)]">
+          <MapPin className="w-4 h-4" />
+          Select Location ({mapMode === "satellite" ? "Satellite" : "Street"} View)
+        </label>
+      </div>
+
+      {/* Lat/Lon Inputs */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="text-sm font-medium">Latitude</label>
+          <input
+            type="text"
+            value={latitude}
+            onChange={(e) => setLatitude(e.target.value)}
+            onBlur={handleLatLonChange}
+            className="form-input"
+            placeholder="e.g., 19.0760"
+          />
+        </div>
+        <div>
+          <label className="text-sm font-medium">Longitude</label>
+          <input
+            type="text"
+            value={longitude}
+            onChange={(e) => setLongitude(e.target.value)}
+            onBlur={handleLatLonChange}
+            className="form-input"
+            placeholder="e.g., 72.8777"
+          />
+        </div>
+      </div>
+
+      {/* Search Input */}
+      <div className="flex gap-2">
+        <input
+          type="text"
+          placeholder="Search for address, city, or landmark..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="form-input"
+        />
+        <button
+          onClick={handleSearch}
+          className="bg-[var(--primary-color)] flex items-center gap-2 border border-[var(--borderBg-color)] text-xs font-semibold py-2 px-3 rounded-lg hover:opacity-80"
+        >
+          <Search className="w-4 h-4" /> Search
+        </button>
+      </div>
+
+      {/* Map Section */}
+      <div className="relative">
+        {/* 🌍 Small floating toggle button */}
+        <button
+          onClick={toggleMapMode}
+          className="absolute top-3 right-3 z-[1000] bg-gray-900/80 hover:bg-gray-800 text-white rounded-full p-2 shadow-lg transition"
+          title={`Switch to ${mapMode === "satellite" ? "Street" : "Satellite"
+            } View`}
+        >
+          <Globe className="w-5 h-5" />
+        </button>
+
+        <div
+          id="map"
+          className="w-full h-96 rounded-lg border border-gray-700 overflow-hidden"
+        ></div>
+      </div>
+
+      {/* Address Display */}
+      {address && (
+        <div className="p-3 rounded-lg bg-green-500/5">
+          <div className="flex items-center gap-2 text-[var(--primary-color)] mb-1">
+            <MapPinCheck className="w-4 h-4" />
+            <h3 className="font-semibold text-sm">Selected Location</h3>
+          </div>
+          <p className="text-xs ps-5">{address}</p>
+        </div>
+      )}
+    </div>
+  );
+}
