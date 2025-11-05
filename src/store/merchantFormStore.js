@@ -5,7 +5,11 @@ import { getPinCodeDetails } from "../services/service";
 
 export const useMerchantFormStore = create((set) => ({
   formData: {
-    basicInfo: { idProof: "", addressProof: "" },
+    basicInfo: {
+      idProof: "", addressProof: "", latitude: "",
+      longitude: "",
+      fullAddress: "",
+    },
     businessHours: initialSchedule,
     kycInfo: {},
     paymentConfig: {
@@ -23,9 +27,23 @@ export const useMerchantFormStore = create((set) => ({
     set((state) => ({
       formData: {
         ...state.formData,
-        [section]: { ...state.formData[section], [key]: value },
+        [section]: {
+          ...state.formData[section],
+          [key]: value,
+        },
       },
     })),
+
+
+  updateBasicInfo: (key, value) =>
+    set((state) => ({
+
+      formData: {
+        ...state.formData,
+        basicInfo: { ...state.formData.basicInfo, [key]: value },
+      },
+    })),
+
 
   updatePinCode: async (pinCode) => {
     set((state) => ({
