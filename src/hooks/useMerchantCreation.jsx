@@ -49,17 +49,16 @@ const UseMerchantCreation = () => {
       const merchantId = updatedMerchantData?.merchantId;
       const res = await updateMerchantDetails({ ...payload, merchantId });
       const isUpdated = res?.data?.status === "SUCCESS";
-      console.log(res);
 
       if (isUpdated) {
         alert("Merchant details updated Successfully");
         setUpdatedMerchantData("");
         resetForm();
       }
-      console.log(res);
     } else {
       const res = await merchantOnboarding(payload);
-      const isOnboarded = res?.message?.status === "success";
+      const isOnboarded =
+        res?.message?.status === "success" || res?.data?.message?.status;
       if (isOnboarded) {
         alert("Merchant Onboarded Successfully");
         resetForm();
