@@ -1,3 +1,13 @@
+export const daysOfWeek = [
+  { name: "monday" },
+  { name: "tuesday" },
+  { name: "wednesday" },
+  { name: "thursday" },
+  { name: "friday" },
+  { name: "saturday" },
+  { name: "sunday" },
+];
+
 export const samplePinData = {
   560001: { city: "Bangalore", state: "Karnataka" },
   110001: { city: "New Delhi", state: "Delhi" },
@@ -19,16 +29,6 @@ export const locationInstructions = [
   "Search for your address using the search bar above",
   "Or click anywhere on the map to place a marker",
   "Drag the marker to adjust the exact location",
-];
-
-export const daysOfWeek = [
-  { name: "monday" },
-  { name: "tuesday" },
-  { name: "wednesday" },
-  { name: "thursday" },
-  { name: "friday" },
-  { name: "saturday" },
-  { name: "sunday" },
 ];
 
 export const buttonOptions = [
@@ -65,9 +65,14 @@ export const kycUploads = [
     note: "Upload agreement copy - PDF, JPG, PNG - Max 5MB",
   },
   {
-    label: "ID and Address Proof",
+    label: "ID Proof",
     name: "idProof",
-    note: "Choose and upload ID & address proof - PDF, JPG, PNG - Max 5MB",
+    note: "Choose and upload ID proof - PDF, JPG, PNG - Max 5MB",
+  },
+  {
+    label: "Address Proof",
+    name: "addressProof",
+    note: "Choose and upload address proof - PDF, JPG, PNG - Max 5MB",
   },
 ];
 

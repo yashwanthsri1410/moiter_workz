@@ -1,22 +1,40 @@
 import { Clock, ChevronRight } from "lucide-react";
 import { daysOfWeek } from "../../../constants/merchantForm";
 import { useMerchantFormStore } from "../../../store/merchantFormStore";
+import { useEffect } from "react";
 
 const BusinessHours = () => {
-  const { formData, updateBusinessHours } = useMerchantFormStore();
+  const { formData, updateBusinessHours, updatedMerchantData } =
+    useMerchantFormStore();
   const { businessHours } = formData;
 
-  const handleToggle = (day) => {
-    const { isClosed } = businessHours[day];
-    const newIsClosed = !isClosed;
-    updateBusinessHours(day, "isClosed", newIsClosed);
+  useEffect(() => {
+    if (Array.isArray(updatedMerchantData?.businessHours)) {
+      updatedMerchantData.businessHours.forEach((item) => {
+        const day = item.day_of_week || ""; // fallback
+        if (!day) return; // skip invalid entries
 
+        // ✅ Defensive normalization
+        const isClosed = item.is_closed === true; // treat null/false/undefined as false
+        const open = item.open_time ? item.open_time.slice(0, 5) : "";
+        const close = item.close_time ? item.close_time.slice(0, 5) : "";
+
+        updateBusinessHours(day, "isClosed", isClosed);
+        updateBusinessHours(day, "open", open);
+        updateBusinessHours(day, "close", close);
+      });
+    }
+  }, [updatedMerchantData, updateBusinessHours]);
+
+  const handleToggle = (day) => {
+    const current = businessHours[day]?.isClosed ?? true; // default closed if undefined/null
+    const newIsClosed = !current;
+
+    updateBusinessHours(day, "isClosed", newIsClosed);
     if (newIsClosed) {
-      // Mark as closed → clear times
       updateBusinessHours(day, "open", "");
       updateBusinessHours(day, "close", "");
     } else {
-      // Reopen → default times
       updateBusinessHours(day, "open", "09:00");
       updateBusinessHours(day, "close", "18:00");
     }
@@ -38,8 +56,11 @@ const BusinessHours = () => {
 
       <div className="space-y-3 mt-3">
         {daysOfWeek.map((day) => {
-          // safe destructure with defaults
-          const { isClosed, open, close } = businessHours?.[day.name] || {};
+          const {
+            isClosed = true,
+            open = "",
+            close = "",
+          } = businessHours?.[day.name] || {}; // ✅ default closed
 
           return (
             <div

@@ -76,6 +76,24 @@ const postRequest = async (endpoint, payload) => {
   }
 };
 
+// Generic PUT request
+const putRequest = async (endpoint, payload) => {
+  try {
+    const response = await api.put(endpoint, payload);
+    return response;
+  } catch (error) {
+    // Check if it's an Axios error
+    if (error.response) {
+      // Return the error response so frontend can inspect it
+      return error.response;
+    } else {
+      // Network error
+      alert("Something went wrong. Please try again later");
+      return { data: null, status: 0 };
+    }
+  }
+};
+
 // Generic GET request
 
 const getRequest = async (endpoint) => {
@@ -100,7 +118,7 @@ export const getMerchantDetails = () =>
   getRequest(`${path}/Product/viewOnboardedMerchants`);
 
 export const updateMerchantDetails = (payload) =>
-  postRequest(`${path}/Product/update-merchant`, {
+  putRequest(`${path}/Product/update-merchant`, {
     ...payload,
     logId: uuidv4(),
   });

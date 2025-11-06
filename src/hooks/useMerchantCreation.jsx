@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
-import { getMerchantDetails, merchantOnboarding } from "../services/service";
+import {
+  getMerchantDetails,
+  merchantOnboarding,
+  updateMerchantDetails,
+} from "../services/service";
 import { useMerchantFormStore } from "../store/merchantFormStore";
 
 const UseMerchantCreation = () => {
-  const { formData } = useMerchantFormStore();
+  const { formData, updatedMerchantData, resetForm, setUpdatedMerchantData } =
+    useMerchantFormStore();
   const [merchantData, setMerchantData] = useState();
   const createdBy = JSON.parse(localStorage.getItem("userData"))?.username;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const businessHours = Object.values(formData?.businessHours || {});
@@ -29,13 +35,6 @@ const UseMerchantCreation = () => {
 
     const payload = {
       partnerId: 1,
-      latitude: formData?.basicInfo?.latitude
-        ? Number(formData.basicInfo.latitude)
-        : null, // ✅ Convert to number or null
-      longitude: formData?.basicInfo?.longitude
-        ? Number(formData.basicInfo.longitude)
-        : null,
-      fullAddress: formData?.basicInfo?.fullAddress || "",
       fileFormat: "",
       createdBy,
       termsAndConditions,
@@ -46,21 +45,25 @@ const UseMerchantCreation = () => {
       mdrMode,
       mdrValue,
     };
-    try {
+    if (Object.keys(updatedMerchantData).length > 0) {
+      const merchantId = updatedMerchantData?.merchantId;
+      const res = await updateMerchantDetails({ ...payload, merchantId });
+      const isUpdated = res?.data?.status === "SUCCESS";
+      console.log(res);
+
+      if (isUpdated) {
+        alert("Merchant details updated Successfully");
+        setUpdatedMerchantData("");
+        resetForm();
+      }
+      console.log(res);
+    } else {
       const res = await merchantOnboarding(payload);
-      // console.log("Merchant onboarding response:", res);
-
-      const message = res?.data?.message || res?.data?.status || "";
-      const isOnboarded = typeof message === "string" && message.includes("onboarded successfully");
-
+      const isOnboarded = res?.message?.status === "success";
       if (isOnboarded) {
         alert("Merchant Onboarded Successfully");
-      } else {
-        alert(`Unexpected response: ${message || "No message from server"}`);
+        resetForm();
       }
-    } catch (error) {
-      console.error("Onboarding error:", error);
-      alert("Merchant onboarding failed. Please try again.");
     }
   };
 

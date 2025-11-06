@@ -11,7 +11,6 @@ const BasicInfo = () => {
     updatedMerchantData,
   } = useMerchantFormStore();
   const { basicInfo } = formData;
-  console.log(updatedMerchantData);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,6 +29,8 @@ const BasicInfo = () => {
 
     updateForm("basicInfo", name, value);
   };
+
+  console.log(formData);
 
   return (
     <>
@@ -77,6 +78,8 @@ const BasicInfo = () => {
           name="email"
           type="email"
           placeholder="merchant@example.com"
+          readOnly={updatedMerchantData.email}
+          disabled={updatedMerchantData.email}
           value={basicInfo.email || updatedMerchantData.email || ""}
           onChange={handleChange}
         />
@@ -123,7 +126,7 @@ const BasicInfo = () => {
           <Label text="City" />
           <select
             name="city"
-            value={basicInfo.city || ""}
+            value={(basicInfo.city || updatedMerchantData?.city || "").trim()}
             onChange={handleChange}
             className="form-input w-full"
             required
@@ -131,8 +134,21 @@ const BasicInfo = () => {
             <option value="" disabled hidden>
               Select City
             </option>
+
+            {pinData.length === 0 && (
+              <option
+                value={(
+                  basicInfo.city ||
+                  updatedMerchantData?.city ||
+                  ""
+                ).trim()}
+              >
+                {(basicInfo.city || updatedMerchantData?.city || "").trim()}
+              </option>
+            )}
+
             {pinData.map((city) => (
-              <option key={city} value={city}>
+              <option key={city} value={city.trim()}>
                 {city}
               </option>
             ))}
@@ -142,7 +158,7 @@ const BasicInfo = () => {
         <InputField
           label="State"
           name="state"
-          value={basicInfo.state || stateName || ""}
+          value={basicInfo.state || updatedMerchantData?.state || ""}
           readOnly
         />
       </div>

@@ -1,10 +1,10 @@
-import { FileText } from "lucide-react";
+import { FileText, Eye } from "lucide-react";
 import { kycTypes, kycUploads } from "../../../constants/merchantForm";
 import { fileToBase64 } from "../../../helper";
 import { useMerchantFormStore } from "../../../store/merchantFormStore";
 
 const KYCInfo = () => {
-  const { formData, updateForm } = useMerchantFormStore();
+  const { formData, updateForm, updatedMerchantData } = useMerchantFormStore();
   const { kycInfo } = formData;
 
   const handleChange = async (e) => {
@@ -16,6 +16,18 @@ const KYCInfo = () => {
     } else {
       updateForm("kycInfo", name, value);
     }
+  };
+
+  const openFile = (base64, fileName = "document.pdf") => {
+    const link = document.createElement("a");
+    link.href = `data:application/pdf;base64,${base64}`;
+    link.download = fileName;
+    link.click();
+  };
+
+  const getFileValue = (name) => {
+    // priority: updated formData > existing merchant data
+    return kycInfo[name] || updatedMerchantData?.[name] || "";
   };
 
   return (
@@ -32,7 +44,7 @@ const KYCInfo = () => {
           </label>
           <select
             name="kycType"
-            value={kycInfo.kycType || ""}
+            value={kycInfo.kycType || updatedMerchantData?.kycType || ""}
             onChange={handleChange}
             className="form-input w-full"
             required
@@ -48,22 +60,37 @@ const KYCInfo = () => {
           </select>
         </div>
 
-        {kycUploads.map((file) => (
-          <div key={file.name} className="form-group flex flex-col">
-            <label className="flex items-center gap-2 text-sm font-medium text-chart-5 mb-1">
-              {file.label}
-            </label>
-            <input
-              style={{ paddingBottom: "28px", paddingTop: "4px" }}
-              type="file"
-              name={file.name}
-              onChange={handleChange}
-              accept=".pdf,.jpg,.png"
-              className="form-input"
-            />
-            <p className="text-[10px] text-[#94a3b8] mt-1">{file.note}</p>
-          </div>
-        ))}
+        {kycUploads.map((file) => {
+          const fileValue = getFileValue(file.name);
+          return (
+            <div key={file.name} className="form-group flex flex-col relative">
+              <label className="flex items-center gap-2 text-sm font-medium text-chart-5 mb-1">
+                {file.label}
+              </label>
+              <input
+                style={{ paddingBottom: "28px", paddingTop: "4px" }}
+                type="file"
+                name={file.name}
+                required={!fileValue}
+                onChange={handleChange}
+                accept=".pdf,.jpg,.png"
+                className="form-input"
+              />
+              {!kycInfo[file.name] && getFileValue(file.name) && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    openFile(getFileValue(file.name), file.name + ".pdf")
+                  }
+                  className="absolute right-2 top-8 flex items-center gap-1 text-blue-600 text-sm"
+                >
+                  <Eye className="w-4 h-4" /> Preview
+                </button>
+              )}
+              <p className="text-[10px] text-[#94a3b8] mt-1">{file.note}</p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { daysOfWeek } from "../constants/merchantForm";
 
-export const initialSchedule = daysOfWeek.reduce((acc, day) => {
+const initialSchedule = daysOfWeek.reduce((acc, day) => {
   const isClosed = day.name === "sunday"; // Sunday closed by default
 
   acc[day.name] = {
@@ -13,11 +13,29 @@ export const initialSchedule = daysOfWeek.reduce((acc, day) => {
   return acc;
 }, {});
 
+export const initialFormData = {
+  basicInfo: {
+    idProof: "",
+    addressProof: "",
+    latitude: 11.9526,
+    longitude: 79.7966,
+    fullAddress: "",
+  },
+  businessHours: initialSchedule,
+  kycInfo: {},
+  paymentConfig: {
+    paymentType: {},
+    mdrType: "Percentage",
+    mdrValue: "",
+  },
+  termsAndConditions: false,
+};
+
 export const fileToBase64 = (file) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
+    reader.onload = () => resolve(reader.result.split(",")[1]); // strip "data:...base64,"
     reader.onerror = (error) => reject(error);
   });
 };
