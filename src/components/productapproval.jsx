@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import Productview from "./productview";
 import { paginationStyle } from "../constants";
+import { getPendingProductData } from "../services/service";
 
 export default function ProductApproval() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -65,9 +66,7 @@ export default function ProductApproval() {
 
   const fetchConfigurations = async () => {
     try {
-      const res = await axios.get(
-        `${API_BASE_URL}/fes/api/Export/product_Config_export`
-      );
+      const res = await getPendingProductData();
       setConfigurations(res.data);
     } catch (err) {
       console.error("Error fetching configurations:", err);
@@ -222,11 +221,10 @@ export default function ProductApproval() {
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
-                  currentPage === 1
+                className={`w-6 h-6 flex items-center justify-center rounded-md transition ${currentPage === 1
                     ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
                     : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
-                }`}
+                  }`}
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -240,11 +238,10 @@ export default function ProductApproval() {
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
-                  currentPage === totalPages
+                className={`w-6 h-6 flex items-center justify-center rounded-md transition ${currentPage === totalPages
                     ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
                     : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
-                }`}
+                  }`}
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -282,17 +279,16 @@ export default function ProductApproval() {
                         <td>{cfg.productName}</td>
                         <td>
                           <span
-                            className={`px-2 py-1 rounded text-[10px] ${
-                              cfg.programType === "Closed"
+                            className={`px-2 py-1 rounded text-[10px] ${cfg.programType === "Closed"
                                 ? "checker"
                                 : cfg.programType === "Semi-Closed"
-                                ? "infra"
-                                : cfg.programType === "Open"
-                                ? "superuser"
-                                : cfg.programType === "open"
-                                ? "maker"
-                                : ""
-                            }`}
+                                  ? "infra"
+                                  : cfg.programType === "Open"
+                                    ? "superuser"
+                                    : cfg.programType === "open"
+                                      ? "maker"
+                                      : ""
+                              }`}
                           >
                             {cfg.programType}
                           </span>
@@ -304,17 +300,16 @@ export default function ProductApproval() {
                         </td>
                         <td>
                           <span
-                            className={`px-2 py-1 rounded text-[10px] ${
-                              cfg.status === 0
+                            className={`px-2 py-1 rounded text-[10px] ${cfg.status === 0
                                 ? "checker"
                                 : cfg.status === 1
-                                ? "infra"
-                                : cfg.status === 2
-                                ? "superuser"
-                                : cfg.status === 3
-                                ? "maker"
-                                : ""
-                            }`}
+                                  ? "infra"
+                                  : cfg.status === 2
+                                    ? "superuser"
+                                    : cfg.status === 3
+                                      ? "maker"
+                                      : ""
+                              }`}
                           >
                             {getStatusLabel(cfg.status)}
                           </span>

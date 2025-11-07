@@ -1,21 +1,17 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import usePublicIp from "../hooks/usePublicIp";
 import {
   ArrowLeft,
-  LayoutGrid,
   Monitor,
   Pencil,
   Plus,
-  ScreenShareIcon,
   Search,
   Settings,
-  X,
 } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import GuidelinesCard from "./reusable/guidelinesCard";
 import { screenGuidelines } from "../constants/guidelines";
 import customConfirm from "./reusable/CustomConfirm";
+import { getModuleData, getScreenData, ScreenCreate, ScreenUpdate } from "../services/service";
 
 export default function ScreenManagement({ onBack }) {
   const [modules, setModules] = useState([]);
@@ -26,9 +22,6 @@ export default function ScreenManagement({ onBack }) {
   const [editId, setEditId] = useState(null);
   const [editText, setEditText] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-  const ip = usePublicIp();
-  const username = localStorage.getItem("username") || "guest";
 
   // Function to validate input - allows only letters, spaces, and hyphens
   const validateInput = (input) => {
@@ -44,7 +37,9 @@ export default function ScreenManagement({ onBack }) {
 
   const fetchModules = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/fes/api/Export/modules`);
+      // const res = await axios.get(`${API_BASE_URL}/fes/api/Export/modules`);
+
+      const res = await getModuleData();
       setModules(res.data || []);
     } catch (err) {
       console.error("Failed to fetch modules:", err);
@@ -53,7 +48,7 @@ export default function ScreenManagement({ onBack }) {
 
   const fetchScreens = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/fes/api/Export/screens`);
+      const res = await getScreenData()
       setScreens(res.data || []);
     } catch (err) {
       console.error("Failed to fetch screens:", err);
@@ -78,36 +73,19 @@ export default function ScreenManagement({ onBack }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-     const confirmAction = await customConfirm("Are you sure you want to continue?");
+    const confirmAction = await customConfirm("Are you sure you want to continue?");
     if (!confirmAction) return;
     if (!selectedModuleId || !screenName.trim()) {
       return alert("Please select a module and enter screen name");
     }
 
-    const now = new Date().toISOString();
     const payload = {
       moduleId: Number(selectedModuleId),
       screenDescription: screenName.trim(),
-      logId: uuidv4(),
-      metadata: {
-        ipAddress: ip,
-        userAgent: navigator.userAgent,
-        headers: "N/A",
-        channel: "web",
-        auditMetadata: {
-          createdBy: username,
-          createdDate: now,
-          modifiedBy: username,
-          modifiedDate: now,
-        },
-      },
     };
 
     try {
-      await axios.post(
-        `${API_BASE_URL}/ums/api/UserManagement/screen_create`,
-        payload
-      );
+      await ScreenCreate(payload);
       setScreenName("");
       fetchScreens();
       setShowForm(false);
@@ -129,9 +107,6 @@ export default function ScreenManagement({ onBack }) {
 
   const handleSaveEdit = async (screen) => {
     if (!editText.trim()) return alert("Screen name cannot be empty");
-
-    const now = new Date().toISOString();
-
     const payload = {
       screenId: screen.screenId,
       logId:
@@ -139,24 +114,9 @@ export default function ScreenManagement({ onBack }) {
           ? screen.logId // reuse existing
           : uuidv4(), // fallback new UUID
       newDescription: editText.trim(),
-      metadata: {
-        ipAddress: ip,
-        userAgent: navigator.userAgent,
-        headers: "N/A",
-        channel: "web",
-        auditMetadata: {
-          createdBy: username,
-          createdDate: now,
-          modifiedBy: username,
-          modifiedDate: now,
-        },
-      },
     };
     try {
-      await axios.put(
-        `${API_BASE_URL}/ums/api/UserManagement/screen_update`,
-        payload
-      );
+      await ScreenUpdate(payload)
       handleCancelEdit();
       fetchScreens();
     } catch (err) {

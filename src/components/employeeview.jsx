@@ -38,61 +38,110 @@ export default function EmployeeView({
     setRemarks(selectedEmployee.remarks || "");
     setShowModal(true);
   };
+  // const submitAction = async () => {
+  //   const confirmAction = await customConfirm("Are you sure you want to continue?");
+  //   if (!confirmAction) return;
+  //   const storedUsername = localStorage.getItem("username");
+  //   try {
+  //     // Only block Recheck action if employee is not pending
+  //     if (currentAction === 3 && selectedEmployee.status !== 1) {
+  //       alert("Recheck action is only allowed for pending employees.");
+  //       return;
+  //     }
+
+  //     // Require remarks for Reject or Recheck
+  //     if (
+  //       (currentAction === 2 || currentAction === 3) &&
+  //       remarks.trim() === ""
+  //     ) {
+  //       alert("Remarks are required for this action.");
+  //       return;
+  //     }
+
+  //     const payload = {
+  //       name: selectedEmployee.userName,
+  //       logId: selectedEmployee.logId,
+  //       checker: storedUsername,
+  //       actionStatus: currentAction,
+  //       remarks: remarks,
+  //       metadata: {
+  //         ipAddress: window.location.hostname,
+  //         userAgent: navigator.userAgent,
+  //         channel: "web",
+  //         auditMetadata: {
+  //           createdBy: storedUsername,
+  //           createdDate: new Date().toISOString(),
+  //           modifiedBy: storedUsername,
+  //           modifiedDate: new Date().toISOString(),
+  //         },
+  //       },
+  //     };
+  //     await axios.post(
+  //       `${API_BASE_URL}/ums/api/UserManagement/ApproveEmployee`,
+  //       payload
+  //     );
+
+  //     alert("Employee action submitted successfully!");
+  //     setShowModal(false);
+  //     setRemarks("");
+  //     fetchConfigurations();
+  //   } catch (err) {
+  //     console.error("Error submitting employee action:", err.response || err);
+  //     alert(
+  //       "Approval not permitted for users in Recheck status. Please ensure Maker review is completed first."
+  //     );
+  //     setShowModal(false);
+  //   }
+  // };
+
   const submitAction = async () => {
-    const confirmAction = await customConfirm("Are you sure you want to continue?");
-    if (!confirmAction) return;
-    const storedUsername = localStorage.getItem("username");
-    try {
-      // Only block Recheck action if employee is not pending
-      if (currentAction === 3 && selectedEmployee.status !== 1) {
-        alert("Recheck action is only allowed for pending employees.");
-        return;
-      }
+  const confirmAction = await customConfirm("Are you sure you want to continue?");
+  if (!confirmAction) return;
 
-      // Require remarks for Reject or Recheck
-      if (
-        (currentAction === 2 || currentAction === 3) &&
-        remarks.trim() === ""
-      ) {
-        alert("Remarks are required for this action.");
-        return;
-      }
+  const storedUsername = localStorage.getItem("username");
 
-      const payload = {
-        name: selectedEmployee.userName,
-        logId: selectedEmployee.logId,
-        checker: storedUsername,
-        actionStatus: currentAction,
-        remarks: remarks,
-        metadata: {
-          ipAddress: window.location.hostname,
-          userAgent: navigator.userAgent,
-          channel: "web",
-          auditMetadata: {
-            createdBy: storedUsername,
-            createdDate: new Date().toISOString(),
-            modifiedBy: storedUsername,
-            modifiedDate: new Date().toISOString(),
-          },
-        },
-      };
-      await axios.post(
-        `${API_BASE_URL}/ums/api/UserManagement/ApproveEmployee`,
-        payload
-      );
+  try {
+    // Validation
+    if (currentAction === 3 && selectedEmployee.status !== 1) {
+      alert("Recheck action is only allowed for pending employees.");
+      return;
+    }
 
+    if ((currentAction === 2 || currentAction === 3) && remarks.trim() === "") {
+      alert("Remarks are required for this action.");
+      return;
+    }
+
+    // Payload for service
+    const payload = {
+      name: selectedEmployee.userName,
+      logId: selectedEmployee.logId,
+      checker: storedUsername,
+      actionStatus: currentAction,
+      remarks,
+    };
+
+    // Trigger the service function
+    const response = await approveEmployeeAction(payload);
+
+    if (response?.status === 200) {
       alert("Employee action submitted successfully!");
       setShowModal(false);
       setRemarks("");
       fetchConfigurations();
-    } catch (err) {
-      console.error("Error submitting employee action:", err.response || err);
+    } else {
       alert(
-        "Approval not permitted for users in Recheck status. Please ensure Maker review is completed first."
+        response?.data?.message ||
+          "Approval not permitted for users in Recheck status. Please ensure Maker review is completed first."
       );
       setShowModal(false);
     }
-  };
+  } catch (err) {
+    console.error("Error submitting employee action:", err);
+    alert("Something went wrong while submitting the action.");
+    setShowModal(false);
+  }
+};
 
   return (
     <>

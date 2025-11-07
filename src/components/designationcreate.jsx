@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import usePublicIp from "../hooks/usePublicIp";
 import {
   ArrowLeft,
@@ -14,6 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 import GuidelinesCard from "./reusable/guidelinesCard";
 import { designationGuidelines } from "../constants/guidelines";
 import customConfirm from "./reusable/CustomConfirm";
+import { DesignationCreate, DesignationUpdate, getDepartmentData, getDesignationData } from "../services/service";
 
 export default function CreateDesignationForm({ onBack }) {
   const [departments, setDepartments] = useState([]);
@@ -25,9 +25,6 @@ export default function CreateDesignationForm({ onBack }) {
   const [editId, setEditId] = useState(null);
   const [editText, setEditText] = useState("");
   const [showForm, setShowForm] = useState(false);
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-  const ip = usePublicIp();
-  const username = localStorage.getItem("username") || "guest";
 
   // Function to validate input - allows only letters, spaces, and hyphens
   const validateInput = (input) => {
@@ -43,9 +40,7 @@ export default function CreateDesignationForm({ onBack }) {
 
   const fetchDepartments = async () => {
     try {
-      const res = await axios.get(
-        `${API_BASE_URL}/fes/api/Export/simple-departments`
-      );
+      const res = await getDepartmentData();
       setDepartments(res.data || []);
     } catch (err) {
       console.error("Failed to fetch departments:", err);
@@ -54,9 +49,7 @@ export default function CreateDesignationForm({ onBack }) {
 
   const fetchDesignations = async () => {
     try {
-      const res = await axios.get(
-        `${API_BASE_URL}/fes/api/Export/designations`
-      );
+      const res = await getDesignationData();
       setDesignations(res.data || []);
     } catch (err) {
       console.error("Failed to fetch designations:", err);
@@ -81,38 +74,20 @@ export default function CreateDesignationForm({ onBack }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-     const confirmAction = await customConfirm("Are you sure you want to continue?");
+    const confirmAction = await customConfirm("Are you sure you want to continue?");
     if (!confirmAction) return;
     if (!selectedDeptId || !designationDesc.trim()) {
       return alert("Please select department and enter designation");
     }
 
-    const now = new Date().toISOString();
     const payload = {
       logId: uuidv4(),
       deptName: selectedDeptId,
-      designationName: designationDesc.trim(),
-      metadata: {
-        ipAddress: ip,
-        userAgent: navigator.userAgent,
-        headers:
-          headersError ||
-          JSON.stringify({ "content-type": "application/json" }),
-        channel: "web",
-        auditMetadata: {
-          createdBy: username,
-          createdDate: now,
-          modifiedBy: username,
-          modifiedDate: now,
-        },
-      },
+      designationName: designationDesc.trim(),      
     };
 
     try {
-      await axios.post(
-        `${API_BASE_URL}/ums/api/UserManagement/designation_create`,
-        payload
-      );
+      await DesignationCreate(payload);
       setDesignationDesc("");
       fetchDesignations();
       setShowForm(false);
@@ -134,8 +109,6 @@ export default function CreateDesignationForm({ onBack }) {
 
   const handleSaveEdit = async (desig) => {
     if (!editText.trim()) return alert("Designation cannot be empty");
-
-    const now = new Date().toISOString();
     const payload = {
       designationId: desig.designationId,
       newDescription: editText.trim(),
@@ -143,27 +116,10 @@ export default function CreateDesignationForm({ onBack }) {
         desig.logId && desig.logId !== "00000000-0000-0000-0000-000000000000"
           ? desig.logId
           : uuidv4(),
-      metadata: {
-        ipAddress: ip,
-        userAgent: navigator.userAgent,
-        headers:
-          headersError ||
-          JSON.stringify({ "content-type": "application/json" }),
-        channel: "web",
-        auditMetadata: {
-          createdBy: username,
-          createdDate: now,
-          modifiedBy: username,
-          modifiedDate: now,
-        },
-      },
     };
 
     try {
-      await axios.put(
-        `${API_BASE_URL}/ums/api/UserManagement/designation_update`,
-        payload
-      );
+      await DesignationUpdate(payload);
       handleCancelEdit();
       fetchDesignations();
     } catch (err) {

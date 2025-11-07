@@ -15,6 +15,7 @@ import {
 import logo from "../assets/logo.png";
 import "../styles/styles.css";
 import { v4 as uuidv4 } from "uuid";
+import { saveAuthToken } from "../utils/authmanager";
 
 const Employeelogin = () => {
   const [formData, setFormData] = useState({ username: "", password: "" });
@@ -83,6 +84,18 @@ const Employeelogin = () => {
     }
 
     try {
+      const authResponse = await axios.post(
+        `${API_BASE_URL}/auth/api/AuthService/mobile-login`,
+        {
+          mobileNumber: "9876543211",
+          password: "9876543211",
+        }
+      );
+
+      // ✅ Extract both tokens
+      const { accessToken, refreshToken } = authResponse.data;
+      // ✅ Save both tokens and start auto-refresh (and Swagger auth)
+      saveAuthToken(accessToken, refreshToken);
       const response = await axios.post(
         `${API_BASE_URL}/ums/api/UserManagement/user_login`,
         {
@@ -124,7 +137,7 @@ const Employeelogin = () => {
       console.error("Login error:", err.response?.data || err.message);
       setError(
         err.response?.data?.message ||
-          "Login api failed. Please try again later"
+        "Login api failed. Please try again later"
       );
     } finally {
       setIsLoading(false);

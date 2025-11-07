@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import Partnerview from "../components/partnerview";
 import { paginationStyle } from "../constants";
+import { getPendingPartnerData } from "../services/service";
 
 export default function PartnerApproval() {
   const [partners, setPartners] = useState([]);
@@ -41,9 +42,10 @@ export default function PartnerApproval() {
   };
   const fetchPartners = async () => {
     try {
-      const res = await axios.get(
-        `${API_BASE_URL}/fes/api/Export/partner_summary_export`
-      );
+      // const res = await axios.get(
+      //   `${API_BASE_URL}/fes/api/Export/partner_summary_export`
+      // );
+      const res = await getPendingPartnerData();
       setPartners(res.data);
       // console.log(typeof res.data, res.data);
     } catch (err) {
@@ -201,11 +203,10 @@ export default function PartnerApproval() {
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
-                  currentPage === 1
+                className={`w-6 h-6 flex items-center justify-center rounded-md transition ${currentPage === 1
                     ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
                     : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
-                }`}
+                  }`}
               >
                 <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" />
               </button>
@@ -217,11 +218,10 @@ export default function PartnerApproval() {
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
-                  currentPage === totalPages
+                className={`w-6 h-6 flex items-center justify-center rounded-md transition ${currentPage === totalPages
                     ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
                     : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
-                }`}
+                  }`}
               >
                 <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
               </button>
@@ -355,17 +355,16 @@ export default function PartnerApproval() {
                       <td>{partner.partnerType}</td>
                       <td>
                         <span
-                          className={`px-2 py-1 rounded text-[10px]  ${
-                            partner.kycStatus === "Verified"
+                          className={`px-2 py-1 rounded text-[10px]  ${partner.kycStatus === "Verified"
                               ? "checker"
                               : partner.kycStatus === "Pending"
-                              ? "infra"
-                              : partner.kycStatus === "Rejected"
-                              ? "superuser"
-                              : partner.kycStatus === "Pending"
-                              ? "maker"
-                              : ""
-                          }`}
+                                ? "infra"
+                                : partner.kycStatus === "Rejected"
+                                  ? "superuser"
+                                  : partner.kycStatus === "Pending"
+                                    ? "maker"
+                                    : ""
+                            }`}
                         >
                           {partner.kycStatus}
                         </span>
@@ -377,17 +376,16 @@ export default function PartnerApproval() {
                       </td>
                       <td>
                         <span
-                          className={`px-2 py-1 text-[10px] rounded ${
-                            partner.status === 0
+                          className={`px-2 py-1 text-[10px] rounded ${partner.status === 0
                               ? "checker"
                               : partner.status === 1
-                              ? "infra"
-                              : partner.status === 2
-                              ? "superuser"
-                              : partner.status === 3
-                              ? "maker"
-                              : ""
-                          }`}
+                                ? "infra"
+                                : partner.status === 2
+                                  ? "superuser"
+                                  : partner.status === 3
+                                    ? "maker"
+                                    : ""
+                            }`}
                         >
                           {getStatusLabel(partner.status)}
                         </span>

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import EmployeeView from "./employeeview";
 import { paginationStyle } from "../constants";
+import { getpartnerledgerData, getPendingEmployeeData } from "../services/service";
 
 export default function EmployeeApproval() {
   const [configurations, setConfigurations] = useState([]);
@@ -21,7 +22,6 @@ export default function EmployeeApproval() {
   const [selectedPriority, setSelectedPriority] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const itemsPerPage = 8;
 
@@ -31,9 +31,7 @@ export default function EmployeeApproval() {
 
   const fetchConfigurations = async () => {
     try {
-      const res = await axios.get(
-        `${API_BASE_URL}/fes/api/Export/pending-employees`
-      );
+      const res = await getPendingEmployeeData();
       setConfigurations(res.data);
     } catch (err) {
       console.error("Error fetching configurations:", err);
@@ -169,11 +167,10 @@ export default function EmployeeApproval() {
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
-                  currentPage === 1
-                    ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
-                    : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
-                }`}
+                className={`w-6 h-6 flex items-center justify-center rounded-md transition ${currentPage === 1
+                  ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
+                  : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
+                  }`}
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -183,11 +180,10 @@ export default function EmployeeApproval() {
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
-                  currentPage === totalPages
-                    ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
-                    : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
-                }`}
+                className={`w-6 h-6 flex items-center justify-center rounded-md transition ${currentPage === totalPages
+                  ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
+                  : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
+                  }`}
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -229,15 +225,14 @@ export default function EmployeeApproval() {
                         <td>{cfg.roleDescription}</td>
                         <td>
                           <span
-                            className={`px-2 py-1 rounded text-[10px] ${
-                              cfg.status === 0
-                                ? "checker"
-                                : cfg.status === 1
+                            className={`px-2 py-1 rounded text-[10px] ${cfg.status === 0
+                              ? "checker"
+                              : cfg.status === 1
                                 ? "infra"
                                 : cfg.status === 2
-                                ? "superuser"
-                                : "maker"
-                            }`}
+                                  ? "superuser"
+                                  : "maker"
+                              }`}
                           >
                             {getStatusLabel(cfg.status)}
                           </span>

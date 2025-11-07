@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import GuidelinesCard from "./reusable/guidelinesCard";
 import { departmentGuidelines } from "../constants/guidelines";
 import customConfirm from "./reusable/CustomConfirm";
+import { DepartmentCreate, DepartmentUpdate, getDepartmentData } from "../services/service";
 
 export default function DepartmentCreation({ onBack }) {
   const [departmentName, setDepartmentName] = useState("");
@@ -25,9 +26,7 @@ export default function DepartmentCreation({ onBack }) {
   // Fetch departments
   const fetchDepartments = async () => {
     try {
-      const res = await axios.get(
-        `${API_BASE_URL}/fes/api/Export/simple-departments`
-      );
+      const res = await getDepartmentData();
       setDepartments(res.data || []);
     } catch (err) {
       console.error("Error fetching departments:", err);
@@ -71,28 +70,12 @@ export default function DepartmentCreation({ onBack }) {
       const payload = {
         logId: uuidv4(), // ✅ auto-generate unique UUID
         deptName: departmentName.trim(),
-        metadata: {
-          ipAddress: window.location.hostname || "unknown",
-          userAgent: navigator.userAgent,
-          channel: "WEB",
-          headers: "N/A",
-          auditMetadata: {
-            createdBy: "admin", // replace with actual logged-in user if available
-            createdDate: new Date().toISOString(),
-            modifiedBy: "admin",
-            modifiedDate: new Date().toISOString(),
-          },
-        },
       };
-
-      await axios.post(
-        `${API_BASE_URL}/ums/api/UserManagement/department_create`,
-        payload
-      );
-
+      await DepartmentCreate(payload);
       setDepartmentName("");
       setShowForm(false);
       fetchDepartments();
+      alert("Department Created Sucessfully");
     } catch (err) {
       console.error("Failed to create department:", err);
       alert("Error occurred while creating department.");
@@ -114,23 +97,8 @@ export default function DepartmentCreation({ onBack }) {
           dept?.logId && dept.logId !== "00000000-0000-0000-0000-000000000000"
             ? dept.logId
             : uuidv4(), // ✅ reuse existing logId or generate new one if null/empty
-        metadata: {
-          ipAddress: window.location.hostname || "unknown",
-          userAgent: navigator.userAgent,
-          channel: "WEB",
-          headers: "N/A",
-          auditMetadata: {
-            modifiedBy: "admin",
-            modifiedDate: new Date().toISOString(),
-          },
-        },
       };
-
-      await axios.put(
-        `${API_BASE_URL}/ums/api/UserManagement/department_update`,
-        payload
-      );
-
+      await DepartmentUpdate(payload);
       setEditingDeptId(null);
       setNewDeptName("");
       fetchDepartments();

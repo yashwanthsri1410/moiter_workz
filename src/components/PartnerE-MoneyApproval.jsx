@@ -9,41 +9,44 @@ import {
     X,
     DollarSign,
 } from "lucide-react";
-import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
 import usePublicIp from "../hooks/usePublicIp";
 import customConfirm from "./reusable/CustomConfirm";
+import { approvePartnerEmoneyAction, getpartnerData, getpartnerledgerData } from "../services/service";
 
 const PartnerLedger = () => {
     const [partners, setPartners] = useState([]);
     const [ledgerData, setLedgerData] = useState([]);
     const [filteredLedger, setFilteredLedger] = useState([]);
-
+    const username = localStorage.getItem("username");
     const [selectedPartner, setSelectedPartner] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
     const [loading, setLoading] = useState(false);
     const [noLedgerData, setNoLedgerData] = useState(false); // ✅ new state
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-
+    const getStatusLabel = (value) => {
+        switch (value) {
+            case 0:
+                return "Approved";
+            case 1:
+                return "Pending";
+            case 2:
+                return "Disapproved";
+            case 3:
+                return "Recheck";
+            default:
+                return "Unknown";
+        }
+    };
     const ip = usePublicIp();
     // Pagination
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
 
-    // ---- API ENDPOINTS ----
-    const PARTNERS_API =
-        `${API_BASE_URL}/fes/api/Export/partner_summary_export`;
-    const LEDGER_API =
-        `${API_BASE_URL}/pms/api/Partner/get-partnerledger`;
-    const APPROVE_API =
-        ` ${API_BASE_URL}/pms/api/Partner/approve-partnerledger`;
-
     // Fetch partner list
     const fetchPartners = async () => {
         try {
-            const res = await axios.get(PARTNERS_API);
+            const res = await getpartnerData();
             setPartners(res.data);
         } catch (err) {
             console.error("Error fetching partners:", err);
@@ -55,7 +58,7 @@ const PartnerLedger = () => {
         try {
             setLoading(true);
             setNoLedgerData(false);
-            const res = await axios.get(`${LEDGER_API}/${partnerId}`);
+            const res = await getpartnerledgerData(partnerId);
             const data = res.data || [];
 
             if (data.length === 0) {
@@ -128,49 +131,36 @@ const PartnerLedger = () => {
             setCurrentPage(page);
         }
     };
-
-    // Approve / Reject Handler
     const handleAction = async (transactionId, status, remarks, item) => {
         const confirmAction = await customConfirm(
-            `Are you sure you want to ${status.toLowerCase()} this transaction?<br/><br/>
-  <b>Payment Method:</b> ${item.paymentMethod || "N/A"}<br/>
-  <b>Amount:</b> ₹${item.amount?.toLocaleString() || "0"}<br/>
-  <b>Transaction ID:</b> ${item.transactionId}`
+            `Are you sure you want to ${status} this transaction?<br/><br/>
+             <b>Payment Method:</b> ${item.paymentMethod || "N/A"}<br/>
+             <b>Amount:</b> ₹${item.amount?.toLocaleString() || "0"}<br/>
+             <b>Transaction ID:</b> ${item.transactionId}`
         );
 
         if (!confirmAction) return;
+
         try {
             const payload = {
                 transactionId,
                 partnerId: Number(selectedPartner?.partnerId),
                 status,
                 remarks: remarks || "",
-                logId: uuidv4(),
-                modifiedBy: "AdminUser",
-                metadata: {
-                    ipAddress: ip || "127.0.0.1",
-                    userAgent: navigator.userAgent,
-                    headers: "web-client",
-                    channel: "frontend",
-                    auditMetadata: {
-                        createdBy: "AdminUser",
-                        createdDate: new Date().toISOString(),
-                        modifiedBy: "AdminUser",
-                        modifiedDate: new Date().toISOString(),
-                        header: {},
-                    },
-                },
+                modifiedBy: username || "",
             };
 
-            await axios.post(APPROVE_API, payload);
-            // Update local state instantly
+            // ✅ Call API through service
+            await approvePartnerEmoneyAction(payload);
+
+            // ✅ Instantly update UI
             setLedgerData((prev) =>
-                prev.map((item) =>
-                    item.transactionId === transactionId ? { ...item, status } : item
+                prev.map((i) =>
+                    i.transactionId === transactionId ? { ...i, status } : i
                 )
             );
 
-            alert(`Ledger ${status} successfully!`);
+            alert(`Ledger ${status === 0 ? "Approved" : status === 2 ? "Rejected" : ""} successfully!`);
         } catch (err) {
             console.error("Error updating ledger status:", err);
             alert("Failed to update ledger status.");
@@ -357,22 +347,26 @@ const PartnerLedger = () => {
                                         <td>{item.remarks || "-"}</td>
                                         <td>
                                             <span
-                                                className={`px-2 py-1 text-[10px] rounded ${item.status === "Approved"
+                                                className={`px-2 py-1 rounded text-[10px] ${item.status === 0
                                                     ? "checker"
-                                                    : item.status === "Pending"
+                                                    : item.status === 1
                                                         ? "infra"
-                                                        : "superuser"
+                                                        : item.status === 2
+                                                            ? "superuser"
+                                                            : item.status === 3
+                                                                ? "maker"
+                                                                : ""
                                                     }`}
                                             >
-                                                {item.status}
+                                                {getStatusLabel(item.status)}
                                             </span>
                                         </td>
                                         <td className="flex items-center gap-2">
-                                            {item.status === "Pending" ? (
+                                            {item.status === 1 ? (
                                                 <>
                                                     <button
                                                         onClick={() =>
-                                                            handleAction(item.transactionId, "Approved", item.remarks, item)
+                                                            handleAction(item.transactionId, 0, item.remarks, item)
                                                         }
                                                         className="checker px-3 py-1.5 rounded-full flex items-center gap-1"
                                                     >
@@ -380,7 +374,7 @@ const PartnerLedger = () => {
                                                     </button>
                                                     <button
                                                         onClick={() =>
-                                                            handleAction(item.transactionId, "Rejected", item.remarks, item)
+                                                            handleAction(item.transactionId, 2, item.remarks, item)
                                                         }
                                                         className="superuser px-3 py-1.5 rounded-full flex items-center gap-1"
                                                     >
@@ -390,14 +384,18 @@ const PartnerLedger = () => {
                                             ) : (
                                                 <span className="text-gray-400 text-xs ">
                                                     <span
-                                                        className={`px-2 py-1 text-[10px] rounded-full ${item.status === "Approved"
+                                                        className={`px-2 py-1 text-[10px] rounded-full  ${item.status === 0
                                                             ? "checker"
-                                                            : item.status === "Pending"
+                                                            : item.status === 1
                                                                 ? "infra"
-                                                                : "superuser"
+                                                                : item.status === 2
+                                                                    ? "superuser"
+                                                                    : item.status === 3
+                                                                        ? "maker"
+                                                                        : ""
                                                             }`}
                                                     >
-                                                        {item.status}
+                                                        {getStatusLabel(item.status)}
                                                     </span>
                                                 </span>
                                             )}

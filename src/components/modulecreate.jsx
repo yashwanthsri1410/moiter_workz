@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from "uuid";
 import GuidelinesCard from "./reusable/guidelinesCard";
 import { moduleGuidelines } from "../constants/guidelines";
 import customConfirm from "./reusable/CustomConfirm";
+import { getModuleData, ModuleCreate, ModuleUpdate } from "../services/service";
 
 export default function ModuleCreation({ onBack }) {
   const [modules, setModules] = useState([]);
@@ -41,7 +42,7 @@ export default function ModuleCreation({ onBack }) {
 
   const fetchModules = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/fes/api/Export/modules`);
+      const res = await getModuleData();
       setModules(res.data || []);
     } catch (error) {
       console.error("Error fetching modules:", error);
@@ -66,7 +67,7 @@ export default function ModuleCreation({ onBack }) {
 
   const handleCreate = async (e) => {
     e.preventDefault();
-     const confirmAction = await customConfirm("Are you sure you want to continue?");
+    const confirmAction = await customConfirm("Are you sure you want to continue?");
     if (!confirmAction) return;
     if (!newModuleName.trim()) return alert("Please enter module name.");
 
@@ -76,31 +77,13 @@ export default function ModuleCreation({ onBack }) {
     );
     if (exists) return alert("Module already exists.");
 
-    const now = new Date().toISOString();
     const payload = {
       logId: uuidv4(),
       moduleName: newModuleName.trim(),
-      metadata: {
-        ipAddress: ip,
-        userAgent: navigator.userAgent,
-        headers: headersError
-          ? headersError
-          : JSON.stringify({ "content-type": "application/json" }),
-        channel: "web",
-        auditMetadata: {
-          createdBy: username,
-          createdDate: now,
-          modifiedBy: username,
-          modifiedDate: now,
-        },
-      },
     };
 
     try {
-      await axios.post(
-        `${API_BASE_URL}/ums/api/UserManagement/module_create`,
-        payload
-      );
+      await ModuleCreate(payload);
       setNewModuleName("");
       setShowForm(false);
       fetchModules();
@@ -132,36 +115,18 @@ export default function ModuleCreation({ onBack }) {
     );
     if (exists) return alert("A module with this name already exists.");
 
-    const now = new Date().toISOString();
     const payload = {
       moduleId,
       logId:
         original.logId &&
-        original.logId !== "00000000-0000-0000-0000-000000000000"
+          original.logId !== "00000000-0000-0000-0000-000000000000"
           ? original.logId // reuse existing logId
           : uuidv4(), // generate new one if missing
       newName: editedModuleName.trim(),
-      metadata: {
-        ipAddress: ip,
-        userAgent: navigator.userAgent,
-        headers:
-          headersError ||
-          JSON.stringify({ "content-type": "application/json" }),
-        channel: "web",
-        auditMetadata: {
-          createdBy: username,
-          createdDate: now,
-          modifiedBy: username,
-          modifiedDate: now,
-        },
-      },
     };
 
     try {
-      await axios.put(
-        `${API_BASE_URL}/ums/api/UserManagement/module_update`,
-        payload
-      );
+      await ModuleUpdate(payload);
       setEditingModuleId(null);
       setEditedModuleName("");
       fetchModules();

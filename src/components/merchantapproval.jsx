@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import MerchantView from "./merchantview";
 import { paginationStyle } from "../constants";
+import { getMerchantData } from "../services/service";
 
 export default function MerchantApproval() {
   const [merchants, setMerchants] = useState([]);
@@ -17,6 +18,7 @@ export default function MerchantApproval() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedMerchant, setSelectedMerchant] = useState(null);
 
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const itemsPerPage = 8;
 
   useEffect(() => {
@@ -25,9 +27,10 @@ export default function MerchantApproval() {
 
   const fetchMerchants = async () => {
     try {
-      const res = await axios.get(
-        "http://192.168.21.250/ps/api/Product/viewOnboardedMerchants"
-      );
+      // const res = await axios.get(
+      //   `${API_BASE_URL}/ps/api/Product/viewOnboardedMerchants`,
+      // );
+      const res = await getMerchantData();
       setMerchants(res.data);
     } catch (err) {
       console.error("Error fetching merchants:", err);
@@ -124,11 +127,10 @@ export default function MerchantApproval() {
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
-                  currentPage === 1
-                    ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
-                    : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
-                }`}
+                className={`w-6 h-6 flex items-center justify-center rounded-md transition ${currentPage === 1
+                  ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
+                  : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
+                  }`}
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -138,11 +140,10 @@ export default function MerchantApproval() {
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
-                  currentPage === totalPages
-                    ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
-                    : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
-                }`}
+                className={`w-6 h-6 flex items-center justify-center rounded-md transition ${currentPage === totalPages
+                  ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
+                  : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
+                  }`}
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
