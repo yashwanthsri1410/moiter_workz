@@ -1,9 +1,10 @@
 import { Check, IndianRupee } from "lucide-react";
 import { paymentOptions } from "../../../constants/merchantForm";
 import { useMerchantFormStore } from "../../../store/merchantFormStore";
+import { useEffect } from "react";
 
 const PaymentConfig = () => {
-  const { formData, updateForm } = useMerchantFormStore();
+  const { formData, updateForm, updatedMerchantData } = useMerchantFormStore();
   const { paymentConfig } = formData;
 
   const handleCheckboxToggle = (id) => {
@@ -18,12 +19,43 @@ const PaymentConfig = () => {
         updatedMethods[opt.id] = allValue;
       });
     }
+
     updateForm("paymentConfig", "paymentType", updatedMethods);
   };
 
   const handleMdrType = (type) => updateForm("paymentConfig", "mdrType", type);
   const handleInputChange = (e) =>
     updateForm("paymentConfig", "mdrValue", e.target.value);
+
+  // ✅ Initialize payment type from backend if available
+  useEffect(() => {
+    if (updatedMerchantData?.paymentType) {
+      const selectedTypes = updatedMerchantData.paymentType
+        .split(",")
+        .map((t) => t.trim());
+
+      const updatedMethods = paymentOptions.reduce((acc, opt) => {
+        acc[opt.id] = selectedTypes.includes(opt.id);
+        return acc;
+      }, {});
+
+      const allSelected = paymentOptions
+        .filter((opt) => opt.id !== "all")
+        .every((opt) => selectedTypes.includes(opt.id));
+      updatedMethods["all"] = allSelected;
+
+      updateForm("paymentConfig", "paymentType", updatedMethods);
+    }
+  }, [updatedMerchantData, updateForm]);
+
+  // ✅ Choose MDR Type — prefer backend `mdrMode`
+  useEffect(() => {
+    if (updatedMerchantData?.mdrMode) {
+      updateForm("paymentConfig", "mdrType", updatedMerchantData.mdrMode);
+    }
+  }, [updatedMerchantData, updateForm]);
+
+  const mdrType = paymentConfig.mdrType || "Percentage";
 
   return (
     <div className="p-3 rounded-lg bg-chart border border-[var(--borderBg-color)]">
@@ -34,7 +66,8 @@ const PaymentConfig = () => {
 
       <div className="space-y-1 form-group mt-3">
         <label className="flex items-center gap-2 text-sm font-medium text-chart-5">
-          Payment Type (Select Multiple)
+          Payment Type{" "}
+          <span className="text-xs opacity-80">(Select Multiple)</span>
         </label>
 
         <div className="grid grid-cols-1 md:grid-cols-2 mt-0 gap-4">
@@ -84,7 +117,7 @@ const PaymentConfig = () => {
             type="button"
             onClick={() => handleMdrType("Percentage")}
             className={`flex-1 py-2 px-4 rounded-2xl border transition-all text-sm ${
-              paymentConfig.mdrType === "Percentage"
+              mdrType === "Percentage"
                 ? "border border-[var(--borderBg-color)] bg-primary text-sm primary-color"
                 : "border border-chart text-[#94a3b8]"
             }`}
@@ -95,7 +128,7 @@ const PaymentConfig = () => {
             type="button"
             onClick={() => handleMdrType("Flat Rate")}
             className={`flex-1 py-2 px-4 rounded-2xl border transition-all text-sm ${
-              paymentConfig.mdrType === "Flat Rate"
+              mdrType === "Flat Rate"
                 ? "border border-[var(--borderBg-color)] bg-primary text-sm primary-color"
                 : "border border-chart text-[#94a3b8]"
             }`}
@@ -109,18 +142,20 @@ const PaymentConfig = () => {
             type="number"
             step="0.01"
             placeholder={
-              paymentConfig.mdrType === "Percentage"
+              mdrType === "Percentage"
                 ? "Enter percentage (e.g., 2.5)"
                 : "Enter flat amount (e.g., 10)"
             }
             required
-            value={paymentConfig.mdrValue || ""}
+            value={
+              paymentConfig.mdrValue || updatedMerchantData?.mdrValue || ""
+            }
             onChange={handleInputChange}
             className="form-input"
           />
-          {paymentConfig.mdrType && (
+          {mdrType && (
             <div className="flex items-center px-4 text-[#94a3b8] border border-[var(--borderBg-color)] rounded-2xl min-w-[60px] justify-center">
-              {paymentConfig.mdrType === "Percentage" ? "%" : "₹"}
+              {mdrType === "Percentage" ? "%" : "₹"}
             </div>
           )}
         </div>

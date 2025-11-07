@@ -1,49 +1,51 @@
 // store/merchantFormStore.js
 import { create } from "zustand";
-import { initialSchedule } from "../helper";
 import { getPinCodeDetails } from "../services/service";
+import { initialFormData } from "../helper";
 
 export const useMerchantFormStore = create((set) => ({
-  formData: {
-    basicInfo: {
-      idProof: "", addressProof: "", latitude: "",
-      longitude: "",
-      fullAddress: "",
-    },
-    businessHours: initialSchedule,
-    kycInfo: {},
-    paymentConfig: {
-      paymentType: {},
-      mdrType: "Percentage",
-      mdrValue: "",
-    },
-    termsAndConditions: false,
-  },
-
+  formData: initialFormData,
   pinData: [],
   stateName: "",
+  updatedMerchantData: {},
 
   updateForm: (section, key, value) =>
-    set((state) => ({
-      formData: {
-        ...state.formData,
-        [section]: {
-          ...state.formData[section],
-          [key]: value,
-        },
-      },
-    })),
+    set((state) => {
+      const currentSection = state.formData[section];
 
+      // If section is an object (like basicInfo, paymentConfig)
+      if (
+        currentSection &&
+        typeof currentSection === "object" &&
+        key !== undefined
+      ) {
+        return {
+          formData: {
+            ...state.formData,
+            [section]: {
+              ...currentSection,
+              [key]: value,
+            },
+          },
+        };
+      }
+
+      // If section is a primitive (like termsAndConditions)
+      return {
+        formData: {
+          ...state.formData,
+          [section]: value,
+        },
+      };
+    }),
 
   updateBasicInfo: (key, value) =>
     set((state) => ({
-
       formData: {
         ...state.formData,
         basicInfo: { ...state.formData.basicInfo, [key]: value },
       },
     })),
-
 
   updatePinCode: async (pinCode) => {
     set((state) => ({
@@ -99,4 +101,14 @@ export const useMerchantFormStore = create((set) => ({
         termsAndConditions: !state.formData.termsAndConditions,
       },
     })),
+  setUpdatedMerchantData: (data) => set(() => ({ updatedMerchantData: data })),
+
+  // ✅ Reset all form values
+  resetForm: () =>
+    set({
+      formData: JSON.parse(JSON.stringify(initialFormData)), // deep copy to avoid mutation
+      pinData: [],
+      stateName: "",
+      updatedMerchantData: {},
+    }),
 }));

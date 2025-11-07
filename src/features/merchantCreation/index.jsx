@@ -1,4 +1,4 @@
-import CreateMerchant from "./createMerchant";
+import MerchantHeader from "./merchantHeader";
 import BasicInfo from "./merchantInfo/basicInfo";
 import BusinessHours from "./merchantInfo/businessHours";
 import FormButton from "./merchantInfo/formButton";
@@ -16,17 +16,14 @@ const MerchantCreation = () => {
   const createMerchantRef = useRef(null);
   const scrollToTop = () => {
     if (createMerchantRef.current) {
-      window.scrollTo({
-        top: createMerchantRef.current.offsetTop,
-        behavior: "smooth",
-      });
+      createMerchantRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
   return (
     <>
       {/* Header */}
       <div ref={createMerchantRef}>
-        <CreateMerchant />
+        <MerchantHeader />
       </div>
       <div className="bg-[var(--cards-bg)] border border-[var(--borderBg-color)] shadow-[0_0_10px_var(--borderBg-color)] rounded-[12px] px-5 py-4 text-white my-5">
         <div className="flex items-center gap-2 primary-color">

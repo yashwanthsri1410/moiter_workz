@@ -2,8 +2,14 @@ import { categories } from "../../../constants/merchantForm";
 import { useMerchantFormStore } from "../../../store/merchantFormStore";
 
 const BasicInfo = () => {
-  const { formData, updateForm, updatePinCode, pinData, stateName } =
-    useMerchantFormStore();
+  const {
+    formData,
+    updateForm,
+    updatePinCode,
+    pinData,
+    stateName,
+    updatedMerchantData,
+  } = useMerchantFormStore();
   const { basicInfo } = formData;
 
   const handleChange = (e) => {
@@ -24,6 +30,8 @@ const BasicInfo = () => {
     updateForm("basicInfo", name, value);
   };
 
+  console.log(formData);
+
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -31,14 +39,16 @@ const BasicInfo = () => {
           label="Merchant / Shop Name"
           name="shopName"
           placeholder="Enter shop name"
-          value={basicInfo.shopName || ""}
+          value={basicInfo.shopName || updatedMerchantData?.shopName || ""}
           onChange={handleChange}
         />
         <InputField
           label="Contact Person Name"
           name="contactName"
           placeholder="Enter contact name"
-          value={basicInfo.contactName || ""}
+          value={
+            basicInfo.contactName || updatedMerchantData?.contactName || ""
+          }
           onChange={handleChange}
         />
 
@@ -52,7 +62,11 @@ const BasicInfo = () => {
               type="tel"
               name="mobileNumber"
               placeholder="Enter 10-digit number"
-              value={basicInfo.mobileNumber || ""}
+              value={
+                basicInfo.mobileNumber ||
+                updatedMerchantData?.mobileNumber ||
+                ""
+              }
               onChange={handleChange}
               className="form-input"
             />
@@ -64,7 +78,9 @@ const BasicInfo = () => {
           name="email"
           type="email"
           placeholder="merchant@example.com"
-          value={basicInfo.email || ""}
+          readOnly={updatedMerchantData.email}
+          disabled={updatedMerchantData.email}
+          value={basicInfo.email || updatedMerchantData.email || ""}
           onChange={handleChange}
         />
 
@@ -72,7 +88,7 @@ const BasicInfo = () => {
           label="GST Number"
           name="gstNumber"
           placeholder="Enter GST number"
-          value={basicInfo.gstNumber || ""}
+          value={basicInfo.gstNumber || updatedMerchantData?.gstNumber || ""}
           onChange={handleChange}
         />
 
@@ -80,7 +96,7 @@ const BasicInfo = () => {
           <Label text="Business Category" />
           <select
             name="category"
-            value={basicInfo.category || ""}
+            value={basicInfo.category || updatedMerchantData?.category || ""}
             onChange={handleChange}
             className="form-input w-full"
             required
@@ -102,7 +118,7 @@ const BasicInfo = () => {
           label="Pin Code"
           name="pinCode"
           placeholder="Enter 6-digit PIN"
-          value={basicInfo.pinCode || ""}
+          value={basicInfo.pinCode || updatedMerchantData?.pinCode || ""}
           onChange={handleChange}
         />
 
@@ -110,7 +126,7 @@ const BasicInfo = () => {
           <Label text="City" />
           <select
             name="city"
-            value={basicInfo.city || ""}
+            value={(basicInfo.city || updatedMerchantData?.city || "").trim()}
             onChange={handleChange}
             className="form-input w-full"
             required
@@ -118,8 +134,21 @@ const BasicInfo = () => {
             <option value="" disabled hidden>
               Select City
             </option>
+
+            {pinData.length === 0 && (
+              <option
+                value={(
+                  basicInfo.city ||
+                  updatedMerchantData?.city ||
+                  ""
+                ).trim()}
+              >
+                {(basicInfo.city || updatedMerchantData?.city || "").trim()}
+              </option>
+            )}
+
             {pinData.map((city) => (
-              <option key={city} value={city}>
+              <option key={city} value={city.trim()}>
                 {city}
               </option>
             ))}
@@ -129,7 +158,7 @@ const BasicInfo = () => {
         <InputField
           label="State"
           name="state"
-          value={basicInfo.state || stateName || ""}
+          value={basicInfo.state || updatedMerchantData?.state || ""}
           readOnly
         />
       </div>

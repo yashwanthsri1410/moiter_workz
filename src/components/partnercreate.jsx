@@ -288,6 +288,7 @@ export default function Partnercreate() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const confirmAction = await customConfirm(
       "Are you sure you want to continue?"
     );

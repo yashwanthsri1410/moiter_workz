@@ -81,7 +81,6 @@ const postRequest = async (endpoint, payload) => {
   }
 };
 
-
 // Generic PUT request
 const putRequest = async (endpoint, payload) => {
   try {
