@@ -1,10 +1,15 @@
-import { Store, Search, CircleAlert, SquarePen, Check, X } from "lucide-react";
-import { useState, useRef } from "react";
 import {
-  columns,
-  merchants,
-  recheckMerchants,
-} from "../../constants/merchantForm";
+  Store,
+  Search,
+  CircleAlert,
+  SquarePen,
+  Check,
+  X,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { useState, useEffect } from "react";
+import { columns, recheckMerchants } from "../../constants/merchantForm";
 import UseMerchantCreation from "../../hooks/useMerchantCreation";
 import { useMerchantFormStore } from "../../store/merchantFormStore";
 
@@ -14,7 +19,8 @@ const MerchantList = ({ scrollToTop }) => {
   const [search, setSearch] = useState("");
   const [editRow, setEditRow] = useState(null); // currently editing merchant ID or index
   const [editedData, setEditedData] = useState({}); // temp editable data
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
   const handleEdit = (merchant, index) => {
     scrollToTop();
     setUpdatedMerchantData(merchant);
@@ -40,6 +46,24 @@ const MerchantList = ({ scrollToTop }) => {
     m?.shopName?.toLowerCase().includes(search?.toLowerCase())
   );
 
+  const totalPages = Math.ceil(filteredMerchants?.length / itemsPerPage);
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  // Use paginated data for rendering
+  const paginatedData = filteredMerchants?.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
+
   return (
     <div className="px-5 py-4 rounded-[12px] bg-[var(--cards-bg)] shadow-[0_0_10px_var(--borderBg-color)] border border-[var(--borderBg-color)]">
       <div className="bg-card/30 rounded-xl basic-card">
@@ -50,7 +74,7 @@ const MerchantList = ({ scrollToTop }) => {
             <h2 className="user-table-header">Merchant List</h2>
           </div>
           <div className="text-xs text-[#94a3b8]">
-            Total: {merchants.length} merchants
+            Total: {merchantData?.length} merchants
           </div>
         </div>
 
@@ -69,7 +93,7 @@ const MerchantList = ({ scrollToTop }) => {
           </div>
         </div>
         {/* Recheck Section */}
-        {recheckMerchants.length > 0 && (
+        {/* {recheckMerchants.length > 0 && (
           <div className="mb-6 p-6 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
             <div className="flex items-start gap-2">
               <CircleAlert className="w-4 h-4 text-yellow-500 mt-1 flex-shrink-0" />
@@ -119,12 +143,12 @@ const MerchantList = ({ scrollToTop }) => {
               </div>
             </div>
           </div>
-        )}
+        )} */}
         {/* Merchant Table */}
         {/* {filteredMerchants?.length === 0 && (
           <p className="text-sm text-red-500">Failed to Load Data</p>
         )} */}
-        {filteredMerchants?.length > 0 && (
+        {filteredMerchants && filteredMerchants?.length > 0 && (
           <div className="rounded-lg overflow-hidden">
             <div className="table-container">
               <table className="w-full text-sm">
@@ -137,7 +161,7 @@ const MerchantList = ({ scrollToTop }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredMerchants?.map((m, i) => (
+                  {paginatedData?.map((m, i) => (
                     <tr key={i} className="border-b hover:bg-muted/5">
                       {columns.map((col) => (
                         <td
@@ -201,6 +225,48 @@ const MerchantList = ({ scrollToTop }) => {
             </div>
           </div>
         )}
+        {/* Pagination */}
+        <div className="flex flex-col sm:flex-row flex-wrap justify-center sm:justify-between items-center mt-4 px-4 gap-2">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center  ${
+              currentPage === 1
+                ? "prev-next-disabled-btn"
+                : "prev-next-active-btn"
+            }`}
+          >
+            <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" /> Prev
+          </button>
+
+          <div className="flex gap-2">
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => handlePageChange(i + 1)}
+                className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${
+                  currentPage === i + 1
+                    ? "active-pagination-btn"
+                    : "inactive-pagination-btn"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${
+              currentPage === totalPages
+                ? "prev-next-disabled-btn"
+                : "prev-next-active-btn"
+            }`}
+          >
+            Next <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
   );

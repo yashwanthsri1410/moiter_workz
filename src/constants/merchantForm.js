@@ -85,59 +85,6 @@ export const paymentOptions = [
   { id: "all", label: "All", special: true },
 ];
 
-export const merchants = [
-  {
-    name: "Super Mart Grocery",
-    contact: "Rajesh Kumar",
-    email: "rajesh@supermart.com",
-    gst: "29ABCDE1234F1Z5",
-    city: "Mumbai",
-    payment: "QR-Static, QR-Dynamic, POS-Swipe",
-    mdr: "1.5%",
-    status: "Active",
-  },
-  {
-    name: "Tech Electronics Hub",
-    contact: "Priya Sharma",
-    email: "priya@techhub.com",
-    gst: "27XYZAB5678G2H6",
-    city: "Delhi",
-    payment: "QR-Static, POS-Swipe, POS-Insert, POS-Tap",
-    mdr: "2.0%",
-    status: "Active",
-  },
-  {
-    name: "Fashion Trends Store",
-    contact: "Amit Patel",
-    email: "amit@fashiontrends.com",
-    gst: "24PQRST9012K3L7",
-    city: "Bangalore",
-    payment: "QR-Static, QR-Dynamic, POS-Tap",
-    mdr: "1.8%",
-    status: "Pending",
-  },
-  {
-    name: "Spice Kitchen Restaurant",
-    contact: "Neha Singh",
-    email: "neha@spicekitchen.com",
-    gst: "27AABCU9603R1Z4",
-    city: "Pune",
-    payment: "QR-Static, POS-Swipe, POS-Tap",
-    mdr: "2.2%",
-    status: "Rejected",
-  },
-  {
-    name: "Health Plus Pharmacy",
-    contact: "Dr. Suresh Reddy",
-    email: "suresh@healthplus.com",
-    gst: "36AABCU9603R1Z5",
-    city: "Hyderabad",
-    payment: "QR-Static, QR-Dynamic, POS-Swipe, POS-Insert, POS-Tap",
-    mdr: "1.5%",
-    status: "Active",
-  },
-];
-
 export const columns = [
   { key: "shopName", label: "Merchant Name" },
   { key: "contactName", label: "Contact" },
@@ -146,6 +93,7 @@ export const columns = [
   { key: "city", label: "City" },
   { key: "paymentType", label: "Payment" },
   { key: "mdrValue", label: "MDR" },
+  { key: "remarks", label: "Remarks" },
   { key: "status", label: "Status" },
 ];
 

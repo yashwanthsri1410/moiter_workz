@@ -66,7 +66,8 @@ const PaymentConfig = () => {
 
       <div className="space-y-1 form-group mt-3">
         <label className="flex items-center gap-2 text-sm font-medium text-chart-5">
-          Payment Type (Select Multiple)
+          Payment Type{" "}
+          <span className="text-xs opacity-80">(Select Multiple)</span>
         </label>
 
         <div className="grid grid-cols-1 md:grid-cols-2 mt-0 gap-4">
