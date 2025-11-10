@@ -5,10 +5,9 @@ import {
   X,
   RefreshCw,
   ArrowLeft,
-  UserCheck2Icon,
 } from "lucide-react";
-import axios from "axios";
 import customConfirm from "./reusable/CustomConfirm"
+import { approveEmployeeAction } from "../services/service";
 export default function EmployeeView({
   selectedEmployee,
   setSelectedEmployee,
@@ -17,7 +16,6 @@ export default function EmployeeView({
   const [remarks, setRemarks] = useState("");
   const [currentAction, setCurrentAction] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   if (!selectedEmployee) return null;
   const getStatusLabel = (value) => {
     switch (value) {
@@ -38,110 +36,55 @@ export default function EmployeeView({
     setRemarks(selectedEmployee.remarks || "");
     setShowModal(true);
   };
-  // const submitAction = async () => {
-  //   const confirmAction = await customConfirm("Are you sure you want to continue?");
-  //   if (!confirmAction) return;
-  //   const storedUsername = localStorage.getItem("username");
-  //   try {
-  //     // Only block Recheck action if employee is not pending
-  //     if (currentAction === 3 && selectedEmployee.status !== 1) {
-  //       alert("Recheck action is only allowed for pending employees.");
-  //       return;
-  //     }
-
-  //     // Require remarks for Reject or Recheck
-  //     if (
-  //       (currentAction === 2 || currentAction === 3) &&
-  //       remarks.trim() === ""
-  //     ) {
-  //       alert("Remarks are required for this action.");
-  //       return;
-  //     }
-
-  //     const payload = {
-  //       name: selectedEmployee.userName,
-  //       logId: selectedEmployee.logId,
-  //       checker: storedUsername,
-  //       actionStatus: currentAction,
-  //       remarks: remarks,
-  //       metadata: {
-  //         ipAddress: window.location.hostname,
-  //         userAgent: navigator.userAgent,
-  //         channel: "web",
-  //         auditMetadata: {
-  //           createdBy: storedUsername,
-  //           createdDate: new Date().toISOString(),
-  //           modifiedBy: storedUsername,
-  //           modifiedDate: new Date().toISOString(),
-  //         },
-  //       },
-  //     };
-  //     await axios.post(
-  //       `${API_BASE_URL}/ums/api/UserManagement/ApproveEmployee`,
-  //       payload
-  //     );
-
-  //     alert("Employee action submitted successfully!");
-  //     setShowModal(false);
-  //     setRemarks("");
-  //     fetchConfigurations();
-  //   } catch (err) {
-  //     console.error("Error submitting employee action:", err.response || err);
-  //     alert(
-  //       "Approval not permitted for users in Recheck status. Please ensure Maker review is completed first."
-  //     );
-  //     setShowModal(false);
-  //   }
-  // };
 
   const submitAction = async () => {
-  const confirmAction = await customConfirm("Are you sure you want to continue?");
-  if (!confirmAction) return;
+    const confirmAction = await customConfirm("Are you sure you want to continue?");
+    if (!confirmAction) return;
 
-  const storedUsername = localStorage.getItem("username");
+    const storedUsername = localStorage.getItem("username");
 
-  try {
-    // Validation
-    if (currentAction === 3 && selectedEmployee.status !== 1) {
-      alert("Recheck action is only allowed for pending employees.");
-      return;
-    }
+    try {
+      // Validation
+      if (currentAction === 3 && selectedEmployee.status !== 1) {
+        alert("Recheck action is only allowed for pending employees.");
+        return;
+      }
 
-    if ((currentAction === 2 || currentAction === 3) && remarks.trim() === "") {
-      alert("Remarks are required for this action.");
-      return;
-    }
+      if ((currentAction === 2 || currentAction === 3) && remarks.trim() === "") {
+        alert("Remarks are required for this action.");
+        return;
+      }
 
-    // Payload for service
-    const payload = {
-      name: selectedEmployee.userName,
-      logId: selectedEmployee.logId,
-      checker: storedUsername,
-      actionStatus: currentAction,
-      remarks,
-    };
+      // Payload for service
+      const payload = {
+        name: selectedEmployee.userName,
+        logId: selectedEmployee.logId,
+        checker: storedUsername,
+        actionStatus: currentAction,
+        remarks,
+      };
 
-    // Trigger the service function
-    const response = await approveEmployeeAction(payload);
+      // Trigger the service function
+      const response = await approveEmployeeAction(payload);
 
-    if (response?.status === 200) {
-      alert("Employee action submitted successfully!");
-      setShowModal(false);
-      setRemarks("");
-      fetchConfigurations();
-    } else {
-      alert(
-        response?.data?.message ||
+      if (response?.status === 200) {
+        alert("Employee action submitted successfully!");
+        setShowModal(false);
+        setRemarks("");
+        fetchConfigurations();
+      } else {
+        alert(
+          response?.data?.message ||
           "Approval not permitted for users in Recheck status. Please ensure Maker review is completed first."
-      );
+        );
+        setShowModal(false);
+      }
+    } catch (err) {
+      console.error("Error submitting employee action:", err);
+      alert("Something went wrong while submitting the action.");
       setShowModal(false);
     }
-  } catch (err) {
-    console.error("Error submitting employee action:", err);
-    alert("Something went wrong while submitting the action.");
-    setShowModal(false);
-  }
-};
+  };
 
   return (
     <>
@@ -174,14 +117,14 @@ export default function EmployeeView({
             <p className="portal-link">
               <span
                 className={`px-2 py-1 rounded text-[10px] ${selectedEmployee.status === 0
-                    ? "checker"
-                    : selectedEmployee.status === 1
-                      ? "infra"
-                      : selectedEmployee.status === 2
-                        ? "superuser"
-                        : selectedEmployee.status === 3
-                          ? "maker"
-                          : ""
+                  ? "checker"
+                  : selectedEmployee.status === 1
+                    ? "infra"
+                    : selectedEmployee.status === 2
+                      ? "superuser"
+                      : selectedEmployee.status === 3
+                        ? "maker"
+                        : ""
                   }`}
               >
                 {getStatusLabel(selectedEmployee.status)}
@@ -259,8 +202,8 @@ export default function EmployeeView({
               {/* Reject Button */}
               <button
                 className={`btn approval-btn-red whitespace-nowrap ${selectedEmployee.status === 3
-                    ? "opacity-20 cursor-not-allowed"
-                    : ""
+                  ? "opacity-20 cursor-not-allowed"
+                  : ""
                   }`}
                 onClick={() => handleActionClick(2)}
                 disabled={selectedEmployee.status === 3}
@@ -334,10 +277,10 @@ export default function EmployeeView({
 
                 <button
                   className={`btn-submit w-full md:w-auto ${currentAction === 0
-                      ? "btn-approve-green"
-                      : currentAction === 2
-                        ? "btn-reject-red"
-                        : "btn-recheck-blue"
+                    ? "btn-approve-green"
+                    : currentAction === 2
+                      ? "btn-reject-red"
+                      : "btn-recheck-blue"
                     }`}
                   onClick={submitAction}
                   disabled={

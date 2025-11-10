@@ -2,21 +2,19 @@ import React, { useState } from "react";
 import {
   Mail,
   Phone,
-  Calendar,
   Info,
   MapPin,
   Shield,
   FileText,
-  Users,
   ArrowLeft,
   Calculator,
   Check,
   X,
   RefreshCw,
 } from "lucide-react";
-import axios from "axios";
 import "../styles/styles.css";
 import customConfirm from "./reusable/CustomConfirm";
+import { approvePartnerAction } from "../services/service";
 
 export default function Partnerview({
   selectedPartner,
@@ -27,8 +25,9 @@ export default function Partnerview({
   const [currentAction, setCurrentAction] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalImage, setModalImage] = useState(null);
+  console.log(currentAction)
+  const username = localStorage.getItem("username") || "guest";
   if (!selectedPartner) return null;
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const getStatusLabel = (value) => {
     switch (value) {
@@ -56,7 +55,7 @@ export default function Partnerview({
     setShowModal(true);
   };
   const submitAction = async () => {
-     const confirmAction = await customConfirm("Are you sure you want to continue?");
+    const confirmAction = await customConfirm("Are you sure you want to continue?");
     if (!confirmAction) return;
     try {
       const payload = {
@@ -64,33 +63,11 @@ export default function Partnerview({
         logId: selectedPartner.logId,
         partnerType: selectedPartner.partnerType,
         actionStatus: Number(currentAction),
-        checker: "checkerUser",
+        checker: username,
         remarks: remarks,
-        metadata: {
-          ipAddress: window.location.hostname,
-          userAgent: navigator.userAgent,
-          headers: "custom-headers-if-any",
-          channel: "web",
-          auditMetadata: {
-            createdBy: "checkerUser",
-            createdDate: new Date().toISOString(),
-            modifiedBy: "checkerUser",
-            modifiedDate: new Date().toISOString(),
-            header: {
-              additionalProp1: {
-                options: { propertyNameCaseInsensitive: true },
-                parent: "string",
-                root: "string",
-              },
-            },
-          },
-        },
       };
 
-      await axios.post(
-        `${API_BASE_URL}/ps/api/Product/approveDistributionPartner`,
-        payload
-      );
+      await approvePartnerAction(payload);
       alert("Action submitted successfully!");
       setShowModal(false);
       setRemarks("");
@@ -133,28 +110,26 @@ export default function Partnerview({
         <div className="card-header-right flex flex-wrap gap-2 mt-2 sm:mt-0">
           <p className="portal-link">
             <span
-              className={`px-2 py-1 rounded text-[10px] ${
-                selectedPartner.partnerType === "Aggregator"
+              className={`px-2 py-1 rounded text-[10px] ${selectedPartner.partnerType === "Aggregator"
                   ? "checker"
                   : selectedPartner.partnerType === "Retailer"
-                  ? "infra"
-                  : "superuser"
-              }`}
+                    ? "infra"
+                    : "superuser"
+                }`}
             >
               {selectedPartner.partnerType}
             </span>
           </p>
           <p className="portal-link">
             <span
-              className={`px-2 py-1 rounded text-[10px] ${
-                selectedPartner.status === 0
+              className={`px-2 py-1 rounded text-[10px] ${selectedPartner.status === 0
                   ? "checker"
                   : selectedPartner.status === 1
-                  ? "infra"
-                  : selectedPartner.status === 2
-                  ? "superuser"
-                  : "maker"
-              }`}
+                    ? "infra"
+                    : selectedPartner.status === 2
+                      ? "superuser"
+                      : "maker"
+                }`}
             >
               {getStatusLabel(selectedPartner.status)}
             </span>
@@ -510,8 +485,8 @@ export default function Partnerview({
               {currentAction === 0
                 ? "approve"
                 : currentAction === 2
-                ? "reject"
-                : "recheck"}{" "}
+                  ? "reject"
+                  : "recheck"}{" "}
               <b>{selectedPartner.partnerName}</b>? This action cannot be
               undone.
             </p>
@@ -536,13 +511,12 @@ export default function Partnerview({
                 Cancel
               </button>
               <button
-                className={`btn-submit ${
-                  currentAction === 0
+                className={`btn-submit ${currentAction === 0
                     ? "btn-approve-green"
                     : currentAction === 2
-                    ? "btn-reject-red"
-                    : "btn-recheck-blue"
-                }`}
+                      ? "btn-reject-red"
+                      : "btn-recheck-blue"
+                  }`}
                 onClick={submitAction}
               >
                 {currentAction === 0 && (

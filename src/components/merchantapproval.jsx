@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import {
   ChevronLeft,
   ChevronRight,
@@ -17,25 +16,24 @@ export default function MerchantApproval() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedMerchant, setSelectedMerchant] = useState(null);
-
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const itemsPerPage = 8;
-
+  console.log(merchants)
   useEffect(() => {
     fetchMerchants();
   }, []);
 
-  const fetchMerchants = async () => {
-    try {
-      // const res = await axios.get(
-      //   `${API_BASE_URL}/ps/api/Product/viewOnboardedMerchants`,
-      // );
-      const res = await getMerchantData();
-      setMerchants(res.data);
-    } catch (err) {
-      console.error("Error fetching merchants:", err);
-    }
-  };
+const fetchMerchants = async () => {
+  try {
+    const res = await getMerchantData();
+    // Filter merchants where status is 1 or 3
+    const filteredMerchants = res.data.filter(
+      (merchant) => merchant.status === 1 || merchant.status === 3
+    );
+    setMerchants(filteredMerchants);
+  } catch (err) {
+    console.error("Error fetching merchants:", err);
+  }
+};
 
   // ✅ Filter + Search
   const filteredMerchants = merchants.filter((m) => {

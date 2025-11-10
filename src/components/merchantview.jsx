@@ -28,6 +28,7 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { approveMerchantAction } from "../services/service";
 
 // Fix Leaflet default marker icons
 delete L.Icon.Default.prototype._getIconUrl;
@@ -55,10 +56,10 @@ export default function Merchantview({
 }) {
   const [remarks, setRemarks] = useState("");
   const [currentAction, setCurrentAction] = useState(null);
+  console.log(currentAction)
   const [showModal, setShowModal] = useState(false);
   const [modalImage, setModalImage] = useState(null);
   if (!selectedMerchant) return null;
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const username = localStorage.getItem("username") || "guest";
   const getStatusLabel = (value) => {
     switch (value) {
@@ -95,34 +96,12 @@ export default function Merchantview({
         merchantId: selectedMerchant.merchantId,
         shopName: selectedMerchant.shopName,
         logId: selectedMerchant.logId,
-        actionStatus: Number(currentAction),
+        status: Number(currentAction),
         checker: username,
         remarks: remarks,
-        metadata: {
-          ipAddress: window.location.hostname,
-          userAgent: navigator.userAgent,
-          headers: "custom-headers-if-any",
-          channel: "web",
-          auditMetadata: {
-            createdBy: "Maker",
-            createdDate: new Date().toISOString(),
-            modifiedBy: username,
-            modifiedDate: new Date().toISOString(),
-            header: {
-              additionalProp1: {
-                options: { propertyNameCaseInsensitive: true },
-                parent: "string",
-                root: "string",
-              },
-            },
-          },
-        },
       };
 
-      await axios.post(
-        `${API_BASE_URL}/ps/api/Product/approve-merchant`,
-        payload
-      );
+      await approveMerchantAction(payload);
       alert("Action submitted successfully!");
       setShowModal(false);
       setRemarks("");
@@ -137,7 +116,6 @@ export default function Merchantview({
     lat: selectedMerchant?.latitude || 13.015842219623803,
     lng: selectedMerchant?.longitude || 80.20119845867158,
   });
-
   return (
     <div>
       {/* Header */}
@@ -168,30 +146,29 @@ export default function Merchantview({
 
         {/* Right section */}
         <div className="card-header-right flex flex-wrap gap-2 mt-2 sm:mt-0">
-          <p className="portal-link">
+          {selectedMerchant.category && <p className="portal-link">
             <span
-              className={`px-2 py-1 rounded text-[10px] ${
-                selectedMerchant.MerchantType === "Aggregator"
-                  ? "checker"
-                  : selectedMerchant.MerchantType === "Retailer"
+              className={`px-2 py-1 rounded text-[10px] ${selectedMerchant.MerchantType === "Aggregator"
+                ? "checker"
+                : selectedMerchant.MerchantType === "Retailer"
                   ? "infra"
                   : "superuser"
-              }`}
+                }`}
             >
               {selectedMerchant.category}
             </span>
-          </p>
+          </p>}
+
           <p className="portal-link">
             <span
-              className={`px-2 py-1 rounded text-[10px] ${
-                selectedMerchant.status === 0
-                  ? "checker"
-                  : selectedMerchant.status === 1
+              className={`px-2 py-1 rounded text-[10px] ${selectedMerchant.status === 0
+                ? "checker"
+                : selectedMerchant.status === 1
                   ? "infra"
                   : selectedMerchant.status === 2
-                  ? "superuser"
-                  : "maker"
-              }`}
+                    ? "superuser"
+                    : "maker"
+                }`}
             >
               {getStatusLabel(selectedMerchant.status)}
             </span>
@@ -596,8 +573,8 @@ export default function Merchantview({
               {currentAction === 0
                 ? "approve"
                 : currentAction === 2
-                ? "reject"
-                : "recheck"}{" "}
+                  ? "reject"
+                  : "recheck"}{" "}
               <b>{selectedMerchant.MerchantName}</b>? This action cannot be
               undone.
             </p>
@@ -622,13 +599,12 @@ export default function Merchantview({
                 Cancel
               </button>
               <button
-                className={`btn-submit ${
-                  currentAction === 0
-                    ? "btn-approve-green"
-                    : currentAction === 2
+                className={`btn-submit ${currentAction === 0
+                  ? "btn-approve-green"
+                  : currentAction === 2
                     ? "btn-reject-red"
                     : "btn-recheck-blue"
-                }`}
+                  }`}
                 onClick={submitAction}
               >
                 {currentAction === 0 && (

@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import {
   ChevronLeft,
   ChevronRight,
   EyeIcon,
-  FileText,
   Filter,
   Search,
-  SquarePen,
-  User2Icon,
   UserCheck2Icon,
 } from "lucide-react";
 import EmployeeView from "./employeeview";
 import { paginationStyle } from "../constants";
-import { getpartnerledgerData, getPendingEmployeeData } from "../services/service";
+import { getPendingEmployeeData } from "../services/service";
 
 export default function EmployeeApproval() {
   const [configurations, setConfigurations] = useState([]);

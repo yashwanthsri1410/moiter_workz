@@ -14,8 +14,8 @@ import {
   RefreshCw,
   PackagePlus,
 } from "lucide-react";
-import axios from "axios";
 import customConfirm from "./reusable/CustomConfirm";
+import { approveProductAction } from "../services/service";
 
 export default function Productview({
   selectedProduct,
@@ -25,6 +25,8 @@ export default function Productview({
   const [remarks, setRemarks] = useState("");
   const [currentAction, setCurrentAction] = useState(null);
   const [showModal, setShowModal] = useState(false);
+
+  const username = localStorage.getItem("username") || "guest";
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   if (!selectedProduct) return null;
 
@@ -52,22 +54,18 @@ export default function Productview({
     setShowModal(true);
   };
   const submitAction = async () => {
-     const confirmAction = await customConfirm("Are you sure you want to continue?");
+    const confirmAction = await customConfirm("Are you sure you want to continue?");
     if (!confirmAction) return;
     try {
       const payload = {
         productId: selectedProduct.productId,
         logId: selectedProduct.logId,
         actionStatus: currentAction,
-        checker: "checkerUser", // Replace with logged-in user if available
+        checker: username,
         remarks: remarks,
         productAccess: selectedProduct.productAccess,
       };
-      await axios.post(
-        `${API_BASE_URL}/ps/api/Product/approveProductConfiguration`,
-        payload
-      );
-
+      await approveProductAction(payload);
       alert("Action submitted successfully!");
       setShowModal(false);
       setRemarks("");
@@ -121,34 +119,32 @@ export default function Productview({
           <div className="portal-info flex flex-wrap gap-2">
             <p className="portal-link">
               <span
-                className={`px-2 py-1 rounded text-[10px] ${
-                  selectedProduct.programType === "Closed"
-                    ? "checker"
-                    : selectedProduct.programType === "Semi-Closed"
+                className={`px-2 py-1 rounded text-[10px] ${selectedProduct.programType === "Closed"
+                  ? "checker"
+                  : selectedProduct.programType === "Semi-Closed"
                     ? "infra"
                     : selectedProduct.programType === "Open"
-                    ? "superuser"
-                    : selectedProduct.programType === "Open"
-                    ? "maker"
-                    : ""
-                }`}
+                      ? "superuser"
+                      : selectedProduct.programType === "Open"
+                        ? "maker"
+                        : ""
+                  }`}
               >
                 {selectedProduct.programType}
               </span>
             </p>
             <p className="portal-link">
               <span
-                className={`px-2 py-1 rounded text-[10px] ${
-                  selectedProduct.status === 0
-                    ? "checker"
-                    : selectedProduct.status === 1
+                className={`px-2 py-1 rounded text-[10px] ${selectedProduct.status === 0
+                  ? "checker"
+                  : selectedProduct.status === 1
                     ? "infra"
                     : selectedProduct.status === 2
-                    ? "superuser"
-                    : selectedProduct.status === 3
-                    ? "maker"
-                    : ""
-                }`}
+                      ? "superuser"
+                      : selectedProduct.status === 3
+                        ? "maker"
+                        : ""
+                  }`}
               >
                 {getStatusLabel(selectedProduct.status)}
               </span>
@@ -183,17 +179,16 @@ export default function Productview({
                 Program:
               </strong>{" "}
               <span
-                className={`px-2 py-1 rounded text-xs sm:text-sm md:text-[15px] ${
-                  selectedProduct.programType === "Closed"
-                    ? "checker"
-                    : selectedProduct.programType === "Semi-Closed"
+                className={`px-2 py-1 rounded text-xs sm:text-sm md:text-[15px] ${selectedProduct.programType === "Closed"
+                  ? "checker"
+                  : selectedProduct.programType === "Semi-Closed"
                     ? "infra"
                     : selectedProduct.programType === "Open"
-                    ? "superuser"
-                    : selectedProduct.programType === "open"
-                    ? "maker"
-                    : ""
-                }`}
+                      ? "superuser"
+                      : selectedProduct.programType === "open"
+                        ? "maker"
+                        : ""
+                  }`}
               >
                 {selectedProduct.programType}
               </span>
@@ -371,17 +366,17 @@ export default function Productview({
             >
               {ch.includes("_") || ch.includes("-")
                 ? ch
-                    .replace(/[_-]/g, " ")
-                    .split(" ")
-                    .map(
-                      (word) =>
-                        word.charAt(0).toUpperCase() +
-                        word.slice(1).toLowerCase()
-                    )
-                    .join(" ")
+                  .replace(/[_-]/g, " ")
+                  .split(" ")
+                  .map(
+                    (word) =>
+                      word.charAt(0).toUpperCase() +
+                      word.slice(1).toLowerCase()
+                  )
+                  .join(" ")
                 : /^[A-Z]+$/.test(ch)
-                ? ch
-                : ch.charAt(0).toUpperCase() + ch.slice(1).toLowerCase()}
+                  ? ch
+                  : ch.charAt(0).toUpperCase() + ch.slice(1).toLowerCase()}
             </span>
           ))}
         </div>
@@ -578,8 +573,8 @@ export default function Productview({
               {currentAction === 0
                 ? "approve"
                 : currentAction === 2
-                ? "reject"
-                : "recheck"}{" "}
+                  ? "reject"
+                  : "recheck"}{" "}
               <b>{selectedProduct.productName}</b>? This action cannot be
               undone.
             </p>
@@ -604,13 +599,12 @@ export default function Productview({
                 Cancel
               </button>
               <button
-                className={`btn-submit ${
-                  currentAction === 0
-                    ? "btn-approve-green"
-                    : currentAction === 2
+                className={`btn-submit ${currentAction === 0
+                  ? "btn-approve-green"
+                  : currentAction === 2
                     ? "btn-reject-red"
                     : "btn-recheck-blue"
-                }`}
+                  }`}
                 onClick={submitAction}
               >
                 {currentAction === 0 && (

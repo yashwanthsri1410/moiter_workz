@@ -130,13 +130,13 @@ export const ModuleCreate = (payload) =>
     logId: uuidv4(),
   });
 
-  export const ScreenCreate = (payload) =>
+export const ScreenCreate = (payload) =>
   postRequest(`${API_BASE_URL}/ums/api/UserManagement/screen_create`, {
     ...payload,
     logId: uuidv4(),
   });
 
-  export const RoleCreate = (payload) =>
+export const RoleCreate = (payload) =>
   postRequest(`${API_BASE_URL}/ums/api/UserManagement/role-access/bulk`, {
     ...payload,
     logId: uuidv4(),
@@ -152,6 +152,20 @@ export const approveEmployeeAction = (payload) =>
   postRequest(`/ums/api/UserManagement/ApproveEmployee`, {
     ...payload,
     logId: uuidv4(),
+  });
+
+export const approveProductAction = (payload) =>
+  postRequest(`/ps/api/Product/approveProductConfiguration`, {
+    ...payload,
+  });
+
+export const approvePartnerAction = (payload) =>
+  postRequest(`/ps/api/Product/approveDistributionPartner`, {
+    ...payload,
+  });
+  export const approveMerchantAction = (payload) =>
+  postRequest(`/ps/api/Product/approve-merchant`, {
+    ...payload,
   });
 
 export const approvePartnerEmoneyAction = (payload) =>
@@ -180,16 +194,20 @@ export const ModuleUpdate = (payload) =>
     ...payload,
   });
 
-  export const ScreenUpdate = (payload) =>
+export const ScreenUpdate = (payload) =>
   putRequest(`${API_BASE_URL}/ums/api/UserManagement/screen_update`, {
     ...payload,
   });
 
-    export const RoleUpdate = (payload) =>
+export const RoleUpdate = (payload) =>
   putRequest(`${API_BASE_URL}/ums/api/UserManagement/update-role-access/bulk`, {
     ...payload,
   });
-
+export const updateMerchantDetails = (payload) =>
+  putRequest(`${path}/Product/update-merchant`, {
+    ...payload,
+    logId: uuidv4(),
+  });
 // ---------------GET METHOD--------------------
 export const getDepartmentData = () =>
   getRequest(`${API_BASE_URL}/fes/api/Export/simple-departments`);
@@ -226,3 +244,7 @@ export const getPendingProductData = () =>
 
 export const getPendingPartnerData = () =>
   getRequest(`${API_BASE_URL}/fes/api/Export/partner_summary_export`);
+
+
+export const getRegulatorData = () =>
+  getRequest(`${API_BASE_URL}/fes/api/Export/export_rbi_configuration`);
