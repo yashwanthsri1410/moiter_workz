@@ -4,7 +4,7 @@ import { useMerchantFormStore } from "../../../store/merchantFormStore";
 import { useEffect } from "react";
 
 const PaymentConfig = () => {
-  const { formData, updateForm, updatedMerchantData } = useMerchantFormStore();
+  const { formData, updateForm } = useMerchantFormStore();
   const { paymentConfig } = formData;
 
   const handleCheckboxToggle = (id) => {
@@ -29,10 +29,10 @@ const PaymentConfig = () => {
 
   // ✅ Initialize payment type from backend if available
   useEffect(() => {
-    if (updatedMerchantData?.paymentType) {
-      const selectedTypes = updatedMerchantData.paymentType
-        .split(",")
-        .map((t) => t.trim());
+    const type = paymentConfig?.paymentType;
+
+    if (typeof type === "string") {
+      const selectedTypes = type.split(",").map((t) => t.trim());
 
       const updatedMethods = paymentOptions.reduce((acc, opt) => {
         acc[opt.id] = selectedTypes.includes(opt.id);
@@ -42,18 +42,18 @@ const PaymentConfig = () => {
       const allSelected = paymentOptions
         .filter((opt) => opt.id !== "all")
         .every((opt) => selectedTypes.includes(opt.id));
-      updatedMethods["all"] = allSelected;
 
+      updatedMethods["all"] = allSelected;
       updateForm("paymentConfig", "paymentType", updatedMethods);
     }
-  }, [updatedMerchantData, updateForm]);
+  }, [paymentConfig, updateForm]);
 
   // ✅ Choose MDR Type — prefer backend `mdrMode`
   useEffect(() => {
-    if (updatedMerchantData?.mdrMode) {
-      updateForm("paymentConfig", "mdrType", updatedMerchantData.mdrMode);
+    if (paymentConfig?.mdrMode) {
+      updateForm("paymentConfig", "mdrType", paymentConfig.mdrMode);
     }
-  }, [updatedMerchantData, updateForm]);
+  }, [paymentConfig, updateForm]);
 
   const mdrType = paymentConfig.mdrType || "Percentage";
 
@@ -147,9 +147,7 @@ const PaymentConfig = () => {
                 : "Enter flat amount (e.g., 10)"
             }
             required
-            value={
-              paymentConfig.mdrValue || updatedMerchantData?.mdrValue || ""
-            }
+            value={paymentConfig.mdrValue}
             onChange={handleInputChange}
             className="form-input"
           />

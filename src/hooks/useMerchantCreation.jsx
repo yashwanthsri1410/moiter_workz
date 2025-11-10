@@ -5,6 +5,7 @@ import {
   updateMerchantDetails,
 } from "../services/service";
 import { useMerchantFormStore } from "../store/merchantFormStore";
+import customConfirm from "../components/reusable/CustomConfirm";
 
 const UseMerchantCreation = () => {
   const { formData, updatedMerchantData, resetForm, setUpdatedMerchantData } =
@@ -32,6 +33,10 @@ const UseMerchantCreation = () => {
       alert("Please accept terms and conditions.");
       return;
     }
+    const confirmAction = await customConfirm(
+      "Are you sure you want to continue?"
+    );
+    if (!confirmAction) return;
 
     const payload = {
       partnerId: 1,

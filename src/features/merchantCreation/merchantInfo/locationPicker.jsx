@@ -4,31 +4,25 @@ import "leaflet/dist/leaflet.css";
 import axios from "axios";
 import { MapPin, Search, Globe, MapPinCheck } from "lucide-react";
 import { useMerchantFormStore } from "../../../store/merchantFormStore";
-
 export default function LocationPicker() {
   const mapRef = useRef(null);
   const markerRef = useRef(null);
-  const { formData, updateForm, updatedMerchantData } = useMerchantFormStore();
+  const { formData, updateForm } = useMerchantFormStore();
   const { basicInfo } = formData;
-
   const [latitude, setLatitude] = useState(basicInfo.latitude || 11.9526);
   const [longitude, setLongitude] = useState(basicInfo.longitude || 79.7966);
-  const [address, setAddress] = useState(basicInfo.fullAddress || "");
+  const [address, setAddress] = useState(basicInfo.fullAddress);
   const [searchQuery, setSearchQuery] = useState("");
   const [mapMode, setMapMode] = useState("satellite");
 
-  // Update form whenever lat/lng/address changes
-  useEffect(() => {
-    updateForm("basicInfo", "latitude", Number(latitude));
-    updateForm("basicInfo", "longitude", Number(longitude));
-    updateForm("basicInfo", "fullAddress", address);
-  }, [latitude, longitude, address, updateForm]);
-
-  // Map layers
   const satelliteLayer = useRef(
     L.tileLayer(
       "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-      { maxZoom: 19, attribution: "Tiles © Esri" }
+      {
+        maxZoom: 19,
+        attribution:
+          'Tiles © <a href="https://www.esri.com/">Esri</a> — Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, IGN, IGP',
+      }
     )
   );
 
@@ -46,63 +40,7 @@ export default function LocationPicker() {
     )
   );
 
-  // Initialize map
-  useEffect(() => {
-    mapRef.current = L.map("map", {
-      center: [latitude, longitude],
-      zoom: 13,
-      layers: [satelliteLayer.current, labelsLayer.current],
-    });
-
-    markerRef.current = L.marker([latitude, longitude], { draggable: true })
-      .addTo(mapRef.current)
-      .bindPopup("Selected Location")
-      .openPopup();
-
-    // Marker drag
-    markerRef.current.on("dragend", async () => {
-      const { lat, lng } = markerRef.current.getLatLng();
-      const latNum = Number(lat.toFixed(6));
-      const lngNum = Number(lng.toFixed(6));
-      setLatitude(latNum);
-      setLongitude(lngNum);
-      await fetchAddress(latNum, lngNum);
-    });
-
-    // Map click
-    mapRef.current.on("click", async (e) => {
-      const { lat, lng } = e.latlng;
-      const latNum = Number(lat.toFixed(6));
-      const lngNum = Number(lng.toFixed(6));
-
-      markerRef.current.setLatLng([latNum, lngNum]);
-      setLatitude(latNum);
-      setLongitude(lngNum);
-
-      await fetchAddress(latNum, lngNum);
-    });
-
-    return () => mapRef.current.remove();
-  }, []);
-
-  // Watch updatedMerchantData and update map + marker when it arrives
-  useEffect(() => {
-    if (updatedMerchantData?.latitude && updatedMerchantData?.longitude) {
-      const lat = updatedMerchantData.latitude;
-      const lng = updatedMerchantData.longitude;
-      const fullAddress = updatedMerchantData.fullAddress || "";
-
-      setLatitude(lat);
-      setLongitude(lng);
-      setAddress(fullAddress);
-
-      if (mapRef.current && markerRef.current) {
-        mapRef.current.setView([lat, lng], 15);
-        markerRef.current.setLatLng([lat, lng]);
-      }
-    }
-  }, [updatedMerchantData]);
-
+  // Toggle map view instantly
   const toggleMapMode = () => {
     const map = mapRef.current;
     if (!map) return;
@@ -119,7 +57,6 @@ export default function LocationPicker() {
       setMapMode("satellite");
     }
   };
-
   const fetchAddress = async (lat, lng) => {
     try {
       const res = await fetch(
@@ -127,7 +64,10 @@ export default function LocationPicker() {
       );
       const data = await res.json();
       const fullAddress = data.display_name || "Unknown location";
+
       setAddress(fullAddress);
+
+      // ✅ Save to global form store
       updateForm("basicInfo", "latitude", lat);
       updateForm("basicInfo", "longitude", lng);
       updateForm("basicInfo", "fullAddress", fullAddress);
@@ -136,16 +76,17 @@ export default function LocationPicker() {
     }
   };
 
+  // Manual lat/lon input update
   const handleLatLonChange = async () => {
+    if (!latitude || !longitude) return;
     const lat = parseFloat(latitude);
     const lng = parseFloat(longitude);
-    if (!lat || !lng) return;
-
     mapRef.current.setView([lat, lng], 15);
     markerRef.current.setLatLng([lat, lng]);
     await fetchAddress(lat, lng);
   };
 
+  // Handle address search
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
     try {
@@ -156,20 +97,81 @@ export default function LocationPicker() {
       );
       if (res.data.length > 0) {
         const { lat, lon, display_name } = res.data[0];
-        const latNum = parseFloat(lat);
-        const lngNum = parseFloat(lon);
-        setLatitude(latNum);
-        setLongitude(lngNum);
+        setLatitude(parseFloat(lat).toFixed(6));
+        setLongitude(parseFloat(lon).toFixed(6));
         setAddress(display_name);
-        mapRef.current.setView([latNum, lngNum], 15);
-        markerRef.current.setLatLng([latNum, lngNum]);
+        mapRef.current.setView([lat, lon], 15);
+        markerRef.current.setLatLng([lat, lon]);
       } else {
         alert("Location not found");
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error("Search failed:", error);
     }
   };
+
+  // Define map layers
+  useEffect(() => {
+    if (latitude && longitude) {
+      updateForm("basicInfo", "latitude", latitude);
+      updateForm("basicInfo", "longitude", longitude);
+      updateForm("basicInfo", "fullAddress", address);
+    }
+  }, [latitude, longitude, address, updateForm]);
+
+  // Initialize map
+  useEffect(() => {
+    mapRef.current = L.map("map", {
+      center: [latitude, longitude],
+      zoom: 13,
+      layers: [satelliteLayer.current, labelsLayer.current],
+    });
+
+    markerRef.current = L.marker([latitude, longitude], { draggable: true })
+      .addTo(mapRef.current)
+      .bindPopup("Selected Location")
+      .openPopup();
+
+    // Handle marker drag
+    markerRef.current.on("dragend", async () => {
+      const { lat, lng } = markerRef.current.getLatLng();
+      const latNum = Number(lat.toFixed(6));
+      const lngNum = Number(lng.toFixed(6));
+      setLatitude(latNum);
+      setLongitude(lngNum);
+
+      await fetchAddress(latNum, lngNum);
+      // ✅ update store
+      updateForm("basicInfo", "latitude", latNum);
+      updateForm("basicInfo", "longitude", lngNum);
+    });
+
+    // Handle map click
+    mapRef.current.on("click", async (e) => {
+      const { lat, lng } = e.latlng;
+      const latNum = Number(lat.toFixed(6));
+      const lngNum = Number(lng.toFixed(6));
+
+      markerRef.current.setLatLng([latNum, lngNum]);
+      setLatitude(latNum);
+      setLongitude(lngNum);
+
+      await fetchAddress(latNum, lngNum);
+    });
+
+    fetchAddress(latitude, longitude);
+
+    return () => mapRef.current.remove();
+  }, []);
+
+  // Sync local state with store values
+  useEffect(() => {
+    if (basicInfo.latitude && basicInfo.longitude) {
+      setLatitude(basicInfo.latitude);
+      setLongitude(basicInfo.longitude);
+      setAddress(basicInfo.fullAddress);
+    }
+  }, [basicInfo.latitude, basicInfo.longitude, basicInfo.fullAddress]);
 
   return (
     <div className="space-y-4">
@@ -194,6 +196,7 @@ export default function LocationPicker() {
             onChange={(e) => setLatitude(e.target.value)}
             onBlur={handleLatLonChange}
             className="form-input"
+            placeholder="e.g., 19.0760"
           />
         </div>
         <div>
@@ -204,11 +207,12 @@ export default function LocationPicker() {
             onChange={(e) => setLongitude(e.target.value)}
             onBlur={handleLatLonChange}
             className="form-input"
+            placeholder="e.g., 72.8777"
           />
         </div>
       </div>
 
-      {/* Search */}
+      {/* Search Input */}
       <div className="flex gap-2">
         <input
           type="text"
@@ -225,8 +229,9 @@ export default function LocationPicker() {
         </button>
       </div>
 
-      {/* Map */}
+      {/* Map Section */}
       <div className="relative">
+        {/* 🌍 Small floating toggle button */}
         <button
           onClick={toggleMapMode}
           className="absolute top-3 right-3 z-[1000] bg-gray-900/80 hover:bg-gray-800 text-white rounded-full p-2 shadow-lg transition"

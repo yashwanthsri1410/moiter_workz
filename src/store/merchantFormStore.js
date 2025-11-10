@@ -9,6 +9,42 @@ export const useMerchantFormStore = create((set) => ({
   stateName: "",
   updatedMerchantData: {},
 
+  populateInfo: (merchant) =>
+    set((state) => ({
+      formData: {
+        ...state.formData,
+        basicInfo: {
+          ...state.formData.basicInfo,
+          shopName: merchant.shopName || "",
+          contactName: merchant.contactName || "",
+          mobileNumber: merchant.mobileNumber || "",
+          email: merchant.email || "",
+          gstNumber: merchant.gstNumber || "",
+          category: merchant.category || "",
+          pinCode: merchant.pinCode || "",
+          city: merchant.city || "",
+          state: merchant.state || "",
+          latitude: merchant.latitude || 11.9526,
+          longitude: merchant.longitude || 79.7966,
+          fullAddress: merchant.fullAddress || "",
+        },
+        kycInfo: {
+          ...state.kycInfo,
+          kycType: merchant.kycType || "",
+          kycDocument: merchant.kycDocument || "",
+          agreementCopy: merchant.agreementCopy || "",
+          idProof: merchant.idProof || "",
+          addressProof: merchant.addressProof || "",
+        },
+        paymentConfig: {
+          ...state.paymentConfig,
+          paymentType: merchant.paymentType,
+          mdrType: merchant.mdrType,
+          mdrValue: merchant.mdrValue,
+        },
+        termsAndConditions: merchant.termsAndConditions,
+      },
+    })),
   updateForm: (section, key, value) =>
     set((state) => {
       const currentSection = state.formData[section];

@@ -4,7 +4,7 @@ import { fileToBase64 } from "../../../helper";
 import { useMerchantFormStore } from "../../../store/merchantFormStore";
 
 const KYCInfo = () => {
-  const { formData, updateForm, updatedMerchantData } = useMerchantFormStore();
+  const { formData, updateForm } = useMerchantFormStore();
   const { kycInfo } = formData;
 
   const handleChange = async (e) => {
@@ -25,10 +25,7 @@ const KYCInfo = () => {
     link.click();
   };
 
-  const getFileValue = (name) => {
-    // priority: updated formData > existing merchant data
-    return kycInfo[name] || updatedMerchantData?.[name] || "";
-  };
+  const getFileValue = (name) => kycInfo[name];
 
   return (
     <div className="p-3 rounded-lg bg-chart border border-[var(--borderBg-color)]">
@@ -44,12 +41,12 @@ const KYCInfo = () => {
           </label>
           <select
             name="kycType"
-            value={kycInfo.kycType || updatedMerchantData?.kycType || ""}
+            value={kycInfo.kycType}
             onChange={handleChange}
             className="form-input w-full"
             required
           >
-            <option value="" disabled hidden>
+            <option value="" hidden>
               Select KYC type
             </option>
             {kycTypes.map((type) => (
@@ -76,7 +73,7 @@ const KYCInfo = () => {
                 accept=".pdf,.jpg,.png"
                 className="form-input"
               />
-              {!kycInfo[file.name] && getFileValue(file.name) && (
+              {kycInfo[file.name] && getFileValue(file.name) && (
                 <button
                   type="button"
                   onClick={() =>

@@ -182,3 +182,28 @@ export const roleGuidelines = [
     description: "Only letters, spaces, and hyphens allowed",
   },
 ];
+
+export const merchantGuidelines = [
+  {
+    icon: "📝",
+    title: "Merchant Registration",
+    description:
+      "Collect shop details, contact information, and business category",
+  },
+  {
+    icon: "📄",
+    title: "KYC Verification",
+    description: "Upload and verify identity and address proof documents",
+  },
+  {
+    icon: "💳",
+    title: "Payment Setup",
+    description: "Configure preferred payment methods and settlement options",
+  },
+  {
+    icon: "📍",
+    title: "Location & Activation",
+    description:
+      "Mark business location and activate merchant account for services",
+  },
+];
