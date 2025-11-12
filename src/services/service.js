@@ -110,7 +110,6 @@ const getRequest = async (endpoint) => {
   }
 };
 
-
 // ---------------POST METHOD--------------------
 export const DepartmentCreate = (payload) =>
   postRequest(`${API_BASE_URL}/ums/api/UserManagement/department_create`, {
@@ -163,7 +162,7 @@ export const approvePartnerAction = (payload) =>
   postRequest(`/ps/api/Product/approveDistributionPartner`, {
     ...payload,
   });
-  export const approveMerchantAction = (payload) =>
+export const approveMerchantAction = (payload) =>
   postRequest(`/ps/api/Product/approve-merchant`, {
     ...payload,
   });
@@ -173,7 +172,6 @@ export const approvePartnerEmoneyAction = (payload) =>
     ...payload,
     logId: uuidv4(),
   });
-
 
 export const getPinCodeDetails = (payload) =>
   postRequest(`cs/api/Customer/Pincode`, payload);
@@ -245,6 +243,49 @@ export const getPendingProductData = () =>
 export const getPendingPartnerData = () =>
   getRequest(`${API_BASE_URL}/fes/api/Export/partner_summary_export`);
 
-
 export const getRegulatorData = () =>
   getRequest(`${API_BASE_URL}/fes/api/Export/export_rbi_configuration`);
+/** role**/
+
+export const getModulesScreens = () =>
+  getRequest(`${API_BASE_URL}/fes/api/Export/modules-screens`);
+
+/** 🔹 Get all role-module-screen mappings */
+export const getAllRoles = () =>
+  getRequest(`${API_BASE_URL}/fes/api/Export/role-module-screen`);
+
+/** 🔹 Create a new role access (bulk create) */
+export const createRoleAccess = (payload) =>
+  postRequest(`${API_BASE_URL}/ums/api/UserManagement/role-access/bulk`, {
+    ...payload,
+    logId: uuidv4(),
+  });
+
+/** 🔹 Update an existing role */
+export const updateRoleAccess = (payload) =>
+  putRequest(`${API_BASE_URL}/ums/api/UserManagement/update-role-access/bulk`, {
+    ...payload,
+    logId: payload.logId || uuidv4(),
+  });
+/** 🔹 Get employee form dropdown data (departments, roles, employees, designations) */
+export const getEmployeeFormData = () =>
+  Promise.all([
+    getRequest(`${API_BASE_URL}/fes/api/Export/simple-departments`),
+    getRequest(`${API_BASE_URL}/fes/api/Export/role-module-screen`),
+    getRequest(`${API_BASE_URL}/fes/api/Export/pending-employees`),
+    getRequest(`${API_BASE_URL}/fes/api/Export/designations`),
+  ]);
+
+/** 🔹 Create Employee */
+export const createEmployee = (payload) =>
+  postRequest(`${API_BASE_URL}/ums/api/UserManagement/createEmployee`, {
+    ...payload,
+    logId: payload.logId || uuidv4(),
+  });
+
+/** 🔹 Update Employee */
+export const updateEmployee = (payload) =>
+  putRequest(`${API_BASE_URL}/ums/api/UserManagement/updateEmployee`, {
+    ...payload,
+    logId: payload.logId || uuidv4(),
+  });

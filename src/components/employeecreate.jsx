@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import axios from "axios";
 import usePublicIp from "../hooks/usePublicIp";
 import {
   ArrowLeft,
@@ -19,6 +18,11 @@ import ErrorText from "./reusable/errorText";
 import { v4 as uuidv4 } from "uuid";
 import { paginationStyle } from "../constants";
 import customConfirm from "./reusable/CustomConfirm";
+import {
+  getEmployeeFormData,
+  createEmployee,
+  updateEmployee,
+} from "../services/service"; // ✅ your centralized API
 
 const EmployeeCreationForm = ({ onBack }) => {
   const username = localStorage.getItem("username");
@@ -45,8 +49,6 @@ const EmployeeCreationForm = ({ onBack }) => {
   const [isApiCalled, setIsApiCalled] = useState(false);
   const ip = usePublicIp();
   const targetRef = useRef(null);
-  const userAgent = navigator.userAgent;
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const itemsPerPage = 8;
 
   const handleScroll = () => {
@@ -58,6 +60,7 @@ const EmployeeCreationForm = ({ onBack }) => {
     setEmpId(generatedId);
   }, []);
 
+  // ✅ Pre-fill form on edit
   useEffect(() => {
     if (selectedEmployee) {
       const status = selectedEmployee.status;
@@ -71,12 +74,12 @@ const EmployeeCreationForm = ({ onBack }) => {
         status === 1
           ? "Super User"
           : status === 2
-            ? "Normal User"
-            : status === 3
-              ? "Checker"
-              : status === 4
-                ? "Maker"
-                : "Infra Manager"
+          ? "Normal User"
+          : status === 3
+          ? "Checker"
+          : status === 4
+          ? "Maker"
+          : "Infra Manager"
       );
       setPassword("");
       if (selectedEmployee.roleAccessId) {
@@ -85,14 +88,12 @@ const EmployeeCreationForm = ({ onBack }) => {
             r.roleAccessId.toString() ===
             selectedEmployee.roleAccessId.toString()
         );
-
         const grouped = {};
         filtered.forEach(({ moduleName, screenDesc }) => {
           if (!grouped[moduleName]) grouped[moduleName] = [];
           if (!grouped[moduleName].includes(screenDesc))
             grouped[moduleName].push(screenDesc);
         });
-
         setSelectedRoleScreens(grouped);
       }
     }
@@ -109,26 +110,23 @@ const EmployeeCreationForm = ({ onBack }) => {
     setErrors({});
   };
 
-  const api = `${API_BASE_URL}/fes/api/Export/`;
+  // ✅ Centralized fetch (instead of axios)
+  const fetchData = async () => {
+    try {
+      const [departmentsRes, modulesRes, employeesRes, designationsRes] =
+        await getEmployeeFormData();
+      setAccessList(departmentsRes.data);
+      setRoleData(modulesRes.data);
+      setEmployees(employeesRes.data);
+      setDesignation(designationsRes.data);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+    }
+  };
 
   useEffect(() => {
     fetchData();
   }, []);
-  const fetchData = () => {
-    Promise.all([
-      axios.get(`${api}simple-departments`),
-      axios.get(`${api}role-module-screen`),
-      axios.get(`${api}pending-employees`),
-      axios.get(`${api}designations`),
-    ])
-      .then(([departmentsRes, modulesRes, employeesRes, designationsRes]) => {
-        setAccessList(departmentsRes.data);
-        setRoleData(modulesRes.data);
-        setEmployees(employeesRes.data);
-        setDesignation(designationsRes.data);
-      })
-      .catch((err) => console.error("Error fetching data:", err));
-  };
 
   const uniqueDepts = Array.from(
     new Set(designation.map((item) => item.deptName))
@@ -157,7 +155,6 @@ const EmployeeCreationForm = ({ onBack }) => {
   });
 
   const totalPages = Math.ceil(filteredConfigurations.length / itemsPerPage);
-
   const paginatedConfigurations = filteredConfigurations.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -179,10 +176,8 @@ const EmployeeCreationForm = ({ onBack }) => {
     else if (name.length > 25) newErrors.name = "Name max 25 characters";
     if (!email) newErrors.email = "Enter Email Id";
     else if (!emailRegex.test(email)) newErrors.email = "Invalid email";
-    if (!isUpdate) {
-      if (!/^[0-9]+$/.test(empId))
-        newErrors.empId = "Employee ID must be numeric";
-    }
+    if (!isUpdate && !/^[0-9]+$/.test(empId))
+      newErrors.empId = "Employee ID must be numeric";
     if (!isUpdate) {
       if (!password) newErrors.password = "Enter password";
       else if (!passwordRegex.test(password)) {
@@ -212,18 +207,17 @@ const EmployeeCreationForm = ({ onBack }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const confirmAction = await customConfirm("Are you sure you want to continue?");
+    const confirmAction = await customConfirm(
+      "Are you sure you want to continue?"
+    );
     if (!confirmAction) return;
     if (!validate(selectedEmployee)) return;
-    if (selectedEmployee && !designationId) return;
 
-    const timestamp = new Date().toISOString();
-
-    // 🔹 get original employee object (for logId)
     const original = employees.find(
       (emp) => emp.userId === selectedEmployee?.userId
     );
 
+    // ✅ No metadata here (backend adds it)
     const payload = {
       deptId,
       designationId,
@@ -232,31 +226,17 @@ const EmployeeCreationForm = ({ onBack }) => {
       password,
       statusId,
       roleAccessId: parseInt(roleAccessId),
-      userType,
-      // 🔹 logId handling
-      logId: selectedEmployee && original?.logId ? original.logId : uuidv4(), // new only on create or missing
+      userType: usersId[userType],
+      logId: selectedEmployee && original?.logId ? original.logId : uuidv4(),
       ...(selectedEmployee
         ? {
-          modifiedBy: createdBy,
-          userId: selectedEmployee?.userId,
-          empId: selectedEmployee?.empId,
-        }
+            modifiedBy: createdBy,
+            userId: selectedEmployee?.userId,
+            empId: selectedEmployee?.empId,
+          }
         : { createdBy: createdBy, empId: `Emp${empId}` }),
-      metadata: {
-        ipAddress: ip || "0.0.0.0",
-        userAgent,
-        headers: "custom-header",
-        channel: "web",
-        auditMetadata: {
-          createdBy: username,
-          createdDate: timestamp,
-          modifiedBy: username,
-          modifiedDate: timestamp,
-        },
-      },
     };
 
-    // map department + designation
     const deptObj = designation.find((d) => d.deptName === payload.deptId);
     if (deptObj) payload.deptId = deptObj.deptId;
 
@@ -265,27 +245,17 @@ const EmployeeCreationForm = ({ onBack }) => {
     );
     if (desigObj) payload.designationId = desigObj.designationId;
 
-    if (usersId[payload.userType]) payload.userType = usersId[payload.userType];
-
     try {
       if (selectedEmployee) {
-        await axios.put(
-          `${API_BASE_URL}/ums/api/UserManagement/updateEmployee`,
-          payload,
-          { headers: { "Content-Type": "application/json" } }
-        );
+        await updateEmployee(payload);
         alert("✅ Employee updated successfully");
       } else {
-        await axios.post(
-          `${API_BASE_URL}/ums/api/UserManagement/createEmployee`,
-          payload,
-          { headers: { "Content-Type": "application/json" } }
-        );
+        await createEmployee(payload);
         alert("✅ Employee created successfully");
       }
     } catch (err) {
       console.error("❌ API error:", err.response?.data || err.message);
-      alert("❌ Failed. See console.");
+      alert("❌ Failed. Check console.");
     } finally {
       fetchData();
       clearState();
@@ -297,12 +267,10 @@ const EmployeeCreationForm = ({ onBack }) => {
   const handleRoleChange = (e) => {
     const roleId = e.target.value;
     setRoleAccessId(roleId);
-
     if (!roleId) {
       setSelectedRoleScreens({});
       return;
     }
-
     const filtered = roleData.filter(
       (r) => r.roleAccessId.toString() === roleId
     );
@@ -314,7 +282,6 @@ const EmployeeCreationForm = ({ onBack }) => {
     });
     setSelectedRoleScreens(grouped);
   };
-
   return (
     <div>
       {/* Top Bar */}
@@ -592,10 +559,11 @@ const EmployeeCreationForm = ({ onBack }) => {
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className={`w-6 h-6 flex items-center justify-center rounded-md transition ${currentPage === 1
+            className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
+              currentPage === 1
                 ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
                 : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
-              }`}
+            }`}
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -605,10 +573,11 @@ const EmployeeCreationForm = ({ onBack }) => {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className={`w-6 h-6 flex items-center justify-center rounded-md transition ${currentPage === totalPages
+            className={`w-6 h-6 flex items-center justify-center rounded-md transition ${
+              currentPage === totalPages
                 ? "bg-[#0f131d] text-gray-500 cursor-not-allowed"
                 : "bg-[#0f131d] text-white hover:border hover:border-[var(--primary-color)]"
-              }`}
+            }`}
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -649,24 +618,25 @@ const EmployeeCreationForm = ({ onBack }) => {
                     <td>{emp.roleDescription}</td>
                     <td>
                       <span
-                        className={`px-2 py-1 text-[10px] rounded ${emp.status === 0
+                        className={`px-2 py-1 text-[10px] rounded ${
+                          emp.status === 0
                             ? "checker"
                             : emp.status === 1
-                              ? "infra"
-                              : emp.status === 2
-                                ? "inactive"
-                                : "maker"
-                          }`}
+                            ? "infra"
+                            : emp.status === 2
+                            ? "inactive"
+                            : "maker"
+                        }`}
                       >
                         {emp.status === 0
                           ? "Approved"
                           : emp.status === 1
-                            ? "Pending"
-                            : emp.status === 2
-                              ? "Rejected"
-                              : emp.status === 3
-                                ? "Recheck"
-                                : ""}
+                          ? "Pending"
+                          : emp.status === 2
+                          ? "Rejected"
+                          : emp.status === 3
+                          ? "Recheck"
+                          : ""}
                       </span>
                     </td>
                     <td>
