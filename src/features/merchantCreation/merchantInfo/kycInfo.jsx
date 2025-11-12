@@ -73,7 +73,7 @@ const KYCInfo = () => {
                 accept=".pdf,.jpg,.png"
                 className="form-input"
               />
-              {kycInfo[file.name] && getFileValue(file.name) && (
+              {!kycInfo[file.name] && getFileValue(file.name) && (
                 <button
                   type="button"
                   onClick={() =>

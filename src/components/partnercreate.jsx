@@ -11,8 +11,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import Select from "react-select";
 import usePublicIp from "../hooks/usePublicIp";
 import "../styles/styles.css";
@@ -27,6 +26,12 @@ import { v4 as uuidv4 } from "uuid";
 import GuidelinesCard from "./reusable/guidelinesCard";
 import { partnerGuidelines } from "../constants/guidelines";
 import customConfirm from "./reusable/CustomConfirm";
+import {
+  createPartner,
+  getDashboardData,
+  getPartnerData,
+  updatePartner,
+} from "../services/service";
 // import { PencilIcon, Plus,SquarePen  } from "lucide-react";
 
 export default function Partnercreate() {
@@ -108,44 +113,22 @@ export default function Partnercreate() {
   };
 
   const [editingId, setEditingId] = useState(null);
+  const fetchData = async () => {
+    const res = await getDashboardData("Export/product_Config_export");
+    const res2 = await getDashboardData(
+      "Export/constraints-disturbution-parnter"
+    );
+    const res3 = await getDashboardData("Export/partner-url");
+    const data = res.data;
+    const unique = Array.from(
+      new Map(data.map((item) => [item.productName, item])).values()
+    );
+    setProducts(unique);
+    setConstraints(transformConstraints(res2.data));
+    setPortalOptions(res3.data || []);
+  };
   useEffect(() => {
-    fetch(`${API_BASE_URL}/fes/api/Export/product_Config_export`)
-      .then((res) => res.json())
-      .then((data) => {
-        // 🔹 Remove duplicates by productName
-        const unique = Array.from(
-          new Map(data.map((item) => [item.productName, item])).values()
-        );
-        setProducts(unique);
-      })
-      .catch((err) => console.error("Error fetching products:", err));
-  }, []);
-
-  useEffect(() => {
-    const fetchConstraints = async () => {
-      try {
-        const res = await axios.get(
-          `${API_BASE_URL}/fes/api/Export/constraints-disturbution-parnter`
-        );
-        setConstraints(transformConstraints(res.data)); // ✅ Use function
-      } catch (err) {
-        console.error("Error fetching constraints", err);
-      }
-    };
-
-    fetchConstraints();
-
-    const fetchPortalUrls = async () => {
-      try {
-        const res = await axios.get(
-          `${API_BASE_URL}/fes/api/Export/partner-url`
-        );
-        setPortalOptions(res.data || []);
-      } catch (err) {
-        console.error("Error fetching portal URLs:", err);
-      }
-    };
-    fetchPortalUrls();
+    fetchData();
   }, []);
 
   const ip = usePublicIp();
@@ -154,14 +137,8 @@ export default function Partnercreate() {
     fetchConfigurations();
   }, []);
   const fetchConfigurations = async () => {
-    try {
-      const res = await axios.get(
-        `${API_BASE_URL}/fes/api/Export/partner_summary_export`
-      );
-      setPartners(res.data || []);
-    } catch (err) {
-      console.error("Error fetching configurations:", err);
-    }
+    const res = await getPartnerData();
+    setPartners(res.data || []);
   };
   // Filter by search
   const filteredPartners = partners
@@ -328,24 +305,7 @@ export default function Partnercreate() {
 
       // Determine method and URL
       const isEditing = !!editingId; // true if editing
-      const method = isEditing ? "put" : "post";
-      const url = isEditing
-        ? `${API_BASE_URL}/ps/api/Product/DistributionPartner-update`
-        : `${API_BASE_URL}/ps/api/Product/DistributionPartner-Create`;
-
-      // console.log("Submitting partner form");
-      // console.log("Editing mode:", isEditing);
-      // console.log("URL:", url);
-      // console.log("Before encoding password:", form.password);
-      // console.log("Encoded password:", btoa(form.password));
-      // console.log("Payload object:", payload);
-      // console.log(JSON.stringify(payload, null, 2));
-      const res = await axios({
-        method: method,
-        url: url,
-        data: payload,
-        headers: { "Content-Type": "application/json" },
-      });
+      isEditing ? await updatePartner(payload) : await createPartner(payload);
 
       alert(
         isEditing

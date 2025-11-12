@@ -11,6 +11,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { primaryColor } from "../../constants";
+import { getDashboardData } from "../../services/service";
 
 ChartJS.register(
   CategoryScale,
@@ -28,98 +29,43 @@ const BarChart = () => {
     step: 2,
     ticks: [0, 2, 4, 6, 8],
   });
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const res = await fetch(
-  //         "http://192.168.22.247/fes/api/Export/wallet-transcation-dashboard"
-  //       );
-  //       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  //       const data = await res.json();
-
-  //       if (!Array.isArray(data) || data.length === 0) {
-  //         setChartData(null);
-  //         return;
-  //       }
-
-  //       const labels = data.map((d) => d.dayOfWeek);
-  //       const load = data.map((d) => d.totalLoadAmountMillion);
-  //       const spend = data.map((d) => d.totalUnloadAmountMillion);
-
-  //       const allValues = [...load, ...spend];
-  //       const maxValue = Math.max(...allValues);
-
-  //       const totalTicks = 5;
-  //       const rawStep = maxValue / (totalTicks - 1);
-  //       const step = Math.ceil(rawStep);
-  //       const yMax = step * (totalTicks - 1);
-  //       const visibleTicks = Array.from({ length: totalTicks }, (_, i) =>
-  //         parseFloat((i * step).toFixed(6))
-  //       );
-
-  //       setYAxisConfig({ max: yMax, step, ticks: visibleTicks });
-
-  //       setChartData({
-  //         labels,
-  //         datasets: [
-  //           { label: "Load", data: load, backgroundColor: "#00D4FF" },
-  //           { label: "Unload", data: spend, backgroundColor: "#ff5252" },
-  //         ],
-  //       });
-  //     } catch (error) {
-  //       console.error("Error fetching chart data:", error);
-  //       setChartData(null);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
-  
   useEffect(() => {
     const fetchChartData = async () => {
-      try {
-        const res = await axios.get(
-          `${API_BASE_URL}/fes/api/Export/wallet-transcation-dashboard`
-        );
-        const data = res.data;
+      const res = await getDashboardData("Export/wallet-transcation-dashboard");
+      const data = res.data;
 
-        if (!Array.isArray(data) || data.length === 0) {
-          setChartData(null); // No data
-          return;
-        }
-
-        // Extract values
-        const labels = data.map((d) => d.dayOfWeek);
-        const load = data.map((d) => d.totalLoadAmountMillion);
-        const spend = data.map((d) => d.totalUnloadAmountMillion);
-
-        const allValues = [...load, ...spend];
-        const maxValue = Math.max(...allValues);
-
-        // Exactly 5 ticks: 0 + 4 intervals
-        const totalTicks = 5;
-        const rawStep = maxValue / (totalTicks - 1);
-        const step = Math.ceil(rawStep);
-        const yMax = step * (totalTicks - 1);
-        const visibleTicks = Array.from({ length: totalTicks }, (_, i) =>
-          parseFloat((i * step).toFixed(6))
-        );
-
-        setYAxisConfig({ max: yMax, step, ticks: visibleTicks });
-
-        setChartData({
-          labels,
-          datasets: [
-            { label: "Load", data: load, backgroundColor: "#00D4FF" },
-            { label: "Unload", data: spend, backgroundColor: "#ff5252" },
-          ],
-        });
-      } catch (error) {
-        console.error("Error fetching chart data:", error);
-        setChartData(null); // API failure
+      if (!Array.isArray(data) || data.length === 0) {
+        setChartData(null); // No data
+        return;
       }
+
+      // Extract values
+      const labels = data.map((d) => d.dayOfWeek);
+      const load = data.map((d) => d.totalLoadAmountMillion);
+      const spend = data.map((d) => d.totalUnloadAmountMillion);
+
+      const allValues = [...load, ...spend];
+      const maxValue = Math.max(...allValues);
+
+      // Exactly 5 ticks: 0 + 4 intervals
+      const totalTicks = 5;
+      const rawStep = maxValue / (totalTicks - 1);
+      const step = Math.ceil(rawStep);
+      const yMax = step * (totalTicks - 1);
+      const visibleTicks = Array.from({ length: totalTicks }, (_, i) =>
+        parseFloat((i * step).toFixed(6))
+      );
+
+      setYAxisConfig({ max: yMax, step, ticks: visibleTicks });
+
+      setChartData({
+        labels,
+        datasets: [
+          { label: "Load", data: load, backgroundColor: "#00D4FF" },
+          { label: "Unload", data: spend, backgroundColor: "#ff5252" },
+        ],
+      });
     };
 
     fetchChartData();

@@ -1,19 +1,15 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "../../styles/styles.css";
 import { BookText, TrendingUp, CheckCircle, Users } from "lucide-react";
 import "../../styles/styles.css";
-import axios from "axios";
 import StatCards from "../../components/reusable/statCards";
 import { primaryColor } from "../../constants";
+import { getDashboardData } from "../../services/service";
 const PartnerMangement = () => {
   const [partnerData, setPartnerData] = useState({});
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const fetchData = async () => {
-    const res = await axios.get(
-      `${API_BASE_URL}/fes/api/Export/partner-performance`
-    );
-    const data = res.data;
-    setPartnerData(data);
+    const res = await getDashboardData("Export/partner-performance");
+    setPartnerData(res?.data);
   };
 
   const stats = [

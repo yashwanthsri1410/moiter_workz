@@ -17,6 +17,7 @@ import LoadedUnLoaded from "../features/financialDashboard/loadedUnloaded";
 import WeeklyTrends from "../features/financialDashboard/weeklyTrends";
 import PerformanceOverview from "../features/financialDashboard/perfomanceOverview";
 import KYCCompliance from "../features/financialDashboard/kycCompliance";
+import { getDashboardData } from "../services/service";
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 axios.defaults.baseURL = `${API_BASE_URL}/fes/api/`;
 
@@ -27,65 +28,46 @@ const OperationsDashboard = () => {
     setWalletPerformanceData,
     setTransactionData,
     setProductData,
-    setPartnerData,
     setError,
     error,
     setKycStatusData,
   } = useOperationStore();
-  const icons = [
-    {
-      id: "refresh",
-      icon: <RefreshCcw size={18} />,
-    },
-    { id: "download", icon: <Download size={18} /> },
-  ];
-
-  const loadedDashboard = async (url) => {
-    const res = await axios.get(url);
-    return res;
-  };
 
   const fetchData = async () => {
     const apiConfigs = [
       {
         key: "loaded",
-        call: loadedDashboard(loadedUrl),
+        call: getDashboardData(loadedUrl),
         setter: setLoadedData,
         errorMsg: "Failed to load Loaded Data",
       },
       {
         key: "unloaded",
-        call: loadedDashboard(unLoadedUrl),
+        call: getDashboardData(unLoadedUrl),
         setter: setUnLoadedData,
         errorMsg: "Failed to load Unloaded Data",
       },
       {
         key: "walletPerfomance",
-        call: loadedDashboard(walletPerfomanceUrl),
+        call: getDashboardData(walletPerfomanceUrl),
         setter: setWalletPerformanceData,
         errorMsg: "Failed to load Wallet Perfomance Data",
       },
       {
         key: "transaction",
-        call: loadedDashboard(transactionUrl),
+        call: getDashboardData(transactionUrl),
         setter: setTransactionData,
         errorMsg: "Failed to load weekly Trends Data",
       },
       {
         key: "product",
-        call: loadedDashboard(productUrl),
+        call: getDashboardData(productUrl),
         setter: setProductData,
         errorMsg: "Failed to load Product Data",
       },
-      // {
-      //   key: "partner",
-      //   call: loadedDashboard(partnerUrl),
-      //   setter: setPartnerData,
-      //   errorMsg: "Failed to load Partner Data",
-      // },
       {
         key: "kyc",
-        call: loadedDashboard(kycStatusUrl),
+        call: getDashboardData(kycStatusUrl),
         setter: setKycStatusData,
         errorMsg: "Failed to load KYC Data",
       },
@@ -96,7 +78,7 @@ const OperationsDashboard = () => {
     results.forEach((res, i) => {
       const { key, setter, errorMsg } = apiConfigs[i];
       if (res.status === "fulfilled") {
-        setter(res.value.data);
+        setter(res?.value?.data);
         setError((prev) => ({ ...prev, [key]: null }));
       } else {
         setter(null);

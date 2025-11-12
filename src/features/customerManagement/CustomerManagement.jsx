@@ -1,28 +1,25 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Users, UserPlus, Clock, Shield } from "lucide-react";
 import PieChart from "./PieChart";
 import BarChart from "./BarChart";
 import RecentCustomer from "./RecentCustomer";
+import { getDashboardData } from "../../services/service";
 
 const CustomerManagement = () => {
   const [data, setData] = useState(null);
 
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  const fetchData = async () => {
+    const res = await getDashboardData("Export/customer_dashboard_export");
+    setData(res.data);
+  };
   useEffect(() => {
-    fetch(`${API_BASE_URL}/fes/api/Export/customer_dashboard_export`)
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.length > 0) {
-          setData(json[0]); // Take the first item (serialNo: 1)
-        }
-      })
-      .catch((err) => console.error("Failed to fetch dashboard data:", err));
+    fetchData();
   }, []);
 
   if (!data) return <p className="text-gray-400">Loading...</p>;
 
   const { total_customers, active_customers, active_percentage } =
-    data.customerSummary;
+    data?.[0]?.customerSummary;
 
   const stats = [
     {
@@ -37,19 +34,19 @@ const CustomerManagement = () => {
     },
     {
       title: "Customer Added Today",
-      value: data.customersAddedToday,
+      value: data?.[0].customersAddedToday,
       color: "text-[#00d4aa]",
       icon: <UserPlus className="w-4 h-4 text-blue-500" />,
     },
     {
       title: "KYC Pending",
-      value: data.kycPendingCount.toLocaleString(),
+      value: data?.[0].kycPendingCount.toLocaleString(),
       color: "text-yellow-500",
       icon: <Clock className="w-4 h-4 text-yellow-500" />,
     },
     {
       title: "High Risk",
-      value: data.highRiskCount.toLocaleString(),
+      value: data?.[0].highRiskCount.toLocaleString(),
       color: "text-red-500",
       icon: <Shield className="w-4 h-4 text-red-500" />,
     },
@@ -94,7 +91,7 @@ const CustomerManagement = () => {
         {/* Pie Chart */}
         <div className="md:h-[400px] w-full flex items-center justify-center">
           <div className="w-full h-full">
-            <PieChart />
+            <PieChart data={data} />
           </div>
         </div>
 
@@ -108,7 +105,7 @@ const CustomerManagement = () => {
 
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200 rounded-lg">
         {" "}
-        <RecentCustomer />{" "}
+        <RecentCustomer data={data} />{" "}
       </div>
     </>
   );

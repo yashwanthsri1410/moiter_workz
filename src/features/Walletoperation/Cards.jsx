@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Wallet, DollarSign, TrendingUp, TrendingDown } from "lucide-react";
-import axios from "axios";
 import "../Walletoperation/Cards.css";
+import { getDashboardData } from "../../services/service";
 
 // ✅ Helper to format numbers
 const formatNumber = (num) => {
@@ -12,20 +12,12 @@ const formatNumber = (num) => {
 
 const Cards = () => {
   const [data, setData] = useState(null);
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const fetchDashboardData = async () => {
-    try {
-      const res = await axios.get(
-        `${API_BASE_URL}/fes/api/Export/wallet_dashboard_export`
-      );
-      if (res.data && res.data.length > 0) {
-        setData(res.data[0]);
-      } else {
-        setData(null);
-      }
-    } catch (err) {
-      console.error("Error fetching dashboard data:", err);
+    const res = await getDashboardData("Export/wallet_dashboard_export");
+    if (res?.data && res?.data?.length > 0) {
+      setData(res?.data[0]);
+    } else {
       setData(null);
     }
   };

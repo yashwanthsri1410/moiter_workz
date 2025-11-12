@@ -7,55 +7,48 @@ const PaymentConfig = () => {
   const { formData, updateForm } = useMerchantFormStore();
   const { paymentConfig } = formData;
 
+  // ✅ Toggle checkbox
   const handleCheckboxToggle = (id) => {
-    const updatedMethods = {
-      ...paymentConfig.paymentType,
-      [id]: !paymentConfig.paymentType[id],
-    };
+    let selectedTypes = paymentConfig.paymentType
+      ? paymentConfig.paymentType.split(",").map((t) => t.trim())
+      : [];
 
     if (id === "all") {
-      const allValue = !paymentConfig.paymentType["all"];
-      paymentOptions.forEach((opt) => {
-        updatedMethods[opt.id] = allValue;
-      });
+      const allSelected = selectedTypes.length !== paymentOptions.length - 1; // exclude "all"
+      selectedTypes = allSelected
+        ? paymentOptions.filter((opt) => opt.id !== "all").map((opt) => opt.id)
+        : [];
+    } else {
+      if (selectedTypes.includes(id)) {
+        selectedTypes = selectedTypes.filter((t) => t !== id);
+      } else {
+        selectedTypes.push(id);
+      }
     }
 
-    updateForm("paymentConfig", "paymentType", updatedMethods);
+    updateForm("paymentConfig", "paymentType", selectedTypes.join(", "));
   };
 
+  // ✅ MDR handlers
   const handleMdrType = (type) => updateForm("paymentConfig", "mdrType", type);
   const handleInputChange = (e) =>
     updateForm("paymentConfig", "mdrValue", e.target.value);
 
-  // ✅ Initialize payment type from backend if available
+  // ✅ Only initialize MDR type from backend
   useEffect(() => {
-    const type = paymentConfig?.paymentType;
-
-    if (typeof type === "string") {
-      const selectedTypes = type.split(",").map((t) => t.trim());
-
-      const updatedMethods = paymentOptions.reduce((acc, opt) => {
-        acc[opt.id] = selectedTypes.includes(opt.id);
-        return acc;
-      }, {});
-
-      const allSelected = paymentOptions
-        .filter((opt) => opt.id !== "all")
-        .every((opt) => selectedTypes.includes(opt.id));
-
-      updatedMethods["all"] = allSelected;
-      updateForm("paymentConfig", "paymentType", updatedMethods);
-    }
-  }, [paymentConfig, updateForm]);
-
-  // ✅ Choose MDR Type — prefer backend `mdrMode`
-  useEffect(() => {
-    if (paymentConfig?.mdrMode) {
+    if (paymentConfig?.mdrMode && !paymentConfig.mdrType) {
       updateForm("paymentConfig", "mdrType", paymentConfig.mdrMode);
     }
-  }, [paymentConfig, updateForm]);
+  }, [paymentConfig.mdrMode, paymentConfig.mdrType, updateForm]);
 
   const mdrType = paymentConfig.mdrType || "Percentage";
+  const selectedTypesArray = paymentConfig.paymentType
+    ? paymentConfig.paymentType.split(",").map((t) => t.trim())
+    : [];
+
+  const allSelected = paymentOptions
+    .filter((opt) => opt.id !== "all")
+    .every((opt) => selectedTypesArray.includes(opt.id));
 
   return (
     <div className="p-3 rounded-lg bg-chart border border-[var(--borderBg-color)]">
@@ -71,39 +64,46 @@ const PaymentConfig = () => {
         </label>
 
         <div className="grid grid-cols-1 md:grid-cols-2 mt-0 gap-4">
-          {paymentOptions.map((option) => (
-            <div
-              key={option.id}
-              className={`flex items-center space-x-3 p-2 rounded-2xl ${
-                option.special
-                  ? "border border-[var(--borderBg-color)] bg-primary text-[#94a3b8]"
-                  : "border border-chart text-[#e2e8f0] font-bold"
-              }`}
-            >
-              <button
-                type="button"
-                role="checkbox"
-                aria-checked={paymentConfig.paymentType[option.id] || false}
-                onClick={() => handleCheckboxToggle(option.id)}
-                className={`peer rounded border shadow-xs size-4 shrink-0 outline-none transition-shadow ${
-                  paymentConfig.paymentType[option.id]
-                    ? "bg-chart-5 border-chart-5 text-primary-foreground"
-                    : "border-chart-5/30"
+          {paymentOptions.map((option) => {
+            const isChecked =
+              option.id === "all"
+                ? allSelected
+                : selectedTypesArray.includes(option.id);
+
+            return (
+              <div
+                key={option.id}
+                className={`flex items-center space-x-3 p-2 rounded-2xl ${
+                  option.special
+                    ? "border border-[var(--borderBg-color)] bg-primary text-[#94a3b8]"
+                    : "border border-chart text-[#e2e8f0] font-bold"
                 }`}
               >
-                {paymentConfig.paymentType[option.id] && (
-                  <Check className="w-3.5 h-3.5 bg-[#008284] text-black" />
-                )}
-              </button>
-              <label
-                className={`font-bold flex items-center gap-2 text-sm cursor-pointer ${
-                  option.special ? "text-primary" : "text-foreground"
-                }`}
-              >
-                {option.label}
-              </label>
-            </div>
-          ))}
+                <button
+                  type="button"
+                  role="checkbox"
+                  aria-checked={isChecked}
+                  onClick={() => handleCheckboxToggle(option.id)}
+                  className={`peer rounded border shadow-xs size-4 shrink-0 outline-none transition-shadow ${
+                    isChecked
+                      ? "bg-chart-5 border-chart-5 text-primary-foreground"
+                      : "border-chart-5/30"
+                  }`}
+                >
+                  {isChecked && (
+                    <Check className="w-3.5 h-3.5 bg-[#008284] text-black" />
+                  )}
+                </button>
+                <label
+                  className={`font-bold flex items-center gap-2 text-sm cursor-pointer ${
+                    option.special ? "text-primary" : "text-foreground"
+                  }`}
+                >
+                  {option.label}
+                </label>
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -147,7 +147,7 @@ const PaymentConfig = () => {
                 : "Enter flat amount (e.g., 10)"
             }
             required
-            value={paymentConfig.mdrValue}
+            value={paymentConfig.mdrValue || ""}
             onChange={handleInputChange}
             className="form-input"
           />

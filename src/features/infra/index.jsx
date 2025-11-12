@@ -5,8 +5,10 @@ import "../../styles/infra.css";
 import axios from "axios";
 import { useMonitoringStore } from "../../store/monitoringStore";
 import { Search } from "lucide-react";
+import { getInfraData } from "../../services/service";
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const url = `${API_BASE_URL}/infra/api/Infra/`;
+
 const Infra = () => {
   const [time, setTime] = useState(new Date());
   const [error, setError] = useState("");
@@ -33,16 +35,17 @@ const Infra = () => {
   };
 
   const fetchData = async () => {
-    try {
-      // run in parallel
-      const [summaryRes, statusRes] = await Promise.all([
-        axios.get(`${url}infra-summary`, { headers: cacheClear }),
-        axios.get(`${url}infra-status`, { headers: cacheClear }),
-      ]);
+    // run in parallel
+    const res = await getInfraData(`${url}infra-summary`, {
+      headers: cacheClear,
+    });
+    const res2 = await getInfraData(`${url}infra-status`, {
+      headers: cacheClear,
+    });
 
-      setInfraSummary(summaryRes.data);
-      setInfraStatus(statusRes.data);
-    } catch (error) {
+    setInfraSummary(res?.data);
+    setInfraStatus(res2?.data);
+    if (!res?.data && !res2?.data) {
       setError("Failed to Load Infra Summary/Status Data");
     }
   };
@@ -65,7 +68,7 @@ const Infra = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const isEmptyObj = Object.keys(infraSummary).length === 0;
+  const isEmptyObj = !infraSummary || Object.keys(infraSummary).length === 0;
   const isDBStrType = typeof dbStatus === "string";
   const isDBBoolType = typeof dbStatus === "boolean";
 
