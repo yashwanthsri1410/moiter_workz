@@ -2,22 +2,23 @@ import React, { useEffect, useState } from "react";
 import "../../styles/styles.css";
 import { Box, CreditCard, TrendingUp, DollarSign } from "lucide-react";
 import { primaryColor } from "../../constants";
+import { getDashboardData } from "../../services/service";
 // import KYCReviewQueue from "./KYCReviewQueue";
 
 // import "./All.css";
 
 const Productperformance = () => {
   const [data, setData] = useState(null);
+
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
+  const fetchData = async () => {
+    const res = await getDashboardData("Export/user-wallet-cards");
+    setData(res?.data);
+  };
+
   useEffect(() => {
-    fetch(`${API_BASE_URL}/fes/api/Export/user-wallet-cards`)
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.length > 0) {
-          setData(json); // Take the first item (serialNo: 1)
-        }
-      })
-      .catch((err) => console.error("Failed to fetch dashboard data:", err));
+    fetchData();
   }, []);
 
   if (!data) return <p>Loading...</p>;

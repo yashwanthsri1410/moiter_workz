@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "../../styles/styles.css";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import axios from "axios";
 import { primaryColor } from "../../constants";
+import { getDashboardData } from "../../services/service";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -11,41 +11,33 @@ const PieChart1 = () => {
   const chartRef = useRef(null);
   const [chartData, setChartData] = useState(null);
   const [hasData, setHasData] = useState(true);
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   useEffect(() => {
     const fetchWalletChartData = async () => {
-      try {
-        const res = await axios.get(
-          `${API_BASE_URL}/fes/api/Export/user-wallet-cards`
-        );
-        const data = res.data;
+      const res = await getDashboardData("Export/user-wallet-cards");
+      const data = res.data;
 
-        if (Array.isArray(data) && data.length > 0) {
-          setChartData({
-            labels: data.map((item) => item.walletCategory),
-            datasets: [
-              {
-                data: data.map((item) => item.activeWallets),
-                backgroundColor: [
-                  "#F59E0B",
-                  "#6366F1",
-                  "#EF4444",
-                  "#00D4FF",
-                  "#8B5CF6",
-                ],
-                borderColor: "#f0f0f0",
-                borderWidth: 1,
-                radius: "80%",
-              },
-            ],
-          });
-          setHasData(true);
-        } else {
-          setHasData(false);
-        }
-      } catch (err) {
-        console.error("Error fetching wallet chart data:", err);
+      if (Array.isArray(data) && data.length > 0) {
+        setChartData({
+          labels: data.map((item) => item.walletCategory),
+          datasets: [
+            {
+              data: data.map((item) => item.activeWallets),
+              backgroundColor: [
+                "#F59E0B",
+                "#6366F1",
+                "#EF4444",
+                "#00D4FF",
+                "#8B5CF6",
+              ],
+              borderColor: "#f0f0f0",
+              borderWidth: 1,
+              radius: "80%",
+            },
+          ],
+        });
+        setHasData(true);
+      } else {
         setHasData(false);
       }
     };

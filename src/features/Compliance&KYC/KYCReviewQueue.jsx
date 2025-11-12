@@ -17,7 +17,7 @@ import {
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-const KYCReviewQueue = () => {
+const KYCReviewQueue = ({ data }) => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,25 +28,17 @@ const KYCReviewQueue = () => {
   const itemsPerPage = 5;
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/fes/api/Export/customer_Kyc_dashboard_export`)
-      .then((res) => res.json())
-      .then((data) => {
-        const mapped = data.map((item) => ({
-          id: item.serialNo,
-          serialNo: item.serialNo,
-          customerName: item.customerName,
-          submitDate: new Date(item.submitDate).toLocaleDateString(), // Formatting the date
-          status: item.status,
-          risk: item.riskCategory,
-          documents: item.documents,
-        }));
-        setCustomers(mapped);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch customers:", err);
-        setLoading(false);
-      });
+    const mapped = data.map((item) => ({
+      id: item.serialNo,
+      serialNo: item.serialNo,
+      customerName: item.customerName,
+      submitDate: new Date(item.submitDate).toLocaleDateString(), // Formatting the date
+      status: item.status,
+      risk: item.riskCategory,
+      documents: item.documents,
+    }));
+    setCustomers(mapped);
+    setLoading(false);
   }, []);
 
   const exportPDF = () => {

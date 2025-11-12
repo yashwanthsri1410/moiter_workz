@@ -4,6 +4,7 @@ import { getPublicIp } from "./ipService";
 // Base URL
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const path = "/ps/api";
+const fesPath = "/fes/api";
 const ip = await getPublicIp();
 const username = localStorage.getItem("username");
 
@@ -110,7 +111,6 @@ const getRequest = async (endpoint) => {
   }
 };
 
-
 // ---------------POST METHOD--------------------
 export const DepartmentCreate = (payload) =>
   postRequest(`${API_BASE_URL}/ums/api/UserManagement/department_create`, {
@@ -163,7 +163,7 @@ export const approvePartnerAction = (payload) =>
   postRequest(`/ps/api/Product/approveDistributionPartner`, {
     ...payload,
   });
-  export const approveMerchantAction = (payload) =>
+export const approveMerchantAction = (payload) =>
   postRequest(`/ps/api/Product/approve-merchant`, {
     ...payload,
   });
@@ -173,7 +173,6 @@ export const approvePartnerEmoneyAction = (payload) =>
     ...payload,
     logId: uuidv4(),
   });
-
 
 export const getPinCodeDetails = (payload) =>
   postRequest(`cs/api/Customer/Pincode`, payload);
@@ -245,6 +244,54 @@ export const getPendingProductData = () =>
 export const getPendingPartnerData = () =>
   getRequest(`${API_BASE_URL}/fes/api/Export/partner_summary_export`);
 
-
 export const getRegulatorData = () =>
   getRequest(`${API_BASE_URL}/fes/api/Export/export_rbi_configuration`);
+
+//partner creation
+
+export const getPartnerData = () =>
+  getRequest(`${API_BASE_URL}${fesPath}/Export/partner_summary_export`);
+
+export const createPartner = (payload) =>
+  postRequest(
+    `${API_BASE_URL}${path}/Product/DistributionPartner-Create`,
+    payload
+  );
+
+export const updatePartner = (payload) =>
+  putRequest(
+    `${API_BASE_URL}${path}/Product/DistributionPartner-update`,
+    payload
+  );
+
+//product creation
+export const getProductData = () =>
+  getRequest(`${API_BASE_URL}${fesPath}/Export/product_Config_export`);
+
+export const getRbiConfig = () =>
+  getRequest(`${API_BASE_URL}${fesPath}/Export/export_rbi_configuration`);
+
+export const createProduct = (payload) =>
+  postRequest(
+    `${API_BASE_URL}${path}/Product/productConfigurationCreate`,
+    payload
+  );
+
+export const updateProduct = (payload) =>
+  putRequest(
+    `${API_BASE_URL}${path}/Product/productConfigurationUpdate`,
+    payload
+  );
+
+//dashboard
+export const getDashboardData = (endpoint) =>
+  getRequest(`${API_BASE_URL}${fesPath}/${endpoint}`);
+
+export const getInfraData = (url) => getRequest(url);
+
+//regulatory
+export const createRegulatory = (payload) =>
+  postRequest(`${API_BASE_URL}${path}/Product/create-RBI-Config`, payload);
+
+export const updateRegulatory = (payload) =>
+  putRequest(`${API_BASE_URL}${path}/Product/updateRbiConfiguration`, payload);

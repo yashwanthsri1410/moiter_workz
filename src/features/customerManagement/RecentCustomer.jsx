@@ -6,7 +6,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import autoTable from "jspdf-autotable";
 
-const RecentCustomer = () => {
+const RecentCustomer = ({ data }) => {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -18,39 +18,29 @@ const RecentCustomer = () => {
 
   useEffect(() => {
     const fetchCustomers = async () => {
-      try {
-        const res = await axios.get(
-          `${API_BASE_URL}/fes/api/Export/customer_dashboard_export`
+      if (Array.isArray(data)) {
+        const mapped = data.map((item) => ({
+          id: item.serialNo,
+          name: item.fullName,
+          email: item.email,
+          phone: item.mobileNumber,
+          kyc: item.kycStatus,
+          risk: item.riskCategory,
+          activity: item.lastActivity,
+        }));
+        const removedDuplicates = mapped?.filter(
+          (obj, index, self) =>
+            index ===
+            self.findIndex(
+              (t) =>
+                t.name === obj.name &&
+                t.email === obj.email &&
+                t.phone === obj.phone
+            )
         );
-        const data = res.data;
-
-        if (Array.isArray(data)) {
-          const mapped = data.map((item) => ({
-            id: item.serialNo,
-            name: item.fullName,
-            email: item.email,
-            phone: item.mobileNumber,
-            kyc: item.kycStatus,
-            risk: item.riskCategory,
-            activity: item.lastActivity,
-          }));
-          const removedDuplicates = mapped?.filter(
-            (obj, index, self) =>
-              index ===
-              self.findIndex(
-                (t) =>
-                  t.name === obj.name &&
-                  t.email === obj.email &&
-                  t.phone === obj.phone
-              )
-          );
-          setCustomers(removedDuplicates);
-        }
-      } catch (err) {
-        console.error("Failed to fetch customers:", err);
-      } finally {
-        setLoading(false);
+        setCustomers(removedDuplicates);
       }
+      setLoading(false);
     };
 
     fetchCustomers();

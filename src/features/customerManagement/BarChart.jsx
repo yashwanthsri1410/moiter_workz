@@ -12,6 +12,10 @@ import {
 import { Bar } from "react-chartjs-2";
 import axios from "axios";
 import { primaryColor } from "../../constants/index";
+import {
+  getDashboardData,
+  getOnboardedCustomers,
+} from "../../services/service";
 
 ChartJS.register(
   CategoryScale,
@@ -31,70 +35,10 @@ const BarChart = () => {
   });
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-  // useEffect(() => {
-  //   fetch("http://192.168.22.247/fes/api/Export/onboarded_customers_export")
-  //     .then((res) => res.json())
-  //     .then((data) => {
-
-  //       const monthOrder = [
-  //         "Jan",
-  //         "Feb",
-  //         "Mar",
-  //         "Apr",
-  //         "May",
-  //         "Jun",
-  //         "Jul",
-  //         "Aug",
-  //         "Sep",
-  //         "Oct",
-  //         "Nov",
-  //         "Dec",
-  //       ];
-
-  //       const sortedData = data
-  //         .sort(
-  //           (a, b) =>
-  //             monthOrder.indexOf(a.monthLabel) -
-  //             monthOrder.indexOf(b.monthLabel)
-  //         )
-  //         .slice(-6);
-
-  //       const labels = sortedData.map((item) => item.monthLabel);
-  //       const customers = sortedData.map((item) => item.onboardedCustomers);
-
-  //       const maxValue = Math.max(...customers);
-
-  //       const totalTicks = 5;
-  //       const rawStep = maxValue / (totalTicks - 1);
-  //       const step = Math.ceil(rawStep);
-  //       const yMax = step * (totalTicks - 1);
-  //       const visibleTicks = Array.from({ length: totalTicks }, (_, i) =>
-  //         parseFloat((i * step).toFixed(6))
-  //       );
-
-  //       setYAxisConfig({ max: yMax, step, ticks: visibleTicks });
-
-  //       setChartData({
-  //         labels,
-  //         datasets: [
-  //           {
-  //             label: "Customers",
-  //             data: customers,
-  //             backgroundColor: "#00D4FF",
-  //           },
-  //         ],
-  //       });
-  //     })
-  //     .catch((err) => {
-  //       console.error("Failed to fetch chart data:", err);
-  //     });
-  // }, []);
   useEffect(() => {
     const fetchOnboardedCustomers = async () => {
       try {
-        const res = await axios.get(
-          `${API_BASE_URL}/fes/api/Export/onboarded_customers_export`
-        );
+        const res = await getDashboardData("Export/onboarded_customers_export");
         const data = res.data;
 
         // Define month order for chronological sorting

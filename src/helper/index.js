@@ -24,7 +24,7 @@ export const initialFormData = {
   businessHours: initialSchedule,
   kycInfo: {},
   paymentConfig: {
-    paymentType: {},
+    paymentType: "",
     mdrType: "Percentage",
     mdrValue: "",
   },

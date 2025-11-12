@@ -11,8 +11,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import usePublicIp from "../hooks/usePublicIp";
 import "../styles/styles.css";
 import { channels, options } from "../constants";
@@ -20,6 +19,12 @@ import { v4 as uuidv4 } from "uuid";
 import GuidelinesCard from "./reusable/guidelinesCard";
 import { productGuidelines } from "../constants/guidelines";
 import customConfirm from "./reusable/CustomConfirm";
+import {
+  createProduct,
+  getProductData,
+  getRbiConfig,
+  updateProduct,
+} from "../services/service";
 
 // 🔹 Mapper function
 const mapFormToApiSchema = (form, username, ip, isEditing = false, empId) => {
@@ -74,9 +79,9 @@ const mapFormToApiSchema = (form, username, ip, isEditing = false, empId) => {
     allowedChannels: form.allowedChannels || [],
     allowedMccCodes: form.allowedMccCodes
       ? String(form.allowedMccCodes)
-        .split(",")
-        .map((c) => c.trim())
-        .filter(Boolean)
+          .split(",")
+          .map((c) => c.trim())
+          .filter(Boolean)
       : [],
     geoRestrictions: form.geoRestrictions || [],
     merchantWhitelistOnly: form.merchantWhitelistOnly ?? false,
@@ -222,8 +227,8 @@ export default function Productcreate() {
         const channels = Array.isArray(matchedRbiConfig.allowedChannels)
           ? matchedRbiConfig.allowedChannels
           : typeof matchedRbiConfig.allowedChannels === "string"
-            ? matchedRbiConfig.allowedChannels.split(",").map((c) => c.trim())
-            : [];
+          ? matchedRbiConfig.allowedChannels.split(",").map((c) => c.trim())
+          : [];
 
         formData.allowedChannels = channels;
         formData.kycLevelRequired =
@@ -402,29 +407,15 @@ export default function Productcreate() {
   }, [ip]);
 
   const fetchConfigurations = async () => {
-    try {
-      const res = await axios.get(
-        `${API_BASE_URL}/fes/api/Export/product_Config_export`
-      );
-      setConfigurations(res.data);
-    } catch (err) {
-      console.error("Error fetching configurations:", err);
-    }
+    const res = await getProductData();
+    setConfigurations(res.data);
   };
 
   const fetchRBIConfigurations = async () => {
-    try {
-      const res = await axios.get(
-        `${API_BASE_URL}/fes/api/Export/export_rbi_configuration`
-      );
-      setRbiConfig(res.data);
-      const types = Array.from(
-        new Set(res.data.map((item) => item.programType))
-      );
-      setProgramTypes(types);
-    } catch (err) {
-      console.error("Error fetching RBI configurations:", err);
-    }
+    const res = await getRbiConfig();
+    setRbiConfig(res.data);
+    const types = Array.from(new Set(res.data.map((item) => item.programType)));
+    setProgramTypes(types);
   };
 
   const handleProgramTypeChange = (type) => {
@@ -446,8 +437,8 @@ export default function Productcreate() {
       const channels = Array.isArray(matched.allowedChannels)
         ? matched.allowedChannels
         : typeof matched.allowedChannels === "string"
-          ? matched.allowedChannels.split(",").map((c) => c.trim())
-          : [];
+        ? matched.allowedChannels.split(",").map((c) => c.trim())
+        : [];
 
       const rawTopup = matched.topUpMethod || matched.topUpMethod || "";
 
@@ -501,7 +492,9 @@ export default function Productcreate() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const confirmAction = await customConfirm("Are you sure you want to continue?");
+    const confirmAction = await customConfirm(
+      "Are you sure you want to continue?"
+    );
     if (!confirmAction) return;
     try {
       // Map frontend form → backend schema
@@ -509,22 +502,13 @@ export default function Productcreate() {
 
       // console.log("Submitting mapped payload:", JSON.stringify(payload, null, 2));
 
-      if (isEditing) {
-        // Update existing config
-        await axios.put(
-          `${API_BASE_URL}/ps/api/Product/productConfigurationUpdate`,
-          payload
-        );
-        alert("Product configuration updated successfully!");
-      } else {
-        // Create new config
-        await axios.post(
-          `${API_BASE_URL}/ps/api/Product/productConfigurationCreate`,
-          payload
-        );
-        alert("Product configuration created successfully!");
-      }
+      isEditing ? await createProduct(payload) : await updateProduct(payload);
 
+      alert(
+        `Product configuration ${
+          isEditing ? "updated" : "created"
+        } successfully!`
+      );
       await fetchConfigurations(); // refresh table after save
 
       // Reset form and editing state
@@ -570,7 +554,9 @@ export default function Productcreate() {
         <div className="card-header-right flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
           <button
             className="btn-outline  flex items-center gap-1 w-full sm:w-auto justify-center"
-            onClick={() => { setformOpen((prev) => !prev), setForm("") }}
+            onClick={() => {
+              setformOpen((prev) => !prev), setForm("");
+            }}
           >
             {formOpen ? (
               <>
@@ -645,8 +631,9 @@ export default function Productcreate() {
                   required
                   disabled={!form.programType}
                   onChange={(e) => handleSubCategoryChange(e.target.value)}
-                  className={`form-input p-2 border border-gray-300 rounded text-xs sm:text-sm ${!form.programType && "cursor-not-allowed"
-                    }`}
+                  className={`form-input p-2 border border-gray-300 rounded text-xs sm:text-sm ${
+                    !form.programType && "cursor-not-allowed"
+                  }`}
                 >
                   <option value="" disabled hidden>
                     Select
@@ -1153,8 +1140,9 @@ export default function Productcreate() {
                       <td>{formattedKYCLevel || "-"}</td>
                       <td>
                         <span
-                          className={` px-2 py-1 rounded text-[10px] ${cfg.isActive ? "checker" : "superuser"
-                            }`}
+                          className={` px-2 py-1 rounded text-[10px] ${
+                            cfg.isActive ? "checker" : "superuser"
+                          }`}
                         >
                           {cfg.isActive ? "active" : "Inactive"}
                         </span>
@@ -1186,10 +1174,11 @@ export default function Productcreate() {
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center  ${currentPage === 1
+            className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center  ${
+              currentPage === 1
                 ? "prev-next-disabled-btn"
                 : "prev-next-active-btn"
-              }`}
+            }`}
           >
             <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" /> Prev
           </button>
@@ -1199,10 +1188,11 @@ export default function Productcreate() {
               <button
                 key={i}
                 onClick={() => handlePageChange(i + 1)}
-                className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${currentPage === i + 1
+                className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${
+                  currentPage === i + 1
                     ? "active-pagination-btn"
                     : "inactive-pagination-btn"
-                  }`}
+                }`}
               >
                 {i + 1}
               </button>
@@ -1212,10 +1202,11 @@ export default function Productcreate() {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${currentPage === totalPages
+            className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${
+              currentPage === totalPages
                 ? "prev-next-disabled-btn"
                 : "prev-next-active-btn"
-              }`}
+            }`}
           >
             Next <ChevronRight className="w-4 h-4" />
           </button>

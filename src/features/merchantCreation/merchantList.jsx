@@ -22,7 +22,6 @@ const MerchantList = ({ scrollToTop, setFormOpen }) => {
   const [editedData, setEditedData] = useState({}); // temp editable data
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  console.log(formData);
 
   const handleEdit = (merchant, index) => {
     scrollToTop();
@@ -171,7 +170,8 @@ const MerchantList = ({ scrollToTop, setFormOpen }) => {
                   ))}
                   <tr>
                     <td colSpan="9" className="text-center py-4 text-gray-500">
-                      {paginatedData?.length === 0 && "No Merchants found"}
+                      {!paginatedData ||
+                        (paginatedData?.length === 0 && "No Merchants found")}
                     </td>
                   </tr>
                 </tbody>

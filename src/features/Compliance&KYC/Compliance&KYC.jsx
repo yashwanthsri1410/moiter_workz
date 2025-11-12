@@ -9,21 +9,15 @@ import {
   FileText,
 } from "lucide-react";
 import KYCReviewQueue from "./KYCReviewQueue";
+import { getDashboardData } from "../../services/service";
 
 const ComplianceKYC = () => {
   const [data, setData] = useState(null);
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-  useEffect(() => {
-    fetch(`${API_BASE_URL}/fes/api/Export/customer_Kyc_dashboard_export`)
-      .then((res) => res.json())
-      .then((json) => {
-        if (json.length > 0) {
-          setData(json[0]); // Take the first item
-        }
-      })
-      .catch((err) => console.error("Failed to fetch dashboard data:", err));
-  }, []);
+  const fetchData = async () => {
+    const res = await getDashboardData("Export/customer_Kyc_dashboard_export");
+    setData(res?.data); // Take the first item
+  };
 
   const metrics = [
     { label: "KYC Completion Rate", percent: 94.2 },
@@ -35,7 +29,7 @@ const ComplianceKYC = () => {
   const complianceCards = [
     {
       title: "KYC Pending",
-      value: data?.kycPendingCount?.toLocaleString("en-IN"),
+      value: data?.[0]?.kycPendingCount?.toLocaleString("en-IN"),
       icon: <Clock10 className="w-4 h-4 text-[#ffeb00]" />,
       valueClass: "text-[#eab308]",
       subText: (
@@ -45,16 +39,18 @@ const ComplianceKYC = () => {
       ),
       footer: (
         <div className="active-row-dx91u flex justify-between">
-          <p className="stat-sub-dx91u">{data?.status}</p>
-          <p className="stat-percentage-dx91u">{data?.kycCompletionRate}%</p>
+          <p className="stat-sub-dx91u">{data?.[0]?.status}</p>
+          <p className="stat-percentage-dx91u">
+            {data?.[0]?.kycCompletionRate}%
+          </p>
         </div>
       ),
-      progress: data?.kycCompletionRate,
+      progress: data?.[0]?.kycCompletionRate,
       className: "total-customers-dx91u",
     },
     {
       title: "KYC Verified",
-      value: data?.kycVerifiedCount?.toLocaleString("en-IN"),
+      value: data?.[0]?.kycVerifiedCount?.toLocaleString("en-IN"),
       icon: <UserCheck className="w-4 h-4 text-[#30d80e]" />,
       valueClass: "text-[#30d80e]",
       subText: (
@@ -65,7 +61,9 @@ const ComplianceKYC = () => {
       footer: (
         <div>
           <p className="stat-sub-dx91u">Verification Rate</p>
-          <p className="primary-color text-[15px]">{data?.kycCompletionRate}</p>
+          <p className="primary-color text-[15px]">
+            {data?.[0]?.kycCompletionRate}
+          </p>
         </div>
       ),
       className: "customer-today-dx91u",
@@ -90,7 +88,7 @@ const ComplianceKYC = () => {
     },
     {
       title: "Compliance Score",
-      value: data?.kycCompletionRate,
+      value: data?.[0]?.kycCompletionRate,
       icon: <Shield className="w-4 h-4 primary-color" />,
       valueClass: "primary-color",
       subText: (
@@ -128,6 +126,10 @@ const ComplianceKYC = () => {
       text: "Quarterly compliance report due in 5 days",
     },
   ];
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   if (!data) return <p>Loading...</p>;
 
@@ -210,7 +212,7 @@ const ComplianceKYC = () => {
 
       {/* Row 3 - KYC Review Queue */}
       <div>
-        <KYCReviewQueue />
+        <KYCReviewQueue data={data} />
       </div>
     </>
   );

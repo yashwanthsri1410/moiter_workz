@@ -1,79 +1,35 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../../styles/styles.css";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import axios from "axios";
 import { primaryColor } from "../../constants";
 // register required controllers
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const PieChart = () => {
+const PieChart = ({ data }) => {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
   const [chartData, setChartData] = useState(null);
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-  // useEffect(() => {
-  //   fetch("http://192.168.22.247/fes/api/Export/customer_dashboard_export")
-  //     .then(async (res) => {
-  //       if (!res.ok) {
-  //         const text = await res.text();
-  //         throw new Error(`HTTP ${res.status}: ${text}`);
-  //       }
-  //       return res.json();
-  //     })
-  //     .then((data) => {
-  //       // console.log("✅ API Data:", data);
-  //       if (Array.isArray(data) && data.length > 0) {
-  //         const first = data[0];
-  //         setChartData({
-  //           labels: ["Verified", "Rejected", "Pending"],
-  //           datasets: [
-  //             {
-  //               data: [
-  //                 first.kycVerifiedPct,
-  //                 first.kycRejectedPct,
-  //                 first.kycPendingPct,
-  //               ],
-  //               backgroundColor: ["#00D4FF", "#ef4444", "#F59E0B"],
-  //               borderColor: "#f0f0f0",
-  //               borderWidth: 1,
-  //               radius: "70%",
-  //             },
-  //           ],
-  //         });
-  //       }
-  //     })
-  //     .catch((err) => console.error("🚨 Error fetching API data:", err));
-  // }, []);
   useEffect(() => {
     const fetchCustomerDashboardChart = async () => {
-      try {
-        const res = await axios.get(
-          `${API_BASE_URL}/fes/api/Export/customer_dashboard_export`
-        );
-        const data = res.data;
-
-        if (Array.isArray(data) && data.length > 0) {
-          const first = data[0];
-          setChartData({
-            labels: ["Verified", "Rejected", "Pending"],
-            datasets: [
-              {
-                data: [
-                  first.kycVerifiedPct,
-                  first.kycRejectedPct,
-                  first.kycPendingPct,
-                ],
-                backgroundColor: ["#00D4FF", "#ef4444", "#F59E0B"],
-                borderColor: "#f0f0f0",
-                borderWidth: 1,
-                radius: "70%",
-              },
-            ],
-          });
-        }
-      } catch (err) {
-        console.error("🚨 Error fetching API data:", err);
+      if (Array.isArray(data) && data.length > 0) {
+        const first = data[0];
+        setChartData({
+          labels: ["Verified", "Rejected", "Pending"],
+          datasets: [
+            {
+              data: [
+                first.kycVerifiedPct,
+                first.kycRejectedPct,
+                first.kycPendingPct,
+              ],
+              backgroundColor: ["#00D4FF", "#ef4444", "#F59E0B"],
+              borderColor: "#f0f0f0",
+              borderWidth: 1,
+              radius: "70%",
+            },
+          ],
+        });
       }
     };
 
