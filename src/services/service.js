@@ -56,7 +56,7 @@ api.interceptors.request.use(
     if (config.method === "post" || config.method === "put") {
       config.data = {
         ...config.data,
-        metadata: getCommonMetadata(),
+        metadata: config.data.metadata || getCommonMetadata(),
       };
     }
     return config;
