@@ -1,4 +1,3 @@
-// UserManagementSystem.jsx
 import React, { useEffect, useState } from "react";
 import {
   Users,
@@ -11,45 +10,43 @@ import {
   ChevronRight,
   Download,
 } from "lucide-react";
-import axios from "axios";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { getUserTypeSummary, getPendingEmployees } from "../services/service"; // ✅ centralized import
 
 export default function UserManagementSystem() {
-  const [users, setUsers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [users, setUsers] = useState({});
   const [employees, setEmployees] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
+  // ✅ Fetch all data on mount
   useEffect(() => {
-    fetch(`${API_BASE_URL}/fes/api/Export/user-type-summary`)
-      .then((res) => res.json())
-      .then((data) => setUsers(data?.[0]))
-      .catch((err) => console.error("Error fetching users:", err));
+    const fetchData = async () => {
+      try {
+        const userSummary = await getUserTypeSummary();
+        setUsers(userSummary?.data?.[0] || userSummary);
+        console.log(userSummary);
 
-    fetchEmployees();
+        const employeeList = await getPendingEmployees();
+        setEmployees(employeeList.data);
+        console.log(employeeList);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  const fetchEmployees = async () => {
-    try {
-      const res = await axios.get(
-        `${API_BASE_URL}/fes/api/Export/pending-employees`
-      );
-      setEmployees(res.data);
-    } catch (err) {
-      console.error("Error fetching employees:", err);
-    }
-  };
-
-  // ✅ Reset to page 1 whenever search term changes
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
+  console.log(employees);
 
   // ✅ Filter Employees
-  const filteredEmployees = employees.filter(
+  const filteredEmployees = employees?.filter(
     (e) =>
       e.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       e.email?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -57,7 +54,7 @@ export default function UserManagementSystem() {
 
   // ✅ Paginate filtered results
   const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
-  const paginatedEmployees = filteredEmployees.slice(
+  const paginatedEmployees = filteredEmployees?.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -114,11 +111,11 @@ export default function UserManagementSystem() {
     doc.save("user_management_users.pdf");
   };
 
-  // Count user types
-  const totalUsers = users.totalUsers || 0;
-  const superUsers = users.superUsers || 0;
-  const makers = users.maker || 0;
-  const checkers = users.checker || 0;
+  // ✅ Count user types
+  const totalUsers = users?.totalUsers || 0;
+  const superUsers = users?.superUsers || 0;
+  const makers = users?.maker || 0;
+  const checkers = users?.checker || 0;
 
   return (
     <div>
@@ -240,7 +237,7 @@ export default function UserManagementSystem() {
               </tr>
             </thead>
             <tbody>
-              {paginatedEmployees.length > 0 ? (
+              {paginatedEmployees?.length > 0 ? (
                 paginatedEmployees.map((e, i) => (
                   <tr key={i}>
                     <td>{e.empId}</td>

@@ -339,3 +339,11 @@ export const createRegulatory = (payload) =>
 
 export const updateRegulatory = (payload) =>
   putRequest(`${API_BASE_URL}${path}/Product/updateRbiConfiguration`, payload);
+
+// ✅ Get user type summary
+export const getUserTypeSummary = () =>
+  getRequest(`${API_BASE_URL}${fesPath}/Export/user-type-summary`);
+
+// ✅ Get pending employees
+export const getPendingEmployees = () =>
+  getRequest(`${API_BASE_URL}${fesPath}/Export/pending-employees`);

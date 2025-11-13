@@ -153,7 +153,7 @@ const PieChart_Trans = () => {
           duration: 2000,
           onComplete: () => {
             animationDone = true;
-            chartRef.current.draw();
+            chartRef.current?.draw();
           },
         },
         plugins: {
