@@ -14,7 +14,7 @@ import {
 import { useEffect, useState } from "react";
 import usePublicIp from "../hooks/usePublicIp";
 import "../styles/styles.css";
-import { channels, options } from "../constants";
+import { channels, inputStyle, options, transErr } from "../constants";
 import { v4 as uuidv4 } from "uuid";
 import GuidelinesCard from "./reusable/guidelinesCard";
 import { productGuidelines } from "../constants/guidelines";
@@ -25,6 +25,7 @@ import {
   getRbiConfig,
   updateProduct,
 } from "../services/service";
+import ErrorText from "./reusable/errorText";
 
 // 🔹 Mapper function
 const mapFormToApiSchema = (form, username, ip, isEditing = false, empId) => {
@@ -109,6 +110,11 @@ const mapFormToApiSchema = (form, username, ip, isEditing = false, empId) => {
       ? form.topUpMethod.join(",")
       : form.topUpMethod || "",
     expiryPeriod: form.expiryPeriod ?? 0,
+
+    // ✅ REQUIRED BY API (missing earlier)
+    createdBy: form.createdBy || "ajith",
+    modifiedBy: form.modifiedBy || "ajith",
+
     productDescription: form.productDescription || "",
     metadata: {
       ipAddress: ip,
@@ -167,6 +173,8 @@ const mapFormToApiSchema = (form, username, ip, isEditing = false, empId) => {
 
 export default function Productcreate() {
   const [configurations, setConfigurations] = useState([]);
+  const [error, setError] = useState({});
+
   const [formOpen, setformOpen] = useState(false);
   const [empId, setEmpId] = useState("");
   const [rbiConfig, setRbiConfig] = useState([]);
@@ -174,6 +182,15 @@ export default function Productcreate() {
   const [filteredSubCategories, setFilteredSubCategories] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [rbiLimits, setRbiLimits] = useState({
+    cashLoadingLimit: 0,
+    dailySpendLimit: 0,
+    monthlySpendLimit: 0,
+    minBalance: 0,
+    maxBalance: 0,
+    maxLoadAmount: 0,
+  });
+
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -182,6 +199,7 @@ export default function Productcreate() {
     setCurrentPage(1);
   }, [searchTerm]);
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
   const handleEdit = async (cfg) => {
     try {
       // First, ensure we have the latest RBI config
@@ -221,6 +239,15 @@ export default function Productcreate() {
           : cfg.programDescription || "",
         topUpMethod: rawTopup ? rawTopup.split(",").map((m) => m.trim()) : [],
       };
+      setRbiLimits({
+        cashLoadingLimit: matchedRbiConfig?.cashLoadingLimit,
+        dailySpendLimit: matchedRbiConfig?.dailySpendLimit,
+        monthlySpendLimit: matchedRbiConfig?.monthlySpendLimit,
+        maxBalance: matchedRbiConfig?.maxBalance,
+        maxLoadAmount: matchedRbiConfig?.maxLoadAmount,
+      });
+
+      // console.log(matchedRbiConfig);
 
       // If we found a matching RBI config, apply its values
       if (matchedRbiConfig) {
@@ -237,6 +264,7 @@ export default function Productcreate() {
           matchedRbiConfig.riskProfile || cfg.riskProfile || "";
         // Add other fields from RBI config as needed
       }
+      // console.log(formData);
 
       setForm(formData);
       setIsEditing(true);
@@ -352,20 +380,20 @@ export default function Productcreate() {
     },
   });
   // compute total pages
-  const filteredConfigurations = configurations.filter((cfg) =>
+  const filteredConfigurations = configurations?.filter((cfg) =>
     Object.values(cfg).some((val) =>
       String(val).toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
 
   // 2. Pagination
-  const paginatedConfigurations = filteredConfigurations.slice(
+  const paginatedConfigurations = filteredConfigurations?.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
   // 3. Total pages
-  const totalPages = Math.ceil(filteredConfigurations.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredConfigurations?.length / itemsPerPage);
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -408,13 +436,15 @@ export default function Productcreate() {
 
   const fetchConfigurations = async () => {
     const res = await getProductData();
-    setConfigurations(res.data);
+    setConfigurations(res?.data);
   };
 
   const fetchRBIConfigurations = async () => {
     const res = await getRbiConfig();
-    setRbiConfig(res.data);
-    const types = Array.from(new Set(res.data.map((item) => item.programType)));
+    setRbiConfig(res?.data);
+    const types = Array.from(
+      new Set(res?.data.map((item) => item.programType))
+    );
     setProgramTypes(types);
   };
 
@@ -425,13 +455,21 @@ export default function Productcreate() {
       subCategory: "",
       programDescription: "",
     }));
-    const filtered = rbiConfig.filter((item) => item.programType === type);
+    const filtered = rbiConfig?.filter((item) => item.programType === type);
     setFilteredSubCategories(filtered);
   };
   const handleSubCategoryChange = (subCategory) => {
     const matched = filteredSubCategories.find(
       (item) => item.subCategory === subCategory
     );
+    // console.log(matched);
+    setRbiLimits({
+      cashLoadingLimit: matched?.cashLoadingLimit,
+      dailySpendLimit: matched?.dailySpendLimit,
+      monthlySpendLimit: matched?.monthlySpendLimit,
+      maxBalance: matched?.maxBalance,
+      maxLoadAmount: matched?.maxLoadAmount,
+    });
 
     if (matched) {
       const channels = Array.isArray(matched.allowedChannels)
@@ -457,7 +495,7 @@ export default function Productcreate() {
       }));
     }
   };
-
+  // console.log(rbiLimits);
   useEffect(() => {
     if (isEditing && form.programType && form.subCategory) {
       const matched = rbiConfig.find(
@@ -478,20 +516,28 @@ export default function Productcreate() {
     }
   }, [rbiConfig, isEditing, form.programType, form.subCategory]);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
+  // const handleChange = (e) => {
+  //   const { name, value, type, checked } = e.target;
+  //   setForm((prev) => ({
+  //     ...prev,
+  //     [name]: type === "checkbox" ? checked : value,
+  //   }));
+  // };
 
   const handleBooleanSelect = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value === "yes" }));
   };
+  const hasValidationErrors = () => {
+    return Object.values(error).some((msg) => msg && msg.length > 0);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (hasValidationErrors()) {
+      alert("Please fix all validation errors before submitting.");
+      focusFirstError(); // 👈 Automatically jump to the first wrong field
+      return;
+    }
     const confirmAction = await customConfirm(
       "Are you sure you want to continue?"
     );
@@ -502,7 +548,13 @@ export default function Productcreate() {
 
       // console.log("Submitting mapped payload:", JSON.stringify(payload, null, 2));
 
-      isEditing ? await createProduct(payload) : await updateProduct(payload);
+      // isEditing ? await createProduct(payload) : await updateProduct(payload);
+      // FIXED: correct API call
+      if (isEditing) {
+        await updateProduct(payload);
+      } else {
+        await createProduct(payload);
+      }
 
       alert(
         `Product configuration ${
@@ -527,6 +579,170 @@ export default function Productcreate() {
       alert("Failed to save product configuration");
     }
   };
+  const numberFields = [
+    "cashLoadingLimit",
+    "maxBalance",
+    "minBalance",
+    "maxLoadAmount",
+    "dailySpendLimit",
+    "monthlySpendLimit",
+    "yearlySpendLimit",
+    "txnCountLimitPerDay",
+    "refundLimit",
+    "maxCashWithdrawalAmount",
+    "validityPeriodMonths",
+    "gracePeriodDays",
+    "customerAgeMin",
+    "customerAgeMax",
+    "expiryWarningDays",
+    "dormantPeriodDays",
+    "expiryPeriod",
+  ];
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: numberFields.includes(name)
+        ? Number(value)
+        : type === "checkbox"
+        ? checked
+        : value,
+    }));
+  };
+
+  // Min Balance lower than everything
+  const minBalCheck =
+    form.minBalance < form.dailySpendLimit &&
+    form.minBalance < form.monthlySpendLimit &&
+    form.minBalance < form.cashLoadingLimit &&
+    form.minBalance < form.maxBalance &&
+    form.minBalance < form.maxLoadAmount;
+
+  // Daily Spend Limit will be lower than Monthly Spend Limit
+  const dailySpendCheck = form.dailySpendLimit > form.monthlySpendLimit;
+
+  // Max Balance will be equal  or lesser than cash load
+  const maxBalCheck = form.maxBalance <= form.cashLoadingLimit;
+
+  // Max Load Amount will be equal or lesser than cash load
+  const maxLoadAmtCheck = form.maxLoadAmount <= form.cashLoadingLimit;
+
+  // cash load limit is highest than everything
+  const cashLoadCheck =
+    form.cashLoadingLimit > form.dailySpendLimit &&
+    form.cashLoadingLimit > form.monthlySpendLimit &&
+    form.cashLoadingLimit > form.minBalance &&
+    form.cashLoadingLimit > form.maxBalance &&
+    form.cashLoadingLimit > form.maxLoadAmount;
+
+  const validateTxnLimits = () => {
+    const newErrors = {};
+
+    const {
+      cashLoadingLimit,
+      dailySpendLimit,
+      monthlySpendLimit,
+      minBalance,
+      maxBalance,
+      maxLoadAmount,
+    } = form;
+
+    // 🔹 Rule 1: Cash Loading Limit must be highest
+    if (
+      dailySpendLimit > cashLoadingLimit ||
+      monthlySpendLimit > cashLoadingLimit ||
+      minBalance >= cashLoadingLimit ||
+      maxBalance > cashLoadingLimit ||
+      maxLoadAmount > cashLoadingLimit
+    ) {
+      newErrors.cashLoadingLimit =
+        "Cash Loading Limit must be higher than all other limits";
+    }
+
+    // 🔹 Rule 2: Daily Spend Limit <= Monthly Spend Limit
+    if (dailySpendLimit > monthlySpendLimit) {
+      newErrors.dailySpendLimit =
+        "Daily Spend Limit cannot exceed Monthly Spend Limit";
+    }
+
+    // 🔹 Rule 3: Monthly Spend Limit <= Cash Loading Limit
+    if (monthlySpendLimit > cashLoadingLimit) {
+      newErrors.monthlySpendLimit =
+        "Monthly Spend Limit cannot exceed Cash Loading Limit";
+    }
+
+    // 🔹 Rule 4: Min Balance must be lowest
+    if (
+      minBalance >= cashLoadingLimit ||
+      minBalance >= dailySpendLimit ||
+      minBalance >= monthlySpendLimit ||
+      minBalance >= maxBalance ||
+      minBalance >= maxLoadAmount
+    ) {
+      newErrors.minBalance = "Min Balance must be lower than all other limits";
+    }
+
+    // 🔹 Rule 5: Max Balance <= Cash Loading Limit
+    if (maxBalance > cashLoadingLimit) {
+      newErrors.maxBalance = "Max Balance cannot exceed Cash Loading Limit";
+    }
+
+    // 🔹 Rule 6: Max Load Amount <= Cash Loading Limit
+    if (maxLoadAmount > cashLoadingLimit) {
+      newErrors.maxLoadAmount =
+        "Max Load Amount cannot exceed Cash Loading Limit";
+    }
+
+    setError(newErrors);
+  };
+
+  useEffect(() => {
+    validateTxnLimits();
+  }, [
+    form,
+    maxLoadAmtCheck,
+    maxBalCheck,
+    dailySpendCheck,
+    minBalCheck,
+    transErr,
+    cashLoadCheck,
+  ]);
+  const focusFirstError = () => {
+    const fields = [
+      "cashLoadingLimit",
+      "dailySpendLimit",
+      "monthlySpendLimit",
+      "minBalance",
+      "maxBalance",
+      "maxLoadAmount",
+    ];
+
+    for (let field of fields) {
+      if (error[field]) {
+        document.querySelector(`input[name="${field}"]`)?.focus();
+        break;
+      }
+    }
+  };
+  const isFieldEditable = (fieldName) => {
+    if (!editingId) return true; // CREATE MODE → everything editable
+
+    const editableFields = [
+      "productName",
+      "productDescription",
+      "cashLoadingLimit",
+      "dailySpendLimit",
+      "monthlySpendLimit",
+      "minBalance",
+      "maxBalance",
+      "maxLoadAmount",
+      "allowedMccCodes",
+    ];
+
+    return editableFields.includes(fieldName);
+  };
+  const isUpdate = !!editingId;
 
   useEffect(() => {
     if (!isEditing) {
@@ -610,6 +826,7 @@ export default function Productcreate() {
                   required
                   onChange={(e) => handleProgramTypeChange(e.target.value)}
                   className="form-input p-2 border border-gray-300 rounded text-xs sm:text-sm"
+                  disabled={isUpdate}
                 >
                   <option value="" disabled hidden>
                     Select
@@ -629,7 +846,8 @@ export default function Productcreate() {
                   name="subCategory"
                   value={form.subCategory}
                   required
-                  disabled={!form.programType}
+                  // disabled={!form.programType}
+                  disabled={isUpdate}
                   onChange={(e) => handleSubCategoryChange(e.target.value)}
                   className={`form-input p-2 border border-gray-300 rounded text-xs sm:text-sm ${
                     !form.programType && "cursor-not-allowed"
@@ -678,6 +896,7 @@ export default function Productcreate() {
                       className="form-input p-2 border border-gray-300 rounded text-xs sm:text-sm"
                       required
                       placeholder="Enter product name"
+                      disabled={!isFieldEditable("productName")}
                     />
                   </div>
                 </div>
@@ -795,39 +1014,160 @@ export default function Productcreate() {
               Transaction Limits
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[
-                { label: "Cash Loading Limit", field: "cashLoadingLimit" },
-                { label: "Daily Spend Limit", field: "dailySpendLimit" },
-                { label: "Monthly Spend Limit", field: "monthlySpendLimit" },
-                { label: "Min Balance", field: "minBalance" },
-                { label: "Max Balance", field: "maxBalance" },
-                { label: "Max Load Amount", field: "maxLoadAmount" },
-              ].map(({ label, field }) => {
-                const maxValue = form[field] || ""; // fetched value
+              {/* Cash Loading Limit */}
+              <div className="form-group flex flex-col">
+                <label className="text-xs sm:text-sm text-gray-300 mb-1">
+                  Cash Loading Limit
+                </label>
+                <input
+                  type="number"
+                  name="cashLoadingLimit"
+                  value={form.cashLoadingLimit || ""}
+                  onChange={(e) => {
+                    const val = Number(e.target.value);
+                    if (val <= rbiLimits.cashLoadingLimit) {
+                      handleChange(e);
+                    }
+                  }}
+                  className={inputStyle}
+                  max={rbiLimits.cashLoadingLimit}
+                  placeholder="Enter amount"
+                />
+                <ErrorText
+                  errTxt={error.cashLoadingLimit}
+                  className="text-[9px] sm:text-xs"
+                />
+              </div>
 
-                return (
-                  <div key={field} className="form-group flex flex-col">
-                    <label className="text-sm text-gray-300 mb-1">
-                      {label}
-                    </label>
-                    <input
-                      type="number"
-                      name={field}
-                      value={form[field] || 0}
-                      max={maxValue} // 🔥 restrict max
-                      onChange={(e) => {
-                        const newValue = Number(e.target.value);
-                        if (newValue <= maxValue) {
-                          handleChange(e);
-                        }
-                      }}
-                      disabled
-                      className="form-input bg-transparent border border-gray-700 text-gray-200 rounded-md p-2 focus:border-teal-400 focus:outline-none cursor-not-allowed"
-                      placeholder="Enter amount"
-                    />
-                  </div>
-                );
-              })}
+              {/* Daily Spend Limit */}
+              <div className="form-group flex flex-col">
+                <label className="text-xs sm:text-sm text-gray-300 mb-1">
+                  Daily Spend Limit
+                </label>
+                <input
+                  type="number"
+                  name="dailySpendLimit"
+                  value={form.dailySpendLimit || ""}
+                  onChange={handleChange}
+                  // onChange={(e) => {
+                  //   const val = Number(e.target.value);
+                  //   if (val <= rbiLimits.dailySpendLimit) {
+                  //     handleChange(e);
+                  //   }
+                  // }}
+                  // max={rbiLimits.dailySpendLimit}
+                  className={inputStyle}
+                  placeholder="Enter amount"
+                />
+                <ErrorText
+                  errTxt={error.dailySpendLimit}
+                  className="text-[9px] sm:text-xs"
+                />
+              </div>
+
+              {/* Monthly Spend Limit */}
+              <div className="form-group flex flex-col">
+                <label className="text-xs sm:text-sm text-gray-300 mb-1">
+                  Monthly Spend Limit
+                </label>
+                <input
+                  type="number"
+                  name="monthlySpendLimit"
+                  value={form.monthlySpendLimit || ""}
+                  // onChange={(e) => {
+                  //   const val = Number(e.target.value);
+                  //   if (val <= rbiLimits.monthlySpendLimit) {
+                  //     handleChange(e);
+                  //   }
+                  // }}
+                  // max={rbiLimits.monthlySpendLimit}
+                  onChange={handleChange}
+                  className={inputStyle}
+                  placeholder="Enter amount"
+                  required
+                />
+              </div>
+
+              {/* Min Balance */}
+              <div className="form-group flex flex-col">
+                <label className="text-xs sm:text-sm text-gray-300 mb-1">
+                  Min Balance
+                </label>
+                <input
+                  type="number"
+                  name="minBalance"
+                  value={form.minBalance || ""}
+                  // onChange={(e) => {
+                  //   const val = Number(e.target.value);
+                  //   if (val <= rbiLimits.minBalance) {
+                  //     handleChange(e);
+                  //   }
+                  // }}
+                  // max={rbiLimits.minBalance}
+                  onChange={handleChange}
+                  className={inputStyle}
+                  placeholder="Enter amount"
+                  required
+                />
+                <ErrorText
+                  errTxt={error.minBalance}
+                  className="text-[9px] sm:text-xs"
+                />
+              </div>
+
+              {/* Max Balance */}
+              <div className="form-group flex flex-col">
+                <label className="text-xs sm:text-sm text-gray-300 mb-1">
+                  Max Balance
+                </label>
+                <input
+                  type="number"
+                  name="maxBalance"
+                  value={form.maxBalance || ""}
+                  // onChange={(e) => {
+                  //   const val = Number(e.target.value);
+                  //   if (val <= rbiLimits.maxBalance) {
+                  //     handleChange(e);
+                  //   }
+                  // }}
+                  // max={rbiLimits.maxBalance}
+                  onChange={handleChange}
+                  className={inputStyle}
+                  placeholder="Enter amount"
+                  required
+                />
+                <ErrorText
+                  errTxt={error.maxBalance}
+                  className="text-[9px] sm:text-xs"
+                />
+              </div>
+
+              {/* Max Load Amount */}
+              <div className="form-group flex flex-col">
+                <label className="text-xs sm:text-sm text-gray-300 mb-1">
+                  Max Load Amount
+                </label>
+                <input
+                  type="number"
+                  name="maxLoadAmount"
+                  value={form.maxLoadAmount || ""}
+                  // onChange={(e) => {
+                  //   const val = Number(e.target.value);
+                  //   if (val <= rbiLimits.maxLoadAmount) {
+                  //     handleChange(e);
+                  //   }
+                  // }}
+                  // max={rbiLimits.maxLoadAmount}
+                  onChange={handleChange}
+                  className={inputStyle}
+                  placeholder="Enter amount"
+                  required
+                />
+                <ErrorText
+                  errTxt={error.maxLoadAmount}
+                  className="text-[9px] sm:text-xs"
+                />
+              </div>
             </div>
           </div>
 
@@ -856,6 +1196,7 @@ export default function Productcreate() {
                     value={form.gracePeriodDays || 0}
                     onChange={handleChange}
                     className="form-input p-2 text-xs sm:text-sm border border-gray-700 rounded-md bg-transparent focus:outline-none focus:border-teal-400 w-full"
+                    disabled={isUpdate}
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -867,6 +1208,7 @@ export default function Productcreate() {
                       value={form.customerAgeMin || ""}
                       onChange={handleChange}
                       className="form-input p-2 text-xs sm:text-sm border border-gray-700 rounded-md bg-transparent focus:outline-none focus:border-teal-400 w-full"
+                      disabled={isUpdate}
                     />
                   </div>
                 </div>
@@ -912,9 +1254,7 @@ export default function Productcreate() {
                             name={field}
                             value="yes"
                             checked={form[field] === true}
-                            onChange={(e) =>
-                              handleBooleanSelect(field, e.target.value)
-                            }
+                            onChange={handleBooleanSelect}
                           />{" "}
                           Yes
                         </label>
@@ -924,9 +1264,7 @@ export default function Productcreate() {
                             name={field}
                             value="no"
                             checked={form[field] === false}
-                            onChange={(e) =>
-                              handleBooleanSelect(field, e.target.value)
-                            }
+                            onChange={handleBooleanSelect}
                           />{" "}
                           No
                         </label>
@@ -943,8 +1281,9 @@ export default function Productcreate() {
             <h3 className="section-title primary-color text-sm sm:text-base mb-4">
               Payment Methods & Channels
             </h3>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Topup Channels */}
+              {/* Loading Channels */}
               <div>
                 <h4 className="compliance-title text-gray-200 text-xs sm:text-sm mb-2">
                   Loading Channels
@@ -961,15 +1300,19 @@ export default function Productcreate() {
                         className="flex items-center gap-2 sm:gap-3 cursor-pointer text-gray-300 text-xs sm:text-sm"
                       >
                         <div
-                          onClick={() => toggleLoading(method)}
+                          onClick={() => {
+                            if (editingId) return; // ⛔ DISABLE CLICK IN UPDATE
+                            toggleLoading(method);
+                          }}
                           className={`w-3 h-3 flex items-center justify-center border 
-          ${checked ? "check-box-clr-after" : "check-box-clr-before"}
-        `}
+                  ${checked ? "check-box-clr-after" : "check-box-clr-before"}
+                `}
                         >
                           {checked && (
                             <Check size={14} className="text-black" />
                           )}
                         </div>
+
                         <span className="text-[12px]">{method}</span>
                       </label>
                     );
@@ -984,13 +1327,15 @@ export default function Productcreate() {
                 </h4>
                 <div className="flex flex-col gap-3">
                   {channels.map((method) => {
-                    const checked = form.allowedChannels?.includes(method);
+                    const checked = form.allowedChannels?.some(
+                      (item) => item.toLowerCase() === method.toLowerCase()
+                    );
 
-                    const normalized = method.toLowerCase();
-
+                    const normalized = method.replace(/_/g, "_").toUpperCase();
                     let formattedMethod = "";
+
                     if (normalized === "qr_code") {
-                      formattedMethod = "QR Code"; // special case
+                      formattedMethod = "QR Code";
                     } else if (
                       ["upi", "pos", "atm", "ecom"].includes(normalized)
                     ) {
@@ -1013,15 +1358,20 @@ export default function Productcreate() {
                         className="flex items-center gap-3 cursor-pointer text-gray-300 text-xs sm:text-sm"
                       >
                         <div
-                          onClick={() => toggleUnloading(method)}
+                          onClick={() => {
+                            if (editingId) return; // ⛔ DISABLE CLICK IN UPDATE
+                            toggleUnloading(method);
+                          }}
                           className={`w-3 h-3 flex items-center justify-center border rounded-sm  
-            ${checked ? "check-box-clr-after" : "check-box-clr-before"}
-            transition-colors duration-200`}
+                  ${checked ? "check-box-clr-after" : "check-box-clr-before"}
+                  transition-colors duration-200
+                `}
                         >
                           {checked && (
                             <Check size={14} className="text-black" />
                           )}
                         </div>
+
                         <span className="text-[12px]">{formattedMethod}</span>
                       </label>
                     );
@@ -1038,6 +1388,7 @@ export default function Productcreate() {
               <input
                 type="text"
                 name="allowedMccCodes"
+                disabled={false} // ✔ MCC Code is editable
                 value={
                   Array.isArray(form.allowedMccCodes)
                     ? form.allowedMccCodes.join(",")
@@ -1046,7 +1397,7 @@ export default function Productcreate() {
                 onChange={(e) =>
                   setForm((prev) => ({
                     ...prev,
-                    allowedMccCodes: e.target.value, // keep as string while typing
+                    allowedMccCodes: e.target.value,
                   }))
                 }
                 className="form-input p-2 text-xs sm:text-sm border border-gray-700 rounded-md bg-transparent focus:outline-none focus:border-teal-400 w-full"
@@ -1159,7 +1510,7 @@ export default function Productcreate() {
                     </tr>
                   );
                 })}
-              {paginatedConfigurations.length === 0 && (
+              {paginatedConfigurations?.length === 0 && (
                 <tr>
                   <td colSpan="9" className="text-center py-4 text-gray-500">
                     No products found.

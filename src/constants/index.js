@@ -55,6 +55,7 @@ export const transErr = {
   msg3: "Max Balance must be equal to or lower than Cash Load Limit.",
   msg4: "Max Load Amount must be equal to or less than the Cash Load Limit.",
   msg5: "Cash load balance must be higher than all other limits",
+  msg6: "Monthly spend limit cannot exceed Cash Loading Limit",
 };
 
 export const inputStyle =
