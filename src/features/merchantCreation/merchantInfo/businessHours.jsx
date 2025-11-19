@@ -76,7 +76,7 @@ const BusinessHours = () => {
                   aria-checked={!isClosed}
                   onClick={() => handleToggle(day.name)}
                   className={`peer inline-flex h-[1.15rem] w-8 items-center rounded-full transition-all ${
-                    !isClosed ? "bg-[#008284]" : "bg-[#1a1f2e]"
+                    !isClosed ? "primary-bg" : "bg-[#1a1f2e]"
                   }`}
                 >
                   <span

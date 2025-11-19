@@ -5,6 +5,6 @@ export const useZustandStore = create((set) => ({
   merchantData: null,
   fetchMerchantData: async () => {
     const res = await getMerchantDetails();
-    set({ merchantData: res.data });
+    set({ merchantData: res?.data });
   },
 }));
