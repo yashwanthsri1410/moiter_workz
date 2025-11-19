@@ -46,12 +46,13 @@ const PaymentConfig = () => {
   // Prepare MDR lists
   // -----------------------------
   const flatRates = useMemo(
-    () => MerchantDiscountRates.filter((item) => item.mdrMode === "FLAT"),
+    () => MerchantDiscountRates.filter((item) => item.mdrType === "FLAT"),
     [MerchantDiscountRates]
   );
+  console.log(flatRates);
 
   const percentageRates = useMemo(
-    () => MerchantDiscountRates.filter((item) => item.mdrMode === "PERCENTAGE"),
+    () => MerchantDiscountRates.filter((item) => item.mdrType === "PERCENTAGE"),
     [MerchantDiscountRates]
   );
 
