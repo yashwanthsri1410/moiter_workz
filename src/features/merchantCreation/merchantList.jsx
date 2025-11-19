@@ -10,11 +10,11 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { columns, recheckMerchants } from "../../constants/merchantForm";
-import UseMerchantCreation from "../../hooks/useMerchantCreation";
 import { useMerchantFormStore } from "../../store/merchantFormStore";
+import { useZustandStore } from "../../store/zustandStore";
 
-const MerchantList = ({ scrollToTop, setFormOpen }) => {
-  const { merchantData } = UseMerchantCreation();
+const MerchantList = ({ scrollToTop, setFormOpen, setIsEditing }) => {
+  const { merchantData } = useZustandStore();
   const { setUpdatedMerchantData, populateInfo, formData } =
     useMerchantFormStore();
   const [search, setSearch] = useState("");
@@ -24,10 +24,9 @@ const MerchantList = ({ scrollToTop, setFormOpen }) => {
   const itemsPerPage = 5;
 
   const handleEdit = (merchant, index) => {
+    setIsEditing(true);
     scrollToTop();
-    console.log(merchant);
     setUpdatedMerchantData(merchant);
-
     populateInfo(merchant);
     //------------------- For input field open ----------
     // setEditRow(index);

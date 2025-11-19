@@ -10,12 +10,12 @@ import FormButton from "./merchantInfo/formButton";
 import UseMerchantCreation from "../../hooks/useMerchantCreation";
 import { useEffect } from "react";
 import { useMerchantFormStore } from "../../store/merchantFormStore";
-const MerchantForm = () => {
+const MerchantForm = ({ formOpen, isEditing }) => {
   const { handleSubmit } = UseMerchantCreation();
   const { resetForm } = useMerchantFormStore();
   useEffect(() => {
-    resetForm();
-  }, []);
+    if (!isEditing && formOpen) resetForm();
+  }, [isEditing, formOpen]);
   return (
     <div className="bg-[var(--cards-bg)] border border-[var(--borderBg-color)] shadow-[0_0_10px_var(--borderBg-color)] rounded-[12px] px-5 py-4 text-white my-5">
       <div className="flex items-center gap-2 primary-color">

@@ -1,6 +1,6 @@
 import { Eye, EyeOff, CalculatorIcon } from "lucide-react";
 
-const MerchantHeader = ({ formOpen, setFormOpen }) => {
+const MerchantHeader = ({ formOpen, setFormOpen, setIsEditing }) => {
   return (
     <div className="card-header flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 sm:gap-0 p-2 sm:p-4">
       <div className="card-header-left flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-2">
@@ -21,7 +21,10 @@ const MerchantHeader = ({ formOpen, setFormOpen }) => {
       <div className="card-header-right flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
         <button
           className="btn-outline"
-          onClick={() => setFormOpen((prev) => !prev)}
+          onClick={() => {
+            setFormOpen((prev) => !prev);
+            setIsEditing(false);
+          }}
         >
           {formOpen ? (
             <>

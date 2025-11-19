@@ -119,13 +119,13 @@ export default function Partnercreate() {
       "Export/constraints-disturbution-parnter"
     );
     const res3 = await getDashboardData("Export/partner-url");
-    const data = res.data;
+    const data = res?.data;
     const unique = Array.from(
       new Map(data.map((item) => [item.productName, item])).values()
     );
     setProducts(unique);
-    setConstraints(transformConstraints(res2.data));
-    setPortalOptions(res3.data || []);
+    setConstraints(transformConstraints(res2?.data));
+    setPortalOptions(res3?.data || []);
   };
   useEffect(() => {
     fetchData();
@@ -138,7 +138,7 @@ export default function Partnercreate() {
   }, []);
   const fetchConfigurations = async () => {
     const res = await getPartnerData();
-    setPartners(res.data || []);
+    setPartners(res?.data || []);
   };
   // Filter by search
   const filteredPartners = partners
@@ -450,8 +450,8 @@ export default function Partnercreate() {
       backgroundColor: state.isSelected
         ? "#1452A8"
         : state.isFocused
-          ? "#1452A8"
-          : "transparent", // 🔹 transparent instead of solid
+        ? "#1452A8"
+        : "transparent", // 🔹 transparent instead of solid
       color: "#fff",
       fontSize: "12px",
       cursor: "pointer",
@@ -1408,24 +1408,26 @@ export default function Partnercreate() {
                     </td>
                     <td>
                       <span
-                        className={`px-2 py-1 rounded text-[10px] ${partner.partnerStatus === "Active"
-                          ? "checker"
-                          : partner.partnerStatus === "Onboarded"
+                        className={`px-2 py-1 rounded text-[10px] ${
+                          partner.partnerStatus === "Active"
+                            ? "checker"
+                            : partner.partnerStatus === "Onboarded"
                             ? "maker"
                             : partner.partnerStatus === "Inactive"
-                              ? "superuser"
-                              : ""
-                          }`}
+                            ? "superuser"
+                            : ""
+                        }`}
                       >
                         {partner.partnerStatus}
                       </span>
                     </td>
                     <td>
                       <span
-                        className={`px-2 py-1 rounded text-[10px] ${partner.kycStatus === "Verified"
-                          ? "checker"
-                          : "superuser"
-                          }`}
+                        className={`px-2 py-1 rounded text-[10px] ${
+                          partner.kycStatus === "Verified"
+                            ? "checker"
+                            : "superuser"
+                        }`}
                       >
                         {partner.kycStatus}
                       </span>
@@ -1493,10 +1495,11 @@ export default function Partnercreate() {
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center  ${currentPage === 1
-                ? "prev-next-disabled-btn"
-                : "prev-next-active-btn"
-                }`}
+              className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center  ${
+                currentPage === 1
+                  ? "prev-next-disabled-btn"
+                  : "prev-next-active-btn"
+              }`}
             >
               <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" /> Prev
             </button>
@@ -1506,10 +1509,11 @@ export default function Partnercreate() {
                 <button
                   key={i}
                   onClick={() => handlePageChange(i + 1)}
-                  className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${currentPage === i + 1
-                    ? "active-pagination-btn"
-                    : "inactive-pagination-btn"
-                    }`}
+                  className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm ${
+                    currentPage === i + 1
+                      ? "active-pagination-btn"
+                      : "inactive-pagination-btn"
+                  }`}
                 >
                   {i + 1}
                 </button>
@@ -1519,10 +1523,11 @@ export default function Partnercreate() {
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${currentPage === totalPages
-                ? "prev-next-disabled-btn"
-                : "prev-next-active-btn"
-                }`}
+              className={`flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm w-full sm:w-auto justify-center ${
+                currentPage === totalPages
+                  ? "prev-next-disabled-btn"
+                  : "prev-next-active-btn"
+              }`}
             >
               Next <ChevronRight className="w-4 h-4" />
             </button>

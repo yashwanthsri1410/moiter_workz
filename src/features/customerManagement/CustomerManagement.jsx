@@ -10,7 +10,7 @@ const CustomerManagement = () => {
 
   const fetchData = async () => {
     const res = await getDashboardData("Export/customer_dashboard_export");
-    setData(res.data);
+    setData(res?.data);
   };
   useEffect(() => {
     fetchData();

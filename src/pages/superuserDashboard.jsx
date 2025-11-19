@@ -42,6 +42,7 @@ import ReportsAndAnalytics from "../features/reportsAnalytics";
 import SystemSettings from "../features/systemSettings";
 import RiskManagement from "../features/riskManagement";
 import TransactionsAnalystics from "../features/TransactionsManagement/TransactionsAnalystics";
+import MerchantDiscountRateCreation from "../components/MerchantDiscountRateCreation";
 
 export default function DashboardLayout() {
   const [activeTab, setActiveTab] = useState("0");
@@ -146,6 +147,7 @@ export default function DashboardLayout() {
       "1-3": <ScreenManagement onBack={() => setActiveTab("0")} />,
       "1-4": <RoleAccessForm onBack={() => setActiveTab("0")} />,
       "1-5": <EmployeeCreationForm onBack={() => setActiveTab("0")} />,
+      "1-6": <MerchantDiscountRateCreation onBack={() => setActiveTab("0")} />,
     };
 
     if (activeTab === "0-9") {
@@ -212,9 +214,8 @@ export default function DashboardLayout() {
                 <div key={modIdx}>
                   <button
                     onClick={() => toggleDropdown(mod.module.trim(), tabKey)}
-                    className={`main-menu-list ${
-                      openDropdown === mod.module.trim() ? "active" : ""
-                    }`}
+                    className={`main-menu-list ${openDropdown === mod.module.trim() ? "active" : ""
+                      }`}
                   >
                     <LayoutGrid size={16} className="menu-icon" />
                     {!isCollapsed && (

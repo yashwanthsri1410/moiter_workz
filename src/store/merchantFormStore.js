@@ -39,7 +39,7 @@ export const useMerchantFormStore = create((set) => ({
         paymentConfig: {
           ...state.paymentConfig,
           paymentType: merchant.paymentType,
-          mdrType: merchant.mdrType,
+          mdrMode: merchant.mdrMode,
           mdrValue: merchant.mdrValue,
         },
         termsAndConditions: merchant.termsAndConditions,

@@ -177,6 +177,12 @@ export const approvePartnerEmoneyAction = (payload) =>
 export const getPinCodeDetails = (payload) =>
   postRequest(`cs/api/Customer/Pincode`, payload);
 
+export const MerchantDiscountRateCreate = (payload) =>
+  postRequest(`${API_BASE_URL}/ms/api/Merchant/InsertMerchantDiscountRate`, {
+    ...payload,
+    logId: uuidv4(),
+  });
+
 //----------------PUT METHOD--------------------
 export const DepartmentUpdate = (payload) =>
   putRequest(`${API_BASE_URL}/ums/api/UserManagement/department_update`, {
@@ -202,6 +208,7 @@ export const RoleUpdate = (payload) =>
   putRequest(`${API_BASE_URL}/ums/api/UserManagement/update-role-access/bulk`, {
     ...payload,
   });
+
 export const updateMerchantDetails = (payload) =>
   putRequest(`${path}/Product/update-merchant`, {
     ...payload,
@@ -347,3 +354,6 @@ export const getUserTypeSummary = () =>
 // ✅ Get pending employees
 export const getPendingEmployees = () =>
   getRequest(`${API_BASE_URL}${fesPath}/Export/pending-employees`);
+
+export const getMerchantDiscountRateData = () =>
+  getRequest(`${API_BASE_URL}/ms/api/Merchant/GetMerchantDiscountRates`);

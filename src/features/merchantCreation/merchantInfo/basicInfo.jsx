@@ -1,21 +1,22 @@
+// components/signup/BasicInfo.tsx
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 import { categories } from "../../../constants/merchantForm";
 import { useMerchantFormStore } from "../../../store/merchantFormStore";
 
 const BasicInfo = () => {
-  const { formData, updateForm, updatePinCode, pinData } =
+  const { formData, updateForm, updatePinCode, pinData, updatedMerchantData } =
     useMerchantFormStore();
   const { basicInfo } = formData;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Mobile number validation: only digits, max 10
     if (name === "mobileNumber") {
       if (/^\d{0,10}$/.test(value)) updateForm("basicInfo", name, value);
       return;
     }
 
-    // Pin code: only digits, max 6
     if (name === "pinCode") {
       if (/^\d{0,6}$/.test(value)) updatePinCode(value);
       return;
@@ -23,9 +24,12 @@ const BasicInfo = () => {
 
     updateForm("basicInfo", name, value);
   };
-
+  const isUpdating = Object.keys(updatedMerchantData).length > 0;
   return (
     <>
+      {/* ------------------------------- */}
+      {/*     FIRST ROWS (2 PER ROW)     */}
+      {/* ------------------------------- */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <InputField
           label="Merchant / Shop Name"
@@ -34,6 +38,7 @@ const BasicInfo = () => {
           value={basicInfo.shopName}
           onChange={handleChange}
         />
+
         <InputField
           label="Contact Person Name"
           name="contactName"
@@ -42,6 +47,7 @@ const BasicInfo = () => {
           onChange={handleChange}
         />
 
+        {/* CONTACT NUMBER */}
         <div className="form-group flex flex-col">
           <Label text="Contact Number" />
           <div className="flex gap-2">
@@ -64,12 +70,22 @@ const BasicInfo = () => {
           name="email"
           type="email"
           placeholder="merchant@example.com"
-          readOnly={basicInfo.email}
-          disabled={basicInfo.email}
+          readOnly={Object.keys(updateForm).length > 0}
+          disabled={Object.keys(updateForm).length > 0}
           value={basicInfo.email}
           onChange={handleChange}
         />
-
+        {!isUpdating && (
+          //  PASSWORD
+          <InputField
+            label="Password"
+            name="password"
+            type="password"
+            placeholder="merchant@123"
+            value={basicInfo.password}
+            onChange={handleChange}
+          />
+        )}
         <InputField
           label="GST Number"
           name="gstNumber"
@@ -78,6 +94,7 @@ const BasicInfo = () => {
           onChange={handleChange}
         />
 
+        {/* BUSINESS CATEGORY */}
         <div className="form-group flex flex-col">
           <Label text="Business Category" />
           <select
@@ -87,7 +104,7 @@ const BasicInfo = () => {
             className="form-input w-full"
             required
           >
-            <option value="" hidden>
+            <option value="" disabled>
               Select category
             </option>
             {categories.map((item) => (
@@ -97,9 +114,8 @@ const BasicInfo = () => {
             ))}
           </select>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+        {/* PIN CODE */}
         <InputField
           label="Pin Code"
           name="pinCode"
@@ -108,6 +124,7 @@ const BasicInfo = () => {
           onChange={handleChange}
         />
 
+        {/* CITY */}
         <div className="form-group flex flex-col">
           <Label text="City" />
           <select
@@ -117,7 +134,7 @@ const BasicInfo = () => {
             className="form-input w-full"
             required
           >
-            <option value="" disabled hidden>
+            <option value="" disabled>
               Select City
             </option>
 
@@ -135,6 +152,7 @@ const BasicInfo = () => {
           </select>
         </div>
 
+        {/* STATE */}
         <InputField
           label="State"
           name="state"
@@ -163,22 +181,46 @@ const InputField = ({
   value,
   onChange,
   readOnly,
-}) => (
-  <div className="form-group flex flex-col">
-    <Label text={label} />
-    <input
-      type={type}
-      name={name}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-      readOnly={readOnly}
-      className={`form-input ${
-        readOnly ? "bg-gray-100 cursor-not-allowed" : ""
-      }`}
-      required
-    />
-  </div>
-);
+}) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const isPassword = type === "password";
+
+  return (
+    <div className="form-group flex flex-col">
+      <Label text={label} />
+
+      <div className="relative">
+        <input
+          type={isPassword && showPassword ? "text" : type}
+          name={name}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          readOnly={readOnly}
+          className={`form-input pr-10 ${
+            readOnly ? "bg-gray-100 cursor-not-allowed" : ""
+          }`}
+          required
+        />
+
+        {/* SHOW/HIDE PASSWORD ICON */}
+        {isPassword && !readOnly && (
+          <button
+            type="button"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? (
+              <EyeOff className="w-4 h-4" />
+            ) : (
+              <Eye className="w-4 h-4" />
+            )}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default BasicInfo;

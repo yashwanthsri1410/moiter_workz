@@ -27,11 +27,9 @@ export default function UserManagementSystem() {
       try {
         const userSummary = await getUserTypeSummary();
         setUsers(userSummary?.data?.[0] || userSummary);
-        console.log(userSummary);
 
         const employeeList = await getPendingEmployees();
         setEmployees(employeeList.data);
-        console.log(employeeList);
       } catch (err) {
         console.error("Error fetching data:", err);
       }
@@ -43,7 +41,6 @@ export default function UserManagementSystem() {
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
-  console.log(employees);
 
   // ✅ Filter Employees
   const filteredEmployees = employees?.filter(

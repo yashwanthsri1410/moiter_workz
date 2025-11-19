@@ -15,6 +15,16 @@ const initialSchedule = daysOfWeek.reduce((acc, day) => {
 
 export const initialFormData = {
   basicInfo: {
+    shopName: "",
+    contactName: "",
+    mobileNumber: "",
+    email: "",
+    password: "",
+    gstNumber: "",
+    category: "",
+    pinCode: "",
+    city: "",
+    state: "",
     idProof: "",
     addressProof: "",
     latitude: 11.9526,
@@ -25,7 +35,7 @@ export const initialFormData = {
   kycInfo: {},
   paymentConfig: {
     paymentType: "",
-    mdrType: "Percentage",
+    mdrMode: "Percentage",
     mdrValue: "",
   },
   termsAndConditions: false,

@@ -15,7 +15,7 @@ const PieChart1 = () => {
   useEffect(() => {
     const fetchWalletChartData = async () => {
       const res = await getDashboardData("Export/user-wallet-cards");
-      const data = res.data;
+      const data = res?.data;
 
       if (Array.isArray(data) && data.length > 0) {
         setChartData({

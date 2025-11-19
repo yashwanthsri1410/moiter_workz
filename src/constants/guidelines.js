@@ -207,3 +207,32 @@ export const merchantGuidelines = [
       "Mark business location and activate merchant account for services",
   },
 ];
+
+
+export const MerchantDiscountRateGuidelines = [
+  {
+    icon: "🏷️",
+    title: "Select MDR Type",
+    description:
+      "Choose between FLAT or PERCENTAGE based MDR based on the merchant’s pricing requirements.",
+  },
+  {
+    icon: "📊",
+    title: "Configure MDR Values",
+    description:
+      "Enter flat amount or percentage rate. For FLAT type, ensure minimum and maximum amounts are defined properly.",
+  },
+  {
+    icon: "🔍",
+    title: "Validate Amount Range",
+    description:
+      "Ensure minimum and maximum amounts are logical, non-negative, and aligned with the merchant’s transaction size.",
+  },
+  {
+    icon: "⚙️",
+    title: "Display Value Verification",
+    description:
+      "Check how the MDR will appear to users — e.g., ₹10.00 for FLAT or 2.00% for PERCENTAGE.",
+  },
+];
+

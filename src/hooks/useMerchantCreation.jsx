@@ -1,29 +1,21 @@
-import { useEffect, useState } from "react";
-import {
-  getMerchantDetails,
-  merchantOnboarding,
-  updateMerchantDetails,
-} from "../services/service";
+import { merchantOnboarding, updateMerchantDetails } from "../services/service";
 import { useMerchantFormStore } from "../store/merchantFormStore";
 import customConfirm from "../components/reusable/CustomConfirm";
+import { useZustandStore } from "../store/zustandStore";
 
 const UseMerchantCreation = () => {
   const { formData, updatedMerchantData, resetForm, setUpdatedMerchantData } =
     useMerchantFormStore();
-  const [merchantData, setMerchantData] = useState();
+  const { fetchMerchantData } = useZustandStore();
   const createdBy = JSON.parse(localStorage.getItem("userData"))?.username;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const businessHours = Object.values(formData?.businessHours || {});
     const obj = formData?.paymentConfig?.paymentType || {};
-    const mdrMode = formData?.paymentConfig?.mdrType;
+    const mdrMode = formData?.paymentConfig?.mdrMode;
     const mdrValue = Number(formData?.paymentConfig?.mdrValue);
     const termsAndConditions = formData?.termsAndConditions;
-
-    const paymentType = Object.keys(obj)
-      .filter((key) => obj?.[key] && key !== "all")
-      .join(", ");
 
     if (Object.keys(obj).length === 0) {
       alert("Please select any one of payment type");
@@ -46,7 +38,7 @@ const UseMerchantCreation = () => {
       ...formData?.basicInfo,
       businessHours,
       ...formData?.kycInfo,
-      paymentType,
+      paymentType: formData?.paymentConfig?.paymentType,
       mdrMode,
       mdrValue,
     };
@@ -59,27 +51,20 @@ const UseMerchantCreation = () => {
         alert("Merchant details updated Successfully");
         setUpdatedMerchantData("");
         resetForm();
+        fetchMerchantData();
       }
     } else {
       const res = await merchantOnboarding(payload);
-      const isOnboarded =
-        res?.message?.status === "success" || res?.data?.message?.status;
+      const isOnboarded = res?.data?.message?.status === "success";
       if (isOnboarded) {
-        alert("Merchant Onboarded Successfully");
+        alert("Application submitted successfully");
         resetForm();
+        fetchMerchantData();
       }
     }
   };
 
-  const fetchData = async () => {
-    const res = await getMerchantDetails();
-    setMerchantData(res?.data);
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-  return { handleSubmit, merchantData };
+  return { handleSubmit };
 };
 
 export default UseMerchantCreation;

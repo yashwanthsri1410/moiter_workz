@@ -1,11 +1,4 @@
 import { create } from "zustand";
-import {
-  loadedRes,
-  productRes,
-  transactionRes,
-  unloadedRes,
-  walletPerformanceRes,
-} from "../mock/operationData";
 
 export const useOperationStore = create((set) => ({
   loadedData: [],

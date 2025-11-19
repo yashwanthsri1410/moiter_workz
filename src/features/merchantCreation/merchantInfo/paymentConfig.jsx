@@ -1,20 +1,25 @@
 import { Check, IndianRupee } from "lucide-react";
 import { paymentOptions } from "../../../constants/merchantForm";
 import { useMerchantFormStore } from "../../../store/merchantFormStore";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+import UseMdrValues from "../../../hooks/useMdrValues";
 
 const PaymentConfig = () => {
   const { formData, updateForm } = useMerchantFormStore();
+  const { MerchantDiscountRates } = UseMdrValues();
+
   const { paymentConfig } = formData;
 
-  // ✅ Toggle checkbox
+  // -----------------------------
+  // Checkbox Toggle
+  // -----------------------------
   const handleCheckboxToggle = (id) => {
     let selectedTypes = paymentConfig.paymentType
       ? paymentConfig.paymentType.split(",").map((t) => t.trim())
       : [];
 
     if (id === "all") {
-      const allSelected = selectedTypes.length !== paymentOptions.length - 1; // exclude "all"
+      const allSelected = selectedTypes.length !== paymentOptions.length - 1;
       selectedTypes = allSelected
         ? paymentOptions.filter((opt) => opt.id !== "all").map((opt) => opt.id)
         : [];
@@ -29,19 +34,38 @@ const PaymentConfig = () => {
     updateForm("paymentConfig", "paymentType", selectedTypes.join(", "));
   };
 
-  // ✅ MDR handlers
-  const handleMdrType = (type) => updateForm("paymentConfig", "mdrType", type);
-  const handleInputChange = (e) =>
-    updateForm("paymentConfig", "mdrValue", e.target.value);
+  // -----------------------------
+  // MDR handlers
+  // -----------------------------
+  const handleMdrType = (type) => {
+    updateForm("paymentConfig", "mdrMode", type);
+    updateForm("paymentConfig", "mdrValue", ""); // clear previous selection
+  };
 
-  // ✅ Only initialize MDR type from backend
+  // -----------------------------
+  // Prepare MDR lists
+  // -----------------------------
+  const flatRates = useMemo(
+    () => MerchantDiscountRates.filter((item) => item.mdrMode === "FLAT"),
+    [MerchantDiscountRates]
+  );
+
+  const percentageRates = useMemo(
+    () => MerchantDiscountRates.filter((item) => item.mdrMode === "PERCENTAGE"),
+    [MerchantDiscountRates]
+  );
+
+  // -----------------------------
+  // Load MDR type if coming from backend
+  // -----------------------------
   useEffect(() => {
-    if (paymentConfig?.mdrMode && !paymentConfig.mdrType) {
-      updateForm("paymentConfig", "mdrType", paymentConfig.mdrMode);
+    if (paymentConfig?.mdrMode && !paymentConfig.mdrMode) {
+      updateForm("paymentConfig", "mdrMode", paymentConfig.mdrMode);
     }
-  }, [paymentConfig.mdrMode, paymentConfig.mdrType, updateForm]);
+  }, [paymentConfig.mdrMode, paymentConfig.mdrMode, updateForm]);
 
-  const mdrType = paymentConfig.mdrType || "Percentage";
+  const mdrMode = paymentConfig.mdrMode || "Percentage";
+
   const selectedTypesArray = paymentConfig.paymentType
     ? paymentConfig.paymentType.split(",").map((t) => t.trim())
     : [];
@@ -57,6 +81,7 @@ const PaymentConfig = () => {
         Payment Configuration
       </h3>
 
+      {/* PAYMENT TYPE */}
       <div className="space-y-1 form-group mt-3">
         <label className="flex items-center gap-2 text-sm font-medium text-chart-5">
           Payment Type{" "}
@@ -94,6 +119,7 @@ const PaymentConfig = () => {
                     <Check className="w-3.5 h-3.5 bg-[#008284] text-black" />
                   )}
                 </button>
+
                 <label
                   className={`font-bold flex items-center gap-2 text-sm cursor-pointer ${
                     option.special ? "text-primary" : "text-foreground"
@@ -107,6 +133,7 @@ const PaymentConfig = () => {
         </div>
       </div>
 
+      {/* MDR TYPE */}
       <div className="form-group mt-5">
         <label className="flex items-center gap-2 text-sm font-medium text-chart-5">
           MDR (Merchant Discount Rate)
@@ -117,18 +144,19 @@ const PaymentConfig = () => {
             type="button"
             onClick={() => handleMdrType("Percentage")}
             className={`flex-1 py-2 px-4 rounded-2xl border transition-all text-sm ${
-              mdrType === "Percentage"
+              mdrMode === "Percentage"
                 ? "border border-[var(--borderBg-color)] bg-primary text-sm primary-color"
                 : "border border-chart text-[#94a3b8]"
             }`}
           >
             Percentage (%)
           </button>
+
           <button
             type="button"
             onClick={() => handleMdrType("Flat Rate")}
             className={`flex-1 py-2 px-4 rounded-2xl border transition-all text-sm ${
-              mdrType === "Flat Rate"
+              mdrMode === "Flat Rate"
                 ? "border border-[var(--borderBg-color)] bg-primary text-sm primary-color"
                 : "border border-chart text-[#94a3b8]"
             }`}
@@ -137,24 +165,50 @@ const PaymentConfig = () => {
           </button>
         </div>
 
-        <div className="flex gap-2 items-center mt-3">
-          <input
-            type="number"
-            step="0.01"
-            placeholder={
-              mdrType === "Percentage"
-                ? "Enter percentage (e.g., 2.5)"
-                : "Enter flat amount (e.g., 10)"
-            }
-            required
-            value={paymentConfig.mdrValue || ""}
-            onChange={handleInputChange}
-            className="form-input"
-          />
-          {mdrType && (
-            <div className="flex items-center px-4 text-[#94a3b8] border border-[var(--borderBg-color)] rounded-2xl min-w-[60px] justify-center">
-              {mdrType === "Percentage" ? "%" : "₹"}
-            </div>
+        {/* SELECT BLOCK */}
+        <div className="flex flex-col gap-2 mt-3">
+          {/* PERCENTAGE SELECT */}
+          {mdrMode === "Percentage" && (
+            <select
+              value={paymentConfig.mdrValue || ""}
+              onChange={(e) =>
+                updateForm("paymentConfig", "mdrValue", e.target.value)
+              }
+              className="form-input w-full"
+              required
+            >
+              <option value="" disabled>
+                Select Percentage MDR
+              </option>
+
+              {percentageRates.map((item) => (
+                <option key={item.mdrId} value={item.percentage}>
+                  {item.displayValue}
+                </option>
+              ))}
+            </select>
+          )}
+
+          {/* FLAT RATE SELECT */}
+          {mdrMode === "Flat Rate" && (
+            <select
+              value={paymentConfig.mdrValue || ""}
+              onChange={(e) =>
+                updateForm("paymentConfig", "mdrValue", e.target.value)
+              }
+              className="form-input w-full"
+              required
+            >
+              <option value="" disabled>
+                Select Flat MDR
+              </option>
+
+              {flatRates.map((item) => (
+                <option key={item.mdrId} value={item.flat}>
+                  {item.displayValue}
+                </option>
+              ))}
+            </select>
           )}
         </div>
       </div>

@@ -33,7 +33,7 @@ const BarChart = () => {
   useEffect(() => {
     const fetchChartData = async () => {
       const res = await getDashboardData("Export/wallet-transcation-dashboard");
-      const data = res.data;
+      const data = res?.data;
 
       if (!Array.isArray(data) || data.length === 0) {
         setChartData(null); // No data
